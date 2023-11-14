@@ -145,7 +145,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();
 
             //Hide debug button
-            btt_debug.Visible = true;
+            btt_debug.Visible = false;
 
             Color myColor = Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
