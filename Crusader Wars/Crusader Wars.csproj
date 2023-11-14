@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4DBBCD93-9794-413E-AE59-FE8D68001588}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Crusader_Wars</RootNamespace>
+    <AssemblyName>Crusader Wars</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>C:\Users\ruben\OneDrive\Ambiente de Trabalho\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>false</MapFileExtensions>
+    <ProductName>Crusader Wars</ProductName>
+    <PublisherName>Faray Mods</PublisherName>
+    <MinimumRequiredVersion>1.0.0.0</MinimumRequiredVersion>
+    <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <DisallowUrlActivation>true</DisallowUrlActivation>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.9.3.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Crusader_Wars.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Win32Resource>
+    </Win32Resource>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>40D315124CA67998D4A0B4CFCB6FF86B034A9A60</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Crusader Wars_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="armies\Deployables.cs" />
+    <Compile Include="armies\Modifiers.cs" />
+    <Compile Include="armies\SupplySystem.cs" />
+    <Compile Include="data\SiegesSearch.cs" />
+    <Compile Include="sieges\Sieges_DataTypes.cs" />
+    <Compile Include="terrain\Deployments.cs" />
+    <Compile Include="terrain\Lands.cs" />
+    <Compile Include="terrain\Rivers&amp;Straits.cs" />
+    <Compile Include="terrain\UniqueMaps.cs" />
+    <Compile Include="terrain\WeatherSystem.cs" />
+    <Compile Include="twbattle\BattleFile.cs" />
+    <Compile Include="twbattle\BattleResult.cs" />
+    <Compile Include="packfile\BattleScript.cs" />
+    <Compile Include="packfile\DeclarationsFile.cs" />
+    <Compile Include="sieges\Sieges.cs" />
+    <Compile Include="twbattle\UnitsFile.cs" />
+    <Compile Include="data\FileData.cs" />
+    <Compile Include="armies\CharactersSystem.cs" />
+    <Compile Include="armies\ArmyProportions.cs" />
+    <Compile Include="data\Languages.cs" />
+    <Compile Include="data\Reader.cs" />
+    <Compile Include="time periods\TimePeriods.cs" />
+    <Compile Include="data\DataSearch.cs" />
+    <Compile Include="client\MainFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="client\MainFile.Designer.cs">
+      <DependentUpon>MainFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="client\LoadingScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="client\LoadingScreen.Designer.cs">
+      <DependentUpon>LoadingScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="client\Options.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="client\Options.Designer.cs">
+      <DependentUpon>Options.cs</DependentUpon>
+    </Compile>
+    <Compile Include="packfile\PackFile.cs" />
+    <Compile Include="armies\SideObjects.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="terrain\TerrainGenerator.cs" />
+    <Compile Include="data\Updater.cs" />
+    <Compile Include="client\UpdaterControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="client\UpdaterControl.Designer.cs">
+      <DependentUpon>UpdaterControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="unit mapper\UnitMappers.cs" />
+    <EmbeddedResource Include="client\MainFile.resx">
+      <DependentUpon>MainFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\LoadingScreen.resx">
+      <DependentUpon>LoadingScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\Options.resx">
+      <DependentUpon>Options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\UpdaterControl.resx">
+      <DependentUpon>UpdaterControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ModDesign%28Alpha%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ModDesign%28Alpha%291.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ModDesign%28Alpha1%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\playbutton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Declare_war_interaction.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\app_background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\app_background1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\background.jpg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\attila background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TextLogo %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LOADINGIMAGE.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\option.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\option.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\option %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\imageedit_2_3450978699.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\options.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\warning %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\warning %281%291.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\correct.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\heavy_infantry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\levies.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\archers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\heavy_cavalry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\archers1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\attilaicon %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ck3 %281%29.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\120px-Icon_CK3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bookpage.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cancel %281%29.png" />
+    <None Include="Resources\loadingscrenn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="logo.ico" />
+    <None Include="Resources\website1.png" />
+    <None Include="Resources\website.png" />
+    <None Include="Resources\patch.png" />
+    <None Include="Resources\steam.png" />
+    <None Include="Resources\discord.png" />
+    <None Include="Resources\wider original.jpg" />
+    <None Include="Resources\fortress-gd06cefbea_1280.jpg" />
+    <None Include="Resources\discord1.jpg" />
+    <None Include="Resources\discord.jpg" />
+    <None Include="Resources\info_smaller.png" />
+    <None Include="Resources\ui.png" />
+    <None Include="Resources\Sem nome.png" />
+    <None Include="Resources\moving.png" />
+    <None Include="Resources\features.png" />
+    <None Include="Resources\EarlyRenainance.png" />
+    <None Include="Resources\resume.png" />
+    <None Include="Resources\tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3.png" />
+    <None Include="Resources\Node_martial.png" />
+    <None Include="Resources\Vassal_stance_minority.png" />
+    <None Include="Resources\paper.jpg" />
+    <None Include="Resources\info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="Crusader Wars.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
