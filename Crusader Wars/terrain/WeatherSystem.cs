@@ -77,8 +77,6 @@ namespace Crusader_Wars.terrain
                                          "Weather\\default\\default\\land\\day\\dry\\CC1_2_day_dry_2.environment",
                                         "Weather\\default\\default\\land\\day\\dry\\day_north_1.environment",
                                         "Weather\\ROME_Destruct\\default\\land\\day\\dry\\DEMO_morning.environment",
-                                        "Weather\\ROME_Med\\default\\Land\\day\\dry\\day_med_1.environmentt",
-                                        "Weather\\ROME_Med\\default\\Land\\day\\dry\\day_med_2.environment",
                                         "Weather\\ROME_Med\\default\\Land\\day\\dry\\day_med_clear.environment",
                                         "Weather\\ROME_Med\\default\\Land\\day\\dry\\morn_med_3.environment" };
             }

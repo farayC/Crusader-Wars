@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crusader_Wars.client;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -14,22 +15,47 @@ namespace Crusader_Wars
     {
         private string CK3_Path { get; set; }
         private string Attila_Path { get; set; }
+
+        UserControl General_Tab;
+        UserControl Units_Tab;
+        UserControl BattleScale_Tab;
         public Options()
         {
             InitializeComponent();
             this.Icon = Properties.Resources.logo;
+
+
         }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
+            }
+        }
+
         private void CloseBtn_Click(object sender, EventArgs e)
         {
             SaveCheckedStates();
             WriteLastChecked();
+            SaveValuesToOptionsFile();
+            ModOptions.StoreOptionsValues(optionsValuesCollection);
             this.Close();
         }
 
 
         private void Options_Load(object sender, EventArgs e)
         {
+            General_Tab = new UC_GeneralOptions();
+            Units_Tab = new UC_UnitsOptions();
+            BattleScale_Tab = new UC_BattleScaleOptions();
+
             ReadTimePeriods();
+            ReadOptionsFile();
+            SetOptionsUIData();
             RetrieveCheckedStates();
             CreateDynamicListControl();
             Status_Refresh();
@@ -38,6 +64,149 @@ namespace Crusader_Wars
             UpdateStatusLabel();
 
 
+        }
+
+        //this is to read the options values on the .xml file
+        public static List<(string option, string value)> optionsValuesCollection { get; private set; }
+        public static void ReadOptionsFile()
+        {
+
+            try
+            {
+                string file = @".\Settings\Options.xml";
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(file);
+
+                optionsValuesCollection = new List<(string option, string value)>();
+                var CloseAttila_Value = xmlDoc.SelectSingleNode("//Option [@name='CloseAttila']").InnerText;
+                var FullArmies_Value = xmlDoc.SelectSingleNode("//Option [@name='FullArmies']").InnerText;
+                var TimeLimit_Value = xmlDoc.SelectSingleNode("//Option [@name='TimeLimit']").InnerText;
+                var BattleMapsSize_Value = xmlDoc.SelectSingleNode("//Option [@name='BattleMapsSize']").InnerText;
+                var DefensiveDeployables_Value = xmlDoc.SelectSingleNode("//Option [@name='DefensiveDeployables']").InnerText;
+
+                var LeviesMax_Value = xmlDoc.SelectSingleNode("//Option [@name='LeviesMax']").InnerText;
+                var RangedMax_Value = xmlDoc.SelectSingleNode("//Option [@name='RangedMax']").InnerText;
+                var InfantryMax_Value = xmlDoc.SelectSingleNode("//Option [@name='InfantryMax']").InnerText;
+                var CavalryMax_Value = xmlDoc.SelectSingleNode("//Option [@name='CavalryMax']").InnerText;
+
+                var BattleScale_Value = xmlDoc.SelectSingleNode("//Option [@name='BattleScale']").InnerText;
+                var MaximumBattleLimit_Value = xmlDoc.SelectSingleNode("//Option [@name='MaximumBattleLimit']").InnerText;
+                var AutoScaleUnits_Value = xmlDoc.SelectSingleNode("//Option [@name='AutoScaleUnits']").InnerText;
+
+                optionsValuesCollection.AddRange(new List<(string, string)>
+                {
+                    ("CloseAttila", CloseAttila_Value),
+                    ("FullArmies", FullArmies_Value),
+                    ("TimeLimit", TimeLimit_Value),
+                    ("BattleMapsSize", BattleMapsSize_Value) ,
+                    ("DefensiveDeployables", DefensiveDeployables_Value),
+
+                    ("LeviesMax", LeviesMax_Value),
+                    ("RangedMax", RangedMax_Value),
+                    ("InfantryMax", InfantryMax_Value),
+                    ("CavalryMax", CavalryMax_Value),
+
+                    ("BattleScale", BattleScale_Value),
+                    ("MaximumBattleLimit", MaximumBattleLimit_Value),
+                    ("AutoScaleUnits", AutoScaleUnits_Value),
+                });
+
+
+            }
+            catch
+            {
+                MessageBox.Show("Error reading game options. Restart the mod and try again", "Data Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                Application.Exit();
+            }
+        }
+
+        void SetOptionsUIData()
+        {
+            var CloseAttila_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_CloseAttila", true).FirstOrDefault() as ComboBox;
+            var FullArmies_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_FullArmies", true).FirstOrDefault() as ComboBox;
+            var TimeLimit_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_TimeLimit", true).FirstOrDefault() as ComboBox;
+            var BattleMapsSize_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_BattleMapsSize", true).FirstOrDefault() as ComboBox;
+            var DefensiveDeployables_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_DefensiveDeployables", true).FirstOrDefault() as ComboBox;
+
+            var LeviesMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_LeviesMax", true).FirstOrDefault() as ComboBox;
+            var RangedMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_RangedMax", true).FirstOrDefault() as ComboBox;
+            var InfantryMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_InfantryMax", true).FirstOrDefault() as ComboBox;
+            var CavalryMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_CavalryMax", true).FirstOrDefault() as ComboBox;
+
+            var BattleScale_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_BattleSizeScale", true).FirstOrDefault() as ComboBox;
+            var MaximumBattleLimit_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_MaxBattleLimit", true).FirstOrDefault() as ComboBox;
+            var AutoScaleUnits_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_AutoScale", true).FirstOrDefault() as ComboBox;
+            
+            CloseAttila_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "CloseAttila").value; 
+            FullArmies_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies").value;
+            TimeLimit_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "TimeLimit").value;
+            BattleMapsSize_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleMapsSize").value;
+            DefensiveDeployables_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "DefensiveDeployables").value;
+
+            LeviesMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "LeviesMax").value;
+            RangedMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "RangedMax").value;
+            InfantryMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "InfantryMax").value;
+            CavalryMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "CavalryMax").value;
+
+            BattleScale_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleScale").value;
+            MaximumBattleLimit_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "MaximumBattleLimit").value;
+            AutoScaleUnits_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "AutoScaleUnits").value;
+
+            ChangeOptionsTab(General_Tab);
+        }
+
+        void SaveValuesToOptionsFile()
+        {
+            string file = @".\Settings\Options.xml";
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(file);
+
+            var CloseAttila_ComboBox = General_Tab.Controls.Find("OptionSelection_CloseAttila", true)[0] as ComboBox;
+            var FullArmies_ComboBox = General_Tab.Controls.Find("OptionSelection_FullArmies", true)[0] as ComboBox;
+            var TimeLimit_ComboBox = General_Tab.Controls.Find("OptionSelection_TimeLimit", true)[0] as ComboBox;
+            var BattleMapsSize_ComboBox = General_Tab.Controls.Find("OptionSelection_BattleMapsSize", true)[0] as ComboBox;
+            var DefensiveDeployables_ComboBox = General_Tab.Controls.Find("OptionSelection_DefensiveDeployables", true)[0] as ComboBox;
+
+            var LeviesMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_LeviesMax", true)[0] as ComboBox;
+            var RangedMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_RangedMax", true)[0] as ComboBox;
+            var InfantryMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_InfantryMax", true)[0] as ComboBox;
+            var CavalryMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_CavalryMax", true)[0] as ComboBox;
+
+            var BattleScale_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_BattleSizeScale", true)[0] as ComboBox;
+            var MaximumBattleLimit_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_MaxBattleLimit", true)[0] as ComboBox;
+            var AutoScaleUnits_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_AutoScale", true)[0] as ComboBox;
+
+
+
+            var CloseAttila_Node = xmlDoc.SelectSingleNode("//Option [@name='CloseAttila']");
+            CloseAttila_Node.InnerText = CloseAttila_ComboBox.Text;
+            var FullArmies_Node = xmlDoc.SelectSingleNode("//Option [@name='FullArmies']");
+            FullArmies_Node.InnerText = FullArmies_ComboBox.Text;
+            var TimeLimit_Node = xmlDoc.SelectSingleNode("//Option [@name='TimeLimit']");
+            TimeLimit_Node.InnerText = TimeLimit_ComboBox.Text;
+            var BattleMapsSize_Node = xmlDoc.SelectSingleNode("//Option [@name='BattleMapsSize']");
+            BattleMapsSize_Node.InnerText = BattleMapsSize_ComboBox.Text;
+            var DefensiveDeployables_Node = xmlDoc.SelectSingleNode("//Option [@name='DefensiveDeployables']");
+            DefensiveDeployables_Node.InnerText = DefensiveDeployables_ComboBox.Text;
+
+            var LeviesMax_Node = xmlDoc.SelectSingleNode("//Option [@name='LeviesMax']");
+            LeviesMax_Node.InnerText = LeviesMax_ComboBox.Text;
+            var RangedMax_Node = xmlDoc.SelectSingleNode("//Option [@name='RangedMax']");
+            RangedMax_Node.InnerText = RangedMax_ComboBox.Text;
+            var InfantryMax_Node = xmlDoc.SelectSingleNode("//Option [@name='InfantryMax']");
+            InfantryMax_Node.InnerText = InfantryMax_ComboBox.Text;
+            var CavalryMax_Node = xmlDoc.SelectSingleNode("//Option [@name='CavalryMax']");
+            CavalryMax_Node.InnerText = CavalryMax_ComboBox.Text;
+
+            var BattleScale_Node = xmlDoc.SelectSingleNode("//Option [@name='BattleScale']");
+            BattleScale_Node.InnerText = BattleScale_ComboBox.Text;
+            var MaximumBattleLimit_Node = xmlDoc.SelectSingleNode("//Option [@name='MaximumBattleLimit']");
+            MaximumBattleLimit_Node.InnerText = MaximumBattleLimit_ComboBox.Text;
+            var AutoScaleUnits_Node = xmlDoc.SelectSingleNode("//Option [@name='AutoScaleUnits']");
+            AutoScaleUnits_Node.InnerText = AutoScaleUnits_ComboBox.Text;
+
+            xmlDoc.Save(file);
         }
 
         //This is for unit mapper tooltip
@@ -225,12 +394,12 @@ namespace Crusader_Wars
             if (enabled == 1)
             {
                 Label_MapperStatus.Text = $"Mapper loaded!";
-                Label_MapperStatus.ForeColor = SystemColors.ControlText;
+                Label_MapperStatus.ForeColor = Color.White;
             }
             if (enabled > 1)
             {
                 Label_MapperStatus.Text = "Loading according to time period!";
-                Label_MapperStatus.ForeColor = SystemColors.ControlText;
+                Label_MapperStatus.ForeColor = Color.White;
             }
         }
 
@@ -474,6 +643,32 @@ namespace Crusader_Wars
                                                     "Select multiple if they have a continuation of time periods.\n\n" +
                                                     "The officials unit mappers are meant to all of them being enabled, so you can see your units evolve.\n" +
                                                     "You can change the timeperiod they start by going to the unit mapper files and change the years.");
+        }
+
+        private void Btn_GeneralTab_Click(object sender, EventArgs e)
+        {
+            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != General_Tab)
+                ChangeOptionsTab(General_Tab);
+        }
+
+        private void Btn_UnitsTab_Click(object sender, EventArgs e)
+        {
+            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != Units_Tab)
+                ChangeOptionsTab(Units_Tab);
+        }
+
+        private void Btn_BattleScaleTab_Click(object sender, EventArgs e)
+        {
+            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != BattleScale_Tab)
+                ChangeOptionsTab(BattleScale_Tab);
+        }
+
+        void ChangeOptionsTab(Control control)
+        {
+            control.Dock = DockStyle.Fill;
+            OptionsPanel.Controls.Clear();
+            OptionsPanel.Controls.Add(control);
+            control.BringToFront();
         }
     }
 }

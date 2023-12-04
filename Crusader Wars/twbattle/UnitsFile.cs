@@ -9,28 +9,29 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
+using Crusader_Wars.client;
 
 namespace Crusader_Wars
 {
     public static class UnitsFile
     {
-        public static int MAX_LEVIES_UNIT_NUMBER = Properties.Settings.Default.LEVY_LIMIT;
-        public static int MAX_CAVALRY_UNIT_NUMBER = Properties.Settings.Default.CAVALVRY_LIMIT;
-        public static int MAX_INFANTRY_UNIT_NUMBER = Properties.Settings.Default.INFANTRY_LIMIT;
-        public static int MAX_RANGED_UNIT_NUMBER = Properties.Settings.Default.RANGED_LIMIT;
+        public static int MAX_LEVIES_UNIT_NUMBER = ModOptions.GetLevyMax();
+        public static int MAX_CAVALRY_UNIT_NUMBER = ModOptions.GetCavalryMax();
+        public static int MAX_INFANTRY_UNIT_NUMBER = ModOptions.GetInfantryMax();
+        public static int MAX_RANGED_UNIT_NUMBER = ModOptions.GetRangedMax();
 
         public static void ConvertandAddArmyUnits(ICharacter Side)
         {
             try
             {
                 //Army XP
-                int commander_army_xp = Side.Commander.SetUnitsExperience();
+                int commander_army_xp = Side.Commander.GetUnitsExperience();
                 int modifiers_xp = Side.Modifiers.GetXP();
                 //int supplies_xp = Side.Supplys.GetXP();
                 if (TerrainGenerator.isStrait && Side.CombatSide == "attacker") { modifiers_xp -= 2; }
                 int army_xp = commander_army_xp + modifiers_xp;
                 //Knights & Commanders XP
-                int commander_xp = Side.Commander.SetCommanderExperience();
+                int commander_xp = Side.Commander.GetCommanderExperience();
                 int knights_xp = Side.Knights.SetExperience();
                 //Modifiers only decrease knights xp
                 if(modifiers_xp < 0) knights_xp += modifiers_xp;
@@ -47,11 +48,19 @@ namespace Crusader_Wars
                 if (knights_xp > 9) knights_xp = 9;
 
                 //General
+                var knights = Side.Army.FirstOrDefault(item => item.Type == "Knights");
                 var general = Side.Army.FirstOrDefault(item => item.Type == "General");
-                BattleFile.AddGeneralUnit(Side.Commander, general.Key, general.Script, commander_xp);
+
+                if (Side.Commander.Rank == 1 || Side.Commander.Rank == 2)
+                {
+                    BattleFile.AddGeneralUnit(Side.Commander, knights.Key, general.Script, commander_xp);
+                }
+                else
+                {
+                    BattleFile.AddGeneralUnit(Side.Commander, general.Key, general.Script, commander_xp);
+                }
 
                 //Knights
-                var knights = Side.Army.FirstOrDefault(item => item.Type == "Knights");
                 BattleFile.AddKnightUnit(Side.Knights, knights.Key, knights.Script, knights_xp);
 
                 //Levies

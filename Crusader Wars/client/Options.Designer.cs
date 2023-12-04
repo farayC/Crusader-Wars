@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Options));
             this.ck3Btn = new System.Windows.Forms.Button();
             this.Status_Ck3_Icon = new System.Windows.Forms.PictureBox();
             this.CloseBtn = new System.Windows.Forms.Button();
@@ -41,9 +42,17 @@
             this.infoBox = new System.Windows.Forms.PictureBox();
             this.ToolTip_UnitMappers = new System.Windows.Forms.ToolTip(this.components);
             this.Label_MapperStatus = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ToolTip_Options = new System.Windows.Forms.ToolTip(this.components);
+            this.OptionsPanel = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.Btn_GeneralTab = new System.Windows.Forms.Button();
+            this.Btn_UnitsTab = new System.Windows.Forms.Button();
+            this.Btn_BattleScaleTab = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Ck3_Icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Attila_Icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.infoBox)).BeginInit();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ck3Btn
@@ -53,7 +62,7 @@
             this.ck3Btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.ck3Btn.Font = new System.Drawing.Font("Yu Gothic UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ck3Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ck3Btn.Location = new System.Drawing.Point(10, 46);
+            this.ck3Btn.Location = new System.Drawing.Point(25, 156);
             this.ck3Btn.Name = "ck3Btn";
             this.ck3Btn.Size = new System.Drawing.Size(129, 122);
             this.ck3Btn.TabIndex = 0;
@@ -66,7 +75,7 @@
             this.Status_Ck3_Icon.BackColor = System.Drawing.Color.Transparent;
             this.Status_Ck3_Icon.BackgroundImage = global::Crusader_Wars.Properties.Resources.correct;
             this.Status_Ck3_Icon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Status_Ck3_Icon.Location = new System.Drawing.Point(37, 174);
+            this.Status_Ck3_Icon.Location = new System.Drawing.Point(52, 284);
             this.Status_Ck3_Icon.Name = "Status_Ck3_Icon";
             this.Status_Ck3_Icon.Size = new System.Drawing.Size(64, 57);
             this.Status_Ck3_Icon.TabIndex = 4;
@@ -79,7 +88,7 @@
             this.CloseBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.CloseBtn.FlatAppearance.BorderSize = 0;
             this.CloseBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CloseBtn.Location = new System.Drawing.Point(506, 12);
+            this.CloseBtn.Location = new System.Drawing.Point(635, 15);
             this.CloseBtn.Name = "CloseBtn";
             this.CloseBtn.Size = new System.Drawing.Size(53, 54);
             this.CloseBtn.TabIndex = 9;
@@ -91,7 +100,7 @@
             this.Status_Attila_Icon.BackColor = System.Drawing.Color.Transparent;
             this.Status_Attila_Icon.BackgroundImage = global::Crusader_Wars.Properties.Resources.correct;
             this.Status_Attila_Icon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Status_Attila_Icon.Location = new System.Drawing.Point(176, 174);
+            this.Status_Attila_Icon.Location = new System.Drawing.Point(191, 284);
             this.Status_Attila_Icon.Name = "Status_Attila_Icon";
             this.Status_Attila_Icon.Size = new System.Drawing.Size(64, 57);
             this.Status_Attila_Icon.TabIndex = 10;
@@ -105,7 +114,7 @@
             this.AttilaBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.AttilaBtn.Font = new System.Drawing.Font("Yu Gothic UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AttilaBtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.AttilaBtn.Location = new System.Drawing.Point(145, 46);
+            this.AttilaBtn.Location = new System.Drawing.Point(160, 156);
             this.AttilaBtn.Name = "AttilaBtn";
             this.AttilaBtn.Size = new System.Drawing.Size(130, 122);
             this.AttilaBtn.TabIndex = 14;
@@ -122,17 +131,17 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(401, 103);
+            this.label1.Location = new System.Drawing.Point(445, 119);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 21);
+            this.label1.Size = new System.Drawing.Size(111, 21);
             this.label1.TabIndex = 16;
-            this.label1.Text = "Mappers";
+            this.label1.Text = "Unit Mappers";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(6, 12);
+            this.label2.Location = new System.Drawing.Point(24, 119);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 21);
             this.label2.TabIndex = 17;
@@ -144,9 +153,9 @@
             this.MappersControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MappersControl.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.MappersControl.Font = new System.Drawing.Font("Yu Gothic UI Semibold", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MappersControl.Location = new System.Drawing.Point(340, 160);
+            this.MappersControl.Location = new System.Drawing.Point(442, 179);
             this.MappersControl.Name = "MappersControl";
-            this.MappersControl.Size = new System.Drawing.Size(207, 407);
+            this.MappersControl.Size = new System.Drawing.Size(246, 522);
             this.MappersControl.TabIndex = 18;
             this.MappersControl.WrapContents = false;
             // 
@@ -155,9 +164,9 @@
             this.infoBox.BackColor = System.Drawing.Color.Transparent;
             this.infoBox.BackgroundImage = global::Crusader_Wars.Properties.Resources.info_smaller;
             this.infoBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.infoBox.Location = new System.Drawing.Point(482, 91);
+            this.infoBox.Location = new System.Drawing.Point(562, 107);
             this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(45, 42);
+            this.infoBox.Size = new System.Drawing.Size(30, 42);
             this.infoBox.TabIndex = 21;
             this.infoBox.TabStop = false;
             this.infoBox.MouseHover += new System.EventHandler(this.infoBox_MouseHover);
@@ -165,8 +174,8 @@
             // ToolTip_UnitMappers
             // 
             this.ToolTip_UnitMappers.AutomaticDelay = 0;
-            this.ToolTip_UnitMappers.AutoPopDelay = 0;
-            this.ToolTip_UnitMappers.InitialDelay = 200;
+            this.ToolTip_UnitMappers.AutoPopDelay = 20000;
+            this.ToolTip_UnitMappers.InitialDelay = 100;
             this.ToolTip_UnitMappers.ReshowDelay = 0;
             // 
             // Label_MapperStatus
@@ -177,20 +186,115 @@
             this.Label_MapperStatus.AutoSize = true;
             this.Label_MapperStatus.BackColor = System.Drawing.Color.Transparent;
             this.Label_MapperStatus.Font = new System.Drawing.Font("Yu Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label_MapperStatus.Location = new System.Drawing.Point(332, 136);
+            this.Label_MapperStatus.ForeColor = System.Drawing.Color.White;
+            this.Label_MapperStatus.Location = new System.Drawing.Point(434, 155);
             this.Label_MapperStatus.Name = "Label_MapperStatus";
             this.Label_MapperStatus.Size = new System.Drawing.Size(50, 17);
             this.Label_MapperStatus.TabIndex = 22;
             this.Label_MapperStatus.Text = "Status";
             this.Label_MapperStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(24, 355);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(105, 21);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "Mod Options";
+            // 
+            // ToolTip_Options
+            // 
+            this.ToolTip_Options.AutoPopDelay = 5000;
+            this.ToolTip_Options.InitialDelay = 500;
+            this.ToolTip_Options.ReshowDelay = 100;
+            this.ToolTip_Options.ToolTipTitle = "Option";
+            // 
+            // OptionsPanel
+            // 
+            this.OptionsPanel.BackColor = System.Drawing.Color.Transparent;
+            this.OptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.OptionsPanel.Location = new System.Drawing.Point(25, 428);
+            this.OptionsPanel.Name = "OptionsPanel";
+            this.OptionsPanel.Size = new System.Drawing.Size(408, 273);
+            this.OptionsPanel.TabIndex = 28;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanel1.Controls.Add(this.Btn_GeneralTab);
+            this.flowLayoutPanel1.Controls.Add(this.Btn_UnitsTab);
+            this.flowLayoutPanel1.Controls.Add(this.Btn_BattleScaleTab);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(25, 388);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(360, 34);
+            this.flowLayoutPanel1.TabIndex = 28;
+            // 
+            // Btn_GeneralTab
+            // 
+            this.Btn_GeneralTab.AutoSize = true;
+            this.Btn_GeneralTab.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_GeneralTab.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Btn_GeneralTab.BackgroundImage")));
+            this.Btn_GeneralTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Btn_GeneralTab.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Btn_GeneralTab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_GeneralTab.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_GeneralTab.ForeColor = System.Drawing.Color.White;
+            this.Btn_GeneralTab.Location = new System.Drawing.Point(3, 3);
+            this.Btn_GeneralTab.Name = "Btn_GeneralTab";
+            this.Btn_GeneralTab.Size = new System.Drawing.Size(69, 28);
+            this.Btn_GeneralTab.TabIndex = 0;
+            this.Btn_GeneralTab.Text = "General";
+            this.Btn_GeneralTab.UseVisualStyleBackColor = false;
+            this.Btn_GeneralTab.Click += new System.EventHandler(this.Btn_GeneralTab_Click);
+            // 
+            // Btn_UnitsTab
+            // 
+            this.Btn_UnitsTab.AutoSize = true;
+            this.Btn_UnitsTab.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_UnitsTab.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Btn_UnitsTab.BackgroundImage")));
+            this.Btn_UnitsTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Btn_UnitsTab.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Btn_UnitsTab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_UnitsTab.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_UnitsTab.ForeColor = System.Drawing.Color.White;
+            this.Btn_UnitsTab.Location = new System.Drawing.Point(78, 3);
+            this.Btn_UnitsTab.Name = "Btn_UnitsTab";
+            this.Btn_UnitsTab.Size = new System.Drawing.Size(80, 28);
+            this.Btn_UnitsTab.TabIndex = 1;
+            this.Btn_UnitsTab.Text = "Units Max";
+            this.Btn_UnitsTab.UseVisualStyleBackColor = false;
+            this.Btn_UnitsTab.Click += new System.EventHandler(this.Btn_UnitsTab_Click);
+            // 
+            // Btn_BattleScaleTab
+            // 
+            this.Btn_BattleScaleTab.AutoSize = true;
+            this.Btn_BattleScaleTab.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_BattleScaleTab.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Btn_BattleScaleTab.BackgroundImage")));
+            this.Btn_BattleScaleTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Btn_BattleScaleTab.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Btn_BattleScaleTab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_BattleScaleTab.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_BattleScaleTab.ForeColor = System.Drawing.Color.White;
+            this.Btn_BattleScaleTab.Location = new System.Drawing.Point(164, 3);
+            this.Btn_BattleScaleTab.Name = "Btn_BattleScaleTab";
+            this.Btn_BattleScaleTab.Size = new System.Drawing.Size(97, 28);
+            this.Btn_BattleScaleTab.TabIndex = 2;
+            this.Btn_BattleScaleTab.Text = "Battle Scale";
+            this.Btn_BattleScaleTab.UseVisualStyleBackColor = false;
+            this.Btn_BattleScaleTab.Click += new System.EventHandler(this.Btn_BattleScaleTab_Click);
+            // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::Crusader_Wars.Properties.Resources.bookpage;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(569, 587);
+            this.BackgroundImage = global::Crusader_Wars.Properties.Resources.options_bk;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.ClientSize = new System.Drawing.Size(712, 713);
+            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.OptionsPanel);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.Label_MapperStatus);
             this.Controls.Add(this.infoBox);
             this.Controls.Add(this.MappersControl);
@@ -201,8 +305,10 @@
             this.Controls.Add(this.CloseBtn);
             this.Controls.Add(this.Status_Ck3_Icon);
             this.Controls.Add(this.ck3Btn);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Options";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Options_FormClosing);
@@ -212,6 +318,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.Status_Ck3_Icon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Attila_Icon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.infoBox)).EndInit();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -231,5 +339,12 @@
         private System.Windows.Forms.PictureBox infoBox;
         private System.Windows.Forms.ToolTip ToolTip_UnitMappers;
         private System.Windows.Forms.Label Label_MapperStatus;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolTip ToolTip_Options;
+        private System.Windows.Forms.Panel OptionsPanel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button Btn_GeneralTab;
+        private System.Windows.Forms.Button Btn_UnitsTab;
+        private System.Windows.Forms.Button Btn_BattleScaleTab;
     }
 }

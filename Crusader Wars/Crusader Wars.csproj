@@ -108,6 +108,25 @@
     <Compile Include="armies\Deployables.cs" />
     <Compile Include="armies\Modifiers.cs" />
     <Compile Include="armies\SupplySystem.cs" />
+    <Compile Include="client\ModOptions.cs" />
+    <Compile Include="client\UC_BattleScaleOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="client\UC_BattleScaleOptions.Designer.cs">
+      <DependentUpon>UC_BattleScaleOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="client\UC_GeneralOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="client\UC_GeneralOptions.Designer.cs">
+      <DependentUpon>UC_GeneralOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="client\UC_UnitsOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="client\UC_UnitsOptions.Designer.cs">
+      <DependentUpon>UC_UnitsOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="data\SiegesSearch.cs" />
     <Compile Include="sieges\Sieges_DataTypes.cs" />
     <Compile Include="terrain\Deployments.cs" />
@@ -169,8 +188,17 @@
     <EmbeddedResource Include="client\Options.resx">
       <DependentUpon>Options.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="client\UC_BattleScaleOptions.resx">
+      <DependentUpon>UC_BattleScaleOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\UC_GeneralOptions.resx">
+      <DependentUpon>UC_GeneralOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="client\UpdaterControl.resx">
       <DependentUpon>UpdaterControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\UC_UnitsOptions.resx">
+      <DependentUpon>UC_UnitsOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -301,6 +329,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
+    <None Include="Resources\btnbk.png" />
+    <None Include="Resources\options_bk.png" />
+    <None Include="Resources\options1.png" />
+    <None Include="Resources\options.png" />
     <None Include="Resources\website1.png" />
     <None Include="Resources\website.png" />
     <None Include="Resources\patch.png" />

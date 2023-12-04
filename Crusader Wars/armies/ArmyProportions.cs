@@ -1,24 +1,20 @@
-﻿using System;
+﻿using Crusader_Wars.client;
+using System;
 
 namespace Crusader_Wars
 {
     public static class ArmyProportions
     {
-        private static double Ratio { get; set; } = 100;
+        private static double Ratio { get; set; } = ModOptions.GetBattleScale();
 
-        private static int BattleLimit { get; set; } = Properties.Settings.Default.OPTIONS_LIMIT;
-        public static bool UnitAutoSizeState { get; set; } = Properties.Settings.Default.OPTIONS_AUTOSCALE;
+        private static int BattleLimit { get; set; } = ModOptions.GetMaxBattleLimit();
+        public static bool UnitAutoSizeState { get; set; } = ModOptions.GetAutoScale();
 
         public static void SetRatio(int a)
         {
             Ratio = a;
         }
 
-        public static void SetLimit(int a)
-        {
-            Properties.Settings.Default.OPTIONS_LIMIT= a;
-            Properties.Settings.Default.Save(); 
-        }
 
         static int no_auto_levy;
         static int no_auto_infantry;
@@ -29,36 +25,36 @@ namespace Crusader_Wars
             int total = player_total + enemy_total;
 
             //Before auto size unit sizes
-            no_auto_levy = Properties.Settings.Default.LEVY_LIMIT;
-            no_auto_infantry = Properties.Settings.Default.INFANTRY_LIMIT;
-            no_auto_ranged = Properties.Settings.Default.RANGED_LIMIT;
-            no_auto_cavalry = Properties.Settings.Default.CAVALVRY_LIMIT;
+            no_auto_levy = ModOptions.GetLevyMax();
+            no_auto_infantry = ModOptions.GetInfantryMax();
+            no_auto_ranged = ModOptions.GetRangedMax();
+            no_auto_cavalry = ModOptions.GetCavalryMax();
 
             if (UnitAutoSizeState)
             {
                 if (total >= 20000 && total < 30000)
                 {
-                    Properties.Settings.Default.LEVY_LIMIT = 400;
-                    Properties.Settings.Default.INFANTRY_LIMIT = 400;
-                    Properties.Settings.Default.RANGED_LIMIT = 350;
-                    Properties.Settings.Default.CAVALVRY_LIMIT = 150;
-                    Properties.Settings.Default.Save();
+                    ModOptions.SetLevyMax(400);
+                    ModOptions.SetInfantryMax(400);
+                    ModOptions.SetRangedMax(400);
+                    ModOptions.SetCavalryMax(150);
+
                 }
                 else if (total >= 30000 && total < 40000)
                 {
-                    Properties.Settings.Default.LEVY_LIMIT = 450;
-                    Properties.Settings.Default.INFANTRY_LIMIT = 400;
-                    Properties.Settings.Default.RANGED_LIMIT = 350;
-                    Properties.Settings.Default.CAVALVRY_LIMIT = 200;
-                    Properties.Settings.Default.Save();
+                    ModOptions.SetLevyMax(460);
+                    ModOptions.SetInfantryMax(450);
+                    ModOptions.SetRangedMax(450);
+                    ModOptions.SetCavalryMax(300);
+
                 }
                 else if (total >= 40000)
                 {
-                    Properties.Settings.Default.LEVY_LIMIT = 550;
-                    Properties.Settings.Default.INFANTRY_LIMIT = 550;
-                    Properties.Settings.Default.RANGED_LIMIT = 500;
-                    Properties.Settings.Default.CAVALVRY_LIMIT = 250;
-                    Properties.Settings.Default.Save();
+                    ModOptions.SetLevyMax(550);
+                    ModOptions.SetInfantryMax(550);
+                    ModOptions.SetRangedMax(550);
+                    ModOptions.SetCavalryMax(350);
+
                 }
                
             }
@@ -67,11 +63,10 @@ namespace Crusader_Wars
 
         public static void ResetUnitSizes()
         {
-            Properties.Settings.Default.LEVY_LIMIT = no_auto_levy;
-            Properties.Settings.Default.INFANTRY_LIMIT = no_auto_infantry;
-            Properties.Settings.Default.RANGED_LIMIT = no_auto_ranged;
-            Properties.Settings.Default.CAVALVRY_LIMIT = no_auto_cavalry;
-            Properties.Settings.Default.Save();
+            ModOptions.SetLevyMax(no_auto_levy);
+            ModOptions.SetInfantryMax(no_auto_infantry);
+            ModOptions.SetRangedMax(no_auto_ranged);
+            ModOptions.SetCavalryMax(no_auto_cavalry);
 
             no_auto_levy = 0;
             no_auto_infantry = 0;

@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.terrain;
+﻿using Crusader_Wars.client;
+using Crusader_Wars.terrain;
 using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Crusader_Wars.data
              ---------------------------------------------*/
 
             //Get Army Ratio in log file...
-            ArmyProportions.SetRatio(Properties.Settings.Default.OPTIONS_RATIO);
+            ArmyProportions.SetRatio(ModOptions.GetBattleScale());
             ArmyProportions.isBiggerThanLimit(Player.TotalNumber, Enemy.TotalNumber);
 
             /*---------------------------------------------

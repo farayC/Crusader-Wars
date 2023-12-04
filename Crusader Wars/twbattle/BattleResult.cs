@@ -16,14 +16,7 @@ namespace Crusader_Wars
 
         public static void LoadSaveFile(string savePath)
         {
-            try
-            {
-                Reader.ReadFile(savePath);
-            }
-            catch
-            {
-                Console.WriteLine("Error loading the save file");
-            }
+            Reader.ReadFile(savePath);
 
         }
 
@@ -52,6 +45,7 @@ namespace Crusader_Wars
 
 
         }
+
 
         //Player Combat
         static string Player_Combat;
@@ -560,7 +554,7 @@ namespace Crusader_Wars
         {
             try
             {
-                List<(string Name, string Remaining)> RemainingSoldiers = new List<(string Name, string Remaining)>();
+                List<(string Name, string Remaining)> RemainingSoldiers = new List<(string Name, string Remaining)>(); 
 
                 using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 using (StreamReader reader = new StreamReader(logFile))
@@ -569,12 +563,7 @@ namespace Crusader_Wars
                     bool isFirst = false;
                     while ((line = reader.ReadLine()) != null)
                     {
-                        //if its a copy of the results stop.
-                        if (line == "-----REMAINING SOLDIERS-----!!" && isFirst) break;
-
-                        if (line == "-----REMAINING SOLDIERS-----!!") isFirst = true;
-
-
+                        if (line == "-----REMAINING SOLDIERS-----!!") RemainingSoldiers = new List<(string Name, string Remaining)>(); 
 
                         if(line.StartsWith("player_") || line.StartsWith("enemy_"))
                         {

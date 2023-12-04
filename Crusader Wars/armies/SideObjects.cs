@@ -1,5 +1,8 @@
 ﻿using Crusader_Wars.armies;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Crusader_Wars
 {
@@ -19,6 +22,7 @@ namespace Crusader_Wars
         Modifiers Modifiers { get; set; }
         Supplys Supplys { get; set; }
 
+
     }
 
     public class Player : ICharacter
@@ -36,6 +40,7 @@ namespace Crusader_Wars
         public DefensiveSystem Defences { get; set; }
         public Modifiers Modifiers { get; set; }
         public Supplys Supplys { get; set; }
+
 
         public Player()
 		{

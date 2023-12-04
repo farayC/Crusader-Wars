@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.terrain;
+﻿using Crusader_Wars.client;
+using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -775,18 +776,18 @@ namespace Crusader_Wars
                 switch (MaxValue)
                 {
                     case "INFANTRY":
-                        return Properties.Settings.Default.INFANTRY_LIMIT;
+                        return ModOptions.GetInfantryMax();
                     case "RANGED":
-                        return Properties.Settings.Default.RANGED_LIMIT;
+                        return ModOptions.GetRangedMax();
                     case "CAVALRY":
-                        return Properties.Settings.Default.CAVALVRY_LIMIT;
+                        return ModOptions.GetCavalryMax();
                     case "LEVY":
-                        return Properties.Settings.Default.LEVY_LIMIT;
+                        return ModOptions.GetLevyMax();
                     case "SPECIAL":
                         return 1111;
                     default:
                         if(int.TryParse(MaxValue, out int max_int)) return max_int;
-                        return Properties.Settings.Default.INFANTRY_LIMIT;
+                        return ModOptions.GetInfantryMax();
 
                 }
             }
