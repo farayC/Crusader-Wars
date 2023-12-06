@@ -318,25 +318,25 @@ namespace Crusader_Wars
                             ExecuteButton.Enabled = true;
                             break;
                         }
-                        infoLabel.Text = "Battle found...";
-                        logFile.Position = 0;
-                        reader.DiscardBufferedData();
-                        log = reader.ReadToEnd();
-                        log = RemoveASCII(log);
 
-                        if (battleHasStarted)
-                        {
-                            infoLabel.Text = "Reading data...";
-
-                            Player = new Player();
-                            Enemy = new Enemy();
-
-                            DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
-                            DataSearch.Search(log, Player, Enemy);
-                        }
                         try
                         {
+                            infoLabel.Text = "Battle found...";
+                            logFile.Position = 0;
+                            reader.DiscardBufferedData();
+                            log = reader.ReadToEnd();
+                            log = RemoveASCII(log);
 
+                            if (battleHasStarted)
+                            {
+                                infoLabel.Text = "Reading data...";
+
+                                Player = new Player();
+                                Enemy = new Enemy();
+
+                                DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
+                                DataSearch.Search(log, Player, Enemy);
+                            }
                         }
                         catch
                         {

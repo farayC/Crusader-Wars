@@ -442,6 +442,8 @@ namespace Crusader_Wars
                                         if (PlayerUnits[i].Type == Unit.Name && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
                                         {
                                             string key = TrimKey(Unit.Attributes["key"].Value);
+                                            //default unit keys bug quick fix
+                                            if (key == "DEFAULT") { key = PlayerUnits[i].Key; }
                                             PlayerUnits[i] = (Unit.Name, key, PlayerUnits[i].Max, PlayerUnits[i].Script);
                                             continue;
                                         }
@@ -454,7 +456,11 @@ namespace Crusader_Wars
                                     if ((Unit.Attributes["type"].Value == PlayerUnits[i].Type) &&
                                        (Unit.Name != "General" || Unit.Name != "Knights") && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
                                     {
+                                        
                                         string key = TrimKey(Unit.Attributes["key"].Value);
+
+                                        //default unit keys bug quick fix
+                                        if (key == "DEFAULT") { key = PlayerUnits[i].Key; }
                                         PlayerUnits[i] = (PlayerUnits[i].Type, key, PlayerUnits[i].Max, PlayerUnits[i].Script);
                                     }
                                     else
@@ -499,6 +505,8 @@ namespace Crusader_Wars
                                         if (EnemyUnits[i].Type == Unit.Name)
                                         {
                                             string key = TrimKey(Unit.Attributes["key"].Value);
+                                            //default unit keys bug quick fix
+                                            if (key == "DEFAULT") { key = EnemyUnits[i].Key; }
                                             EnemyUnits[i] = (Unit.Name, key, EnemyUnits[i].Max, EnemyUnits[i].Script);
                                             continue;
                                         }
@@ -512,6 +520,8 @@ namespace Crusader_Wars
                                        (Unit.Name != "General" || Unit.Name != "Knights") && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
                                     {
                                         string key = TrimKey(Unit.Attributes["key"].Value);
+                                        //default unit keys bug quick fix
+                                        if (key == "DEFAULT") { key = EnemyUnits[i].Key; }
                                         EnemyUnits[i] = (EnemyUnits[i].Type, key, EnemyUnits[i].Max, EnemyUnits[i].Script);
                                     }
                                     else
