@@ -12,11 +12,14 @@ using System.Xml.Linq;
 using System.Windows;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
+using Crusader_Wars.client;
 
 namespace Crusader_Wars
 {
     public partial class HomePage : Form
     {
+
+
         const string SEARCH_KEY = "CRUSADERWARS3";
 
         private int _myVariable = 0;
@@ -151,6 +154,9 @@ namespace Crusader_Wars
             infoLabel.BackColor = myColor;
             labelVersion.BackColor = myColor;
 
+            Options.ReadOptionsFile();
+            ModOptions.StoreOptionsValues(Options.optionsValuesCollection);
+
 
         }
 
@@ -160,7 +166,6 @@ namespace Crusader_Wars
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
-
         }
         
 
@@ -292,8 +297,6 @@ namespace Crusader_Wars
                                 {
                                     string line = reader.ReadLine();
 
-                                    DataSearch.SettingsSearch(line);
-
                                     //If Battle Started
                                     if (line.Contains(SEARCH_KEY))
                                     {
@@ -315,25 +318,25 @@ namespace Crusader_Wars
                             ExecuteButton.Enabled = true;
                             break;
                         }
-                        infoLabel.Text = "Battle found...";
-                        logFile.Position = 0;
-                        reader.DiscardBufferedData();
-                        log = reader.ReadToEnd();
-                        log = RemoveASCII(log);
 
-                        if (battleHasStarted)
-                        {
-                            infoLabel.Text = "Reading data...";
-
-                            Player = new Player();
-                            Enemy = new Enemy();
-
-                            DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
-                            DataSearch.Search(log, Player, Enemy);
-                        }
                         try
                         {
+                            infoLabel.Text = "Battle found...";
+                            logFile.Position = 0;
+                            reader.DiscardBufferedData();
+                            log = reader.ReadToEnd();
+                            log = RemoveASCII(log);
 
+                            if (battleHasStarted)
+                            {
+                                infoLabel.Text = "Reading data...";
+
+                                Player = new Player();
+                                Enemy = new Enemy();
+
+                                DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
+                                DataSearch.Search(log, Player, Enemy);
+                            }
                         }
                         catch
                         {
@@ -357,17 +360,19 @@ namespace Crusader_Wars
                 ProcessCommands.SuspendProcess();
 
                 path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
+
+                long startMemoryTotal = GC.GetTotalMemory(false);
+
+
+                Reader.SetData(Player, Enemy);
+                BattleResult.LoadSaveFile(path_editedSave);
+
+                long endMemory10 = GC.GetTotalMemory(false);
+                long memoryUsage10 = endMemory10 - startMemoryTotal;
+                Console.WriteLine($"----\nReading data from save file ...\nTotal Memory Usage: {memoryUsage10 / 1048576} mb\n----");
                 try
                 {
-                    long startMemoryTotal = GC.GetTotalMemory(false);
 
-
-
-                    BattleResult.LoadSaveFile(path_editedSave);
-
-                    long endMemory10 = GC.GetTotalMemory(false);
-                    long memoryUsage10 = endMemory10 - startMemoryTotal;
-                    Console.WriteLine($"----\nReading data from save file ...\nTotal Memory Usage: {memoryUsage10 / 1048576} mb\n----");
 
                     BattleResult.GetAllCombats();
                     BattleResult.FindPlayerBattle(Player.ID.ToString());
@@ -505,6 +510,7 @@ namespace Crusader_Wars
 
                 if (battleEnded)
                 {
+                    ModOptions.CloseAttila();
 
                     infoLabel.Text = "Battle has ended!";
                     string path_log_attila = Properties.Settings.Default.VAR_log_attila;
@@ -587,8 +593,8 @@ namespace Crusader_Wars
                         Enemy.Commander.Health();
 
                         //Knights Health System
-                        Player.Knights.Health(Player.ID.ToString());
-                        Enemy.Knights.Health(Enemy.ID.ToString());
+                        Player.Knights.Health();
+                        Enemy.Knights.Health();
                         SaveFile.SendToFile(); //hmmm sus...
 
                         winner = BattleResult.GetAttilaWinner(attilaLogPath, Player.CombatSide, Enemy.CombatSide);

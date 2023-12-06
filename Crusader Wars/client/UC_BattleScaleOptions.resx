@@ -117,38 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="ToolTip_Attila.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="ToolTip_UnitMappers.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>143, 17</value>
-  </metadata>
-  <metadata name="ToolTip_Options.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>311, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="Btn_GeneralTab.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAyAAAAJYAQMAAACguBAzAAAABGdBTUEAALGPC/xhBQAAAAZQTFRFXCsY
-        XCsZiiqSWwAAAAlwSFlzAAAOvAAADrwBlbxySQAAAFlJREFUeNrtzUERAAAIA6D1T2Uzl8LzAwUIAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADzbuR6S
-        ApqjAcC45DYaAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Btn_UnitsTab.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAyAAAAJYAQMAAACguBAzAAAABGdBTUEAALGPC/xhBQAAAAZQTFRFXCsY
-        XCsZiiqSWwAAAAlwSFlzAAAOvAAADrwBlbxySQAAAFlJREFUeNrtzUERAAAIA6D1T2Uzl8LzAwUIAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADzbuR6S
-        ApqjAcC45DYaAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="Btn_BattleScaleTab.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAyAAAAJYAQMAAACguBAzAAAABGdBTUEAALGPC/xhBQAAAAZQTFRFXCsY
-        XCsZiiqSWwAAAAlwSFlzAAAOvAAADrwBlbxySQAAAFlJREFUeNrtzUERAAAIA6D1T2Uzl8LzAwUIAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADzbuR6S
-        ApqjAcC45DYaAAAAAElFTkSuQmCC
-</value>
-  </data>
 </root>

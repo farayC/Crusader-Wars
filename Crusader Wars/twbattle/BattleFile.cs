@@ -1,4 +1,5 @@
 ﻿using Crusader_Wars.armies;
+using Crusader_Wars.client;
 using Crusader_Wars.terrain;
 using System;
 using System.Drawing;
@@ -149,7 +150,7 @@ namespace Crusader_Wars
 
         private static void AddDeployablesDefenses(ICharacter Side)
         {
-            if(Side.CombatSide == "defender")
+            if(Side.CombatSide == "defender" && ModOptions.DefensiveDeployables() is true)
             {
                 Side.Defences = new DefensiveSystem();
                 string PR_DefensiveDeployments = Side.Defences.SetDefenses(Side.TotalNumber, Side.Commander.Martial);
@@ -273,9 +274,9 @@ namespace Crusader_Wars
             if(Commander != null)
             {
                 string name = Commander.Name;
-                int numberOfSoldiers = 50;
+                int numberOfSoldiers = Commander.GetUnitSoldiers();
 
-                if (numberOfSoldiers <= 1) return;
+                if (numberOfSoldiers < 1) return;
 
                 if (experience < 0) experience = 0;
                 if (experience > 9) experience = 9;
@@ -292,7 +293,7 @@ namespace Crusader_Wars
                      $"<unit_experience level=\"{experience}\"/>\n" +
                      "<general>\n" +
                      $"<name>{name}</name>\n" +
-                     $"<star_rating level=\"{Commander.SetCommanderStarRating()}\"/>\n" +
+                     $"<star_rating level=\"{Commander.GetCommanderStarRating()}\"/>\n" +
                      "</general>\n" +
                      "</unit>\n\n";
 
@@ -321,9 +322,12 @@ namespace Crusader_Wars
         public static void AddKnightUnit(KnightSystem Knights, string troopType, string unitScript, int experience)
         {
 
-            int numberOfSoldiers = Knights.SetKnightsCount();
+            Knights.WoundedDebuffs();
+            int numberOfSoldiers = Knights.GetKnightsSoldiers();
 
-            if(numberOfSoldiers <= 1) return;
+
+            if(numberOfSoldiers == 0) return;
+
 
             if (experience < 0) experience = 0;
             if (experience > 9) experience = 9;
@@ -432,7 +436,7 @@ namespace Crusader_Wars
                                           "<season>Summer</season>\n" +
                                           "<precipitation_type>snow</precipitation_type>\n" +
                                           "<type>land_normal</type>\n" +
-                                          "<duration>3600</duration>\n" +
+                                          ModOptions.TimeLimit() +
                                           $"<timeout_winning_alliance_index>{combat_side}</timeout_winning_alliance_index>\n" +
                                           "<boiling_oil></boiling_oil>\n" +
                                           "</battle_description>\n\n";

@@ -1,4 +1,5 @@
 ﻿using Crusader_Wars.armies;
+using Crusader_Wars.client;
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace Crusader_Wars
@@ -67,154 +69,6 @@ namespace Crusader_Wars
 
         }
 
-        static int Last_LevyLimit = Properties.Settings.Default.LEVY_LIMIT;
-        static int Last_InfantryLimit = Properties.Settings.Default.INFANTRY_LIMIT;
-        static int Last_RangedLimit = Properties.Settings.Default.RANGED_LIMIT;
-        static int Last_CavalryLimit = Properties.Settings.Default.CAVALVRY_LIMIT;
-
-        static int Last_OptionsLimit = Properties.Settings.Default.OPTIONS_LIMIT;
-        static int Last_OptionsRatio = Properties.Settings.Default.OPTIONS_RATIO;
-        static bool Last_OptionsAutoScale = Properties.Settings.Default.OPTIONS_AUTOSCALE;
-
-        public static void SettingsSearch(string log)
-        {
-            /*---------------------------------------------
-              * ::::::::::::::Settings:::::::::::::::::::
-            ---------------------------------------------*/
-
-            //Battle Limit
-            Match limit_settings = Regex.Match(log, @"battle_max:(\d+)", RegexOptions.RightToLeft);
-            if (limit_settings.Success)
-            {
-                int limit = Int32.Parse(limit_settings.Groups[1].Value);
-                if (limit != Last_OptionsLimit)
-                {
-                    ArmyProportions.SetLimit(limit);
-                    Last_OptionsLimit = limit;
-                    ClearLogFile();
-                }
-            }
-
-
-            //Units Sizes
-            Match units_levy_settings = Regex.Match(log, @"unit_levy:(\d+)", RegexOptions.RightToLeft);
-            if (units_levy_settings.Success)
-            {
-                int size = Int32.Parse(units_levy_settings.Groups[1].Value);
-                if(size != Last_LevyLimit)
-                {
-                    Properties.Settings.Default.LEVY_LIMIT = size;
-                    Properties.Settings.Default.Save();
-                    Last_LevyLimit = size;
-                    ClearLogFile();
-                }
-
-            }
-
-            Match units_infantry_settings = Regex.Match(log, @"unit_melee_maa:(\d+)", RegexOptions.RightToLeft);
-            if (units_infantry_settings.Success)
-            {
-                int size = Int32.Parse(units_infantry_settings.Groups[1].Value);
-                if (size != Last_InfantryLimit)
-                {
-                    Properties.Settings.Default.INFANTRY_LIMIT = size;
-                    Properties.Settings.Default.Save();
-                    Last_InfantryLimit = size;
-                    ClearLogFile();
-                }
-
-            }
-
-            Match units_ranged_settings = Regex.Match(log, @"unit_ranged_maa:(\d+)", RegexOptions.RightToLeft);
-            if (units_ranged_settings.Success)
-            {
-                int size = Int32.Parse(units_ranged_settings.Groups[1].Value);
-                if(size != Last_RangedLimit)
-                {
-                    Properties.Settings.Default.RANGED_LIMIT = size;
-                    Properties.Settings.Default.Save();
-                    Last_RangedLimit = size;
-                    ClearLogFile();
-                }
-            }
-
-            Match units_mounted_settings = Regex.Match(log, @"unit_mounted_maa:(\d+)", RegexOptions.RightToLeft);
-            if (units_mounted_settings.Success)
-            {
-                int size = Int32.Parse(units_mounted_settings.Groups[1].Value);
-                if(size != Last_CavalryLimit)
-                {
-                    Properties.Settings.Default.CAVALVRY_LIMIT = size;
-                    Properties.Settings.Default.Save();
-                    Last_CavalryLimit = size;
-                    ClearLogFile();
-                }
-
-            }
-
-            //Scale
-            Match scale_settings = Regex.Match(log, @"battle_scale:(\d+)", RegexOptions.RightToLeft);
-            if (scale_settings.Success)
-            {
-                string scale = scale_settings.Groups[1].Value;
-                if(scale != Last_OptionsRatio.ToString())
-                {
-                    switch (scale)
-                    {
-                        case "100":
-                            Properties.Settings.Default.OPTIONS_RATIO = Int32.Parse(scale);
-                            Properties.Settings.Default.Save();
-                            Last_OptionsRatio = Int32.Parse(scale);
-                            ClearLogFile();
-                            break;
-                        case "50":
-                            Properties.Settings.Default.OPTIONS_RATIO = Int32.Parse(scale);
-                            Properties.Settings.Default.Save();
-                            Last_OptionsRatio = Int32.Parse(scale);
-                            ClearLogFile();
-                            break;
-                        case "25":
-                            Properties.Settings.Default.OPTIONS_RATIO = Int32.Parse(scale);
-                            Properties.Settings.Default.Save();
-                            Last_OptionsRatio = Int32.Parse(scale);
-                            ClearLogFile();
-                            break;
-
-                    }
-                }
-                
-            }
-
-
-            //Auto Scale
-            Match auto_scale_settings = Regex.Match(log, @"auto_scale:(\d+)", RegexOptions.RightToLeft);
-            if (auto_scale_settings.Success)
-            {
-                string scale = auto_scale_settings.Groups[1].Value;
-                switch (scale)
-                {
-                    case "1":
-                        if(Last_OptionsAutoScale != true)
-                        {
-                            Properties.Settings.Default.OPTIONS_AUTOSCALE = true;
-                            Properties.Settings.Default.Save();
-                            Last_OptionsAutoScale = true;
-                            ClearLogFile();
-                        }
-                        break;
-                    case "0":
-                        if (Last_OptionsAutoScale != false)
-                        {
-                            Properties.Settings.Default.OPTIONS_AUTOSCALE = false;
-                            Properties.Settings.Default.Save();
-                            Last_OptionsAutoScale = false;
-                            ClearLogFile();
-                        }
-                        break;
-                }
-            }
-        }
-
 
 
         public static void Search(string log, Player Player, Enemy Enemy)
@@ -224,7 +78,7 @@ namespace Crusader_Wars
              ---------------------------------------------*/
 
             //Get Army Ratio in log file...
-            ArmyProportions.SetRatio(Properties.Settings.Default.OPTIONS_RATIO);
+            ArmyProportions.SetRatio(ModOptions.GetBattleScale());
             ArmyProportions.isBiggerThanLimit(Player.TotalNumber, Enemy.TotalNumber);
 
             /*---------------------------------------------
@@ -347,6 +201,7 @@ namespace Crusader_Wars
 
             RealmsNamesSearch(log, Player, Enemy);
             CharNamesSearch(log, Player, Enemy);
+            TitlesRanksSearch(log, Player, Enemy);
 
         }
 
@@ -431,7 +286,7 @@ namespace Crusader_Wars
             List<(string Type, int Number)> FoundMAA = new List<(string Type, int Number)>();
 
             //Levies
-            MatchCollection levies_found = Regex.Matches(ArmyComposition, Languages.SearchPatterns.levies);
+            MatchCollection levies_found = Regex.Matches(ArmyComposition, ModOptions.FullArmiesLevies());
             int levies = 0;
             foreach (Match match in levies_found)
             {
@@ -439,7 +294,6 @@ namespace Crusader_Wars
                 {
                     string num_of_soldiers = match.Groups["SoldiersNum"].Value;
                     levies += Int32.Parse(num_of_soldiers);
-
                 }
             }
             if (levies > 0)
@@ -450,7 +304,10 @@ namespace Crusader_Wars
 
 
             //MenAtArms
-            MatchCollection maa_matches = Regex.Matches(ArmyComposition, "L (?<MenAtArms>.+):.+?(?<SoldiersNum>\\d+)");
+            string pattern_current_soldiers = "L (?<MenAtArms>.+):.+?(?<SoldiersNum>\\d+)";
+            string pattern_full_soldiers = "L (?<MenAtArms>.+):.+\\d+V (?<SoldiersNum>\\d+)";
+
+            MatchCollection maa_matches = Regex.Matches(ArmyComposition, ModOptions.FullArmiesMAA());
 
             foreach (Match maa in maa_matches)
             {
@@ -475,9 +332,6 @@ namespace Crusader_Wars
                     }
 
                     //Add to found maa
-
-                    if (soldiers == 0 && type == "Mangonels") 
-                        FoundMAA.Add((type, 30));//debug purposes
                     if (soldiers > 0)
                     {
                         soldiers = ArmyProportions.SetSoldiersRatio(soldiers);
@@ -505,10 +359,10 @@ namespace Crusader_Wars
 
                 //Knights
                 //if army has knights
-                if (side.Knights.SetKnightsCount() > 0)
+                if (side.Knights.GetKnightsSoldiers() > 0)
                 {
                     var knights_unit = UnitMapper.PlayerUnits.FirstOrDefault(item => item.Type == "Knights");
-                    side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.SetKnightsCount(), $"player_{knights_unit.Script}", side.Knights.SetKnightsCount()));
+                    side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"player_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
                 }
 
 
@@ -538,10 +392,10 @@ namespace Crusader_Wars
 
                 //Knights
                 //if army has knights
-                if(side.Knights.SetKnightsCount() > 0)
+                if(side.Knights.GetKnightsSoldiers() > 0)
                 {
                     var knights_unit = UnitMapper.EnemyUnits.FirstOrDefault(item => item.Type == "Knights");
-                    side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.SetKnightsCount(), $"enemy_{knights_unit.Script}", side.Knights.SetKnightsCount()));
+                    side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"enemy_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
                 }
 
                 foreach (var unit in UnitMapper.EnemyUnits)
@@ -574,6 +428,15 @@ namespace Crusader_Wars
 
         }
 
+        static void TitlesRanksSearch(string log, Player Player, Enemy Enemy)
+        {
+            int player_rank = Int32.Parse(Regex.Match(log, @"PlayerRank:(?<Name>.+)").Groups["Name"].Value);
+            int enemy_rank = Int32.Parse(Regex.Match(log, @"EnemyRank:(?<Name>.+)").Groups["Name"].Value);
+
+            Player.Commander.SetRank(player_rank);
+            Enemy.Commander.SetRank(enemy_rank);
+        }
+
         static void CharNamesSearch(string log, Player player, Enemy enemy)
         {
 
@@ -588,12 +451,12 @@ namespace Crusader_Wars
         private static void KnightsSearch(string army_data, ICharacter side)
         {
             string Knights = Regex.Match(army_data, @"(?<Knights>ONCLICK:CHARACTER[\s\S]*?)\z[\s\S]*?").Groups["Knights"].Value;
-
+            
 
             side.Knights = new KnightSystem();
 
             //Search Knights
-            List<(string, int)> ProwessList = new List<(string, int)>();
+            List<(string, int, int, List<string>,BaseSkills, bool)> ProwessList = new List<(string, int, int, List<string>, BaseSkills,bool)>();
             MatchCollection knights_collection = Regex.Matches(Knights, "(?<Prowess>\\d+) E TOOLTIP");
             MatchCollection knights_id_collection = Regex.Matches(Knights, "CHARACTER(?<ID>\\d+) TOOLTIP");
 
@@ -602,7 +465,7 @@ namespace Crusader_Wars
             {
                 string id = knights_id_collection[i].Groups["ID"].Value;
                 int knight_prowess = Int32.Parse(knights_collection[i].Groups["Prowess"].Value);
-                ProwessList.Add((id, knight_prowess));
+                ProwessList.Add((id,3,knight_prowess, new List<string>(), null,false));
             }
 
             MatchCollection knight_effectiveness = Regex.Matches(Knights, @"(?<Effectiveness>\d+)%");
@@ -617,34 +480,44 @@ namespace Crusader_Wars
 
         }
 
+        //No commander bug error is here!!
         private static void CultureAndHeritageSearch(string side_army, ICharacter side)
         {
-            string CulturesText = Regex.Match(side_army, Languages.SearchPatterns.cultures).Groups["CulturesText"].Value;
-
-            MatchCollection FoundCultureHeritage = Regex.Matches(CulturesText, "L (?<Match>.+)");
-            string Heritage = FoundCultureHeritage[0].Groups["Match"].Value;
-            string Culture = FoundCultureHeritage[1].Groups["Match"].Value;
-
-            string AttilaFaction;
-            for(int i = 0; i < UnitMapper.Heritages.Count; i++) 
+            try
             {
-                if(Heritage == UnitMapper.Heritages[i].Heritage)
+                string CulturesText = Regex.Match(side_army, Languages.SearchPatterns.cultures).Groups["CulturesText"].Value;
+
+                MatchCollection FoundCultureHeritage = Regex.Matches(CulturesText, "L (?<Match>.+)");
+                string Heritage = FoundCultureHeritage[0].Groups["Match"].Value;
+                string Culture = FoundCultureHeritage[1].Groups["Match"].Value;
+
+                string AttilaFaction;
+                for (int i = 0; i < UnitMapper.Heritages.Count; i++)
                 {
-                    AttilaFaction = UnitMapper.Heritages[i].Faction;
-                    side.AttilaFaction = AttilaFaction;
-                    break;
+                    if (Heritage == UnitMapper.Heritages[i].Heritage)
+                    {
+                        AttilaFaction = UnitMapper.Heritages[i].Faction;
+                        side.AttilaFaction = AttilaFaction;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < UnitMapper.Cultures.Count; i++)
+                {
+                    if (Culture == UnitMapper.Cultures[i].Cultures)
+                    {
+                        AttilaFaction = UnitMapper.Cultures[i].Faction;
+                        side.AttilaFaction = AttilaFaction;
+                        break;
+                    }
                 }
             }
-
-            for (int i = 0; i < UnitMapper.Cultures.Count; i++)
+            catch 
             {
-                if (Culture == UnitMapper.Cultures[i].Cultures)
-                {
-                    AttilaFaction = UnitMapper.Cultures[i].Faction;
-                    side.AttilaFaction = AttilaFaction;
-                    break;
-                }
+                MessageBox.Show("The enemy side doesn't have a commander, unfortunaly this battle is impossible to fight....", "Impossible Battle Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }
+ 
 
         }
 

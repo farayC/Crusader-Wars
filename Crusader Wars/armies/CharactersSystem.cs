@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Crusader_Wars.terrain;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -7,10 +9,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Media.TextFormatting;
 
 namespace Crusader_Wars
 {
+
+ 
 
     struct MartialSkill
     {
@@ -52,7 +57,7 @@ namespace Crusader_Wars
 
     public static  class SaveFile
     {
-        static List<string> LivingList { get; set; }
+        public static List<string> LivingList { get; private set; }
         static List<(string name, int index)> WoundedTraits_List { get; set; }
         public static void ReadAll()
         {
@@ -62,7 +67,7 @@ namespace Crusader_Wars
             long startMemory1 = GC.GetTotalMemory(false);
             MatchCollection allLiving = Regex.Matches(Data.String_Living, @"(?s)\d+={.*?(?=\d+={|\z)");
             LivingList = new List<string>();
-            foreach(Match match in allLiving)
+            foreach (Match match in allLiving)
             {
                 LivingList.Add(match.Value);
             }
@@ -70,13 +75,16 @@ namespace Crusader_Wars
             long memoryUsage1 = endMemory1 - startMemory1;
             Console.WriteLine($"----\nAdding each char to Living list...\nMemory Usage: {memoryUsage1 / 1048576} mb");
 
-            //---------Wounded Traits----------
 
-            long startMemory = GC.GetTotalMemory(false);
+        }
+
+        public static void ReadWoundedTraits()
+        {
+            //---------Wounded Traits----------
 
             MatchCollection allTraits = Regex.Matches(Data.String_Traits, @" (\w+)");
             string[] traitList = new string[allTraits.Count];
-            for(int i = 0; i < allTraits.Count; i++)
+            for (int i = 0; i < allTraits.Count; i++)
             {
                 traitList[i] = allTraits[i].Groups[1].Value;
             }
@@ -84,7 +92,7 @@ namespace Crusader_Wars
             List<(string name, int index)> wounded_traits;
             wounded_traits = new List<(string name, int index)>();
 
-            for(int i = 0; i < traitList.Length; i++)
+            for (int i = 0; i < traitList.Length; i++)
             {
                 if (traitList[i] == "wounded_1") wounded_traits.Add(("wounded_1", i));
                 else if (traitList[i] == "wounded_2") wounded_traits.Add(("wounded_2", i));
@@ -97,11 +105,6 @@ namespace Crusader_Wars
 
             WoundedTraits_List = new List<(string name, int index)>();
             WoundedTraits_List.AddRange(wounded_traits);
-
-            long endMemory = GC.GetTotalMemory(false);
-            long memoryUsage = endMemory - startMemory;
-            Console.WriteLine($"----\nAdding each trait to list...\nMemory Usage: {memoryUsage / 1048576} mb");
-
         }
 
         internal static int GetWoundedTraitIndex(string trait_name)
@@ -109,6 +112,7 @@ namespace Crusader_Wars
             int index;
             index = WoundedTraits_List.FirstOrDefault(x => x.name == trait_name).index;
             return index;
+
         }
 
         public static void SetTraits(string character_id, string trait)
@@ -178,16 +182,22 @@ namespace Crusader_Wars
 
             //check if it is already wounded
             string already_wounded_trait="";
-            foreach(string id in ids)
+            if (str.Contains($" {ids[0]} ") || str.Contains($" {ids[0]}"))
             {
-                if (str.Contains($" {id} ") || str.Contains($" {id}"))
-                {
-                    already_wounded_trait = id;
-                }
+                already_wounded_trait = ids[0];
             }
+            else if (str.Contains($" {ids[1]} ") || str.Contains($" {ids[1]}"))
+            {
+                already_wounded_trait = ids[1];
+            }
+            else if (str.Contains($" {ids[2]} ") || str.Contains($" {ids[2]}"))
+            {
+                already_wounded_trait = ids[2];
+            }
+            
 
             //if its not wounded, give wounded trait
-            if(already_wounded_trait == string.Empty)
+            if (already_wounded_trait == string.Empty)
             {
                 //Add trait if doesn't have one
                 str += $" {trait}";
@@ -196,23 +206,54 @@ namespace Crusader_Wars
             }
             else //if its already wounded, increase wound
             {
-                string increased_wound_trait = Int32.Parse(already_wounded_trait)+1.ToString();
-                string edited_str = Regex.Replace(str, $" {already_wounded_trait} | {already_wounded_trait}", $" {increased_wound_trait} ");
+                var match_1 = Regex.Match(str, $" {already_wounded_trait} ");
+                if(match_1.Success)
+                {
+                    string edited_str = Regex.Replace(str, $" {already_wounded_trait} ", $" {Traits.Brutally_Mauled()} ");
+                    return edited_str;
+                }
 
-                return edited_str;
+
+                var match_2 = Regex.Match(str, $" {already_wounded_trait}");
+                if (match_2.Success)
+                {
+                    string edited_str = Regex.Replace(str, $" {already_wounded_trait}", $" {Traits.Brutally_Mauled()} ");
+                    return edited_str;
+                }
+
+                return str;
+
             }
         }
     }
 
-    
+
+
 
     public class CommanderSystem
     {
+        private class CourtPosition
+        {
+            private string Profession { get; set; }
+            private string Employee_ID { get; set; }
+
+
+            public CourtPosition(string profession, string employee_ID)
+            {
+                Profession = profession;
+                Employee_ID = employee_ID;
+            }
+        }
+
+
 
         public string CommanderID { get; private set; }
         public string Name { get; private set; }
+        public int Rank { get; private set; }
         public int Martial { get; private set; }
         public int Prowess { get;private set; }
+        public List<string> Traits_List { get; private set; }
+        private List<CourtPosition> Employees { get; set; }
         private bool hasFallen { get; set; }
 
         public void SetID(string charachter_id)
@@ -225,6 +266,11 @@ namespace Crusader_Wars
             Name = name;
         }
 
+        public void SetRank(int rank)
+        {
+            Rank = rank;
+        }
+
         public void SetMartial(int martial)
         {
             Martial = martial;
@@ -235,20 +281,111 @@ namespace Crusader_Wars
             Prowess = prowess;
         }
 
-        public int SetUnitsExperience()
+        
+        public void AddCourtPosition(string profession, string id )
         {
-            return MartialExperience();
+            if(Employees is null) Employees = new List<CourtPosition>();
+            Employees.Add(new CourtPosition(profession, id));
         }
 
-        public int SetCommanderExperience()
+        public int GetUnitSoldiers()
         {
-            return ProwessExperience();
+            return UnitSoldiers();
         }
 
-        public int SetCommanderStarRating()
+
+        public int GetUnitsExperience()
+        {
+            return MartialArmyExperience();
+        }
+
+        public int GetCommanderExperience()
+        {
+            return (int)Math.Round(ProwessExperience() + (ProwessExperience() * MartialExperience()));
+        }
+
+        public int GetCommanderStarRating()
         {
             return StarExperience();
         }
+
+        public void SetTraits(List<string> traits)
+        {
+            Traits_List = traits;
+        }
+
+        private int UnitSoldiers()
+        {
+
+            //Title rank soldiers
+            int soldiers = 0;
+            switch (Rank) 
+            {
+                case 1:
+                    soldiers = 10;
+                    break;
+                case 2:
+                    soldiers = 20;
+                    break;
+                case 3:
+                    soldiers = 30;
+                    break;
+                case 4:
+                    soldiers = 50;
+                    break;
+                case 5:
+                    soldiers = 70;
+                    break;
+                case 6:
+                    soldiers = 90;
+                    break;
+            }
+            
+            //Prowess soldiers
+            int prowess = Prowess;
+            if (prowess <= 3)
+            {
+                soldiers += 0;
+
+            }
+            else if (prowess >= 4 && prowess <= 7)
+            {
+                soldiers += 5;
+            }
+            else if (prowess >= 8 && prowess <= 11)
+            {
+                soldiers += 10;
+            }
+            else if (prowess >= 12 && prowess <= 15)
+            {
+                soldiers += 15;
+            }
+            else if (prowess >= 16)
+            {
+                soldiers += 20;
+            }
+            
+            //Court positions soldiers
+            if (Employees != null) {
+                int courtiers = Employees.Count * 5;
+                soldiers += courtiers;
+            }
+
+            //Health soldiers debuff
+            if(Traits_List.Contains(Traits.Wounded().ToString())) soldiers += -5;
+            if(Traits_List.Contains(Traits.Severely_Injured().ToString())) soldiers += -10;
+            if (Traits_List.Contains(Traits.Brutally_Mauled().ToString())) soldiers += -15;
+            if (Traits_List.Contains(Traits.Maimed().ToString())) soldiers += -10;
+            if (Traits_List.Contains(Traits.One_Eyed().ToString())) soldiers += -5;
+            if (Traits_List.Contains(Traits.One_Legged().ToString())) soldiers += -10;
+            if (Traits_List.Contains(Traits.Disfigured().ToString())) soldiers += -5;
+
+            //Minimum of 1 soldier
+            if (soldiers < 1) soldiers = 1;
+
+            return soldiers;
+        }
+
 
         private int StarExperience()
         {
@@ -286,7 +423,7 @@ namespace Crusader_Wars
             return value;
         }
 
-        private int ProwessExperience()
+        private double ProwessExperience()
         {
             int prowess = Prowess;
             int value = 0;
@@ -314,8 +451,39 @@ namespace Crusader_Wars
 
             return value;
         }
+
+        private double MartialExperience()
+        {
+            int martial = Martial;
+            double value = 0;
+
+            if (martial <= 3)
+            {
+                value += 0.0;
+
+            }
+            else if (martial >= 4 && martial <= 7)
+            {
+                value += 0.2;
+            }
+            else if (martial >= 8 && martial <= 11)
+            {
+                value += 0.4;
+            }
+            else if (martial >= 12 && martial <= 15)
+            {
+                value += 0.6;
+            }
+            else if (martial >= 16)
+            {
+                value += 0.8;
+            }
+
+
+            return value;
+        }
         
-        private int MartialExperience()
+        private int MartialArmyExperience()
         {
             int martial = Martial;
             int value = 0;
@@ -384,15 +552,15 @@ namespace Crusader_Wars
             //50% Chance Light Wounds
             const int WoundedChance = 50; // 50%
 
-            //30% Chance Harsh Wounds
-            const int Severely_InjuredChance = 65; // 15%
-            const int Brutally_MauledChance = 80; // 15%
+            //50% Chance Harsh Wounds
+            const int Severely_InjuredChance = 70; // 20%
+            const int Brutally_MauledChance = 90; // 20%
 
-            //20% Chance Extreme Wounds
-            const int MaimedChance = 85; // 5%
-            const int One_LeggedChance = 90;// 5%
-            const int One_EyedChance = 95;// 5%
-            const int Disfigured = 100; //5%
+            //10% Chance Extreme Wounds
+            const int MaimedChance = 93; // 3%
+            const int One_LeggedChance = 96;// 3%
+            const int One_EyedChance = 99;// 3%
+            const int Disfigured = 100; //1%
 
             var Chance = new Random();
             var RandomNumber = Chance.Next(101);
@@ -454,17 +622,132 @@ namespace Crusader_Wars
         }
     }
 
+    public static class AccoladesSystem
+    {
+        struct Abilities
+        {
+            public static string RaiseBanner1() { return "att_gen_raise_01"; }
+            public static string Fear1() { return "att_gen_fear_01"; }
+            public static string Inspire1() { return "att_gen_inspire_01"; }
+            public static string Encourage() { return "chant"; }
+            public static string SecondWind1() { return "att_gen_second_01"; }
+            public static string RallyInspire() { return "com_rally_and_inspire"; }
+            public static string Presence1() { return "att_gen_presence_01"; }
+            public static string BattleRhythm() { return "com_battle_rhythm"; }
+            public static string Pride() { return "com_pride"; }
+            public static string WarCryGroup() { return "com_war_cry_group"; }
+            public static string Brace1() { return "att_gen_brace_01"; }
+            public static string WarCry1() { return "att_gen_war_01"; }
+            public static string Push() { return "com_push"; }
+            public static string Reconnaissance1() { return "att_gen_recon_01"; }
+        };
+
+        struct Attributes
+        {
+            public static string Marauder() { return "marauder_attribute"; }
+            public static string Idealist() { return "idealist_attribute"; }
+            public static string Charmer() { return "charmer_attribute"; }
+            public static string Thug() { return "thug_attribute"; }
+            public static string Disciplinarian() { return "disciplinarian_attribute"; }
+            public static string Fanatic() { return "fanatic_attribute"; }
+            public static string Valiant() { return "valiant_attribute"; }
+            public static string Stalwart() { return "stalwart_attribute"; }
+            public static string Scoundrel() { return "scoundrel_attribute"; }
+            public static string Politicker() { return "politicker_attribute"; }
+            public static string Tactician() { return "tactician_attribute"; }
+            public static string Reeve() { return "reeve_attribute"; }
+            public static string Manipulator() { return "manipulator_attribute"; }
+            public static string Mentor() { return "mentor_attribute"; }
+            public static string Contender() { return "contender_attribute"; }
+        }
+
+        public static void GetSpecialAbility(string attribute_key)
+        {
+            if(attribute_key == Attributes.Marauder())
+            {
+
+            }
+            else if( attribute_key == Attributes.Idealist())
+            {
+
+            }
+            else if (attribute_key == Attributes.Charmer())
+            {
+
+            }
+            else if (attribute_key == Attributes.Thug())
+            {
+
+            }
+            else if (attribute_key == Attributes.Disciplinarian())
+            {
+
+            }
+            else if (attribute_key == Attributes.Fanatic())
+            {
+
+            }
+            else if (attribute_key == Attributes.Stalwart())
+            {
+
+            }
+            else if (attribute_key == Attributes.Scoundrel())
+            {
+
+            }
+            else if (attribute_key == Attributes.Politicker())
+            {
+
+            }
+            else if (attribute_key == Attributes.Tactician())
+            {
+
+            }
+            else if (attribute_key == Attributes.Reeve())
+            {
+
+            }
+            else if (attribute_key == Attributes.Manipulator())
+            {
+
+            }
+            else if (attribute_key == Attributes.Mentor())
+            {
+
+            }
+            else if (attribute_key == Attributes.Contender())
+            {
+
+            }
+
+
+        }
+
+
+
+    }
+
     public class KnightSystem
     {
 
-        private List<(string ID, int Prowess)> Knights { get; set; }
-
+        private List<(string ID, int Soldiers,int Prowess, List<string> Traits,BaseSkills BaseSkill,bool isAccolade)> Knights { get; set; }
+        private List<(string PrimaryAttribute, string SecundaryAttribute, string Honor)> Accolades { get; set; }
         private int UnitSoldiers { get; set; }
 
         private int Effectiveness { get; set; }
 
-        private int KilledKnights { get; set; }
+        private List<string> KilledKnights { get; set; }
         private bool HasKnights { get; set; }
+        
+        public List<(string, int,int, List<string>,BaseSkills, bool)> GetKnightsList()
+        {
+            return Knights;
+        }
+        public void SetAccolades(List<(string, string, string)> accolades_list)
+        {
+            Accolades = accolades_list;
+        }
+
 
         private double KnightEffectiveness(int level)
         {
@@ -483,22 +766,22 @@ namespace Crusader_Wars
         }
 
 
-        public void Health(string side_id)
+        public void Health()
         {
             if(HasKnights)
             {
                 //50% Chance Light Wounds
                 const int WoundedChance = 50; // 50%
 
-                //30% Chance Harsh Wounds
-                const int Severely_InjuredChance = 65; // 15%
-                const int Brutally_MauledChance = 80; // 15%
+                //40% Chance Harsh Wounds
+                const int Severely_InjuredChance = 70; // 20%
+                const int Brutally_MauledChance = 90; // 20%
 
-                //20% Chance Extreme Wounds
-                const int MaimedChance = 85; // 5%
-                const int One_LeggedChance = 90;// 5%
-                const int One_EyedChance = 95;// 5%
-                const int Disfigured = 100; //5%
+                //10% Chance Extreme Wounds
+                const int MaimedChance = 93; // 3%
+                const int One_LeggedChance = 96;// 3%
+                const int One_EyedChance = 99;// 3%
+                const int Disfigured = 100; //1%
 
                 var Chance = new Random();
                 int RandomNumber;
@@ -506,10 +789,10 @@ namespace Crusader_Wars
                 Console.WriteLine("----------------------------------");
                 Console.WriteLine($"KNIGHTS FALLEN - {KilledKnights}\n");
 
-                for (int i = 0; i < KilledKnights; i++)
+                for (int i = 0; i < KilledKnights.Count; i++)
                 {
                     //Random Knight
-                    string id = Knights[i].ID;
+                    string id = KilledKnights[i];
                     RandomNumber = Chance.Next(101);
 
                     // Determine which option to set based on its percentage chance
@@ -568,28 +851,30 @@ namespace Crusader_Wars
         {
             if(HasKnights)
             {
+                KilledKnights = new List<string>();
+
                 int totalSoldiers = UnitSoldiers;
                 int remainingSoldiers = remaining;
 
-                int knights_killed = 0;
 
-                int numberOfKnights;
-                if (Date.Year >= 1066)
+                //random knight
+                int soldiers_lost = totalSoldiers - remainingSoldiers;
+                while(soldiers_lost > 0)
                 {
-                    numberOfKnights = 10;
-                }
-                else
-                {
-                    numberOfKnights = 5;
+                    Random random = new Random();
+                    int random_index = random.Next(Knights.Count);
+                    var knight = Knights[random_index];
+
+                    soldiers_lost -= knight.Soldiers;
+
+                    if (soldiers_lost <= 0) break;
+
+                    KilledKnights.Add(knight.ID);
+
+                    Knights.Remove(knight);
                 }
 
-                //For 10 soldiers killed, 1 knight is killed
-                for (int i = numberOfKnights; i <= totalSoldiers - remainingSoldiers; i += numberOfKnights)
-                {
-                    knights_killed++;
-                }
 
-                KilledKnights = knights_killed;
             }
 
 
@@ -605,11 +890,11 @@ namespace Crusader_Wars
             return level;
         }
 
-        public int SetKnightsCount()
+        public int GetKnightsSoldiers()
         {
-            GetKnightsCount();
             return UnitSoldiers;
         }
+
 
         private double ProwessExperience()
         {
@@ -661,39 +946,98 @@ namespace Crusader_Wars
         }
 
 
-        private void GetKnightsCount()
+        private void SetKnightsCount()
         {
             UnitSoldiers = 0;
 
-            int numberOfKnights;
-            if(Date.Year >= 1066)
-            {
-                numberOfKnights = 10;
-            }
-            else
-            {
-                numberOfKnights = 5;
-            }
-
             if(HasKnights)
             {
+                for(int i = 0; i < Knights.Count; i++)
+                {
+                    int prowess = Knights[i].Prowess;
+                    var traits = Knights[i].Traits;
+                    Knights[i] = (Knights[i].ID, CalculeKnightStrenght(prowess), prowess, Knights[i].Traits, Knights[i].BaseSkill,Knights[i].isAccolade);
+                    UnitSoldiers += Knights[i].Soldiers;
+                }
+
+            }            
+        }
+
+        public void WoundedDebuffs()
+        {
+            if(HasKnights)
+            {
+                int debuff = 0;
                 for (int i = 0; i < Knights.Count; i++)
                 {
-                    UnitSoldiers += numberOfKnights;
+                    var knight = Knights[i];
+                    var traits = knight.Traits;
+
+                    //Health soldiers debuff
+                    if (traits.Contains(Traits.Wounded().ToString())) debuff += -1;
+                    if (traits.Contains(Traits.Severely_Injured().ToString())) debuff += -2;
+                    if (traits.Contains(Traits.Brutally_Mauled().ToString())) debuff += -3;
+                    if (traits.Contains(Traits.Maimed().ToString())) debuff += -2;
+                    if (traits.Contains(Traits.One_Eyed().ToString())) debuff += -1;
+                    if (traits.Contains(Traits.One_Legged().ToString())) debuff += -2;
+                    if (traits.Contains(Traits.Disfigured().ToString())) debuff += -1;
+
+                    Knights[i] = (knight.ID, knight.Soldiers - debuff, knight.Prowess, knight.Traits, knight.BaseSkill, knight.isAccolade);
                 }
+
             }
+
+
 
         }
 
+        int CalculeKnightStrenght(int knight_prowess)
+        {
+            int value = 0;
+            if (knight_prowess <= 3)
+            {
+                value += 0;
+            }
+            else if (knight_prowess >= 4 && knight_prowess <= 7)
+            {
+                value += 1;
+            }
+            else if (knight_prowess >= 8 && knight_prowess <= 11)
+            {
+                value += 2;
+            }
+            else if (knight_prowess >= 12 && knight_prowess <= 15)
+            {
+                value += 3;
+            }
+            else if (knight_prowess >= 16)
+            {
+                value += 4;
+            }
+
+            return 3 + value;
+        }
+
+        public void SetTraits(string id, List<string> traits)
+        {
+            var knight = Knights.FirstOrDefault(x => x.ID == id);
+            Knights[Knights.IndexOf(knight)] = (knight.ID, knight.Soldiers, knight.Prowess, traits, knight.BaseSkill,knight.isAccolade);
+        }
+        public void SetSkills(string id, BaseSkills skills)
+        {
+            var knight = Knights.FirstOrDefault(x => x.ID == id);
+            Knights[Knights.IndexOf(knight)] = (knight.ID, knight.Soldiers, knight.Prowess, knight.Traits, skills, knight.isAccolade);
+        }
        
 
-        public void SetData(List<(string ,int)> data, int effectiveness)
+        public void SetData(List<(string, int, int, List<string>, BaseSkills ,bool)> data, int effectiveness)
         {
             if(data.Count > 0)
             {
                 Knights = data;
                 Effectiveness = effectiveness;
                 HasKnights = true;
+                SetKnightsCount();
             }
             else
             {
@@ -703,4 +1047,29 @@ namespace Crusader_Wars
         }
 
     }
+
+    //this are the base values from a character skills
+    //modifiers do not count here
+    public class BaseSkills
+    {
+        public int diplomacy { get; private set; }
+        public int martial { get; private set; }
+        public int stewardship { get; private set; }
+        public int intrige { get; private set; }
+        public int learning { get; private set; }
+        public int prowess { get; private set; }
+
+        public BaseSkills(List<string> skills_collection)
+        {
+
+            this.diplomacy = Int32.Parse(skills_collection[0]);
+            this.martial = Int32.Parse(skills_collection[1]);
+            this.stewardship = Int32.Parse(skills_collection[2]);
+            this.intrige = Int32.Parse(skills_collection[3]);
+            this.learning = Int32.Parse(skills_collection[4]);
+            this.prowess = Int32.Parse(skills_collection[5]);
+        }
+    }
+
+
 }

@@ -17,26 +17,5 @@
     <Setting Name="VAR_dir_save" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LEVY_LIMIT" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">200</Value>
-    </Setting>
-    <Setting Name="INFANTRY_LIMIT" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">200</Value>
-    </Setting>
-    <Setting Name="RANGED_LIMIT" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">100</Value>
-    </Setting>
-    <Setting Name="CAVALVRY_LIMIT" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">100</Value>
-    </Setting>
-    <Setting Name="OPTIONS_LIMIT" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">40000</Value>
-    </Setting>
-    <Setting Name="OPTIONS_AUTOSCALE" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="OPTIONS_RATIO" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">100</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

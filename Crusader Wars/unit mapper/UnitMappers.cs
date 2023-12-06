@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.terrain;
+﻿using Crusader_Wars.client;
+using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -441,6 +442,8 @@ namespace Crusader_Wars
                                         if (PlayerUnits[i].Type == Unit.Name && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
                                         {
                                             string key = TrimKey(Unit.Attributes["key"].Value);
+                                            //default unit keys bug quick fix
+                                            if (key == "DEFAULT") { key = PlayerUnits[i].Key; }
                                             PlayerUnits[i] = (Unit.Name, key, PlayerUnits[i].Max, PlayerUnits[i].Script);
                                             continue;
                                         }
@@ -453,7 +456,11 @@ namespace Crusader_Wars
                                     if ((Unit.Attributes["type"].Value == PlayerUnits[i].Type) &&
                                        (Unit.Name != "General" || Unit.Name != "Knights") && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
                                     {
+                                        
                                         string key = TrimKey(Unit.Attributes["key"].Value);
+
+                                        //default unit keys bug quick fix
+                                        if (key == "DEFAULT") { key = PlayerUnits[i].Key; }
                                         PlayerUnits[i] = (PlayerUnits[i].Type, key, PlayerUnits[i].Max, PlayerUnits[i].Script);
                                     }
                                     else
@@ -498,6 +505,8 @@ namespace Crusader_Wars
                                         if (EnemyUnits[i].Type == Unit.Name)
                                         {
                                             string key = TrimKey(Unit.Attributes["key"].Value);
+                                            //default unit keys bug quick fix
+                                            if (key == "DEFAULT") { key = EnemyUnits[i].Key; }
                                             EnemyUnits[i] = (Unit.Name, key, EnemyUnits[i].Max, EnemyUnits[i].Script);
                                             continue;
                                         }
@@ -511,6 +520,8 @@ namespace Crusader_Wars
                                        (Unit.Name != "General" || Unit.Name != "Knights") && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
                                     {
                                         string key = TrimKey(Unit.Attributes["key"].Value);
+                                        //default unit keys bug quick fix
+                                        if (key == "DEFAULT") { key = EnemyUnits[i].Key; }
                                         EnemyUnits[i] = (EnemyUnits[i].Type, key, EnemyUnits[i].Max, EnemyUnits[i].Script);
                                     }
                                     else
@@ -775,18 +786,18 @@ namespace Crusader_Wars
                 switch (MaxValue)
                 {
                     case "INFANTRY":
-                        return Properties.Settings.Default.INFANTRY_LIMIT;
+                        return ModOptions.GetInfantryMax();
                     case "RANGED":
-                        return Properties.Settings.Default.RANGED_LIMIT;
+                        return ModOptions.GetRangedMax();
                     case "CAVALRY":
-                        return Properties.Settings.Default.CAVALVRY_LIMIT;
+                        return ModOptions.GetCavalryMax();
                     case "LEVY":
-                        return Properties.Settings.Default.LEVY_LIMIT;
+                        return ModOptions.GetLevyMax();
                     case "SPECIAL":
                         return 1111;
                     default:
                         if(int.TryParse(MaxValue, out int max_int)) return max_int;
-                        return Properties.Settings.Default.INFANTRY_LIMIT;
+                        return ModOptions.GetInfantryMax();
 
                 }
             }
