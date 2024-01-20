@@ -2,6 +2,8 @@
 using Crusader_Wars.client;
 using Crusader_Wars.terrain;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 
@@ -324,9 +326,11 @@ namespace Crusader_Wars
 
             Knights.WoundedDebuffs();
             int numberOfSoldiers = Knights.GetKnightsSoldiers();
+            
+            var accoladesList = Knights.GetAccolades();
 
 
-            if(numberOfSoldiers == 0) return;
+            if (numberOfSoldiers == 0) return;
 
 
             if (experience < 0) experience = 0;
@@ -341,8 +345,28 @@ namespace Crusader_Wars
                  $"<position x=\"{Position.x}\" y=\"{Position.y}\"/>\n" +
                  $"<orientation radians=\"{Rotation}\"/>\n" +
                  "<width metres=\"21.70\"/>\n" +
-                 $"<unit_experience level=\"{experience}\"/>\n" +
-                 "</unit>\n\n";
+                 $"<unit_experience level=\"{experience}\"/>\n";
+                
+                PR_Unit += "<unit_capabilities>\n";
+
+                //accolades special abilities
+                foreach (var accolade in accoladesList)
+                {
+                    var accoladeAbilites = Accolades.ReturnAbilitiesKeys(accolade);
+                    if (accoladeAbilites.primaryKey != "null")
+                    {
+                        PR_Unit += $"<special_ability>{accoladeAbilites.primaryKey}</special_ability>\n";
+                    }
+                    if(accoladeAbilites.secundaryKey != "null")
+                    {
+                        PR_Unit += $"<special_ability>{accoladeAbilites.secundaryKey}</special_ability>\n";
+                    }
+                    
+                }
+
+                PR_Unit += "</unit_capabilities>\n";
+                PR_Unit += "</unit>\n\n";
+
                 //Add vertical spacing between units
                 if (Direction is "N" || Direction is "S")
                     Position = UnitsFile.AddUnitYSpacing(Direction, Position);
@@ -354,6 +378,7 @@ namespace Crusader_Wars
                 BattleScript.SetLocals(Unit_Script_Name, "UNIT_" + Unit_Script_Name);
                 File.AppendAllText(battlePath, PR_Unit);
             }
+
             //Add vertical spacing between units
             if (Direction is "N" || Direction is "S")
                 Position = UnitsFile.AddUnitYSpacing(Direction, Position);

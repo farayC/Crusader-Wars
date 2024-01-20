@@ -107,6 +107,7 @@
   <ItemGroup>
     <Compile Include="armies\Deployables.cs" />
     <Compile Include="armies\Modifiers.cs" />
+    <Compile Include="armies\SpecialAbilities.cs" />
     <Compile Include="armies\SupplySystem.cs" />
     <Compile Include="client\ModOptions.cs" />
     <Compile Include="client\UC_BattleScaleOptions.cs">

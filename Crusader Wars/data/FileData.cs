@@ -86,6 +86,7 @@ namespace Crusader_Wars
             }
 
         }
+        
         public static void SetChunks(string ArmyRegiments, ref string Regiments,
                                 List<(string ID, string StartingNum, string CurrentNum)> Side_RegimentsList,
                                 List<(string ID, string Type, string[] ChunksIDs, string Full)> ArmyRegimentsList,
@@ -230,6 +231,7 @@ namespace Crusader_Wars
             double num;
             return num = Double.Parse(value, CultureInfo.InvariantCulture);
         }
+
 
         static double DistributeValues(double value, double limit)
         {
