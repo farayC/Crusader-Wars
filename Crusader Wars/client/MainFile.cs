@@ -148,7 +148,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();
 
             //Hide debug button
-            btt_debug.Visible = false;
+            btt_debug.Visible = true;
 
             Color myColor = Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
@@ -389,6 +389,7 @@ namespace Crusader_Wars
                     infoLabel.Text = "Waiting for battle...";
                     ProcessCommands.ResumeProcess();
                     continue;
+
                 }
 
 
@@ -586,7 +587,7 @@ namespace Crusader_Wars
 
                         if (remaining_enemy_knights != null) Enemy.Knights.GetKilled(Int32.Parse(remaining_enemy_knights));
 
-
+                        
                         //Commanders Health System
                         SaveFile.ReadAll(); //memory intensive
                         Player.Commander.Health();
@@ -669,7 +670,7 @@ namespace Crusader_Wars
           
             
         }
-
+        
 
         /*---------------------------------------------
          * :::::::::::::PROCESS COMMANDS:::::::::::::::

@@ -374,6 +374,9 @@ namespace Crusader_Wars
             //Update status text
             int disabled = 0;
             int enabled = 0;
+
+            var YearCollection = new Dictionary<string, (int start, int end)>();
+
             foreach (var item in folderCheckStates)
             {
                 if (item.Value is false)
@@ -383,8 +386,16 @@ namespace Crusader_Wars
                 else
                 {
                     enabled++;
+
+
+                    var timePeriod_Item = timePeriodCollecion.FirstOrDefault(x => item.Key.Contains(x.mapper));
+                    if (timePeriod_Item.mapper != null)  YearCollection.Add(item.Key, (Int32.Parse(timePeriod_Item.start_year), Int32.Parse(timePeriod_Item.end_year)));
+                    
+
                 }
+
             }
+
 
             if (disabled == folderCheckStates.Count) 
             { 
@@ -393,12 +404,42 @@ namespace Crusader_Wars
             }
             if (enabled == 1)
             {
-                Label_MapperStatus.Text = $"Mapper loaded!";
+                Label_MapperStatus.Text = $"Single Mapper loaded!";
                 Label_MapperStatus.ForeColor = Color.White;
             }
             if (enabled > 1)
             {
-                Label_MapperStatus.Text = "Loading according to time period!";
+
+                //Total Conversion mix check
+                try
+                {
+                    string official_one = YearCollection.First(item => item.Key.Contains("OfficialCW")).Key;
+                    string totalConversion_one = YearCollection.First(item => item.Key.Contains("xCW")).Key;
+
+                    Label_MapperStatus.Text = $"Incorrect Mappers loaded together!";
+                    Label_MapperStatus.ForeColor = Color.Red;
+
+                    return;
+                }
+                catch { }
+
+
+                //Time Period
+                int minimum_year = 0;
+                int maximum_year = 0;
+                foreach (var item in YearCollection) 
+                {
+                    int min, max;   
+                    min = Math.Min(item.Value.start, item.Value.end);
+                    max = Math.Max(item.Value.start, item.Value.end);
+                    if(minimum_year == 0) { minimum_year = min; }
+                    if (maximum_year == 0) { maximum_year = max; }
+
+                    if (min < minimum_year) { minimum_year = min; }
+                    if (max > maximum_year) { maximum_year = max; }
+                }
+
+                Label_MapperStatus.Text = $"Loading Mappers from {minimum_year}AD to {maximum_year}AD!";
                 Label_MapperStatus.ForeColor = Color.White;
             }
         }

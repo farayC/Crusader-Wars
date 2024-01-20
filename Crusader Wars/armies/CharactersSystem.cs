@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.terrain;
+﻿using Crusader_Wars.armies;
+using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -622,114 +623,10 @@ namespace Crusader_Wars
         }
     }
 
-    public static class AccoladesSystem
-    {
-        struct Abilities
-        {
-            public static string RaiseBanner1() { return "att_gen_raise_01"; }
-            public static string Fear1() { return "att_gen_fear_01"; }
-            public static string Inspire1() { return "att_gen_inspire_01"; }
-            public static string Encourage() { return "chant"; }
-            public static string SecondWind1() { return "att_gen_second_01"; }
-            public static string RallyInspire() { return "com_rally_and_inspire"; }
-            public static string Presence1() { return "att_gen_presence_01"; }
-            public static string BattleRhythm() { return "com_battle_rhythm"; }
-            public static string Pride() { return "com_pride"; }
-            public static string WarCryGroup() { return "com_war_cry_group"; }
-            public static string Brace1() { return "att_gen_brace_01"; }
-            public static string WarCry1() { return "att_gen_war_01"; }
-            public static string Push() { return "com_push"; }
-            public static string Reconnaissance1() { return "att_gen_recon_01"; }
-        };
-
-        struct Attributes
-        {
-            public static string Marauder() { return "marauder_attribute"; }
-            public static string Idealist() { return "idealist_attribute"; }
-            public static string Charmer() { return "charmer_attribute"; }
-            public static string Thug() { return "thug_attribute"; }
-            public static string Disciplinarian() { return "disciplinarian_attribute"; }
-            public static string Fanatic() { return "fanatic_attribute"; }
-            public static string Valiant() { return "valiant_attribute"; }
-            public static string Stalwart() { return "stalwart_attribute"; }
-            public static string Scoundrel() { return "scoundrel_attribute"; }
-            public static string Politicker() { return "politicker_attribute"; }
-            public static string Tactician() { return "tactician_attribute"; }
-            public static string Reeve() { return "reeve_attribute"; }
-            public static string Manipulator() { return "manipulator_attribute"; }
-            public static string Mentor() { return "mentor_attribute"; }
-            public static string Contender() { return "contender_attribute"; }
-        }
-
-        public static void GetSpecialAbility(string attribute_key)
-        {
-            if(attribute_key == Attributes.Marauder())
-            {
-
-            }
-            else if( attribute_key == Attributes.Idealist())
-            {
-
-            }
-            else if (attribute_key == Attributes.Charmer())
-            {
-
-            }
-            else if (attribute_key == Attributes.Thug())
-            {
-
-            }
-            else if (attribute_key == Attributes.Disciplinarian())
-            {
-
-            }
-            else if (attribute_key == Attributes.Fanatic())
-            {
-
-            }
-            else if (attribute_key == Attributes.Stalwart())
-            {
-
-            }
-            else if (attribute_key == Attributes.Scoundrel())
-            {
-
-            }
-            else if (attribute_key == Attributes.Politicker())
-            {
-
-            }
-            else if (attribute_key == Attributes.Tactician())
-            {
-
-            }
-            else if (attribute_key == Attributes.Reeve())
-            {
-
-            }
-            else if (attribute_key == Attributes.Manipulator())
-            {
-
-            }
-            else if (attribute_key == Attributes.Mentor())
-            {
-
-            }
-            else if (attribute_key == Attributes.Contender())
-            {
-
-            }
-
-
-        }
-
-
-
-    }
 
     public class KnightSystem
     {
-
+        
         private List<(string ID, int Soldiers,int Prowess, List<string> Traits,BaseSkills BaseSkill,bool isAccolade)> Knights { get; set; }
         private List<(string PrimaryAttribute, string SecundaryAttribute, string Honor)> Accolades { get; set; }
         private int UnitSoldiers { get; set; }
@@ -742,6 +639,11 @@ namespace Crusader_Wars
         public List<(string, int,int, List<string>,BaseSkills, bool)> GetKnightsList()
         {
             return Knights;
+        }
+
+        public List<(string PrimaryAttribute, string SecundaryAttribute, string Honor)> GetAccolades()
+        {
+            return Accolades;
         }
         public void SetAccolades(List<(string, string, string)> accolades_list)
         {

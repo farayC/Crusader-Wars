@@ -295,7 +295,7 @@ namespace Crusader_Wars
             //if there is a accolade id found
             if(Data.PlayerIDsAccolades.Count > 0 || Data.EnemyIDsAccolades.Count > 0)
             {
-                if(line == "accolades={\n")
+                if(line == "accolades={")
                 {
                     isSearchPermittedAccolades= true;
                 }
@@ -303,7 +303,7 @@ namespace Crusader_Wars
                 //find accolade on the battle
                 if(isSearchPermittedAccolades && !StartAccoladeSearchAllowed) 
                 {
-                    foreach(var id in  Data.PlayerIDsAccolades) 
+                    foreach(var id in Data.PlayerIDsAccolades) 
                     {
                         if (line == $"\t\t{id}={{")
                         {
@@ -347,7 +347,8 @@ namespace Crusader_Wars
                 {
                     if(isAccoladePlayer) { Data.PlayerAccolades.Add((primary_attribute, secundary_attribute, glory)); }
                     else { Data.EnemysAccolades.Add((primary_attribute, secundary_attribute, glory)); }
-                    
+
+
                     primary_attribute = "";
                     secundary_attribute = "";
                     glory = "";
@@ -365,6 +366,10 @@ namespace Crusader_Wars
                 //accolades data group end line
                 if(isSearchPermittedAccolades && line == "tax_slot_manager={")
                 {
+                    //clear empty items
+                    Data.PlayerAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
+                    Data.EnemysAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
+
                     player.Knights.SetAccolades(Data.PlayerAccolades);
                     enemy.Knights.SetAccolades(Data.EnemysAccolades);
 
@@ -488,8 +493,14 @@ namespace Crusader_Wars
                     var enemy_knights = Enemy.Knights.GetKnightsList();
 
                     (string, int, int, List<string>, BaseSkills, bool) accolade_knight;
-                    try { accolade_knight = player_knights.First(x => x.Item1 == char_id);  }
-                    catch { accolade_knight = enemy_knights.First(x => x.Item1 == char_id); }
+                    try 
+                    { 
+                        accolade_knight = player_knights.First(x => x.Item1 == char_id);  
+                    }
+                    catch 
+                    { 
+                        accolade_knight = enemy_knights.First(x => x.Item1 == char_id); 
+                    }
 
 
                     if (isPlayerKnight)
@@ -507,8 +518,12 @@ namespace Crusader_Wars
 
 
                     string accolade_id = Regex.Match(line, @"\d+").Value;
-                    if (isPlayerKnight) { Data.PlayerIDsAccolades.Add(accolade_id); }
-                    else if(isEnemyKnight) { Data.EnemyIDsAccolades.Add(accolade_id); }
+                    if (isPlayerKnight) {
+                        Data.PlayerIDsAccolades.Add(accolade_id); 
+                    }
+                    else if(isEnemyKnight) { 
+                        Data.EnemyIDsAccolades.Add(accolade_id); 
+                    }
 
                 }
 
@@ -562,6 +577,11 @@ namespace Crusader_Wars
                 else if (line == "\t\t\tcourt_position=\"champion_court_position\"")
                 {
                     profession = "personal_champion";
+                    StartCourtPositionsSearchAllowed = true;
+                }
+                else if (line == "\t\t\tcourt_position=\"garuva_warrior_court_position\"")
+                {
+                    profession = "garuva_warrior";
                     StartCourtPositionsSearchAllowed = true;
                 }
 
