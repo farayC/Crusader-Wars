@@ -16,5 +16,6 @@ namespace Crusader_Wars.client
         {
             InitializeComponent();
         }
+
     }
 }

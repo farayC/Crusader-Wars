@@ -97,9 +97,9 @@
             "50000",
             "60000",
             "70000"});
-            this.OptionSelection_MaxBattleLimit.Location = new System.Drawing.Point(336, 43);
+            this.OptionSelection_MaxBattleLimit.Location = new System.Drawing.Point(316, 43);
             this.OptionSelection_MaxBattleLimit.Name = "OptionSelection_MaxBattleLimit";
-            this.OptionSelection_MaxBattleLimit.Size = new System.Drawing.Size(132, 26);
+            this.OptionSelection_MaxBattleLimit.Size = new System.Drawing.Size(152, 26);
             this.OptionSelection_MaxBattleLimit.TabIndex = 6;
             this.toolTip1.SetToolTip(this.OptionSelection_MaxBattleLimit, "Choose the limit of total soldiers a battle can have.\r\nCK3 battles that surpass t" +
         "his limit will scale the Attila battles to the approximate limit.");

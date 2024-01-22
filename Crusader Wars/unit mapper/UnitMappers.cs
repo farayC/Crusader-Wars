@@ -1,4 +1,5 @@
 ﻿using Crusader_Wars.client;
+using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
@@ -223,7 +224,7 @@ namespace Crusader_Wars
         {
             if(RequiredMods != null)
             {
-                StringBuilder sb = new StringBuilder();
+               StringBuilder sb = new StringBuilder();
                foreach(string mod in RequiredMods)
                 {
                     sb.AppendLine(mod);
@@ -232,7 +233,8 @@ namespace Crusader_Wars
 
                 await Task.Delay(1);
 
-                MessageBox.Show($"Loaded Mapper: {folder}\nRequired Mods:\n" + mods, "Load these required mods!");
+                //MessageBox.Show($"Loaded Mapper: {folder}\nRequired Mods:\n" + mods, "Load these required mods!");
+                RequiredModsMessage.ShowRequiredMods(folder, mods);
             }
             
         }
