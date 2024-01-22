@@ -30,13 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.OptionSelection_AutoScale = new System.Windows.Forms.ComboBox();
-            this.OptionSelection_MaxBattleLimit = new System.Windows.Forms.ComboBox();
             this.OptionSelection_BattleSizeScale = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.OptionSelection_AutoScale = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,11 +45,9 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 66.66666F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.Controls.Add(this.OptionSelection_AutoScale, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.OptionSelection_MaxBattleLimit, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.OptionSelection_BattleSizeScale, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -63,46 +59,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(471, 201);
             this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // OptionSelection_AutoScale
-            // 
-            this.OptionSelection_AutoScale.BackColor = System.Drawing.Color.White;
-            this.OptionSelection_AutoScale.Dock = System.Windows.Forms.DockStyle.Top;
-            this.OptionSelection_AutoScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OptionSelection_AutoScale.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptionSelection_AutoScale.FormattingEnabled = true;
-            this.OptionSelection_AutoScale.Items.AddRange(new object[] {
-            "Disabled",
-            "Enabled"});
-            this.OptionSelection_AutoScale.Location = new System.Drawing.Point(316, 83);
-            this.OptionSelection_AutoScale.Name = "OptionSelection_AutoScale";
-            this.OptionSelection_AutoScale.Size = new System.Drawing.Size(152, 26);
-            this.OptionSelection_AutoScale.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.OptionSelection_AutoScale, "Enabled: CW will auto size the maximum number of soldiers an Attila can have acco" +
-        "rding to huge scale battles. (Recommended)\r\nDisabled: Units maximum size will al" +
-        "ways be from user set options.");
-            // 
-            // OptionSelection_MaxBattleLimit
-            // 
-            this.OptionSelection_MaxBattleLimit.BackColor = System.Drawing.Color.White;
-            this.OptionSelection_MaxBattleLimit.Dock = System.Windows.Forms.DockStyle.Right;
-            this.OptionSelection_MaxBattleLimit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OptionSelection_MaxBattleLimit.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptionSelection_MaxBattleLimit.FormattingEnabled = true;
-            this.OptionSelection_MaxBattleLimit.Items.AddRange(new object[] {
-            "10000",
-            "20000",
-            "30000",
-            "40000",
-            "50000",
-            "60000",
-            "70000"});
-            this.OptionSelection_MaxBattleLimit.Location = new System.Drawing.Point(316, 43);
-            this.OptionSelection_MaxBattleLimit.Name = "OptionSelection_MaxBattleLimit";
-            this.OptionSelection_MaxBattleLimit.Size = new System.Drawing.Size(152, 26);
-            this.OptionSelection_MaxBattleLimit.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.OptionSelection_MaxBattleLimit, "Choose the limit of total soldiers a battle can have.\r\nCK3 battles that surpass t" +
-        "his limit will scale the Attila battles to the approximate limit.");
             // 
             // OptionSelection_BattleSizeScale
             // 
@@ -136,18 +92,10 @@
             this.label4.Text = "Overhaul battle size scale:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label1
+            // toolTip1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Paradox King Script", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label1.Location = new System.Drawing.Point(3, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(176, 19);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Maximum battle limit:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.AutomaticDelay = 100000;
+            this.toolTip1.IsBalloon = true;
             // 
             // label2
             // 
@@ -162,10 +110,23 @@
             this.label2.Text = "Auto Scale Units Max:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // toolTip1
+            // OptionSelection_AutoScale
             // 
-            this.toolTip1.AutomaticDelay = 100000;
-            this.toolTip1.IsBalloon = true;
+            this.OptionSelection_AutoScale.BackColor = System.Drawing.Color.White;
+            this.OptionSelection_AutoScale.Dock = System.Windows.Forms.DockStyle.Top;
+            this.OptionSelection_AutoScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.OptionSelection_AutoScale.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OptionSelection_AutoScale.FormattingEnabled = true;
+            this.OptionSelection_AutoScale.Items.AddRange(new object[] {
+            "Disabled",
+            "Enabled"});
+            this.OptionSelection_AutoScale.Location = new System.Drawing.Point(316, 83);
+            this.OptionSelection_AutoScale.Name = "OptionSelection_AutoScale";
+            this.OptionSelection_AutoScale.Size = new System.Drawing.Size(152, 26);
+            this.OptionSelection_AutoScale.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.OptionSelection_AutoScale, "Enabled: CW will auto size the maximum number of soldiers an Attila can have acco" +
+        "rding to huge scale battles. (Recommended)\r\nDisabled: Units maximum size will al" +
+        "ways be from user set options.");
             // 
             // UC_BattleScaleOptions
             // 
@@ -187,11 +148,9 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox OptionSelection_BattleSizeScale;
-        private System.Windows.Forms.ComboBox OptionSelection_AutoScale;
-        private System.Windows.Forms.ComboBox OptionSelection_MaxBattleLimit;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ComboBox OptionSelection_AutoScale;
+        private System.Windows.Forms.Label label2;
     }
 }

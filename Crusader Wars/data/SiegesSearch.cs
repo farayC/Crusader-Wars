@@ -20,7 +20,6 @@ namespace Crusader_Wars.data
 
             //Get Army Ratio in log file...
             ArmyProportions.SetRatio(ModOptions.GetBattleScale());
-            ArmyProportions.isBiggerThanLimit(Player.TotalNumber, Enemy.TotalNumber);
 
             /*---------------------------------------------
              * :::::::::::::::::::Date:::::::::::::::::::::

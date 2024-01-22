@@ -6,8 +6,6 @@ namespace Crusader_Wars
     public static class ArmyProportions
     {
         private static double Ratio { get; set; } = ModOptions.GetBattleScale();
-
-        private static int BattleLimit { get; set; } = ModOptions.GetMaxBattleLimit();
         public static bool UnitAutoSizeState { get; set; } = ModOptions.GetAutoScale();
 
         public static void SetRatio(int a)
@@ -74,17 +72,6 @@ namespace Crusader_Wars
             no_auto_cavalry = 0;
         }
 
-        public static void isBiggerThanLimit(int player_total, int enemy_total)
-        {
-            int total = player_total + enemy_total;
-            if(total > BattleLimit && UnitAutoSizeState == true)
-            {
-                Ratio = BattleLimit / total;
-              //  return true;
-            }
-
-            //return false;
-        }
 
 
         public static int SetSoldiersRatio(int num_soldiers)

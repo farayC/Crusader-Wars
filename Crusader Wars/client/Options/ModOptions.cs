@@ -70,13 +70,7 @@ namespace Crusader_Wars.client
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleScale");
             return Int32.Parse(option.value.Trim('%'));
         }
-
-        public static int GetMaxBattleLimit()
-        {
-            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "MaximumBattleLimit");
-            return Int32.Parse(option.value);
-        }
-
+        
         public static bool GetAutoScale()
         {
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "AutoScaleUnits");

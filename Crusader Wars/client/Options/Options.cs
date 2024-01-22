@@ -45,6 +45,7 @@ namespace Crusader_Wars
             SaveCheckedStates();
             WriteLastChecked();
             SaveValuesToOptionsFile();
+            ReadOptionsFile();
             ModOptions.StoreOptionsValues(optionsValuesCollection);
             this.Close();
         }
@@ -93,7 +94,6 @@ namespace Crusader_Wars
                 var CavalryMax_Value = xmlDoc.SelectSingleNode("//Option [@name='CavalryMax']").InnerText;
 
                 var BattleScale_Value = xmlDoc.SelectSingleNode("//Option [@name='BattleScale']").InnerText;
-                var MaximumBattleLimit_Value = xmlDoc.SelectSingleNode("//Option [@name='MaximumBattleLimit']").InnerText;
                 var AutoScaleUnits_Value = xmlDoc.SelectSingleNode("//Option [@name='AutoScaleUnits']").InnerText;
 
                 optionsValuesCollection.AddRange(new List<(string, string)>
@@ -110,7 +110,6 @@ namespace Crusader_Wars
                     ("CavalryMax", CavalryMax_Value),
 
                     ("BattleScale", BattleScale_Value),
-                    ("MaximumBattleLimit", MaximumBattleLimit_Value),
                     ("AutoScaleUnits", AutoScaleUnits_Value),
                 });
 
@@ -137,8 +136,7 @@ namespace Crusader_Wars
             var InfantryMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_InfantryMax", true).FirstOrDefault() as ComboBox;
             var CavalryMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_CavalryMax", true).FirstOrDefault() as ComboBox;
 
-            var BattleScale_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_BattleSizeScale", true).FirstOrDefault() as ComboBox;
-            var MaximumBattleLimit_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_MaxBattleLimit", true).FirstOrDefault() as ComboBox;
+            var BattleScale_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_BattleSizeScale", true).FirstOrDefault() as ComboBox;            
             var AutoScaleUnits_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_AutoScale", true).FirstOrDefault() as ComboBox;
             
             CloseAttila_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "CloseAttila").value; 
@@ -153,7 +151,6 @@ namespace Crusader_Wars
             CavalryMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "CavalryMax").value;
 
             BattleScale_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleScale").value;
-            MaximumBattleLimit_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "MaximumBattleLimit").value;
             AutoScaleUnits_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "AutoScaleUnits").value;
 
             ChangeOptionsTab(General_Tab);
@@ -178,7 +175,6 @@ namespace Crusader_Wars
             var CavalryMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_CavalryMax", true)[0] as ComboBox;
 
             var BattleScale_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_BattleSizeScale", true)[0] as ComboBox;
-            var MaximumBattleLimit_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_MaxBattleLimit", true)[0] as ComboBox;
             var AutoScaleUnits_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_AutoScale", true)[0] as ComboBox;
 
 
@@ -205,8 +201,6 @@ namespace Crusader_Wars
 
             var BattleScale_Node = xmlDoc.SelectSingleNode("//Option [@name='BattleScale']");
             BattleScale_Node.InnerText = BattleScale_ComboBox.Text;
-            var MaximumBattleLimit_Node = xmlDoc.SelectSingleNode("//Option [@name='MaximumBattleLimit']");
-            MaximumBattleLimit_Node.InnerText = MaximumBattleLimit_ComboBox.Text;
             var AutoScaleUnits_Node = xmlDoc.SelectSingleNode("//Option [@name='AutoScaleUnits']");
             AutoScaleUnits_Node.InnerText = AutoScaleUnits_ComboBox.Text;
 
