@@ -13,6 +13,7 @@ using System.Windows;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using Crusader_Wars.client;
+using Crusader_Wars.client.RequiredMods;
 
 namespace Crusader_Wars
 {
@@ -512,6 +513,7 @@ namespace Crusader_Wars
                 if (battleEnded)
                 {
                     ModOptions.CloseAttila();
+                    RequiredModsMessage.CloseAllWindows();
 
                     infoLabel.Text = "Battle has ended!";
                     string path_log_attila = Properties.Settings.Default.VAR_log_attila;
@@ -787,9 +789,10 @@ namespace Crusader_Wars
         private string RemoveASCII(string inputString)
         {
             StringBuilder sb = new StringBuilder();
+            string apostrophe = "'";
             foreach (char c in inputString)
             {
-                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\n' || c == '-' || c == ':' || c == ' '|| char.IsLetter(c) || c == '?' )
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\n' || c == '-' || c == ':' || c == ' '|| char.IsLetter(c) || c == '?' || c == apostrophe[0])
                 {
                     sb.Append(c);
                 }

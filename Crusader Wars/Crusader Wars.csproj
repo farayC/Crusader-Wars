@@ -109,24 +109,36 @@
     <Compile Include="armies\Modifiers.cs" />
     <Compile Include="armies\SpecialAbilities.cs" />
     <Compile Include="armies\SupplySystem.cs" />
-    <Compile Include="client\ModOptions.cs" />
-    <Compile Include="client\UC_BattleScaleOptions.cs">
+    <Compile Include="client\Options\ModOptions.cs" />
+    <Compile Include="client\Options\UC_BattleScaleOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="client\UC_BattleScaleOptions.Designer.cs">
+    <Compile Include="client\Options\UC_BattleScaleOptions.Designer.cs">
       <DependentUpon>UC_BattleScaleOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="client\UC_GeneralOptions.cs">
+    <Compile Include="client\Options\UC_GeneralOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="client\UC_GeneralOptions.Designer.cs">
+    <Compile Include="client\Options\UC_GeneralOptions.Designer.cs">
       <DependentUpon>UC_GeneralOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="client\UC_UnitsOptions.cs">
+    <Compile Include="client\Options\UC_UnitsOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="client\UC_UnitsOptions.Designer.cs">
+    <Compile Include="client\Options\UC_UnitsOptions.Designer.cs">
       <DependentUpon>UC_UnitsOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="client\RequiredMods\RequiredModsMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="client\RequiredMods\RequiredModsMessage.Designer.cs">
+      <DependentUpon>RequiredModsMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="client\WarningMessage\WarningMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="client\WarningMessage\WarningMessage.Designer.cs">
+      <DependentUpon>WarningMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="data\SiegesSearch.cs" />
     <Compile Include="sieges\Sieges_DataTypes.cs" />
@@ -160,10 +172,10 @@
     <Compile Include="client\LoadingScreen.Designer.cs">
       <DependentUpon>LoadingScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="client\Options.cs">
+    <Compile Include="client\Options\Options.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="client\Options.Designer.cs">
+    <Compile Include="client\Options\Options.Designer.cs">
       <DependentUpon>Options.cs</DependentUpon>
     </Compile>
     <Compile Include="packfile\PackFile.cs" />
@@ -186,20 +198,26 @@
     <EmbeddedResource Include="client\LoadingScreen.resx">
       <DependentUpon>LoadingScreen.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="client\Options.resx">
+    <EmbeddedResource Include="client\Options\Options.resx">
       <DependentUpon>Options.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="client\UC_BattleScaleOptions.resx">
+    <EmbeddedResource Include="client\Options\UC_BattleScaleOptions.resx">
       <DependentUpon>UC_BattleScaleOptions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="client\UC_GeneralOptions.resx">
+    <EmbeddedResource Include="client\Options\UC_GeneralOptions.resx">
       <DependentUpon>UC_GeneralOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\RequiredMods\RequiredModsMessage.resx">
+      <DependentUpon>RequiredModsMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="client\UpdaterControl.resx">
       <DependentUpon>UpdaterControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="client\UC_UnitsOptions.resx">
+    <EmbeddedResource Include="client\Options\UC_UnitsOptions.resx">
       <DependentUpon>UC_UnitsOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="client\WarningMessage\WarningMessage.resx">
+      <DependentUpon>WarningMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -42,7 +42,7 @@ namespace Crusader_Wars
                 }
                 else if (total >= 30000 && total < 40000)
                 {
-                    ModOptions.SetLevyMax(460);
+                    ModOptions.SetLevyMax(450);
                     ModOptions.SetInfantryMax(450);
                     ModOptions.SetRangedMax(450);
                     ModOptions.SetCavalryMax(300);

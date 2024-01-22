@@ -1,5 +1,7 @@
 ﻿using Crusader_Wars.client;
+using Crusader_Wars.client.WarningMessage;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -7,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Media;
 using Control = System.Windows.Forms.Control;
 
 namespace Crusader_Wars
@@ -155,6 +158,7 @@ namespace Crusader_Wars
 
             ChangeOptionsTab(General_Tab);
         }
+
 
         void SaveValuesToOptionsFile()
         {
@@ -369,13 +373,14 @@ namespace Crusader_Wars
 
         }
 
+        Dictionary<string, (int start, int end)> YearCollection = new Dictionary<string, (int start, int end)>();
         void UpdateStatusLabel()
         {
             //Update status text
             int disabled = 0;
             int enabled = 0;
 
-            var YearCollection = new Dictionary<string, (int start, int end)>();
+            
 
             foreach (var item in folderCheckStates)
             {
@@ -389,7 +394,10 @@ namespace Crusader_Wars
 
 
                     var timePeriod_Item = timePeriodCollecion.FirstOrDefault(x => item.Key.Contains(x.mapper));
-                    if (timePeriod_Item.mapper != null)  YearCollection.Add(item.Key, (Int32.Parse(timePeriod_Item.start_year), Int32.Parse(timePeriod_Item.end_year)));
+                    if (timePeriod_Item.mapper != null) {
+                        try { YearCollection.Add(item.Key, (Int32.Parse(timePeriod_Item.start_year), Int32.Parse(timePeriod_Item.end_year))); } 
+                        catch { }
+                    } 
                     
 
                 }
@@ -416,7 +424,7 @@ namespace Crusader_Wars
                     string official_one = YearCollection.First(item => item.Key.Contains("OfficialCW")).Key;
                     string totalConversion_one = YearCollection.First(item => item.Key.Contains("xCW")).Key;
 
-                    Label_MapperStatus.Text = $"Incorrect Mappers loaded together!";
+                    Label_MapperStatus.Text = "Incorrect Mappers loaded together!";
                     Label_MapperStatus.ForeColor = Color.Red;
 
                     return;
@@ -429,6 +437,8 @@ namespace Crusader_Wars
                 int maximum_year = 0;
                 foreach (var item in YearCollection) 
                 {
+
+
                     int min, max;   
                     min = Math.Min(item.Value.start, item.Value.end);
                     max = Math.Max(item.Value.start, item.Value.end);
@@ -443,6 +453,7 @@ namespace Crusader_Wars
                 Label_MapperStatus.ForeColor = Color.White;
             }
         }
+
 
         private void WriteLastChecked()
         {
@@ -668,8 +679,22 @@ namespace Crusader_Wars
         }
 
 
+        
+        //Warning Messages
         private void Options_FormClosing(object sender, FormClosingEventArgs e)
         {
+
+            if (Label_MapperStatus.Text == "Incorrect Mappers loaded together!")
+            {
+                string message = "Mixing Total Conversion Unit Mappers with Official ones cause crashes! Disable one of them!";
+                WarningMessage.ShowWarningMessage(message);
+            }
+            else if(Label_MapperStatus.Text == "No Mapper enabled!")
+            {
+                string message = "You didn't enable a Unit Mapper, enable one or the mod will not work!";
+                WarningMessage.ShowWarningMessage(message);
+            }
+
             
         }
 
@@ -679,11 +704,10 @@ namespace Crusader_Wars
 
             ToolTip_UnitMappers.SetToolTip(infoBox, "This is how the mod assigns ck3 cultures and men-at-arms to Attila units.\n" +
                                                     "Think of them like little unit mod packs. You choose the desired one for how you want your units to look\n" +
-                                                    "You can have multiple enabled and the mod will load the one that the time period is more close to your campaign date.\n\n" +
+                                                    "You can have multiple enabled and the mod will load the one that the time period is more close to your campaign year.\n\n" +
                                                     "Select only one mapper if you only want that one to load.\n" +
                                                     "Select multiple if they have a continuation of time periods.\n\n" +
-                                                    "The officials unit mappers are meant to all of them being enabled, so you can see your units evolve.\n" +
-                                                    "You can change the timeperiod they start by going to the unit mapper files and change the years.");
+                                                    "The officials unit mappers are meant to all of them being enabled, so you can see your units evolve.");
         }
 
         private void Btn_GeneralTab_Click(object sender, EventArgs e)
