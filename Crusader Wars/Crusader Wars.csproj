@@ -105,9 +105,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="armies\characters\Commanders.cs" />
+    <Compile Include="armies\characters\Knights.cs" />
     <Compile Include="armies\Deployables.cs" />
     <Compile Include="armies\Modifiers.cs" />
-    <Compile Include="armies\SpecialAbilities.cs" />
+    <Compile Include="armies\characters\SpecialAbilities.cs" />
     <Compile Include="armies\SupplySystem.cs" />
     <Compile Include="client\Options\ModOptions.cs" />
     <Compile Include="client\Options\UC_BattleScaleOptions.cs">
@@ -140,7 +142,7 @@
     <Compile Include="client\WarningMessage\WarningMessage.Designer.cs">
       <DependentUpon>WarningMessage.cs</DependentUpon>
     </Compile>
-    <Compile Include="data\SiegesSearch.cs" />
+    <Compile Include="data\ck3 log\SiegesSearch.cs" />
     <Compile Include="sieges\Sieges_DataTypes.cs" />
     <Compile Include="terrain\Deployments.cs" />
     <Compile Include="terrain\Lands.cs" />
@@ -148,18 +150,18 @@
     <Compile Include="terrain\UniqueMaps.cs" />
     <Compile Include="terrain\WeatherSystem.cs" />
     <Compile Include="twbattle\BattleFile.cs" />
-    <Compile Include="twbattle\BattleResult.cs" />
+    <Compile Include="data\battle results\BattleResult.cs" />
     <Compile Include="packfile\BattleScript.cs" />
     <Compile Include="packfile\DeclarationsFile.cs" />
     <Compile Include="sieges\Sieges.cs" />
     <Compile Include="twbattle\UnitsFile.cs" />
-    <Compile Include="data\FileData.cs" />
-    <Compile Include="armies\CharactersSystem.cs" />
-    <Compile Include="armies\ArmyProportions.cs" />
-    <Compile Include="data\Languages.cs" />
-    <Compile Include="data\Reader.cs" />
+    <Compile Include="data\battle results\FileData.cs" />
+    <Compile Include="armies\characters\Characters_Data.cs" />
+    <Compile Include="armies\battle scale\ArmyProportions.cs" />
+    <Compile Include="data\language support\Languages.cs" />
+    <Compile Include="data\save file\Reader.cs" />
     <Compile Include="time periods\TimePeriods.cs" />
-    <Compile Include="data\DataSearch.cs" />
+    <Compile Include="data\ck3 log\DataSearch.cs" />
     <Compile Include="client\MainFile.cs">
       <SubType>Form</SubType>
     </Compile>

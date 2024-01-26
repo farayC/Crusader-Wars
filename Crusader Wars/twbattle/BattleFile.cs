@@ -277,6 +277,7 @@ namespace Crusader_Wars
             {
                 string name = Commander.Name;
                 int numberOfSoldiers = Commander.GetUnitSoldiers();
+                var accolade = Commander.GetAccolade();
 
                 if (numberOfSoldiers < 1) return;
 
@@ -293,6 +294,26 @@ namespace Crusader_Wars
                      $"<orientation radians=\"{Rotation}\"/>\n" +
                      "<width metres=\"21.70\"/>\n" +
                      $"<unit_experience level=\"{experience}\"/>\n" +
+                     "<unit_capabilities>\n" +
+                     "<special_ability></special_ability>\n";
+
+
+                    if(!string.IsNullOrEmpty(accolade.Item1))
+                    {
+                        var special_ability = Accolades.ReturnAbilitiesKeys(accolade);
+                        if (special_ability.primaryKey != "null")
+                        {
+                            PR_General += $"<special_ability>{special_ability.primaryKey}</special_ability>\n";
+                        }
+                        if (special_ability.secundaryKey != "null")
+                        {
+                            PR_General += $"<special_ability>{special_ability.secundaryKey}</special_ability>\n";
+                        }
+
+                    }
+
+                     PR_General += 
+                     "</unit_capabilities>\n" +
                      "<general>\n" +
                      $"<name>{name}</name>\n" +
                      $"<star_rating level=\"{Commander.GetCommanderStarRating()}\"/>\n" +
@@ -348,21 +369,26 @@ namespace Crusader_Wars
                  $"<unit_experience level=\"{experience}\"/>\n";
                 
                 PR_Unit += "<unit_capabilities>\n";
+                PR_Unit += "<special_ability></special_ability>\n"; //dummy ability to remove all abilities from this unit
 
                 //accolades special abilities
-                foreach (var accolade in accoladesList)
+                if(accoladesList != null)
                 {
-                    var accoladeAbilites = Accolades.ReturnAbilitiesKeys(accolade);
-                    if (accoladeAbilites.primaryKey != "null")
+                    foreach (var accolade in accoladesList)
                     {
-                        PR_Unit += $"<special_ability>{accoladeAbilites.primaryKey}</special_ability>\n";
+                        var accoladeAbilites = Accolades.ReturnAbilitiesKeys(accolade);
+                        if (accoladeAbilites.primaryKey != "null")
+                        {
+                            PR_Unit += $"<special_ability>{accoladeAbilites.primaryKey}</special_ability>\n";
+                        }
+                        if (accoladeAbilites.secundaryKey != "null")
+                        {
+                            PR_Unit += $"<special_ability>{accoladeAbilites.secundaryKey}</special_ability>\n";
+                        }
+
                     }
-                    if(accoladeAbilites.secundaryKey != "null")
-                    {
-                        PR_Unit += $"<special_ability>{accoladeAbilites.secundaryKey}</special_ability>\n";
-                    }
-                    
                 }
+
 
                 PR_Unit += "</unit_capabilities>\n";
                 PR_Unit += "</unit>\n\n";

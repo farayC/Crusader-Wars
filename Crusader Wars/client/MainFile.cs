@@ -149,7 +149,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();
 
             //Hide debug button
-            btt_debug.Visible = true;
+            btt_debug.Visible = false;
 
             Color myColor = Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
@@ -792,7 +792,7 @@ namespace Crusader_Wars
             string apostrophe = "'";
             foreach (char c in inputString)
             {
-                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\n' || c == '-' || c == ':' || c == ' '|| char.IsLetter(c) || c == '?' || c == apostrophe[0])
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\n' || c == '-' || c == ':' || c == ' '|| char.IsLetter(c) || c == '?' || c == apostrophe[0] || c== '%')
                 {
                     sb.Append(c);
                 }

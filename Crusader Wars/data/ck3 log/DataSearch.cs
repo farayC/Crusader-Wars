@@ -446,7 +446,6 @@ namespace Crusader_Wars
             enemy.Commander.SetName(enemy_name);
         }
 
-
         private static void KnightsSearch(string army_data, ICharacter side)
         {
             string Knights = Regex.Match(army_data, @"(?<Knights>ONCLICK:CHARACTER[\s\S]*?)\z[\s\S]*?").Groups["Knights"].Value;
@@ -455,7 +454,7 @@ namespace Crusader_Wars
             side.Knights = new KnightSystem();
 
             //Search Knights
-            List<(string, int, int, List<string>,BaseSkills, bool)> ProwessList = new List<(string, int, int, List<string>, BaseSkills,bool)>();
+            List<(string, int, int, List<string>,BaseSkills, bool)> KnightsList = new List<(string, int, int, List<string>, BaseSkills,bool)>();
             MatchCollection knights_collection = Regex.Matches(Knights, "(?<Prowess>\\d+) E TOOLTIP");
             MatchCollection knights_id_collection = Regex.Matches(Knights, "CHARACTER(?<ID>\\d+) TOOLTIP");
 
@@ -463,8 +462,9 @@ namespace Crusader_Wars
             for (int i = 0; i < knights_collection.Count; i++)
             {
                 string id = knights_id_collection[i].Groups["ID"].Value;
+                if (id == side.ID.ToString()) continue; // if commander is on the list knight, skip it.
                 int knight_prowess = Int32.Parse(knights_collection[i].Groups["Prowess"].Value);
-                ProwessList.Add((id,3,knight_prowess, new List<string>(), null,false));
+                KnightsList.Add((id,3,knight_prowess, new List<string>(), null,false));
             }
 
             MatchCollection knight_effectiveness = Regex.Matches(Knights, @"(?<Effectiveness>\d+)%");
@@ -475,7 +475,10 @@ namespace Crusader_Wars
                 effectiveness += value;
             }
 
-            side.Knights.SetData(ProwessList, effectiveness);
+
+            
+
+            side.Knights.SetData(KnightsList, effectiveness);
 
         }
 

@@ -46,10 +46,10 @@ namespace Crusader_Wars
                 while(line != null && !reader.EndOfStream) 
                 {
                     line = reader.ReadLine();
-                    GetterKeys.ReadProvinceBuildings(line, "5984");
+                    //GetterKeys.ReadProvinceBuildings(line, "5984");
                     GetterKeys.ReadAccolades(line, Player, Enemy);
                     GetterKeys.ReadCourtPositions(line, Player, Enemy);
-                    GetterKeys.ReadBattleCharactersTraits(line, Player, Enemy);
+                    GetterKeys.ReadLivingCharacters(line, Player, Enemy);
                     SearchKeys.TraitsList(line);
                     SearchKeys.Combats(line);
                     SearchKeys.Regiments(line);
@@ -163,6 +163,12 @@ namespace Crusader_Wars
         public static List<(string,string,string)> PlayerAccolades = new List<(string,string,string)>();
         public static List<(string,string,string)> EnemysAccolades = new List<(string,string,string)>();
 
+
+        public static string PlayerCommanderAccoladeID = "";
+        public static string EnemyCommanderAccoladeID = "";
+        public static (string, string, string) PlayerCommanderAccolade;
+        public static (string, string, string) EnemyCommanderAccolade;
+
         //Sieges
         public static List<string> Province_Buildings = new List<string>();
 
@@ -200,6 +206,11 @@ namespace Crusader_Wars
             EnemyIDsAccolades = new List<string>();
             PlayerAccolades = new List<(string, string, string)> ();
             EnemysAccolades = new List<(string, string, string)>();
+
+            PlayerCommanderAccoladeID = "";
+            EnemyCommanderAccoladeID = "";
+            PlayerCommanderAccolade = ("","","");
+            EnemyCommanderAccolade = ("","","");
 
             Traits = new StringBuilder();
             Combats = new StringBuilder();
@@ -290,20 +301,22 @@ namespace Crusader_Wars
         static string glory;
         static bool isAccoladePlayer = false;
         static bool isAccoladeEnemy = false;
+        static bool isAccoladePlayerCommander = false;
+        static bool isAccoladeEnemyCommander = false;
         public static void ReadAccolades(string line, ICharacter player, ICharacter enemy)
         {
             //if there is a accolade id found
-            if(Data.PlayerIDsAccolades.Count > 0 || Data.EnemyIDsAccolades.Count > 0)
+            if (Data.PlayerIDsAccolades.Count > 0 || Data.EnemyIDsAccolades.Count > 0)
             {
-                if(line == "accolades={")
+                if (line == "accolades={")
                 {
-                    isSearchPermittedAccolades= true;
+                    isSearchPermittedAccolades = true;
                 }
 
                 //find accolade on the battle
-                if(isSearchPermittedAccolades && !StartAccoladeSearchAllowed) 
+                if (isSearchPermittedAccolades && !StartAccoladeSearchAllowed)
                 {
-                    foreach(var id in Data.PlayerIDsAccolades) 
+                    foreach (var id in Data.PlayerIDsAccolades)
                     {
                         if (line == $"\t\t{id}={{")
                         {
@@ -324,62 +337,94 @@ namespace Crusader_Wars
                             break;
                         }
                     }
-                }
 
-
-                //search for attributes and glory
-                if(StartAccoladeSearchAllowed && line.Contains("\t\t\tprimary=")) 
-                {
-                    primary_attribute = Regex.Match(line, @"\w+", RegexOptions.RightToLeft).Value;
-                }
-                if (StartAccoladeSearchAllowed && line.Contains("\t\t\tsecondary="))
-                {
-                    secundary_attribute = Regex.Match(line, @"\w+", RegexOptions.RightToLeft).Value;
-                }
-                if (StartAccoladeSearchAllowed && line.Contains("\t\t\tglory="))
-                {
-                    glory = Regex.Match(line, @"\d+", RegexOptions.RightToLeft).Value;
-                }
-
-
-                //add data to list
-                if(primary_attribute != String.Empty && secundary_attribute != String.Empty && glory != String.Empty)
-                {
-                    if(isAccoladePlayer) { Data.PlayerAccolades.Add((primary_attribute, secundary_attribute, glory)); }
-                    else { Data.EnemysAccolades.Add((primary_attribute, secundary_attribute, glory)); }
-
-
-                    primary_attribute = "";
-                    secundary_attribute = "";
-                    glory = "";
-                    isAccoladeEnemy = false;
-                    isAccoladePlayer = false;
-                }
-
-                //accolade data end line
-                if(StartAccoladeSearchAllowed && line == "\t\t}")
-                {
-                    StartAccoladeSearchAllowed = false;
-                    found_accolade_id = "";
-                }
-
-                //accolades data group end line
-                if(isSearchPermittedAccolades && line == "tax_slot_manager={")
-                {
-                    //clear empty items
-                    Data.PlayerAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
-                    Data.EnemysAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
-
-                    player.Knights.SetAccolades(Data.PlayerAccolades);
-                    enemy.Knights.SetAccolades(Data.EnemysAccolades);
-
-                    StartAccoladeSearchAllowed = false;
-                    isSearchPermittedAccolades = false;
-
+                    if (line == $"\t\t{Data.PlayerCommanderAccoladeID}={{")
+                    {
+                        isAccoladePlayerCommander = true;
+                        found_accolade_id = Data.PlayerCommanderAccoladeID;
+                        StartAccoladeSearchAllowed = true;
+                    }
+                    else if (line == $"\t\t{Data.EnemyCommanderAccoladeID}={{")
+                    {
+                        isAccoladeEnemyCommander = true;
+                        found_accolade_id = Data.EnemyCommanderAccoladeID;
+                        StartAccoladeSearchAllowed = true;
+                    }
 
                 }
+                    //search for attributes and glory
+                    if (StartAccoladeSearchAllowed && line.Contains("\t\t\tprimary="))
+                    {
+                        primary_attribute = Regex.Match(line, @"\w+", RegexOptions.RightToLeft).Value;
+                    }
+                    if (StartAccoladeSearchAllowed && line.Contains("\t\t\tsecondary="))
+                    {
+                        secundary_attribute = Regex.Match(line, @"\w+", RegexOptions.RightToLeft).Value;
+                    }
+                    if (StartAccoladeSearchAllowed && line.Contains("\t\t\tglory="))
+                    {
+                        glory = Regex.Match(line, @"\d+").Value;
+                    }
 
 
+                    //add data to list
+                    if (primary_attribute != String.Empty && secundary_attribute != String.Empty && glory != String.Empty)
+                    {
+                        if (isAccoladePlayer)
+                        {
+                            Data.PlayerAccolades.Add((primary_attribute, secundary_attribute, glory));
+                            Console.WriteLine($"Player Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
+                        }
+                        else if(isAccoladeEnemy)
+                        {
+                            Data.EnemysAccolades.Add((primary_attribute, secundary_attribute, glory));
+                            Console.WriteLine($"Enemy Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
+                        }
+                        else if(isAccoladePlayerCommander)
+                        {
+                            player.Commander.SetAccolade((primary_attribute, secundary_attribute, glory));
+                            Console.WriteLine($"Player Commander Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
+                        }
+                        else if(isAccoladeEnemyCommander)
+                        {
+                            enemy.Commander.SetAccolade((primary_attribute, secundary_attribute, glory));
+                            Console.WriteLine($"Enemmy Commander Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
+                        }
+
+
+                        primary_attribute = "";
+                        secundary_attribute = "";
+                        glory = "";
+                        isAccoladeEnemy = false;
+                        isAccoladePlayer = false;
+                        isAccoladePlayerCommander = false;
+                        isAccoladeEnemyCommander = false;
+                    }
+
+                    //accolade data end line
+                    if (StartAccoladeSearchAllowed && line == "\t\t}")
+                    {
+                        StartAccoladeSearchAllowed = false;
+                        found_accolade_id = "";
+                    }
+
+                    //accolades data group end line
+                    if (isSearchPermittedAccolades && line == "tax_slot_manager={")
+                    {
+                        //clear empty items
+                        Data.PlayerAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
+                        Data.EnemysAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
+
+                        player.Knights.SetAccolades(Data.PlayerAccolades);
+                        enemy.Knights.SetAccolades(Data.EnemysAccolades);
+
+                        StartAccoladeSearchAllowed = false;
+                        isSearchPermittedAccolades = false;
+
+
+                    }
+
+                
             }
         }
 
@@ -392,17 +437,16 @@ namespace Crusader_Wars
         static bool isPlayerKnight = false;
         static bool isEnemyKnight = false;
         static string char_id = "";
-        public static void ReadBattleCharactersTraits(string line, ICharacter Player, ICharacter Enemy)
+        public static void ReadLivingCharacters(string line, ICharacter Player, ICharacter Enemy)
         {
-            if(player_knights_list == null || enemy_knights_list == null)
-            {
-                player_knights_list = Player.Knights.GetKnightsList();
-                enemy_knights_list  = Enemy.Knights.GetKnightsList();
-            }
+
 
             if (line == "living={")
             {
                 isSearchPermittedLiving = true;
+
+                player_knights_list = Player.Knights.GetKnightsList();
+                enemy_knights_list = Enemy.Knights.GetKnightsList();
             }
 
             if (isSearchPermittedLiving && !StartCharacterSearchAllowed)
@@ -489,40 +533,62 @@ namespace Crusader_Wars
                 //set the knight as accolade if true and add id to a list
                 if (line.Contains("\t\taccolade="))
                 {
-                    var player_knights = Player.Knights.GetKnightsList();
-                    var enemy_knights = Enemy.Knights.GetKnightsList();
-
+                   
                     (string, int, int, List<string>, BaseSkills, bool) accolade_knight;
-                    try 
-                    { 
-                        accolade_knight = player_knights.First(x => x.Item1 == char_id);  
-                    }
-                    catch 
-                    { 
-                        accolade_knight = enemy_knights.First(x => x.Item1 == char_id); 
-                    }
-
 
                     if (isPlayerKnight)
                     {
-                        int index = player_knights.IndexOf(accolade_knight);
-                        accolade_knight = ((accolade_knight.Item1, 7, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
-                        player_knights[index] = accolade_knight;
+                        try
+                        {
+                            var player_knights = Player.Knights.GetKnightsList();
+                            accolade_knight = player_knights.First(x => x.Item1 == char_id);
+
+                            int index = player_knights.IndexOf(accolade_knight);
+                            accolade_knight = ((accolade_knight.Item1, 7, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
+                            player_knights[index] = accolade_knight;
+
+                            string accolade_id = Regex.Match(line, @"\d+").Value;
+                            Data.PlayerIDsAccolades.Add(accolade_id);
+                            Console.WriteLine("Player accolade found with an id of - " + char_id);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("");
+                        }
+
                     }
                     else if (isEnemyKnight)
                     {
-                        int index = enemy_knights.IndexOf(accolade_knight);
-                        accolade_knight = ((accolade_knight.Item1, 7, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5,true));
-                        enemy_knights[index] = accolade_knight;
-                    }
+                        try
+                        {
+                            var enemy_knights = Enemy.Knights.GetKnightsList();
+                            accolade_knight = enemy_knights.First(x => x.Item1 == char_id);
 
+                            int index = enemy_knights.IndexOf(accolade_knight);
+                            accolade_knight = ((accolade_knight.Item1, 7, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
+                            enemy_knights[index] = accolade_knight;
 
-                    string accolade_id = Regex.Match(line, @"\d+").Value;
-                    if (isPlayerKnight) {
-                        Data.PlayerIDsAccolades.Add(accolade_id); 
+                            string accolade_id = Regex.Match(line, @"\d+").Value;
+                            Data.EnemyIDsAccolades.Add(accolade_id);
+                            Console.WriteLine("Enemy accolade found with an id of - " + char_id);
+                        }
+                        catch 
+                        {
+                            Console.WriteLine("");
+                        }
+
                     }
-                    else if(isEnemyKnight) { 
-                        Data.EnemyIDsAccolades.Add(accolade_id); 
+                    else if(isPlayerCommander) 
+                    {
+                        string accolade_id = Regex.Match(line, @"\d+").Value;
+                        Data.PlayerCommanderAccoladeID = accolade_id;
+                        Console.WriteLine("Player Accolade Commander found with an id of - "+ char_id);
+                    }
+                    else if (isEnemyCommander)
+                    {
+                        string accolade_id = Regex.Match(line, @"\d+").Value;
+                        Data.EnemyCommanderAccoladeID = accolade_id;
+                        Console.WriteLine("Enemy Accolade Commander found with an id of - " + char_id);
                     }
 
                 }
@@ -537,22 +603,27 @@ namespace Crusader_Wars
                 isPlayerCommander = false;
                 isEnemyKnight = false;
                 isPlayerKnight = false;
+
                 char_id = "";
                 StartCharacterSearchAllowed = false;
             }
 
             //end line to all court positions data
-            if(isSearchPermittedLiving && line == "dead_unprunable={")
+            //Second battle no knights bug is here!!!
+            if (isSearchPermittedLiving && line == "dead_unprunable={")
             {
-                player_knights_list = new List<(string, int, int, List<string>, BaseSkills, bool)>();
-                enemy_knights_list = new List<(string, int, int, List<string>, BaseSkills, bool)> ();
+                player_knights_list = null;
+                enemy_knights_list = null;
+
                 isEnemyCommander = false;
                 isPlayerCommander = false;
                 isEnemyKnight = false;
                 isPlayerKnight = false;
+
                 char_id = "";
                 StartCharacterSearchAllowed = false;
                 isSearchPermittedLiving = false;
+
             }
         }
 
