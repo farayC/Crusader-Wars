@@ -1,5 +1,6 @@
 ﻿using Crusader_Wars.armies;
 using Crusader_Wars.client;
+using Crusader_Wars.locs;
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
@@ -81,10 +82,11 @@ namespace Crusader_Wars
             ArmyProportions.SetRatio(ModOptions.GetBattleScale());
 
             /*---------------------------------------------
-             * :::::::::::::::::::Date:::::::::::::::::::::
+             * :::::::::::::::::::Geral Data:::::::::::::::
              ---------------------------------------------*/
 
              DateSearch(log);
+            BattleNameSearch(log);
 
 
             /*---------------------------------------------
@@ -204,7 +206,11 @@ namespace Crusader_Wars
 
         }
 
-
+        private static void BattleNameSearch(string log)
+        {
+            string battle_name = Regex.Match(log, "BattleName:(?<BattleName>.+)\n").Groups["BattleName"].Value;
+            BattleDetails.SetBattleName(battle_name);
+        }
 
         private static void DateSearch(string log)
         {
@@ -285,7 +291,7 @@ namespace Crusader_Wars
             List<(string Type, int Number)> FoundMAA = new List<(string Type, int Number)>();
 
             //Levies
-            MatchCollection levies_found = Regex.Matches(ArmyComposition, ModOptions.FullArmiesLevies());
+            MatchCollection levies_found = Regex.Matches(ArmyComposition, ModOptions.FullArmiesLevies(ArmyComposition));
             int levies = 0;
             foreach (Match match in levies_found)
             {
@@ -302,9 +308,6 @@ namespace Crusader_Wars
             }
 
 
-            //MenAtArms
-            string pattern_current_soldiers = "L (?<MenAtArms>.+):.+?(?<SoldiersNum>\\d+)";
-            string pattern_full_soldiers = "L (?<MenAtArms>.+):.+\\d+V (?<SoldiersNum>\\d+)";
 
             MatchCollection maa_matches = Regex.Matches(ArmyComposition, ModOptions.FullArmiesMAA());
 
@@ -358,12 +361,13 @@ namespace Crusader_Wars
 
                 //Knights
                 //if army has knights
+                /*
                 if (side.Knights.GetKnightsSoldiers() > 0)
                 {
-                    var knights_unit = UnitMapper.PlayerUnits.FirstOrDefault(item => item.Type == "Knights");
-                    side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"player_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
-                }
 
+                }*/
+                var knights_unit = UnitMapper.PlayerUnits.FirstOrDefault(item => item.Type == "Knights");
+                side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"player_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
 
                 foreach (var unit in UnitMapper.PlayerUnits)
                 {
@@ -390,12 +394,8 @@ namespace Crusader_Wars
                 }
 
                 //Knights
-                //if army has knights
-                if(side.Knights.GetKnightsSoldiers() > 0)
-                {
-                    var knights_unit = UnitMapper.EnemyUnits.FirstOrDefault(item => item.Type == "Knights");
-                    side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"enemy_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
-                }
+                var knights_unit = UnitMapper.EnemyUnits.FirstOrDefault(item => item.Type == "Knights");
+                side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"enemy_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
 
                 foreach (var unit in UnitMapper.EnemyUnits)
                 {
@@ -518,6 +518,7 @@ namespace Crusader_Wars
             {
                 MessageBox.Show("The enemy side doesn't have a commander, unfortunaly this battle is impossible to fight....", "Impossible Battle Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                throw;
             }
  
 

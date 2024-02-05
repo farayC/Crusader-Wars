@@ -103,12 +103,21 @@ namespace Crusader_Wars.client
             }
             
         }
-        public static string FullArmiesLevies()
+        public static string FullArmiesLevies(string army_composition_text)
         {
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies");
 
             string pattern_current_soldiers = "Levies.+?(?=)(?<SoldiersNum>\\d+)";
-            string pattern_full_soldiers = "Levies.+V.(?<SoldiersNum>\\d+)";
+            string pattern_full_soldiers;
+            if (army_composition_text.Contains("month"))
+            {
+                pattern_full_soldiers = "Levies.+V.(?<SoldiersNum>\\d+) ";
+            }
+            else
+            {
+                pattern_full_soldiers = "Levies.+V.(?<SoldiersNum>\\d+)";
+            }
+
 
             switch (option.value)
             {
@@ -127,6 +136,7 @@ namespace Crusader_Wars.client
 
             string pattern_current_soldiers = "L (?<MenAtArms>.+):.+?(?<SoldiersNum>\\d+)";
             string pattern_full_soldiers = "L (?<MenAtArms>.+):.+\\d+V (?<SoldiersNum>\\d+)";
+
 
             switch (option.value)
             {

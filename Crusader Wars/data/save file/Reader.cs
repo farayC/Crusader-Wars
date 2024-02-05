@@ -464,24 +464,32 @@ namespace Crusader_Wars
                     char_id = Enemy.Commander.CommanderID;
                 }
                 
-                foreach(var knight in player_knights_list)
+                if(player_knights_list != null)
                 {
-                    if (line == $"\t{knight.Item1}={{" || line == $"{knight.Item1}={{")
+                    foreach (var knight in player_knights_list)
                     {
-                        StartCharacterSearchAllowed = true;
-                        isPlayerKnight=true;
-                        char_id = knight.Item1;
+                        if (line == $"\t{knight.Item1}={{" || line == $"{knight.Item1}={{")
+                        {
+                            StartCharacterSearchAllowed = true;
+                            isPlayerKnight = true;
+                            char_id = knight.Item1;
+                        }
                     }
                 }
-                foreach (var knight in enemy_knights_list)
+
+                if( enemy_knights_list != null )
                 {
-                    if (line == $"\t{knight.Item1}={{" || line == $"{knight.Item1}={{")
+                    foreach (var knight in enemy_knights_list)
                     {
-                        StartCharacterSearchAllowed = true;
-                        isEnemyKnight=true;
-                        char_id = knight.Item1;
+                        if (line == $"\t{knight.Item1}={{" || line == $"{knight.Item1}={{")
+                        {
+                            StartCharacterSearchAllowed = true;
+                            isEnemyKnight = true;
+                            char_id = knight.Item1;
+                        }
                     }
                 }
+
             }
 
             if(StartCharacterSearchAllowed)

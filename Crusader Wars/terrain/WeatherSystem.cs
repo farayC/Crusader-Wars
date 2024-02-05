@@ -9,9 +9,9 @@ namespace Crusader_Wars.terrain
 {
     public static class Weather
     {
-        static string Season { get;set; }
-        static bool HasWinter { get;set; }
-        static string Winter_Severity { get; set; }
+        public static string Season { get;private set; }
+        public static bool HasWinter { get;private set; }
+        public static string Winter_Severity { get; private set; }
 
         struct MildWinter
         {
@@ -88,7 +88,7 @@ namespace Crusader_Wars.terrain
             {
                 return new List<string> {"Weather\\ROME_Med\\default\\Land\\day\\rain\\morn_9.environment",
                                          "Weather\\default\\default\\land\\day\\rain\\default_day_rain.environment",
-                                        "Weather\\default\\default\\land\\day\\rain\\morn_9.environmentt",
+                                        "Weather\\default\\default\\land\\day\\rain\\morn_9.environment",
                                         "Weather\\default\\default\\land\\day\\dry\\CC1_2_day_dry_1.environment",
                                         "Weather\\default\\default\\land\\day\\dry\\CC4_day_dry_1.environment",
                                         "Weather\\default\\default\\land\\day\\dry\\CC4_day_dry_2.environment",
