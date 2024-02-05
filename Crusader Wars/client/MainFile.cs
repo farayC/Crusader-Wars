@@ -14,6 +14,8 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using Crusader_Wars.client;
 using Crusader_Wars.client.RequiredMods;
+using Crusader_Wars.locs;
+using static Crusader_Wars.Languages;
 
 namespace Crusader_Wars
 {
@@ -149,7 +151,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();
 
             //Hide debug button
-            btt_debug.Visible = false;
+            btt_debug.Visible = true;
 
             Color myColor = Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
@@ -158,7 +160,7 @@ namespace Crusader_Wars
             Options.ReadOptionsFile();
             ModOptions.StoreOptionsValues(Options.optionsValuesCollection);
 
-
+            
         }
 
         //---------------------------------//
@@ -167,6 +169,7 @@ namespace Crusader_Wars
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
+
         }
         
 
@@ -337,6 +340,7 @@ namespace Crusader_Wars
 
                                 DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
                                 DataSearch.Search(log, Player, Enemy);
+
                             }
                         }
                         catch
@@ -382,6 +386,9 @@ namespace Crusader_Wars
                     BattleResult.GetAllArmyRegiments();
                     BattleResult.GetAllRegiments();
 
+
+
+
                 }
                 catch
                 {
@@ -397,6 +404,10 @@ namespace Crusader_Wars
                 try
                 {
                     BattleResult.GetCombatSides(Player, Enemy);
+
+                    //debug purpose for now
+                    UnitsCardsNames.ChangeUnitsCardsNames(Player, Enemy);
+                    BattleDetails.ChangeBattleDetails(Player, Enemy);
                 }
                 catch
                 {

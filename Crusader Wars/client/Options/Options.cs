@@ -374,8 +374,8 @@ namespace Crusader_Wars
             int disabled = 0;
             int enabled = 0;
 
-            
 
+            YearCollection = new Dictionary<string, (int start, int end)>();
             foreach (var item in folderCheckStates)
             {
                 if (item.Value is false)
@@ -406,13 +406,41 @@ namespace Crusader_Wars
             }
             if (enabled == 1)
             {
-                Label_MapperStatus.Text = $"Single Mapper loaded!";
-                Label_MapperStatus.ForeColor = Color.White;
+                string loaded_mapper = YearCollection.First().Key;
+                if (loaded_mapper.Contains("OfficialCW"))
+                {
+                    Label_MapperStatus.Text = $"Single Mapper loaded!";
+                    Label_MapperStatus.ForeColor = Color.White;
+                }
+                else if (loaded_mapper.Contains("xCW_FallenEagle"))
+                {
+                    Label_MapperStatus.Text = $"Single TFE Mapper loaded!";
+                    Label_MapperStatus.ForeColor = Color.White;
+                }
+                else if (loaded_mapper.Contains("xCW_RealmsInExile"))
+                {
+                    Label_MapperStatus.Text = $"Single LOTR Mapper loaded!";
+                    Label_MapperStatus.ForeColor = Color.White;
+                }
+
             }
             if (enabled > 1)
             {
+                //LOTR & TFE mix warning
+                try
+                {
+                    string lotr_one = YearCollection.First(item => item.Key.Contains("xCW_RealmsInExile")).Key;
+                    string tfe_one = YearCollection.First(item => item.Key.Contains("xCW_FallenEagle")).Key;
 
-                //Total Conversion mix check
+                    Label_MapperStatus.Text = "Incorrect mix of loaded Mappers!";
+                    Label_MapperStatus.ForeColor = Color.Red;
+
+                    return;
+                }
+                catch { }
+
+
+                //Total Conversion & Offical mix warning
                 try
                 {
                     string official_one = YearCollection.First(item => item.Key.Contains("OfficialCW")).Key;
@@ -429,9 +457,9 @@ namespace Crusader_Wars
                 //Time Period
                 int minimum_year = 0;
                 int maximum_year = 0;
+
                 foreach (var item in YearCollection) 
                 {
-
 
                     int min, max;   
                     min = Math.Min(item.Value.start, item.Value.end);
@@ -442,7 +470,9 @@ namespace Crusader_Wars
                     if (min < minimum_year) { minimum_year = min; }
                     if (max > maximum_year) { maximum_year = max; }
                 }
+                
 
+                
                 Label_MapperStatus.Text = $"Loading Mappers from {minimum_year}AD to {maximum_year}AD!";
                 Label_MapperStatus.ForeColor = Color.White;
             }
@@ -686,6 +716,11 @@ namespace Crusader_Wars
             else if(Label_MapperStatus.Text == "No Mapper enabled!")
             {
                 string message = "You didn't enable a Unit Mapper, enable one or the mod will not work!";
+                WarningMessage.ShowWarningMessage(message);
+            }
+            else if(Label_MapperStatus.Text == "Incorrect mix of loaded Mappers!")
+            {
+                string message = "You enabled \"Realms in Exile\" Mapper with \"The Fallen Eagle\" Mapper, just enable one of them or the mod will not work!";
                 WarningMessage.ShowWarningMessage(message);
             }
 

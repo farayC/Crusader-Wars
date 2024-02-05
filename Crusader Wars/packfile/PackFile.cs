@@ -10,6 +10,7 @@ namespace Crusader_Wars
     public static class PackFile
     {
 
+
         public static void PackFileCreator()
         {
             // Create and import .pack file
@@ -17,10 +18,11 @@ namespace Crusader_Wars
             string create_path =Directory.GetCurrentDirectory() + @"\CrusaderWars.pack";
             string add_path = Directory.GetCurrentDirectory() + @"\battle files";
             string thumbnail_path = Directory.GetCurrentDirectory() + @"\Settings\CrusaderWars.png";
+            string tsv_path = Directory.GetCurrentDirectory() + @"\Settings\schema_att.ron";
 
             string create_command = $@"--game attila pack create -p ""{create_path}""";
-           // string add_command = $@"--game attila pack add -p ""{create_path}"" -t ""{add_path}\""";
-            string add_command = $@"--game attila pack add -p ""{create_path}"" -F ""{add_path}""";
+            //string add_command = $@"--game attila pack add -p ""{create_path}"" -F ""{add_path}""";
+            string add_command = $@"--game attila pack add -p ""{create_path}"" -t ""{tsv_path}"" -F ""{add_path}""";
 
             CreatePackFile(create_command);
             CreatePackFile(add_command);
@@ -60,6 +62,7 @@ namespace Crusader_Wars
             {
                 proc.StartInfo = procStartInfo;
                 proc.Start();
+                Console.WriteLine(proc.StandardOutput.ReadToEnd());
                 return proc.StandardOutput.ReadToEnd();
             }
         }

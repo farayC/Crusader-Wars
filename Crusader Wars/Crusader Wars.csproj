@@ -143,6 +143,8 @@
       <DependentUpon>WarningMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="data\ck3 log\SiegesSearch.cs" />
+    <Compile Include="locs\BattleDetails.cs" />
+    <Compile Include="locs\UnitsCardsNames.cs" />
     <Compile Include="sieges\Sieges_DataTypes.cs" />
     <Compile Include="terrain\Deployments.cs" />
     <Compile Include="terrain\Lands.cs" />
