@@ -33,7 +33,7 @@ namespace Crusader_Wars.locs
             string patreon_text = "Special thanks to our patreons for supporting the development of the mod: Jermaine, Kameron, Michael Nathan Chananja, Kyra, Gav, Walid Kazzaz, Carl Enqvist, I Regret This Already, Oron Gabay, Kyle T David, Ryan Merklen, Chris Kelly, Kieran Britt, Chris Amori, Galahad!";
 
             string original_battle_details_path = @".\battle files\text\db\tutorial_historical_battles.loc.tsv";
-            string copy_path = @".\Settings\tutorial_historical_battles.loc.tsv";
+            string copy_path = @".\data\tutorial_historical_battles.loc.tsv";
             File.Copy(original_battle_details_path, copy_path);
             File.WriteAllText(copy_path, string.Empty);
 
@@ -62,6 +62,8 @@ namespace Crusader_Wars.locs
                         double player_total_soldiers = player.TotalNumber;
                         double enemy_total_soldiers = enemy.TotalNumber;
 
+                        string white_spaces = "";
+
                         string new_text = $"{player_side_realm_name}" + "  VS  " + $"{enemy_side_realm_name}" +
                                            "\\\\n" +
                                           $"Total Soldiers: {player_total_soldiers}" + "\\\\t||\\\\t" + $"Total Soldiers: {enemy_total_soldiers}" +
@@ -78,14 +80,14 @@ namespace Crusader_Wars.locs
             }
 
             File.WriteAllText(copy_path, new_data);
-            File.Delete(original_battle_details_path);
+            if(File.Exists(original_battle_details_path))File.Delete(original_battle_details_path);
             File.Move(copy_path, original_battle_details_path);
         }
 
         private static void EditCombatSidesDetails(Player player, Enemy enemy)
         {
             string original_attila_file_path = @".\battle files\text\db\tutorial_historical_battles_factions.loc.tsv";
-            string copy_path = @".\Settings\tutorial_historical_battles_factions.loc.tsv";
+            string copy_path = @".\data\tutorial_historical_battles_factions.loc.tsv";
             File.Copy(original_attila_file_path, copy_path);
             File.WriteAllText(copy_path, string.Empty);
 
@@ -118,7 +120,7 @@ namespace Crusader_Wars.locs
             }
 
             File.WriteAllText(copy_path, new_data);
-            File.Delete(original_attila_file_path);
+            if(File.Exists(original_attila_file_path))File.Delete(original_attila_file_path);
             File.Move(copy_path, original_attila_file_path);
         }
 
@@ -142,7 +144,7 @@ namespace Crusader_Wars.locs
              */
 
             
-            string images_folder_path = @".\Settings\terrains_images\";
+            string images_folder_path = @".\data\terrains_images\";
 
             string image_to_copy_path = "";
 
@@ -194,7 +196,7 @@ namespace Crusader_Wars.locs
                 }
             }
 
-            string default_image_path = @".\Settings\terrains_images\screenshot_small.png";
+            string default_image_path = @".\data\terrains_images\screenshot_small.png";
             
             //Default Version Image
             if(string.IsNullOrEmpty(image_to_copy_path))
@@ -203,7 +205,8 @@ namespace Crusader_Wars.locs
             }
 
             string battle_files_image_path = @".\battle files\script\tut_tutorial_battle\screenshot_small.png";
-            File.Delete(battle_files_image_path);
+
+            if(File.Exists(battle_files_image_path)) File.Delete(battle_files_image_path);
             File.Copy(image_to_copy_path, battle_files_image_path);
 
 

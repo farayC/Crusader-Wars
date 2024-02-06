@@ -15,6 +15,7 @@ namespace Crusader_Wars
 {
     public static class UnitMapper
     {
+        public static string LoadedMapper { get; private set; }
         public static List<(string Heritage, string Faction)> Heritages { get; private set; }
         public static List<(string Cultures, string Faction)> Cultures { get; private set; }
 
@@ -138,6 +139,8 @@ namespace Crusader_Wars
             //Image background
             ReadMapperImage(folderName);
             folder = folderName;
+
+            LoadedMapper = folderName;
         }
 
         private static void LoadMapperByTimePeriod()

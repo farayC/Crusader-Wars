@@ -17,104 +17,139 @@ namespace Crusader_Wars.locs
          *  -Knights Unit Card name based on their culture name
          */
 
-        public static void ChangeUnitsCardsNames(Player Player, Enemy Enemy)
+        public static void ChangeUnitsCardsNames(string Mapper_Name, Player Player, Enemy Enemy)
         {
-            string pattern = @"name_(?<AttilaUnit>\w+)\t(?<UnitName>.+)\t";
-
-            string edited_file = @".\Settings\919_land_units.loc.tsv";
-
-            string unit_919AD_path =@".\battle files\text\db\919_land_units.loc.tsv";
-
-
-            File.Copy(unit_919AD_path, edited_file);
-            File.WriteAllText(edited_file, string.Empty);
-
-            string edited_names="";
-            using (FileStream units_file = File.Open(unit_919AD_path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-            using (StreamReader reader = new StreamReader(units_file))
+            switch(Mapper_Name)
             {
-                string line = "";
-                while(line != null && !reader.EndOfStream)
-                {
-                    line = reader.ReadLine();
-                        
-                    foreach(var regiment in Player.Army)
-                    {
-                        if(line.Contains($"land_units_onscreen_name_{regiment.Key}\t"))
-                        {
-                            //Commander
-                            if(regiment.Type == "General")
-                            {
-                                string commander_name = ReturnGeneralName(Player);
-                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
-                                break;
-                            }
+                case "OfficialCW_DarkAges_AOC":
+                case "OfficialCW_EarlyMedieval_919Mod":
 
-                            //Knights
-                            if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
-                            {
+                    string attila_loc = @".\data\units_cards_names\land_units.loc.tsv";
+                    string mod919_loc = @".\data\units_cards_names\919_land_units.loc.tsv";
+                    string[] loc_files = new string []{mod919_loc,attila_loc };
+                    EditUnitCardsFiles(loc_files, Player, Enemy);
+                    break;
+                case "OfficialCW_HighMedieval_MK1212":
+                case "OfficialCW_LateMedieval_MK1212":
+                case "OfficialCW_Renaissance_MK1212":
+                    string mk1212_loc = @".\data\units_cards_names\mk1212_land_units.loc.tsv";
+                    string submod_loc = @".\data\units_cards_names\mk1212submod_land_units.loc.tsv";
+                    string[] mk1212_loc_files = new string[] { mk1212_loc, submod_loc };
+                    EditUnitCardsFiles(mk1212_loc_files, Player, Enemy);
+                    break;
 
-                            }
-
-
-                            //Levies
-                            if (regiment.Type.Contains("Levy"))
-                            {
-                                string levies_name = ReturnLeviesName(regiment.Type);
-
-                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
-                                break;
-                            }
-
-                            //Men-At-Arms
-                            line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{regiment.Type}\t");
-                            break;
-                        }
-                    }
-
-                    foreach(var regiment in Enemy.Army)
-                    {
-                        if (line.Contains($"land_units_onscreen_name_{regiment.Key}\t"))
-                        {
-                            //Commander
-                            if (regiment.Type == "General")
-                            {
-                                string commander_name = ReturnGeneralName(Enemy);
-                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
-                                break;
-                            }
-
-                            //Knights
-                            if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
-                            {
-
-                            }
-
-
-                            if (regiment.Type.Contains("Levy"))
-                            {
-                                string levies_name = ReturnLeviesName(regiment.Type);
-
-                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
-                                break;
-                            }
-
-                            line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{regiment.Type}\t");
-                            break;
-                        }
-                    }
-
-                    edited_names += line+"\n"; // write to string every line
-                }
-
-                reader.Close();
-                units_file.Close();
             }
 
-            File.WriteAllText (edited_file, edited_names);
-            File.Delete(unit_919AD_path);
-            File.Move(edited_file, unit_919AD_path);
         }
+
+        private static void EditUnitCardsFiles(string[] unit_cards_files, Player Player, Enemy Enemy)
+        {
+            for (int i = 0; i < unit_cards_files.Length - 1; i++)
+            {
+                string loc_file_path = unit_cards_files[i];
+                string loc_file_name = Path.GetFileName(loc_file_path);
+                string file_to_edit_path = $@".\data\{loc_file_name}";
+
+                //Copy original loc file
+                File.Copy(loc_file_path, file_to_edit_path);
+
+                //Clears the new one
+                File.WriteAllText(file_to_edit_path, string.Empty);
+
+                string edited_names = "";
+                using (FileStream units_file = File.Open(loc_file_path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (StreamReader reader = new StreamReader(units_file))
+                {
+                    string line = "";
+                    while (line != null && !reader.EndOfStream)
+                    {
+                        line = reader.ReadLine();
+
+                        foreach (var regiment in Player.Army)
+                        {
+                            if (line.Contains($"land_units_onscreen_name_{regiment.Key}\t"))
+                            {
+                                //Commander
+                                if (regiment.Type == "General")
+                                {
+                                    string commander_name = ReturnGeneralName(Player);
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
+                                    break;
+                                }
+
+                                //Knights
+                                if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
+                                {
+
+                                }
+
+
+                                //Levies
+                                if (regiment.Type.Contains("Levy"))
+                                {
+                                    string levies_name = ReturnLeviesName(regiment.Type);
+
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
+                                    break;
+                                }
+
+                                //Men-At-Arms
+                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{regiment.Type}\t");
+                                break;
+                            }
+                        }
+
+                        foreach (var regiment in Enemy.Army)
+                        {
+                            if (line.Contains($"land_units_onscreen_name_{regiment.Key}\t"))
+                            {
+                                //Commander
+                                if (regiment.Type == "General")
+                                {
+                                    string commander_name = ReturnGeneralName(Enemy);
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
+                                    break;
+                                }
+
+                                //Knights
+                                if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
+                                {
+
+                                }
+
+
+                                if (regiment.Type.Contains("Levy"))
+                                {
+                                    string levies_name = ReturnLeviesName(regiment.Type);
+
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
+                                    break;
+                                }
+
+                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{regiment.Type}\t");
+                                break;
+                            }
+                        }
+
+                        edited_names += line + "\n"; // write to string every line
+                    }
+
+                    reader.Close();
+                    units_file.Close();
+                }
+
+                string battle_files_path = $@".\battle files\text\db\{loc_file_name}";
+
+                File.WriteAllText(file_to_edit_path, edited_names);
+                if(File.Exists(battle_files_path))File.Delete(battle_files_path);
+                File.Move(file_to_edit_path, battle_files_path);
+
+            }
+            
+
+
+        }
+
 
         private static string ReturnLeviesName(string levy_type)
         {
@@ -137,7 +172,6 @@ namespace Crusader_Wars.locs
 
         private static string ReturnGeneralName(ICharacter Side)
         {
-            
 
             string name="Commander";
             switch(Side.Commander.Rank)
