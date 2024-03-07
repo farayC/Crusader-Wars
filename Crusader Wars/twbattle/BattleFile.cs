@@ -37,6 +37,7 @@ namespace Crusader_Wars
         public static void CreateBattle(Player Player, Enemy Enemy)
         {
             var battleMap = TerrainGenerator.GetBattleMap();
+            int total_soldiers = Player.TotalNumber + Enemy.TotalNumber;
 
             //Write essential data
             OpenBattle();
@@ -49,11 +50,11 @@ namespace Crusader_Wars
             //Write essential data
             SetPlayerFaction();
             //Write player deployment area
-            SetDeploymentArea(Player.CombatSide, battleMap);
+            SetDeploymentArea(total_soldiers, Player.CombatSide, battleMap);
             //Write player deployables defenses
             AddDeployablesDefenses(Player);
             //Set unit positions values
-            SetPositions();
+            SetPositions(total_soldiers);
             //Write all player army units
             UnitsFile.ConvertandAddArmyUnits(Player);
             //Write essential data
@@ -71,11 +72,11 @@ namespace Crusader_Wars
             //Write essential data
             SetEnemyFaction();
             //Write enemy deployment area
-            SetDeploymentArea(Enemy.CombatSide, battleMap);
+            SetDeploymentArea(total_soldiers, Enemy.CombatSide, battleMap);
             //Write enemy deployables defenses
             AddDeployablesDefenses(Enemy);
             //Write unit positions values
-            SetPositions();
+            SetPositions(total_soldiers);
             //Write all enemy army units
             UnitsFile.ConvertandAddArmyUnits(Enemy);
             //Write essential data
@@ -85,7 +86,7 @@ namespace Crusader_Wars
             //Write essential data
             CloseAlliance();
             //Write battle description
-            SetBattleDescription(Player);
+            SetBattleDescription(Player, total_soldiers);
             //Write battle map
             SetBattleTerrain(battleMap.X, battleMap.Y, Weather.GetWeather(), GetAttilaMap());
             //Write essential data
@@ -142,9 +143,9 @@ namespace Crusader_Wars
             File.AppendAllText(battlePath, PR_PlayerFaction);
         }
 
-        private static void SetDeploymentArea(string combat_side, (string, string, string[], string[]) battlemap)
+        private static void SetDeploymentArea(int total_soldiers,string combat_side, (string, string, string[], string[]) battlemap)
         {
-            string PR_Deployment = Deployments.SetDirection(combat_side, battlemap); ;
+            string PR_Deployment = Deployments.SetDirection(total_soldiers, combat_side, battlemap); ;
 
             File.AppendAllText(battlePath, PR_Deployment);
 
@@ -164,10 +165,11 @@ namespace Crusader_Wars
 
         static int default_x = -350;
         static int default_y = 0;
-        static (int x, int y) Position = (default_x, default_y);
+        static UnitsDeploymentsPosition Position;
         public static void ResetPositions()
         {
-            Position = (default_x, default_y);
+            Position = new UnitsDeploymentsPosition(default_x, default_y);
+            isFirstDirection = false;
         }
 
         static string west_rotation = "1.57";
@@ -178,54 +180,53 @@ namespace Crusader_Wars
         static string Direction = Deployments.Direction;
         static string Rotation;
 
-        public static void SetPositions()
+        static bool isFirstDirection = false;
+        public static void SetPositions(int total_soldiers)
         {
             Direction = Deployments.Direction;
+            UnitsDeploymentsPosition UnitsPosition = new UnitsDeploymentsPosition(Direction, ModOptions.DeploymentsZones(), total_soldiers) ;
 
-            if (Direction == "N")
+            if (!isFirstDirection) { isFirstDirection = true; }
+            else
+            {
+                UnitsPosition.InverseDirection();
+            }
+
+            if (UnitsPosition.Direction == "N")
             {
                 default_x = 0;
                 default_y = 350;
-                Position = (default_x, default_y);
+                Position = UnitsPosition;
                 Rotation = north_rotation;
             }
-            else if (Direction == "S")
+            else if (UnitsPosition.Direction == "S")
             {
                 default_x = 0;
                 default_y = -350;
-                Position = (default_x, default_y);
+                Position = UnitsPosition;
                 Rotation = south_rotation;
             }
-            else if (Direction == "E")
+            else if (UnitsPosition.Direction == "E")
             {
                 default_x = 350;
                 default_y = 0;
-                Position = (default_x, default_y);
+                Position = UnitsPosition;
                 Rotation = east_rotation;
             }
-            else if (Direction == "W")
+            else if (UnitsPosition.Direction == "W")
             {
                 default_x = -350;
                 default_y = 0;
-                Position = (default_x, default_y);
+                Position = UnitsPosition;
                 Rotation = west_rotation;
             }
         }
+
 
         public static void AddUnit(string troopKey, int numSoldiers, int numUnits, int numRest, string unitScript, string unit_experience)
         {
             if(numSoldiers <= 1 || numUnits == 0) return;
 
-
-
-            if(Direction == "S" || Direction == "N")
-            {
-                Position = (default_x, Position.y);
-            }
-            else if (Direction == "E" || Direction == "W")
-            {
-                Position = (Position.x, default_y);
-            }
 
             if (Int32.Parse(unit_experience) < 0) unit_experience = "0";
             if (Int32.Parse(unit_experience) > 9) unit_experience = "9";
@@ -238,7 +239,7 @@ namespace Crusader_Wars
                 Unit_Script_Name = unitScript + i.ToString();
                 string PR_Unit = $"<unit num_soldiers= \"{numSoldiers}\" script_name= \"{Unit_Script_Name}\">\n" +
                  $"<unit_type type=\"{troopKey}\"/>\n" +
-                 $"<position x=\"{Position.x}\" y=\"{Position.y}\"/>\n" +
+                 $"<position x=\"{Position.X}\" y=\"{Position.Y}\"/>\n" +
                  $"<orientation radians=\"{Rotation}\"/>\n" +
                  "<width metres=\"21.70\"/>\n" +
                  $"<unit_experience level=\"{unit_experience}\"/>\n" +
@@ -246,10 +247,10 @@ namespace Crusader_Wars
 
                 //Add horizontal spacing between units
                 if(Direction is "N" || Direction is "S")
-                Position = UnitsFile.AddUnitXSpacing(Direction,Position);
+                    Position.AddUnitXSpacing(Direction);
                 else
                 {
-                    Position = UnitsFile.AddUnitYSpacing(Direction, Position);
+                    Position.AddUnitYSpacing(Direction);
                 }
 
                 //Reset soldiers num to normal
@@ -258,6 +259,7 @@ namespace Crusader_Wars
                 //Adds Declarations and Locals to the Battle Files
                 DeclarationsFile.AddUnitDeclaration("UNIT_" + Unit_Script_Name, Unit_Script_Name);
                 BattleScript.SetLocals(Unit_Script_Name, "UNIT_" + Unit_Script_Name);
+                Data.units_scripts.Add((Unit_Script_Name, "UNIT_" + Unit_Script_Name));
                 
                 //Write to file
                 File.AppendAllText(battlePath, PR_Unit);
@@ -265,9 +267,9 @@ namespace Crusader_Wars
 
             //Add vertical spacing between units
             if (Direction is "N" || Direction is "S")
-            Position = UnitsFile.AddUnitYSpacing(Direction,Position);
+            Position.AddUnitYSpacing(Direction);
             else
-            Position = UnitsFile.AddUnitXSpacing(Direction, Position);
+            Position.AddUnitXSpacing(Direction);
 
         }
 
@@ -290,7 +292,7 @@ namespace Crusader_Wars
 
                     string PR_General = $"<unit num_soldiers= \"{numberOfSoldiers}\" script_name= \"{Unit_Script_Name}\">\n" +
                      $"<unit_type type=\"{troopType}\"/>\n" +
-                     $"<position x=\"{Position.x}\" y=\"{Position.y}\"/>\n" +
+                     $"<position x=\"{Position.Y}\" y=\"{Position.X}\"/>\n" +
                      $"<orientation radians=\"{Rotation}\"/>\n" +
                      "<width metres=\"21.70\"/>\n" +
                      $"<unit_experience level=\"{experience}\"/>\n" +
@@ -322,22 +324,23 @@ namespace Crusader_Wars
 
                     //Add horizontal spacing between units
                     if (Direction is "N" || Direction is "S")
-                        Position = UnitsFile.AddUnitXSpacing(Direction, Position);
+                        Position.AddUnitXSpacing(Direction);
                     else
                     {
-                        Position = UnitsFile.AddUnitYSpacing(Direction, Position);
+                        Position.AddUnitYSpacing(Direction);
                     }
 
                     DeclarationsFile.AddUnitDeclaration("UNIT_" + Unit_Script_Name, Unit_Script_Name);
                     BattleScript.SetLocals(Unit_Script_Name, "UNIT_" + Unit_Script_Name);
+                    Data.units_scripts.Add((Unit_Script_Name, "UNIT_" + Unit_Script_Name));
                     File.AppendAllText(battlePath, PR_General);
                 }
 
                 //Add vertical spacing between units
                 if (Direction is "N" || Direction is "S")
-                    Position = UnitsFile.AddUnitYSpacing(Direction, Position);
+                    Position.AddUnitYSpacing(Direction);
                 else
-                    Position = UnitsFile.AddUnitXSpacing(Direction, Position);
+                    Position.AddUnitXSpacing(Direction);
             }
 
         }
@@ -363,7 +366,7 @@ namespace Crusader_Wars
 
                 string PR_Unit = $"<unit num_soldiers= \"{numberOfSoldiers}\" script_name= \"{Unit_Script_Name}\">\n" +
                  $"<unit_type type=\"{troopType}\"/>\n" +
-                 $"<position x=\"{Position.x}\" y=\"{Position.y}\"/>\n" +
+                 $"<position x=\"{Position.X}\" y=\"{Position.Y}\"/>\n" +
                  $"<orientation radians=\"{Rotation}\"/>\n" +
                  "<width metres=\"21.70\"/>\n" +
                  $"<unit_experience level=\"{experience}\"/>\n";
@@ -395,21 +398,22 @@ namespace Crusader_Wars
 
                 //Add vertical spacing between units
                 if (Direction is "N" || Direction is "S")
-                    Position = UnitsFile.AddUnitYSpacing(Direction, Position);
+                    Position.AddUnitYSpacing(Direction);
                 else
-                    Position = UnitsFile.AddUnitXSpacing(Direction, Position);
+                    Position.AddUnitXSpacing(Direction);
 
 
                 DeclarationsFile.AddUnitDeclaration("UNIT_" + Unit_Script_Name, Unit_Script_Name);
                 BattleScript.SetLocals(Unit_Script_Name, "UNIT_" + Unit_Script_Name);
+                Data.units_scripts.Add((Unit_Script_Name, "UNIT_" + Unit_Script_Name));
                 File.AppendAllText(battlePath, PR_Unit);
             }
 
             //Add vertical spacing between units
             if (Direction is "N" || Direction is "S")
-                Position = UnitsFile.AddUnitYSpacing(Direction, Position);
+                Position.AddUnitYSpacing(Direction);
             else
-                Position = UnitsFile.AddUnitXSpacing(Direction, Position);
+                Position.AddUnitXSpacing(Direction);
 
         }
 
@@ -458,25 +462,25 @@ namespace Crusader_Wars
             File.AppendAllText(battlePath, PR_EnemyFaction);
         }
 
-        private static void SetBattleDescription(Player Player)
+        private static void SetBattleDescription(Player Player, int total_soldiers)
         {
             switch (Player.CombatSide)
             {
                 // 0 = player defender 
                 // 1 = enemy defender
                 case "defender":
-                    SetBattleDescription("0");
+                    SetBattleDescription("0", total_soldiers);
                     break;
                 case "attacker":
-                    SetBattleDescription("1");
+                    SetBattleDescription("1", total_soldiers);
                     break;
                 default:
-                    SetBattleDescription("1");
+                    SetBattleDescription("1", total_soldiers);
                     break;
             }
         }
 
-        private static void SetBattleDescription(string combat_side)
+        private static void SetBattleDescription(string combat_side, int total_soldiers)
         {
             // 0 = player defender 
             // 1 = enemy defender
@@ -492,7 +496,7 @@ namespace Crusader_Wars
                                           "<boiling_oil></boiling_oil>\n" +
                                           "</battle_description>\n\n";
 
-            string PR_PlayableArea = "<playable_area dimension=\"1500\"/>\n\n";
+            string PR_PlayableArea = $"<playable_area dimension=\"{ModOptions.SetMapSize(total_soldiers)}\"/>\n\n";
 
             File.AppendAllText(battlePath, PR_BattleDescription + PR_PlayableArea);
         }

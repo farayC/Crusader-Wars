@@ -73,26 +73,6 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap app_background {
-            get {
-                object obj = ResourceManager.GetObject("app_background", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap app_background1 {
-            get {
-                object obj = ResourceManager.GetObject("app_background1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap archers {
             get {
                 object obj = ResourceManager.GetObject("archers", resourceCulture);
@@ -106,16 +86,6 @@ namespace Crusader_Wars.Properties {
         internal static System.Drawing.Bitmap archers1 {
             get {
                 object obj = ResourceManager.GetObject("archers1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap attila_background {
-            get {
-                object obj = ResourceManager.GetObject("attila background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -166,6 +136,16 @@ namespace Crusader_Wars.Properties {
         internal static System.Drawing.Bitmap cancel__1_ {
             get {
                 object obj = ResourceManager.GetObject("cancel (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cha_evpic_charlemagne_prepares_for_war {
+            get {
+                object obj = ResourceManager.GetObject("cha_evpic_charlemagne_prepares_for_war", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -253,16 +233,6 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EarlyRenainance {
-            get {
-                object obj = ResourceManager.GetObject("EarlyRenainance", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap features {
             get {
                 object obj = ResourceManager.GetObject("features", resourceCulture);
@@ -343,9 +313,9 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap LOADINGIMAGE {
+        internal static System.Drawing.Bitmap loadingscreen {
             get {
-                object obj = ResourceManager.GetObject("LOADINGIMAGE", resourceCulture);
+                object obj = ResourceManager.GetObject("loadingscreen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -353,9 +323,9 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap loadingscrenn {
+        internal static System.Drawing.Bitmap loadingscreen1 {
             get {
-                object obj = ResourceManager.GetObject("loadingscrenn", resourceCulture);
+                object obj = ResourceManager.GetObject("loadingscreen1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -367,36 +337,6 @@ namespace Crusader_Wars.Properties {
             get {
                 object obj = ResourceManager.GetObject("logo", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ModDesign_Alpha_ {
-            get {
-                object obj = ResourceManager.GetObject("ModDesign(Alpha)", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ModDesign_Alpha_1 {
-            get {
-                object obj = ResourceManager.GetObject("ModDesign(Alpha)1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ModDesign_Alpha1_ {
-            get {
-                object obj = ResourceManager.GetObject("ModDesign(Alpha1)", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -446,16 +386,6 @@ namespace Crusader_Wars.Properties {
         internal static System.Drawing.Bitmap option1 {
             get {
                 object obj = ResourceManager.GetObject("option1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap options {
-            get {
-                object obj = ResourceManager.GetObject("options", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -533,6 +463,26 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap rotating_logo {
+            get {
+                object obj = ResourceManager.GetObject("rotating_logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotating_logo1 {
+            get {
+                object obj = ResourceManager.GetObject("rotating_logo1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Sem_nome {
             get {
                 object obj = ResourceManager.GetObject("Sem nome", resourceCulture);
@@ -557,16 +507,6 @@ namespace Crusader_Wars.Properties {
             get {
                 object obj = ResourceManager.GetObject("tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c0" +
                         "5-9d6d-fb5342c957e3", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap TextLogo__1_ {
-            get {
-                object obj = ResourceManager.GetObject("TextLogo (1)", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

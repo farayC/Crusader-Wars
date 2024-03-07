@@ -22,10 +22,51 @@ namespace Crusader_Wars.locs
         public static void ChangeBattleDetails(Player player, Enemy enemy)
         {
 
+            EditButtonVersion();
             EditBattleTextDetails(player, enemy);
             EditCombatSidesDetails(player, enemy);
             EditTerrainImage();
 
+        }
+
+        private static void EditButtonVersion()
+        {
+            string version_path = @".\app_version.txt";
+            string version = File.ReadAllText(version_path);
+            version = Regex.Match(version, @"""(.+)""").Groups[1].Value;
+
+            
+            string original_buttonVersion_path = @".\battle files\text\db\tutorial_historical_battles_uied_component_texts.loc.tsv";
+            string copy_path = @".\data\tutorial_historical_battles_uied_component_texts.loc.tsv";
+            File.Copy(original_buttonVersion_path, copy_path);
+            File.WriteAllText(copy_path, string.Empty);
+
+            string new_data = "";
+            using (FileStream btnVersion = File.Open(original_buttonVersion_path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (StreamReader reader = new StreamReader(btnVersion))
+            {
+                string line = "";
+                while (line != null && !reader.EndOfStream)
+                {
+                    line = reader.ReadLine();
+
+                    if (line.Contains("uied_component_texts_localised_string_string_NewState_Text_3a000c"))
+                    {
+                        string new_version = $"uied_component_texts_localised_string_string_NewState_Text_3a000c\tCrusader Wars V{version}\ttrue";
+                        new_data += new_version + "\n";
+                        continue;
+                    }
+
+                    new_data += line + "\n";
+                }
+
+                reader.Close();
+                btnVersion.Close();
+            }
+
+            File.WriteAllText(copy_path, new_data);
+            if (File.Exists(original_buttonVersion_path)) File.Delete(original_buttonVersion_path);
+            File.Move(copy_path, original_buttonVersion_path);
         }
 
         private static void EditBattleTextDetails(Player player, Enemy enemy)
@@ -61,8 +102,6 @@ namespace Crusader_Wars.locs
 
                         double player_total_soldiers = player.TotalNumber;
                         double enemy_total_soldiers = enemy.TotalNumber;
-
-                        string white_spaces = "";
 
                         string new_text = $"{player_side_realm_name}" + "  VS  " + $"{enemy_side_realm_name}" +
                                            "\\\\n" +

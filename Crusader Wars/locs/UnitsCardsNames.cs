@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,46 +11,61 @@ namespace Crusader_Wars.locs
 {
     static class UnitsCardsNames
     {
-        /*
-         * Whats missing:
-         *  -Change Unit Card names based on the loaded Unit Mapper
-         *  -Commanders Unit Card name based on their culture title tier name
-         *  -Knights Unit Card name based on their culture name
-         */
+
+        private static string Player_KnightsName { get; set; }
+        public static string Enemy_KnightsName { get; set; }
+
+        public static void SetPlayerKnightsName(string name)
+        {
+            Player_KnightsName = name;
+        }
+        public static void SetEnemyKnightsName(string name)
+        {
+            Enemy_KnightsName = name;
+        }
 
         public static void ChangeUnitsCardsNames(string Mapper_Name, Player Player, Enemy Enemy)
         {
-            switch(Mapper_Name)
+            switch (Mapper_Name)
             {
                 case "OfficialCW_DarkAges_AOC":
                 case "OfficialCW_EarlyMedieval_919Mod":
-
-                    string attila_loc = @".\data\units_cards_names\land_units.loc.tsv";
-                    string mod919_loc = @".\data\units_cards_names\919_land_units.loc.tsv";
-                    string[] loc_files = new string []{mod919_loc,attila_loc };
+                    string[] loc_files = Directory.GetFiles(@".\data\units_cards_names\anno domini\");
                     EditUnitCardsFiles(loc_files, Player, Enemy);
                     break;
                 case "OfficialCW_HighMedieval_MK1212":
                 case "OfficialCW_LateMedieval_MK1212":
                 case "OfficialCW_Renaissance_MK1212":
-                    string mk1212_loc = @".\data\units_cards_names\mk1212_land_units.loc.tsv";
-                    string submod_loc = @".\data\units_cards_names\mk1212submod_land_units.loc.tsv";
-                    string[] mk1212_loc_files = new string[] { mk1212_loc, submod_loc };
+                    string[] mk1212_loc_files = Directory.GetFiles(@".\data\units_cards_names\mk1212\");
                     EditUnitCardsFiles(mk1212_loc_files, Player, Enemy);
                     break;
-
+                case "xCW_FallenEagle_AgeOfJustinian":
+                    string[] aoj_loc_files = Directory.GetFiles(@".\data\units_cards_names\age of justinian\");
+                    EditUnitCardsFiles(aoj_loc_files, Player, Enemy);
+                    break;
+                case "xCW_FallenEagle_FallofTheEagle":
+                    string[] fte_loc_files = Directory.GetFiles(@".\data\units_cards_names\fall of the eagles\");
+                    EditUnitCardsFiles(fte_loc_files, Player, Enemy);
+                    break;
+                case "xCW_RealmsInExile_TheDawnlessDays":
+                    string[] lotr_loc_files = Directory.GetFiles(@".\data\units_cards_names\dawnless days\");
+                    EditUnitCardsFiles(lotr_loc_files, Player, Enemy);
+                    break;
             }
 
         }
 
         private static void EditUnitCardsFiles(string[] unit_cards_files, Player Player, Enemy Enemy)
         {
-            for (int i = 0; i < unit_cards_files.Length - 1; i++)
+            for (int i = 0; i < unit_cards_files.Length; i++)
             {
                 string loc_file_path = unit_cards_files[i];
                 string loc_file_name = Path.GetFileName(loc_file_path);
                 string file_to_edit_path = $@".\data\{loc_file_name}";
 
+                
+                if(File.Exists(file_to_edit_path)) File.Delete(file_to_edit_path);
+                
                 //Copy original loc file
                 File.Copy(loc_file_path, file_to_edit_path);
 
@@ -80,7 +96,9 @@ namespace Crusader_Wars.locs
                                 //Knights
                                 if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
                                 {
-
+                                    string knights_name = RemoveDiacritics(Player_KnightsName);
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{knights_name}\t");
+                                    break;
                                 }
 
 
@@ -114,7 +132,9 @@ namespace Crusader_Wars.locs
                                 //Knights
                                 if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
                                 {
-
+                                    string knights_name = RemoveDiacritics(Enemy_KnightsName);
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{knights_name}\t");
+                                    break;
                                 }
 
 
@@ -160,7 +180,7 @@ namespace Crusader_Wars.locs
                     levies_name = "Levy Peasantry";
                     break;
                 case "Levy Infantry":
-                    levies_name = "Levy Burghers";
+                    levies_name = "Levy Landowners";
                     break;
                 case "Levy Ranged":
                     levies_name = "Levy Skirmishers";
@@ -170,10 +190,13 @@ namespace Crusader_Wars.locs
         }
 
 
+
         private static string ReturnGeneralName(ICharacter Side)
         {
 
-            string name="Commander";
+            string name="Commander's Retinue";
+
+            /*
             switch(Side.Commander.Rank)
             {
                 case 1:
@@ -194,10 +217,27 @@ namespace Crusader_Wars.locs
                 case 6:
                     name = "Imperial Retinue";
                     break;
-            }
+            }*/
 
 
             return name;
+        }
+
+
+        static string RemoveDiacritics(string input)
+        {
+            string normalizedString = input.Normalize(NormalizationForm.FormD);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (char c in normalizedString)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
 
     }

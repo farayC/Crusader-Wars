@@ -145,6 +145,8 @@ namespace Crusader_Wars
                 int soldiers_lost = totalSoldiers - remainingSoldiers;
                 while (soldiers_lost > 0)
                 {
+                    if (Knights.Count == 0) break;
+
                     Random random = new Random();
                     int random_index = random.Next(Knights.Count);
                     var knight = Knights[random_index];

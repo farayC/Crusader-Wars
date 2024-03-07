@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Crusader_Wars.terrain;
+using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Crusader_Wars.client
 {
@@ -103,6 +107,45 @@ namespace Crusader_Wars.client
             }
             
         }
+        
+        public static string DeploymentsZones()
+        {
+            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleMapsSize");
+            return option.value;
+        }
+
+
+        public static string SetMapSize(int total_soldiers)
+        {
+            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleMapsSize");
+
+
+            switch (option.value)
+            {
+                case "Dynamic":
+                    if (total_soldiers <= 5000)
+                    {
+                        return "1000";
+                    }
+                    else if (total_soldiers > 5000 && total_soldiers < 20000)
+                    {
+                        return "1500";
+                    }
+                    else if (total_soldiers >= 20000)
+                    {
+                        return "2000";
+                    }
+                    break;
+                case "Medium":
+                    return "1000";
+                case "Big":
+                    return "1500";
+                case "Huge":
+                    return "2000";
+            }
+
+            return "1500";
+        }
         public static string FullArmiesLevies(string army_composition_text)
         {
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies");
@@ -167,6 +210,20 @@ namespace Crusader_Wars.client
         public static bool DefensiveDeployables()
         {
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "DefensiveDeployables");
+            switch (option.value)
+            {
+                case "Disabled":
+                    return false;
+                case "Enabled":
+                    return true;
+                default:
+                    return true;
+            }
+        }
+
+        public static bool UnitCards()
+        {
+            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "UnitCards");
             switch (option.value)
             {
                 case "Disabled":

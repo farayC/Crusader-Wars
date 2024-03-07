@@ -4,6 +4,9 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Net.NetworkInformation;
+using Crusader_Wars.client.BETAUPDATE_Message;
+using System.Web;
+using Microsoft.SqlServer.Server;
 
 namespace Crusader_Wars
 {
@@ -102,6 +105,15 @@ namespace Crusader_Wars
 
             GetAppVersion();
             GetModVersion();
+
+            if(ModVersion == "1.0")
+            {
+                string text = "The mod has updated to the official Crusader Wars v1.0 \"Warfare\"!\n" +
+                              "For this you need to uninstall this Launcher by just deleting the folder." +
+                              "Then you need to download the new setup from our website!"
+                              ;
+                BETAUPDATE_Message.ShowWarningMessage(text);
+            }
 
 
             if(ModVersion != String.Empty)

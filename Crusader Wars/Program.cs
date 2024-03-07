@@ -18,5 +18,6 @@ namespace Crusader_Wars
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new HomePage());
         }
+
     }
 }

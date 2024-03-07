@@ -351,6 +351,7 @@ namespace Crusader_Wars
 
             if (side is Player)
             {
+
                 //General
                 //if army has a commander
                 if(side.ID != 0)
@@ -360,15 +361,11 @@ namespace Crusader_Wars
                 }
 
                 //Knights
-                //if army has knights
-                /*
-                if (side.Knights.GetKnightsSoldiers() > 0)
-                {
-
-                }*/
                 var knights_unit = UnitMapper.PlayerUnits.FirstOrDefault(item => item.Type == "Knights");
                 side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"player_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
-
+                Match knights_name_match = Regex.Match(ArmyComposition, @":GAME_CONCEPTknight (?<KnightsName>.+):");
+                if (knights_name_match.Success) { UnitsCardsNames.SetPlayerKnightsName(knights_name_match.Groups["KnightsName"].Value); }
+                
                 foreach (var unit in UnitMapper.PlayerUnits)
                 {
                     for (int i = 0; i < FoundMAA.Count; i++)
@@ -396,6 +393,8 @@ namespace Crusader_Wars
                 //Knights
                 var knights_unit = UnitMapper.EnemyUnits.FirstOrDefault(item => item.Type == "Knights");
                 side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"enemy_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
+                Match knights_name_match = Regex.Match(ArmyComposition, @":GAME_CONCEPTknight (?<KnightsName>.+):");
+                if (knights_name_match.Success) { UnitsCardsNames.SetEnemyKnightsName(knights_name_match.Groups["KnightsName"].Value); }
 
                 foreach (var unit in UnitMapper.EnemyUnits)
                 {
