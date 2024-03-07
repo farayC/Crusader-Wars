@@ -8,11 +8,15 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Text;
 using System.IO.Pipes;
+using Crusader_Wars.data;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Crusader_Wars
 {
     public static class BattleResult
     {
+
+        public static string ID { get; set; }
 
         public static void LoadSaveFile(string savePath)
         {
@@ -46,6 +50,467 @@ namespace Crusader_Wars
 
         }
 
+        static List<string> CombatsResults = new List<string>();
+        public static void GetAllCombatResults(string PlayerID)
+        {
+            try
+            {
+                MatchCollection Match_AllCombatsResults = Regex.Matches(Data.String_BattleResults, @"(?s)(\d+).*?(?=\d+=|\z)");
+
+                //Get all ID's and Combats
+                foreach (Match ID in Match_AllCombatsResults)
+                {
+                    CombatsResults.Add(ID.Value);
+                }
+
+                
+                string player_result = CombatsResults.FirstOrDefault(x => x.Contains($"commander={PlayerID}"));
+                Data.String_BattleResults = player_result;
+                using (StringReader sr = new StringReader(player_result))
+                {
+                    string first_line = sr.ReadLine();
+                    BattleResult.ID = Regex.Match(first_line, @"(.+)={").Groups[1].Value;
+                }
+                Console.WriteLine("All combats were read successfully");
+            }
+            catch
+            {
+                Console.WriteLine("Error reading all combats!");
+            }
+        }
+
+        public static void EditCombatResults(ICharacter Side)
+        {
+
+            bool isLevies = false;
+            bool isKnight = false;
+            bool isMAA = false;
+
+            bool isAttacker = false;
+            bool isDefender = false;
+            bool STOP = false;
+
+            bool isSearching = false;
+
+            if (Side.CombatSide == "attacker")
+            {
+                isAttacker = true;
+
+            }
+            else if (Side.CombatSide == "defender")
+            {
+                isDefender = true;
+            }
+
+
+            string MAAtype = "";
+            StringBuilder sb = new StringBuilder();
+            using (StringReader sr = new StringReader(Data.String_BattleResults))
+            {
+                string line = sr.ReadLine();
+                while (line != null)
+                {
+                    line = sr.ReadLine();
+                    if (line != null)
+                    {
+
+                        //
+                        //CONTROL FUNCTIONS
+                        if((isDefender && !line.Contains("\t\t\tdefender={") && !isSearching))
+                        {
+                            STOP = true;
+                        }
+                        else if((isDefender && line.Contains("\t\t\tdefender={") && !isSearching))
+                        {
+                            STOP = false;
+                            isSearching = true;
+                        }
+                        else if((isDefender && line.Contains("\t\t\twinning_side={") && isSearching))
+                        {
+                            STOP = true;
+                            isSearching = false;
+                        }
+                        else if((isAttacker && !line.Contains("\t\t\tattacker={") && !isSearching))
+                        {
+                            STOP = true;
+                        }
+                        else if ((isAttacker && line.Contains("\t\t\tattacker={") && !isSearching))
+                        {
+                            STOP = false;
+                            isSearching = true;
+                        }
+                        else if ((isAttacker && line.Contains("\t\t\tdefender={") && isSearching))
+                        {
+                            STOP = true;
+                            isSearching = false;
+                        }
+
+
+
+                        if(!STOP)
+                        {
+                            if (line.Contains("\ttype=") && !isMAA && !isLevies)
+                            {
+                                isMAA = true;
+                                MAAtype = Regex.Match(line, @"""(.+)""").Groups[1].Value;
+
+                                //skip if they are siege maa
+                                if (MAAtype == "mangonel" || MAAtype == "onager" || MAAtype == "bombard" || MAAtype == "trebuchet") { sb.AppendLine(line); continue; }
+                            }
+
+
+                            //
+                            //  MEN AT ARMS
+                            //
+                            if (isMAA)
+                            {
+                                //
+                                //MAIN KILLS
+                                if (line.Contains("\tmain_kills="))
+                                {
+                                    int kills = 0;
+                                    foreach (var unit in Side.UnitsResults.Kills_MainPhase)
+                                    {
+                                        if (unit.Name.Contains(MAAtype))
+                                        {
+                                            kills += Int32.Parse(unit.Kills);
+                                        }
+                                    }
+
+                                    string newline = Regex.Replace(line, "=(.+)", $"={kills}");
+                                    sb.AppendLine(newline);
+                                    continue;
+                                }
+                                //
+                                //PURSUIT KILLS
+                                else if (line.Contains("\tpursuit_kills="))
+                                {
+                                    int kills = 0;
+                                    if (Side.UnitsResults.Kills_PursuitPhase == null)
+                                    {
+                                        string noPursuitLine = Regex.Replace(line, "=(.+)", $"={kills}");
+                                        sb.AppendLine(noPursuitLine);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        foreach (var unit in Side.UnitsResults.Kills_PursuitPhase)
+                                        {
+                                            if (unit.Name.Contains(MAAtype))
+                                            {
+                                                kills += Int32.Parse(unit.Kills);
+                                            }
+                                        }
+
+                                        string newline = Regex.Replace(line, "=(.+)", $"={kills}");
+                                        sb.AppendLine(newline);
+                                        continue;
+                                    }
+
+
+                                }
+                                //
+                                //MAIN LOSSES
+                                else if (line.Contains("\tmain_losses="))
+                                {
+                                    int initial = 0;
+                                    foreach (var i in Side.Army)
+                                    {
+                                        if (i.Script.Contains(MAAtype))
+                                        {
+                                            initial += i.SoldiersNum;
+                                        }
+                                    }
+
+                                    int alive = 0;
+                                    int losses = 0;
+                                    foreach (var unit in Side.UnitsResults.Alive_MainPhase)
+                                    {
+                                        if (unit.Name.Contains(MAAtype))
+                                        {
+                                            alive += Int32.Parse(unit.Remaining);
+                                        }
+                                    }
+
+                                    losses = initial - alive;
+                                    string newline = Regex.Replace(line, "=(.+)", $"={losses}");
+                                    sb.AppendLine(newline);
+                                    continue;
+                                }
+                                //
+                                //PURSUIT LOSSES
+                                else if (line.Contains("\tpursuit_losses_maa="))
+                                {
+                                    int losses = 0;
+                                    if (Side.UnitsResults.Alive_PursuitPhase == null)
+                                    {
+                                        string noPursuitLine = Regex.Replace(line, "=(.+)", $"={losses}");
+                                        sb.AppendLine(noPursuitLine);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        int initial = 0;
+                                        int alive = 0;
+                                        foreach (var i in Side.UnitsResults.Alive_MainPhase)
+                                        {
+                                            if (i.Name.Contains(MAAtype))
+                                                initial += Int32.Parse(i.Remaining);
+                                        }
+
+                                        foreach (var unit in Side.UnitsResults.Alive_PursuitPhase)
+                                        {
+                                            if (unit.Name.Contains(MAAtype))
+                                            {
+                                                //Main Phase alive soldiers
+                                                alive += Int32.Parse(unit.Remaining);
+                                            }
+                                        }
+
+                                        losses = initial - alive;
+                                        string newline = Regex.Replace(line, "=(.+)", $"={losses}");
+                                        sb.AppendLine(newline);
+                                        continue;
+                                    }
+
+
+                                }
+                                //
+                                //ALIVE
+                                else if (line.Contains("\tfinal_count="))
+                                {
+                                    int alive = 0;
+                                    if (Side.UnitsResults.Alive_PursuitPhase == null)
+                                    {
+                                        foreach (var unit in Side.UnitsResults.Alive_MainPhase)
+                                        {
+                                            if (unit.Name.Contains(MAAtype))
+                                            {
+                                                //Main Phase alive soldiers
+                                                alive += Int32.Parse(unit.Remaining);
+                                            }
+                                        }
+
+                                        string newline = Regex.Replace(line, "=(.+)", $"={alive}");
+                                        sb.AppendLine(newline);
+
+                                        isMAA = false;
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        foreach (var unit in Side.UnitsResults.Alive_PursuitPhase)
+                                        {
+                                            if (unit.Name.Contains(MAAtype))
+                                            {
+                                                //Main Phase alive soldiers
+                                                alive += Int32.Parse(unit.Remaining);
+                                            }
+                                        }
+
+                                        string newline = Regex.Replace(line, "=(.+)", $"={alive}");
+                                        sb.AppendLine(newline);
+
+                                        isMAA = false;
+                                        continue;
+                                    }
+
+                                }
+
+                            }
+
+                            //
+                            //  LEVIES
+                            //                  
+                            if (isLevies)
+                            {
+                                //
+                                //MAIN KILLS
+                                if (line.Contains("\tmain_kills="))
+                                {
+                                    int kills = 0;
+                                    foreach (var unit in Side.UnitsResults.Kills_MainPhase)
+                                    {
+                                        if (unit.Name.Contains("levy_"))
+                                        {
+                                            kills += Int32.Parse(unit.Kills);
+                                        }
+                                    }
+
+                                    string newline = Regex.Replace(line, "=(.+)", $"={kills}");
+                                    sb.AppendLine(newline);
+                                    continue;
+                                }
+                                //
+                                //PURSUIT KILLS
+                                else if (line.Contains("\tpursuit_kills="))
+                                {
+                                    int kills = 0;
+                                    if (Side.UnitsResults.Kills_PursuitPhase == null)
+                                    {
+                                        string noPursuitLine = Regex.Replace(line, "=(.+)", $"={kills}");
+                                        sb.AppendLine(noPursuitLine);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        foreach (var unit in Side.UnitsResults.Kills_PursuitPhase)
+                                        {
+                                            if (unit.Name.Contains("levy_"))
+                                            {
+                                                kills += Int32.Parse(unit.Kills);
+                                            }
+                                        }
+                                    }
+
+                                    string newline = Regex.Replace(line, "=(.+)", $"={kills}");
+                                    sb.AppendLine(newline);
+                                    continue;
+                                }
+                                //
+                                //MAIN LOSSES
+                                else if (line.Contains("\tmain_losses="))
+                                {
+                                    int initial = 0;
+                                    foreach (var u in Side.Army)
+                                    {
+                                        if (u.Type.Contains("Levy "))
+                                        {
+                                            initial += u.SoldiersNum;
+                                        }
+                                    }
+                                    int alive = 0;
+                                    int losses = 0;
+                                    foreach (var unit in Side.UnitsResults.Alive_MainPhase)
+                                    {
+                                        if (unit.Name.Contains("levy_"))
+                                        {
+                                            alive += Int32.Parse(unit.Remaining);
+                                        }
+                                    }
+
+                                    losses = initial - alive;
+                                    string newline = Regex.Replace(line, "=(.+)", $"={losses}");
+                                    sb.AppendLine(newline);
+                                    continue;
+                                }
+                                //
+                                //PURSUIT LOSSES
+                                else if (line.Contains("\tpursuit_losses_maa="))
+                                {
+                                    int losses = 0;
+                                    if (Side.UnitsResults.Alive_PursuitPhase == null)
+                                    {
+                                        string noPursuitLine = Regex.Replace(line, "=(.+)", $"={losses}");
+                                        sb.AppendLine(noPursuitLine);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        int initial = 0;
+
+                                        foreach (var i in Side.UnitsResults.Alive_MainPhase)
+                                        {
+                                            if (i.Name.Contains("levy_"))
+                                            {
+                                                initial += Int32.Parse(i.Remaining);
+                                            }
+
+                                        }
+                                        int alive = 0;
+                                        foreach (var unit in Side.UnitsResults.Alive_PursuitPhase)
+                                        {
+                                            if (unit.Name.Contains("levy_"))
+                                            {
+                                                //Main Phase alive soldiers
+                                                alive += Int32.Parse(unit.Remaining);
+                                            }
+                                        }
+
+                                        losses = initial - alive;
+                                        string newline = Regex.Replace(line, "=(.+)", $"={losses}");
+                                        sb.AppendLine(newline);
+                                        continue;
+                                    }
+
+
+                                }
+                                //
+                                //ALIVE
+                                else if (line.Contains("\tfinal_count="))
+                                {
+                                    int alive = 0;
+                                    if (Side.UnitsResults.Alive_PursuitPhase == null)
+                                    {
+                                        foreach (var unit in Side.UnitsResults.Alive_MainPhase)
+                                        {
+                                            if (unit.Name.Contains("levy_"))
+                                            {
+                                                //Main Phase alive soldiers
+                                                alive += Int32.Parse(unit.Remaining);
+                                            }
+                                        }
+
+                                        string newline = Regex.Replace(line, "=(.+)", $"={alive}");
+                                        sb.AppendLine(newline);
+
+                                        isMAA = false;
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        foreach (var unit in Side.UnitsResults.Alive_PursuitPhase)
+                                        {
+                                            if (unit.Name.Contains("levy_"))
+                                            {
+                                                //Main Phase alive soldiers
+                                                alive += Int32.Parse(unit.Remaining);
+                                            }
+                                        }
+
+                                        string newline = Regex.Replace(line, "=(.+)", $"={alive}");
+                                        sb.AppendLine(newline);
+
+                                        isLevies = false;
+                                        continue;
+                                    }
+
+                                }
+                            }
+
+                            if (line.Contains("\tknight=") && !isMAA)
+                            {
+                                string id = Regex.Match(line, @"\d+").Value;
+                                int id_num = 0;
+
+                                //isKnight
+                                if (int.TryParse(id, out id_num))
+                                {
+                                    isKnight = true;
+                                    isLevies = false;
+                                    isMAA = false;
+                                    sb.AppendLine(line);
+                                    continue;
+                                }
+                                else // isLevies
+                                {
+                                    isKnight = false;
+                                    isLevies = true;
+                                }
+                            }
+                        }
+
+                        sb.AppendLine(line);
+
+                    }
+                }
+            }
+            //var player_units = player.UnitsResults.
+            Data.String_BattleResults = sb.ToString();
+        }
+
+        
+
 
         //Player Combat
         static string Player_Combat;
@@ -53,7 +518,13 @@ namespace Crusader_Wars
         {
             try
             {
+                
                 Player_Combat = CombatsList.FirstOrDefault(stringToCheck => stringToCheck.Contains($"commander={PlayerID}"));
+                using (var reader = new StringReader(Player_Combat))
+                {
+                    string first = reader.ReadLine();
+                    BattleResult.ID = Regex.Match(first, @"(.+)={").Groups[1].Value;
+                }
                 Console.WriteLine("Found player combat");
             }
             catch
@@ -550,52 +1021,153 @@ namespace Crusader_Wars
 
 
         // Get attila remaining soldiers
-        public static List<(string Name, string Remaining)> GetRemainingSoldiersData(string path_attila_log)
+        public static void GetUnitsData(ICharacter Side, string path_attila_log)
         {
+            Units units = new Units();
             try
             {
-                List<(string Name, string Remaining)> RemainingSoldiers = new List<(string Name, string Remaining)>(); 
+                List<(string Name, string Remaining)> Alive_MainPhase = new List<(string Name, string Remaining)>();
+                List<(string Name, string Remaining)> Alive_PursuitPhase = new List<(string Name, string Remaining)>();
+                List<(string Name, string Remaining)> Kills_MainPhase = new List<(string Name, string Kills)>();
+                List<(string Name, string Remaining)> Kills_PursuitPhase = new List<(string Name, string Kills)>();
 
                 using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 using (StreamReader reader = new StreamReader(logFile))
                 {
-                    string line;
-                    bool isFirst = false;
-                    while ((line = reader.ReadLine()) != null)
+                    string alltext = reader.ReadToEnd();
+
+                    MatchCollection all_alive_texts = Regex.Matches(alltext, "-----REMAINING SOLDIERS-----!!\\r\\n([\\s\\S]*?)([\\s\\S]*?)-----NUMBERS OF KILLS-----!!");
+                    MatchCollection all_kills_texts = Regex.Matches(alltext, "-----NUMBERS OF KILLS-----!!\\r\\n([\\s\\S]*?)(-----REMAINING SOLDIERS-----!!|Battle has finished)");
+                    string alive_text = "";
+                    string kills_text = "";
+
+                    int remaining_soldiers_ocurrences = Regex.Matches(alltext, "-----REMAINING SOLDIERS-----!!").Count;
+                    int kills_ocurrences = Regex.Matches(alltext, "-----NUMBERS OF KILLS-----!!").Count;
+
+
+                    if(remaining_soldiers_ocurrences == 1 && kills_ocurrences == 1)
                     {
-                        if (line == "-----REMAINING SOLDIERS-----!!") RemainingSoldiers = new List<(string Name, string Remaining)>(); 
+                        alive_text = all_alive_texts[0].Groups[2].Value;
+                        kills_text = all_kills_texts[0].Groups[1].Value;
 
-                        if(line.StartsWith("player_") || line.StartsWith("enemy_"))
-                        {
-                            Match pattern = Regex.Match(line, "(?<Unit>.+)-(?<Remaining>.+)");
-                            if (pattern.Success)
-                            {
-                                string unit_name = pattern.Groups["Unit"].Value;
-                                string remaining = pattern.Groups["Remaining"].Value;
+                        Alive_MainPhase = ReturnList(Side, alive_text, DataType.Alive);
+                        units.SetAliveMainPhase(Alive_MainPhase);
+                        Kills_MainPhase = ReturnList(Side, kills_text, DataType.Kills);
+                        units.SetKillsMainPhase(Kills_MainPhase);
+                        Alive_PursuitPhase  = ReturnList(Side, alive_text,DataType.Alive);
+                        units.SetAlivePursuitPhase(Alive_PursuitPhase);
+                        Kills_PursuitPhase = ReturnList(Side, kills_text, DataType.Kills);
 
-                                RemainingSoldiers.Add((unit_name, remaining));
-                            }
-
-                        }
                     }
+                    else if(remaining_soldiers_ocurrences > 1 && kills_ocurrences > 1) 
+                    {
+                        string mainphase_alive_text = all_alive_texts[0].Groups[2].Value;
+                        Alive_MainPhase = ReturnList(Side, mainphase_alive_text, DataType.Alive);
+                        units.SetAliveMainPhase(Alive_MainPhase);
 
-                   
+                        string pursuitphase_alive_text = all_alive_texts[1].Groups[2].Value;
+                        Alive_PursuitPhase = ReturnList(Side, pursuitphase_alive_text, DataType.Alive);
+                        units.SetAlivePursuitPhase (Alive_PursuitPhase);
+
+                        string mainphase_kills_text = all_kills_texts[0].Groups[1].Value;
+                        Kills_MainPhase = ReturnList(Side, mainphase_kills_text, DataType.Kills);
+                        units.SetKillsMainPhase(Kills_MainPhase);
+
+                        string pursuitphase_kills_text = all_kills_texts[1].Groups[1].Value;
+                        Kills_PursuitPhase = ReturnList(Side, pursuitphase_kills_text, DataType.Kills);
+                        units.SetKillsPursuitPhase(Kills_PursuitPhase) ;
+                    }
+ 
                     reader.Close();
                     logFile.Close();
 
-                    Console.WriteLine("Attila remaining soldiers read sucessfully!");
 
-                    return RemainingSoldiers;
                 }
+
+                Side.UnitsResults = units;
+
 
                 
             }
             catch
             {
-                Console.WriteLine("Error reading Attila remaining soldiers!");
-                return null;
+                Console.WriteLine("Error reading Attila results!");
+                throw new Exception();
+                
             }
        
+        }
+
+        private enum DataType
+        {
+            Alive,
+            Kills
+        }
+
+        private static List<(string, string)> ReturnList(ICharacter Side, string text, DataType list_type)
+        {
+
+            List<(string, string)> list = new List<(string, string)> ();
+
+            if(Side is Player)
+            {
+                MatchCollection pattern;
+                switch (list_type)
+                {
+                    case DataType.Alive:
+                        pattern = Regex.Matches(text, "\\n(?<Unit>player_.+)-(?<Remaining>.+)");
+                        foreach (Match match in pattern)
+                        {
+                            string unit_name = match.Groups["Unit"].Value;
+                            string remaining = match.Groups["Remaining"].Value;
+
+                            list.Add((unit_name, remaining));
+                        }
+                        break;
+                    case DataType.Kills:
+                        pattern = Regex.Matches(text, "(?<Unit>kills_player_.+)-(?<Remaining>.+)");
+                        foreach (Match match in pattern)
+                        {
+                            string unit_name = match.Groups["Unit"].Value;
+                            string remaining = match.Groups["Remaining"].Value;
+
+                            list.Add((unit_name, remaining));
+                        }
+                        break;
+                }
+            }
+            //Enemy
+            else
+            {
+                MatchCollection pattern;
+                switch (list_type)
+                {
+                    case DataType.Alive:
+                        pattern = Regex.Matches(text, "\\n(?<Unit>enemy_.+)-(?<Remaining>.+)");
+                        foreach (Match match in pattern)
+                        {
+                            string unit_name = match.Groups["Unit"].Value;
+                            string remaining = match.Groups["Remaining"].Value;
+
+                            list.Add((unit_name, remaining));
+                        }
+                        break;
+                    case DataType.Kills:
+                        pattern = Regex.Matches(text, "(?<Unit>kills_enemy_.+)-(?<Remaining>.+)");
+                        foreach (Match match in pattern)
+                        {
+                            string unit_name = match.Groups["Unit"].Value;
+                            string remaining = match.Groups["Remaining"].Value;
+
+                            list.Add((unit_name, remaining));
+                        }
+                        break;
+                }
+            }
+
+
+
+            return list;
         }
 
         //Get winner from Attila

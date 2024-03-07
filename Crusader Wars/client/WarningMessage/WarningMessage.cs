@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Media;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +27,7 @@ namespace Crusader_Wars.client.WarningMessage
 
         public static void ShowWarningMessage(string message)
         {
-            WarningMessage warning_message = new WarningMessage();
+            var warning_message = new WarningMessage();
             warning_message.SetMessage(message);
             SystemSounds.Exclamation.Play();
             warning_message.ShowDialog();

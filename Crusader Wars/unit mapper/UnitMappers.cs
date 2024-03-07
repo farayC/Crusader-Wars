@@ -331,11 +331,6 @@ namespace Crusader_Wars
 
         }
 
-        public static void IncrementTerrainData()
-        {
-            
-        }
-
 
         private static void ReadCulturesFile(string folderName)
         {

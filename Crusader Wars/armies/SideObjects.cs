@@ -20,6 +20,7 @@ namespace Crusader_Wars
         KnightSystem Knights { get; set; }
         DefensiveSystem Defences { get; set; }
         Modifiers Modifiers { get; set; }
+        Units UnitsResults {  get; set; }
         Supplys Supplys { get; set; }
 
 
@@ -39,6 +40,7 @@ namespace Crusader_Wars
         public KnightSystem Knights { get; set; }
         public DefensiveSystem Defences { get; set; }
         public Modifiers Modifiers { get; set; }
+        public Units UnitsResults { get; set; }
         public Supplys Supplys { get; set; }
 
 
@@ -63,6 +65,7 @@ namespace Crusader_Wars
         public KnightSystem Knights { get; set; }
         public DefensiveSystem Defences { get; set; }
         public Modifiers Modifiers { get; set; }
+        public Units UnitsResults { get; set; }
         public Supplys Supplys { get; set; }
 
         public Enemy()

@@ -164,55 +164,6 @@ namespace Crusader_Wars
             return (0, 0, 0);
         }
 
-        public static (int x, int y) AddUnitXSpacing(string direction, (int x, int y) Positions)
-        {
-            int xSpacing = 30;
-            (int x, int y) newPosition;
-            if (direction is "N" || direction is "S")
-            {
-                newPosition = (Positions.x - xSpacing, Positions.y);
-                return newPosition;
-            }
-            else if (direction is "E")
-            {
-                xSpacing = 15;
-                newPosition = (Positions.x + xSpacing, Positions.y);
-                return newPosition;
-            }
-            else if (direction is "W")
-            {
-                xSpacing = 15;
-                newPosition = (Positions.x - xSpacing, Positions.y);
-                return newPosition;
-            }
-            return (0,0);
-        }
-
-        public static (int x, int y) AddUnitYSpacing(string direction, (int x, int y) Positions)
-        {
-            (int x, int y) newPosition;
-            int ySpacing = 15;
-            if (direction is "N")
-            {
-                newPosition = (Positions.x, Positions.y + ySpacing);
-                return newPosition;
-            }
-            else if(direction is "S")
-            {
-                newPosition = (Positions.x, Positions.y - ySpacing);
-                return newPosition;
-            }
-            else if (direction is "E" || direction is "W")
-            {
-                ySpacing = 30;
-                newPosition = (Positions.x, Positions.y + ySpacing);
-                return newPosition;
-            }
-
-            return (0, 0);
-        }
-
-
 
 
     }

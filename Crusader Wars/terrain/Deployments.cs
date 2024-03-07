@@ -1,22 +1,18 @@
-﻿using System;
+﻿using Crusader_Wars.client;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace Crusader_Wars.terrain
 {
     public static class Deployments
     {
         public static string Direction { get; private set; }
-
-        //Center Positions
-        static (string X, string Y) CENTER_NORTH = ("0.00", "450.00");
-        static (string X, string Y) CENTER_EAST = ("450.00", "0.00");
-        static (string X, string Y) CENTER_WEST = ("-450.00", "0.00");
-        static (string X, string Y) CENTER_SOUTH = ("0.00", "-450.00");
 
         //Radius
         static string ROTATION_0º = "0.00";
@@ -25,82 +21,85 @@ namespace Crusader_Wars.terrain
         static string ROTATION_270º = "4.71";
         static string ROTATION_360º = "6.28";
 
-        //Sizes
-        static (string Width, string Height) HORIZONTAL_SIZE = ("1300", "400");
-        static (string Width, string Height) VERTICAL_SIZE = ("400", "1300");
 
         struct Directions
         {
-            static string SetSouth()
+            static string SetSouth(DeploymentArea SOUTH_DEPLOYMENT_AREA)
             {
                 string PR_Deployment = "<deployment_area>\n" +
-                          $"<centre x =\"{CENTER_SOUTH.X}\" y =\"{CENTER_SOUTH.Y}\"/>\n" +
-                          $"<width metres =\"{HORIZONTAL_SIZE.Width}\"/>\n" +
-                          $"<height metres =\"{HORIZONTAL_SIZE.Height}\"/>\n" +
+                          $"<centre x =\"{SOUTH_DEPLOYMENT_AREA.X}\" y =\"{SOUTH_DEPLOYMENT_AREA.Y}\"/>\n" +
+                          $"<width metres =\"{SOUTH_DEPLOYMENT_AREA.Width}\"/>\n" +
+                          $"<height metres =\"{SOUTH_DEPLOYMENT_AREA.Height}\"/>\n" +
                           $"<orientation radians =\"{ROTATION_0º}\"/>\n" +
                           "</deployment_area>\n\n";
                 return PR_Deployment;
             }
-            static string SetWest()
+            static string SetWest(DeploymentArea WEST_DEPLOYMENT_AREA)
             {
                 string PR_Deployment = "<deployment_area>\n" +
-                          $"<centre x =\"{CENTER_WEST.X}\" y =\"{CENTER_WEST.Y}\"/>\n" +
-                          $"<width metres =\"{VERTICAL_SIZE.Width}\"/>\n" +
-                          $"<height metres =\"{VERTICAL_SIZE.Height}\"/>\n" +
+                          $"<centre x =\"{WEST_DEPLOYMENT_AREA.X}\" y =\"{WEST_DEPLOYMENT_AREA.Y}\"/>\n" +
+                          $"<width metres =\"{WEST_DEPLOYMENT_AREA.Width}\"/>\n" +
+                          $"<height metres =\"{WEST_DEPLOYMENT_AREA.Height}\"/>\n" +
                           $"<orientation radians =\"{ROTATION_180º}\"/>\n" +
                           "</deployment_area>\n\n";
                 return PR_Deployment;
             }
-            static string SetEast()
+            static string SetEast(DeploymentArea EAST_DEPLOYMENT_AREA)
             {
                 string PR_Deployment = "<deployment_area>\n" +
-                          $"<centre x =\"{CENTER_EAST.X}\" y =\"{CENTER_EAST.Y}\"/>\n" +
-                          $"<width metres =\"{VERTICAL_SIZE.Width}\"/>\n" +
-                          $"<height metres =\"{VERTICAL_SIZE.Height}\"/>\n" +
+                          $"<centre x =\"{EAST_DEPLOYMENT_AREA.X}\" y =\"{EAST_DEPLOYMENT_AREA.Y}\"/>\n" +
+                          $"<width metres =\"{EAST_DEPLOYMENT_AREA.Width}\"/>\n" +
+                          $"<height metres =\"{EAST_DEPLOYMENT_AREA.Height}\"/>\n" +
                           $"<orientation radians =\"{ROTATION_360º}\"/>\n" +
                           "</deployment_area>\n\n";
                 return PR_Deployment;
             }
-            static string SetNorth()
+            static string SetNorth(DeploymentArea NORTH_DEPLOYMENT_AREA)
             {
                 string PR_Deployment = "<deployment_area>\n" +
-                          $"<centre x =\"{CENTER_NORTH.X}\" y =\"{CENTER_NORTH.Y}\"/>\n" +
-                          $"<width metres =\"{HORIZONTAL_SIZE.Width}\"/>\n" +
-                          $"<height metres =\"{HORIZONTAL_SIZE.Height}\"/>\n" +
+                          $"<centre x =\"{NORTH_DEPLOYMENT_AREA.X}\" y =\"{NORTH_DEPLOYMENT_AREA.Y}\"/>\n" +
+                          $"<width metres =\"{NORTH_DEPLOYMENT_AREA.Width}\"/>\n" +
+                          $"<height metres =\"{NORTH_DEPLOYMENT_AREA.Height}\"/>\n" +
                           $"<orientation radians =\"{ROTATION_180º}\"/>\n" +
                           "</deployment_area>\n\n";
                 return PR_Deployment;
             }
 
-            public static string SetOppositeDirection(string direction)
+            public static string SetOppositeDirection(string direction, int total_soldiers)
             {
+                DeploymentArea DEPLOYMENT_AREA;
                 switch (direction)
                 {
                     case "N":
-                        return Directions.SetSouth();
+                        DEPLOYMENT_AREA = new DeploymentArea("S", ModOptions.DeploymentsZones(), total_soldiers);
+                        return Directions.SetSouth(DEPLOYMENT_AREA);
                     case "S":
-                        return Directions.SetNorth();
+                        DEPLOYMENT_AREA = new DeploymentArea("N", ModOptions.DeploymentsZones(), total_soldiers);
+                        return Directions.SetNorth(DEPLOYMENT_AREA);
                     case "E":
-                        return Directions.SetWest();
+                        DEPLOYMENT_AREA = new DeploymentArea("W", ModOptions.DeploymentsZones(), total_soldiers);
+                        return Directions.SetWest(DEPLOYMENT_AREA);
                     case "W":
-                        return Directions.SetEast();
+                        DEPLOYMENT_AREA = new DeploymentArea("E", ModOptions.DeploymentsZones(), total_soldiers);
+                        return Directions.SetEast(DEPLOYMENT_AREA);
                 }
 
                 return null;
             }
 
-            public static string SetDirection(string direction)
+            public static string SetDirection(string direction, int total_soldiers)
             {
+                DeploymentArea DEPLOYMENT_AREA = new DeploymentArea(direction, ModOptions.DeploymentsZones(), total_soldiers);
                 switch (direction)
                 {
                     case "N":
-                        return Directions.SetNorth();
+                        return Directions.SetNorth(DEPLOYMENT_AREA);
                     case "S":
-                        return Directions.SetSouth();
+                        return Directions.SetSouth(DEPLOYMENT_AREA);
                     case "E":
-                        return Directions.SetEast();
+                        return Directions.SetEast(DEPLOYMENT_AREA);
                     case "W":
-                        return Directions.SetWest();
+                        return Directions.SetWest(DEPLOYMENT_AREA);
                 }
 
                 return null;
@@ -111,11 +110,12 @@ namespace Crusader_Wars.terrain
 
         static bool isFirstDirectionSet;
         static string OppositeDirection;
-        public static string SetDirection(string combat_side,(string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
+        public static string SetDirection(int total_soldiers, string combat_side,(string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
         {
             Random random = new Random();
 
-            if(!isFirstDirectionSet)
+
+            if (!isFirstDirectionSet)
             {   
 
                 //All directions battle maps
@@ -124,9 +124,9 @@ namespace Crusader_Wars.terrain
                     string[] coords = { "N", "S", "E", "W" };
                     int index = random.Next(0, 4);
                     Direction = coords[index];
-                    string data_all = Directions.SetDirection(coords[index]);
+                    string data_all = Directions.SetDirection(coords[index], total_soldiers);
                     isFirstDirectionSet = true;
-                    OppositeDirection = Directions.SetOppositeDirection(coords[index]);
+                    OppositeDirection = Directions.SetOppositeDirection(coords[index], total_soldiers);
                     return data_all;
                     
                 }
@@ -140,18 +140,18 @@ namespace Crusader_Wars.terrain
                             int index = random.Next(0, 2);
                             string direction = battle_map.attacker_dir[index];
                             Direction = direction;
-                            string data = Directions.SetDirection(direction);
+                            string data = Directions.SetDirection(direction, total_soldiers);
                             isFirstDirectionSet = true;
-                            OppositeDirection = Directions.SetOppositeDirection(direction);
+                            OppositeDirection = Directions.SetOppositeDirection(direction, total_soldiers);
                             return data;
 
                         case "defender":
                             int i = random.Next(0, 2);
                             string dir = battle_map.defender_dir[i];
                             Direction = dir;
-                            string text = Directions.SetDirection(dir);
+                            string text = Directions.SetDirection(dir, total_soldiers);
                             isFirstDirectionSet = true;
-                            OppositeDirection = Directions.SetOppositeDirection(dir);
+                            OppositeDirection = Directions.SetOppositeDirection(dir, total_soldiers);
                             return text;
                     }
                 }
@@ -168,6 +168,371 @@ namespace Crusader_Wars.terrain
         }
 
 
+    }
+
+    class DeploymentArea
+    {
+        //CENTER POSITIONS
+        public string X { get; private set; }
+        public string Y { get; private set; }
+
+        //AREA DIAMETER
+        public string Width { get; private set; }
+        public string Height { get; private set; }
+
+        //MAP SIZE OPTION
+        string MapSize { get; set; }
+        public DeploymentArea(string direction, string option_map_size, int total_soldiers)
+        {
+
+            if (option_map_size == "Dynamic")
+            {
+                if (total_soldiers <= 5000)
+                {
+                    MapSize = "Medium";
+                }
+                else if (total_soldiers > 5000 && total_soldiers < 20000)
+                {
+                    MapSize = "Big";
+                }
+                else if (total_soldiers >= 20000)
+                {
+                    MapSize = "Huge";
+                }
+            }
+            else
+            {
+                MapSize = option_map_size;
+            }
+
+            if (direction == "N")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = "0.00";
+                        Y = "300.00";
+                        HorizontalSize();
+                        break;
+                    case "Big":
+                        X = "0.00";
+                        Y = "450.00";
+                        HorizontalSize();
+                        break;
+                    case "Huge":
+                        X = "0.00";
+                        Y = "700.00";
+                        HorizontalSize();
+                        break;
+                }
+            }
+            else if (direction == "S")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = "0.00";
+                        Y = "-300.00";
+                        HorizontalSize();
+                        break;
+                    case "Big":
+                        X = "0.00";
+                        Y = "-450.00";
+                        HorizontalSize();
+                        break;
+                    case "Huge":
+                        X = "0.00";
+                        Y = "-700.00";
+                        HorizontalSize();
+                        break;
+                }
+            }
+            else if (direction == "W")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = "-300.00";
+                        Y = "0.00";
+                        VerticalSize();
+                        break;
+                    case "Big":
+                        X = "-450.00";
+                        Y = "0.00";
+                        VerticalSize();
+                        break;
+                    case "Huge":
+                        X = "-700.00";
+                        Y = "0.00";
+                        VerticalSize();
+                        break;
+                }
+            }
+            else if (direction == "E")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = "300.00";
+                        Y = "0.00";
+                        VerticalSize();
+                        break;
+                    case "Big":
+                        X = "450.00";
+                        Y = "0.00";
+                        VerticalSize();
+                        break;
+                    case "Huge":
+                        X = "700.00";
+                        Y = "0.00";
+                        VerticalSize();
+                        break;
+                }
+            }
+        }
+
+
+
+        private void HorizontalSize()
+        {
+            switch (MapSize)
+            {
+                case "Medium":
+                    Width = "800";
+                    Height = "200";
+                    break;
+                case "Big":
+                    Width = "1300";
+                    Height = "400";
+                    break;
+                case "Huge":
+                    Width = "1800";
+                    Height = "600";
+                    break;
+            }
+        }
+
+        private void VerticalSize()
+        {
+            switch (MapSize)
+            {
+                case "Medium":
+                    Width = "200";
+                    Height = "800";
+                    break;
+                case "Big":
+                    Width = "400";
+                    Height = "1300";
+                    break;
+                case "Huge":
+                    Width = "600";
+                    Height = "1800";
+                    break;
+            }
+
+        }
+    }
+
+    class UnitsDeploymentsPosition
+    {
+        //UNITS DEPLOYMENT AREA DEFAULT POSITION
+        public int X {  get; private set; }
+        public int Y { get; private set; }
+
+        //DEPLOYMENT AREA DIRECTION
+        public string Direction { get; private set; }
+
+        //MAP SIZE USER OPTION
+        private string MapSize { get; set; }
+
+        /// <summary>
+        /// Dynamic constructor for units positioning
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="option_map_size"></param>
+        /// <param name="total_soldiers"></param>
+        public UnitsDeploymentsPosition(string direction, string option_map_size, int total_soldiers) 
+        {
+            Direction = direction;
+            MapSize = option_map_size;
+
+            BattleMap(option_map_size, total_soldiers);
+            UnitsPositionament();
+        }
+
+        /// <summary>
+        /// Default values for unit positioning
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+
+        public UnitsDeploymentsPosition(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public void AddUnitXSpacing(string direction)
+        {
+            int xSpacing = 30;
+            if (direction is "N" || direction is "S")
+            {
+                X = X - xSpacing;
+                Y = Y;
+            }
+            else if (direction is "E")
+            {
+                xSpacing = 15;
+                X = X + xSpacing;
+                Y = Y;
+            }
+            else if (direction is "W")
+            {
+                xSpacing = 15;
+                X = X - xSpacing;
+                Y = Y;
+            }
+        }
+        public void AddUnitYSpacing(string direction)
+        {
+            int ySpacing = 15;
+            if (direction is "N")
+            {
+                X = X;
+                Y = Y + ySpacing;
+            }
+            else if (direction is "S")
+            {
+                X = X;
+                Y = Y - ySpacing;
+            }
+            else if (direction is "E" || direction is "W")
+            {
+                ySpacing = 30;
+                X = X;
+                Y = Y + ySpacing;
+            }
+        }
+
+
+        private void BattleMap(string option_map_size, int total_soldiers)
+        {
+            if(option_map_size == "Dynamic")
+            {
+                if (total_soldiers <= 5000)
+                {
+                    MapSize = "Medium";
+                }
+                else if (total_soldiers > 5000 && total_soldiers < 20000)
+                {
+                    MapSize = "Big";
+                }
+                else if (total_soldiers >= 20000)
+                {
+                    MapSize = "Huge";
+                }
+            }
+            else
+            {
+                MapSize = option_map_size;
+            }
+        }
+
+        public void InverseDirection()
+        {
+            if (Direction == "N")
+            {
+                Direction = "S";
+            }
+            else if (Direction == "S")
+            {
+                Direction= "N";
+            }
+            else if (Direction == "E")
+            {
+                Direction = "W";
+            }
+            else if (Direction == "W")
+            {
+                Direction = "E";
+            }
+        }
+
+        private void UnitsPositionament()
+        {
+            if (Direction == "N")
+            {
+                switch(MapSize)
+                {
+                    case "Medium":
+                        X = 0;
+                        Y = 200;
+                        break;
+                    case "Big":
+                        X = 0;
+                        Y = 350;
+                        break;
+                    case "Huge":
+                        X = 0;
+                        Y = 600;
+                        break;
+                }
+            }
+            else if (Direction == "S")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = 0;
+                        Y = -200;
+                        break;
+                    case "Big":
+                        X = 0;
+                        Y = -350;
+                        break;
+                    case "Huge":
+                        X = 0;
+                        Y = -600;
+                        break;
+                }
+            }
+            else if (Direction == "E")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = 200;
+                        Y = 0;
+                        break;
+                    case "Big":
+                        X = 350;
+                        Y = 0;
+                        break;
+                    case "Huge":
+                        X = 600;
+                        Y = 0;
+                        break;
+                }
+            }
+            else if (Direction == "W")
+            {
+                switch (MapSize)
+                {
+                    case "Medium":
+                        X = -200;
+                        Y = 0;
+                        break;
+                    case "Big":
+                        X = -350;
+                        Y = 0;
+                        break;
+                    case "Huge":
+                        X = -600;
+                        Y = 0;
+                        break;
+                }
+            }
+        }
     }
 
 

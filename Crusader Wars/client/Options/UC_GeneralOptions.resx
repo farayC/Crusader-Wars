@@ -121,9 +121,10 @@
     <value>17, 17</value>
   </metadata>
   <data name="OptionSelection_BattleMapsSize.ToolTip" xml:space="preserve">
-    <value>Big: 50% bigger than default Attila battle maps.
+    <value>Dynamic: Battle maps sizes will change according to the amount of soldiers in battle. (Recommended)
+Medium: Small sized battle maps.
+Big: 50% bigger than default Attila battle maps.
 Huge: 100% bigger than default Attila battle maps.
-
-Warning-Huge battle maps will make battles last longer since it's gonna take some time to find the enemy.</value>
+</value>
   </data>
 </root>

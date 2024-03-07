@@ -16,6 +16,7 @@ using Crusader_Wars.client;
 using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.locs;
 using static Crusader_Wars.Languages;
+using Crusader_Wars.data.attila_settings;
 
 namespace Crusader_Wars
 {
@@ -151,7 +152,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();
 
             //Hide debug button
-            btt_debug.Visible = true;
+            btt_debug.Visible = false;
 
             Color myColor = Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
@@ -159,8 +160,9 @@ namespace Crusader_Wars
 
             Options.ReadOptionsFile();
             ModOptions.StoreOptionsValues(Options.optionsValuesCollection);
+            AttilaPreferences.ChangeUnitSizes();
 
-            
+
         }
 
         //---------------------------------//
@@ -169,7 +171,7 @@ namespace Crusader_Wars
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
-
+            
         }
         
 
@@ -224,12 +226,14 @@ namespace Crusader_Wars
 
 
         string log;
+        LoadingScreen LoadingScreen;
         private async void ExecuteButton_Click(object sender, EventArgs e)
         {
             _myVariable = 1;
 
             ExecuteButton.Enabled = false;
 
+            ProcessCommands.ResumeProcess();
 
             while (true)
             {
@@ -320,11 +324,15 @@ namespace Crusader_Wars
                             MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                             infoLabel.Text = "Ready to start!";
                             ExecuteButton.Enabled = true;
+                            LoadingScreen.Close();
                             break;
                         }
 
                         try
                         {
+                            LoadingScreen = new LoadingScreen();
+                            //LoadingScreen.Show();
+
                             infoLabel.Text = "Battle found...";
                             logFile.Position = 0;
                             reader.DiscardBufferedData();
@@ -333,6 +341,8 @@ namespace Crusader_Wars
 
                             if (battleHasStarted)
                             {
+                                LoadingScreen.ChangeMessage("Reading battle data...");
+
                                 infoLabel.Text = "Reading data...";
 
                                 Player = new Player();
@@ -345,9 +355,16 @@ namespace Crusader_Wars
                         }
                         catch
                         {
+                            LoadingScreen.Close();
                             MessageBox.Show("Error reading battle data.", "Data Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                             infoLabel.Text = "Waiting for battle...";
+
+                            //Data Clear
+                            Data.Reset();
+                            Player = new Player();
+                            Enemy = new Enemy(); 
+
                             continue;
                         }
 
@@ -369,8 +386,6 @@ namespace Crusader_Wars
                 long startMemoryTotal = GC.GetTotalMemory(false);
 
 
-                Reader.SetData(Player, Enemy);
-                BattleResult.LoadSaveFile(path_editedSave);
 
                 long endMemory10 = GC.GetTotalMemory(false);
                 long memoryUsage10 = endMemory10 - startMemoryTotal;
@@ -378,8 +393,12 @@ namespace Crusader_Wars
                 try
                 {
 
+                    LoadingScreen.ChangeMessage("Reading save file data...");
 
-                    BattleResult.GetAllCombats();
+                    Reader.SetData(Player, Enemy);
+                    BattleResult.LoadSaveFile(path_editedSave);
+                    BattleResult.GetAllCombatResults(Player.ID.ToString());
+                    BattleResult.GetAllCombats(); 
                     BattleResult.FindPlayerBattle(Player.ID.ToString());
                     BattleResult.GetAttackerRegiments();
                     BattleResult.GetDefenderRegiments();
@@ -392,10 +411,17 @@ namespace Crusader_Wars
                 }
                 catch
                 {
+                    LoadingScreen.Close();
                     MessageBox.Show("Error reading the save file. Disable Ironman or Debug Mode.", "Save File Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Waiting for battle...";
                     ProcessCommands.ResumeProcess();
+
+                    //Data Clear
+                    Data.Reset();
+                    Player = new Player();
+                    Enemy = new Enemy();
+
                     continue;
 
                 }
@@ -403,18 +429,31 @@ namespace Crusader_Wars
 
                 try
                 {
+                    LoadingScreen.ChangeMessage("Reading combat sides...");
                     BattleResult.GetCombatSides(Player, Enemy);
 
-                    //debug purpose for now
-                    UnitsCardsNames.ChangeUnitsCardsNames(Player, Enemy);
+                    if (ModOptions.UnitCards())
+                    {
+                        LoadingScreen.ChangeMessage("Changing unit cards names...");
+                        UnitsCardsNames.ChangeUnitsCardsNames(UnitMapper.LoadedMapper, Player, Enemy);
+                    }
+
+                    LoadingScreen.ChangeMessage("Adding battle details...");
                     BattleDetails.ChangeBattleDetails(Player, Enemy);
                 }
                 catch
                 {
+                    LoadingScreen.Close();
                     MessageBox.Show("Error reading the save file. Disable Ironman or Debug Mode.", "Save File Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";
+
+                    //Data Clear
+                    Data.Reset();
+                    Player = new Player();
+                    Enemy = new Enemy();
+
                     continue;
                 }
 
@@ -423,6 +462,8 @@ namespace Crusader_Wars
                 try
                 {
                     Games.CloseTotalWarAttilaProcess();
+
+                    LoadingScreen.ChangeMessage("Creating battle in Total War Attila...");
 
                     //Create Declarations
                     DeclarationsFile.CreateAlliances();
@@ -437,6 +478,12 @@ namespace Crusader_Wars
                     //Close Script
                     BattleScript.CloseScript();
 
+                    //Set Units Kills Script
+                    BattleScript.SetLocalsKills(Data.units_scripts);
+
+                    //Close Script
+                    BattleScript.CloseScript();
+
                     //Set Units Declarations
                     DeclarationsFile.SetDeclarations();
 
@@ -445,10 +492,18 @@ namespace Crusader_Wars
                 }
                 catch
                 {
+                    LoadingScreen.Close();
                     MessageBox.Show("Error creating the battle", "Data Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";
+
+                    //Data Clear
+                    Data.Reset();
+                    Player = new Player();
+                    Enemy = new Enemy();
+
+
                     continue;
                 }
 
@@ -456,9 +511,13 @@ namespace Crusader_Wars
                 {
                     //Open Total War Attila
                     Games.StartTotalWArAttilaProcess();
+
+                    LoadingScreen.ChangeMessage("Done!");
+                    LoadingScreen.Close();
                 }
                 catch
                 {
+                    LoadingScreen.Close();
                     MessageBox.Show("Couldn't find 'Attila.exe'. Change the Total War Attila path. ", "Path Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Ready to start!";
@@ -482,6 +541,12 @@ namespace Crusader_Wars
                     Games.CloseTotalWarAttilaProcess();
                     Games.StartCrusaderKingsProcess();
                     infoLabel.Text = "Waiting for battle...";
+
+                    //Data Clear
+                    Data.Reset();
+                    Player = new Player();
+                    Enemy = new Enemy();
+
                     continue;
                 }
 
@@ -516,6 +581,12 @@ namespace Crusader_Wars
                     Games.CloseTotalWarAttilaProcess();
                     Games.StartCrusaderKingsProcess();
                     infoLabel.Text = "Waiting for battle...";
+
+                    //Data Clear
+                    Data.Reset();
+                    Player = new Player();
+                    Enemy = new Enemy();
+
                     continue;
                 }
 
@@ -528,7 +599,6 @@ namespace Crusader_Wars
 
                     infoLabel.Text = "Battle has ended!";
                     string path_log_attila = Properties.Settings.Default.VAR_log_attila;
-                    List<(string Name, string Remaining)> Remaining_Soldiers_List;
 
                     List<(string Name, string Remaining)> Player_Remaining;
                     List<(string Name, string Remaining)> Enemy_Remaining;
@@ -543,25 +613,58 @@ namespace Crusader_Wars
                         //Attila Remaining Soldiers
 
                         long startMemory = GC.GetTotalMemory(false);
-                        Remaining_Soldiers_List = BattleResult.GetRemainingSoldiersData(path_log_attila);
+                        //Remaining_Soldiers_List = BattleResult.GetRemainingSoldiersData(path_log_attila);
+                        BattleResult.GetUnitsData(Player, path_log_attila);
+                        BattleResult.GetUnitsData(Enemy, path_log_attila);
                         long endMemory = GC.GetTotalMemory(false);
                         long memoryUsage = endMemory - startMemory;
-
                         Console.WriteLine($"----\nGetting from Attila log the remaining soldiers...\nMemory Usage: {memoryUsage / 1048576} mb\n----");
 
                         Player_Remaining = new List<(string Name, string Remaining)>();
                         Enemy_Remaining = new List<(string Name, string Remaining)>();
 
+                        if(Player.UnitsResults.Alive_PursuitPhase.Count > 0 )
+                        {
+                            Player_Remaining = Player.UnitsResults.Alive_PursuitPhase;
+                        }
+                        else
+                        {
+                            Player_Remaining = Player.UnitsResults.Alive_MainPhase;
+                        }
+                        if (Enemy.UnitsResults.Alive_PursuitPhase.Count > 0)
+                        {
+                            Enemy_Remaining = Enemy.UnitsResults.Alive_PursuitPhase;
+                        }
+                        else
+                        {
+                            Enemy_Remaining = Enemy.UnitsResults.Alive_MainPhase;
+                        }
+
                         //Army Ratio
-                        for (int i = 0; i < Remaining_Soldiers_List.Count; i++)
+                        for (int i = 0; i < Player_Remaining.Count; i++)
                         {
                             int number;
-                            if (Int32.TryParse(Remaining_Soldiers_List[i].Remaining, out number))
+                            if (Int32.TryParse(Player_Remaining[i].Remaining, out number))
                             {
-                                if (!Remaining_Soldiers_List[i].Name.Contains("general"))
+                                if (!Player_Remaining[i].Name.Contains("general"))
                                     number = ArmyProportions.SetResultsRatio(number);
 
-                                Remaining_Soldiers_List[i] = (Remaining_Soldiers_List[i].Name, number.ToString());
+                                Player_Remaining[i] = (Player_Remaining[i].Name, number.ToString());
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        for (int i = 0; i < Enemy_Remaining.Count; i++)
+                        {
+                            int number;
+                            if (Int32.TryParse(Enemy_Remaining[i].Remaining, out number))
+                            {
+                                if (!Enemy_Remaining[i].Name.Contains("general"))
+                                    number = ArmyProportions.SetResultsRatio(number);
+
+                                Enemy_Remaining[i] = (Enemy_Remaining[i].Name, number.ToString());
                             }
                             else
                             {
@@ -569,20 +672,6 @@ namespace Crusader_Wars
                             }
                         }
 
-                        foreach (var unit in Remaining_Soldiers_List)
-                        {
-
-                            if (unit.Name.StartsWith("player"))
-                            {
-                                Player_Remaining.Add(unit);
-                            }
-
-                            if (unit.Name.StartsWith("enemy"))
-                            {
-                                Enemy_Remaining.Add(unit);
-                            }
-
-                        }
 
                         remaining_player_knights = Player_Remaining.Where(x => x.Name.Contains("player_general_knights"))
                                            .Select(p => p.Remaining)
@@ -591,6 +680,8 @@ namespace Crusader_Wars
                         remaining_enemy_knights = Enemy_Remaining.Where(x => x.Name.Contains("enemy_general_knights"))
                                                                      .Select(p => p.Remaining)
                                                                      .FirstOrDefault();
+
+
 
                         Player.Commander.HasGeneralFallen(path_log_attila, Player);
                         Enemy.Commander.HasGeneralFallen(path_log_attila, Enemy);
@@ -636,6 +727,12 @@ namespace Crusader_Wars
                         Games.CloseTotalWarAttilaProcess();
                         Games.StartCrusaderKingsProcess();
                         infoLabel.Text = "Waiting for battle...";
+
+                        //Data Clear
+                        Data.Reset();
+                        Player = new Player();
+                        Enemy = new Enemy();
+
                         continue;
                     }
 
@@ -644,6 +741,8 @@ namespace Crusader_Wars
 
                     try
                     {
+                        BattleResult.EditCombatResults(Player);
+                        BattleResult.EditCombatResults(Enemy);
                         BattleResult.SetAttackerGUIRegiments();
                         BattleResult.SetDefenderGUIRegiments();
                         BattleResult.SetWinner(Player.ID.ToString(), winner);
@@ -659,6 +758,12 @@ namespace Crusader_Wars
                         Games.CloseTotalWarAttilaProcess();
                         Games.StartCrusaderKingsProcess();
                         infoLabel.Text = "Waiting for battle...";
+
+                        //Data Clear
+                        Data.Reset();
+                        Player = new Player();
+                        Enemy = new Enemy();
+
                         continue;
                     }
 

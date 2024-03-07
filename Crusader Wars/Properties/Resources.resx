@@ -121,11 +121,11 @@
   <data name="option" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\option.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="120px-Icon_CK3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\120px-Icon_CK3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="attilaicon (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\attilaicon (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="LOADINGIMAGE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LOADINGIMAGE.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cancel (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cancel (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -142,8 +142,8 @@
   <data name="discord" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\discord.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="resume" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\resume.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="loadingscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loadingscreen1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Vassal_stance_minority" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Vassal_stance_minority.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -178,9 +178,6 @@
   <data name="archers" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\archers.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ModDesign(Alpha1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ModDesign(Alpha1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="cross (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cross (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -193,20 +190,14 @@
   <data name="discord2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\discord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ModDesign(Alpha)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ModDesign(Alpha).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="option1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\option.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="btnbk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnbk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="moving" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\moving.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="fortress-gd06cefbea_1280" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fortress-gd06cefbea_1280.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="options" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="options1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -214,38 +205,29 @@
   <data name="warning (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warning (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="attila background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\attila background.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="warning (1)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warning (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="bookpage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bookpage.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="EarlyRenainance" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\EarlyRenainance.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="playbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\playbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="loadingscrenn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loadingscrenn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="120px-Icon_CK3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\120px-Icon_CK3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="rotating_logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rotating_logo1.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ck3 (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ck3 (1).jpeg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ModDesign(Alpha)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ModDesign(Alpha)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="rotating_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rotating_logo.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="loadingscreen1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loadingscreen2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="wider original" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wider original.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="option (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\option (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -253,11 +235,11 @@
   <data name="cross (2) (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cross (2) (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="archers1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\archers1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="fortress-gd06cefbea_1280" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fortress-gd06cefbea_1280.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="app_background1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\app_background1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Declare_war_interaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Declare_war_interaction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -271,25 +253,25 @@
   <data name="website1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\website1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="playbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\playbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TextLogo (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TextLogo (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="discord1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\discord1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="app_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\app_background.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="archers1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\archers1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="background.jpg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\background.jpg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="discord1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\discord1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="option1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\option.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="resume" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\resume.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="heavy_cavalry" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\heavy_cavalry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="btnbk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btnbk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cha_evpic_charlemagne_prepares_for_war" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cha_evpic_charlemagne_prepares_for_war.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

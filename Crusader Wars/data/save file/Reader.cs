@@ -39,6 +39,7 @@ namespace Crusader_Wars
         /// <param name="savePath">Path to the ck3 save file</param>  
         public static void ReadFile(string savePath)
         {
+
             using (FileStream saveFile = File.Open(savePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(saveFile))
             {
@@ -50,11 +51,13 @@ namespace Crusader_Wars
                     GetterKeys.ReadAccolades(line, Player, Enemy);
                     GetterKeys.ReadCourtPositions(line, Player, Enemy);
                     GetterKeys.ReadLivingCharacters(line, Player, Enemy);
+                    SearchKeys.BattleResults(line);
                     SearchKeys.TraitsList(line);
                     SearchKeys.Combats(line);
                     SearchKeys.Regiments(line);
                     SearchKeys.ArmyRegiments(line);
                     SearchKeys.Living(line);
+                     
                 }
                 Player = null;
                 Enemy = null;
@@ -73,7 +76,7 @@ namespace Crusader_Wars
         {
 
             long startMemory = GC.GetTotalMemory(false);
-
+            bool resultsFound = false;
             string tempFilePath = Directory.GetCurrentDirectory() + "\\CrusaderWars_Battle.ck3";
 
             using (var inputFileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -91,6 +94,11 @@ namespace Crusader_Wars
                     {
                         NeedSkiping = false;
                     }
+                    else if (NeedSkiping && line == "\tcombats={")
+                    {
+                        NeedSkiping = false;
+                        resultsFound = false;
+                    }
                     else if (NeedSkiping && line == "\tarmy_regiments={")
                     {
                         NeedSkiping = false;
@@ -104,11 +112,21 @@ namespace Crusader_Wars
                         NeedSkiping = false;
                     }
 
-
-                    if (line == "\tcombats={" && !NeedSkiping)
+                    if(line == "\tcombat_results={")
+                    {
+                        resultsFound = true;
+                        streamWriter.WriteLine(line);
+                    }
+                    else if (line == $"\t\t{BattleResult.ID}={{"&& resultsFound && !NeedSkiping)
+                    {
+                        streamWriter.WriteLine($"\t\t{BattleResult.ID}={{\n" + Data.String_BattleResults);
+                        Console.WriteLine("EDITED BATTLE RESULTS SENT!");
+                        NeedSkiping = true;
+                    }
+                    else if (line == "\tcombats={" && !NeedSkiping)
                     {
                         streamWriter.WriteLine(Data.String_Combats);
-                        Console.WriteLine("EDITED COMBATS SENT!");
+                        
                         NeedSkiping = true;
                     }
                     else if (line == "\tregiments={" && !NeedSkiping)
@@ -158,6 +176,9 @@ namespace Crusader_Wars
 
     internal static class Data
     {
+        public static List<(string unitName, string declarationName)> units_scripts = new List<(string unitName, string declarationName)>();
+
+
         public static List<string> PlayerIDsAccolades = new List<string>();
         public static List<string> EnemyIDsAccolades = new List<string>();
         public static List<(string,string,string)> PlayerAccolades = new List<(string,string,string)>();
@@ -177,12 +198,15 @@ namespace Crusader_Wars
         public static StringBuilder Living = new StringBuilder();
         public static StringBuilder ArmyRegiments = new StringBuilder();
         public static StringBuilder Regiments = new StringBuilder();
+        public static StringBuilder BattleResults = new StringBuilder();
+        public static int BattleID = 0;
 
         public static string String_Traits;
         public static string String_Combats;
         public static string String_Living;
         public static string String_ArmyRegiments;
         public static string String_Regiments;
+        public static string String_BattleResults;
 
         public static void ConvertDataToString()
         {
@@ -193,6 +217,8 @@ namespace Crusader_Wars
             String_Living = Living.ToString();
             String_ArmyRegiments = ArmyRegiments.ToString();
             String_Regiments = Regiments.ToString();
+            String_BattleResults = BattleResults.ToString();
+
 
             long endMemory = GC.GetTotalMemory(false);
             long memoryUsage = endMemory - startMemory;
@@ -217,18 +243,21 @@ namespace Crusader_Wars
             Living = new StringBuilder();
             ArmyRegiments = new StringBuilder ();
             Regiments = new StringBuilder ();
+            BattleResults = new StringBuilder ();
 
             String_Traits = "";
             String_Combats = "";
             String_Living = "";
             String_ArmyRegiments= "";
             String_Regiments = "";
+            String_BattleResults = "";
 
             SearchKeys.HasTraitsExtracted = false;
             SearchKeys.HasCombatsExtracted = false;
             SearchKeys.HasLivingExtracted = false;
             SearchKeys.HasArmyRegimentsExtracted = false;
             SearchKeys.HasRegimentsExtracted = false;
+            SearchKeys.HasBattleResultsExtracted = false;
         }
     }
 
@@ -552,7 +581,7 @@ namespace Crusader_Wars
                             accolade_knight = player_knights.First(x => x.Item1 == char_id);
 
                             int index = player_knights.IndexOf(accolade_knight);
-                            accolade_knight = ((accolade_knight.Item1, 7, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
+                            accolade_knight = ((accolade_knight.Item1, 4, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
                             player_knights[index] = accolade_knight;
 
                             string accolade_id = Regex.Match(line, @"\d+").Value;
@@ -573,7 +602,7 @@ namespace Crusader_Wars
                             accolade_knight = enemy_knights.First(x => x.Item1 == char_id);
 
                             int index = enemy_knights.IndexOf(accolade_knight);
-                            accolade_knight = ((accolade_knight.Item1, 7, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
+                            accolade_knight = ((accolade_knight.Item1, 4, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
                             enemy_knights[index] = accolade_knight;
 
                             string accolade_id = Regex.Match(line, @"\d+").Value;
@@ -788,6 +817,48 @@ namespace Crusader_Wars
             }
         }
 
+        private static bool Start_BattleResultsFound { get; set; }
+        private static bool End_BattleResultsFound { get; set; }
+        public static bool HasBattleResultsExtracted { get; set; }
+
+        public static void BattleResults(string line)
+        {
+            if (!HasBattleResultsExtracted)
+            {
+                if (!Start_BattleResultsFound)
+                {
+                    if (line == "\tcombat_results={")
+                    {
+                        Start_BattleResultsFound = true; Console.WriteLine("COMBAT RESULT START KEY FOUND!");
+                    }
+                    else { Start_BattleResultsFound = false; }
+                }
+                
+
+
+                if (Start_BattleResultsFound && !End_BattleResultsFound)
+                {
+                    if (line == "\tcombats={")
+                    {
+                        End_BattleResultsFound = true;
+                        Console.WriteLine("COMBAT RESULT END KEY FOUND!");
+                        return;
+                    }
+                    else { End_BattleResultsFound = false; }
+
+                    Data.BattleResults.Append(line + "\n");
+
+                }
+
+                if (End_BattleResultsFound)
+                {
+                    HasBattleResultsExtracted = true;
+                    Start_BattleResultsFound = false;
+                    End_BattleResultsFound = false;
+                }
+            }
+        }
+
         private static bool Start_RegimentsFound { get; set; }
         private static bool End_RegimentsFound { get; set; }
         public static bool HasRegimentsExtracted { get; set; }
@@ -857,7 +928,6 @@ namespace Crusader_Wars
                     HasArmyRegimentsExtracted = true;
                     Start_ArmyRegimentsFound = false;
                     End_ArmyRegimentsFound = false;
-                    //Console.WriteLine(Data.ArmyRegiments);
                 }
             }
         }
