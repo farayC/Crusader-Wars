@@ -26,6 +26,25 @@ namespace Crusader_Wars
 
     }
 
+    public class CK3Army : ICharacter
+    {
+        public int ID { get; set; }
+        public string RealmName { get; set; }
+        public int TotalNumber { get; set; }
+        public string Heritage { get; set; }
+        public string Culture { get; set; }
+        public string AttilaFaction { get; set; }
+        public List<(string Type, string Key, int Max, string Script, int SoldiersNum)> Army { get; set; }
+        public string CombatSide { get; set; }
+        public CommanderSystem Commander { get; set; }
+        public KnightSystem Knights { get; set; }
+        public DefensiveSystem Defences { get; set; }
+        public Modifiers Modifiers { get; set; }
+        public Units UnitsResults { get; set; }
+        public Supplys Supplys { get; set; }
+
+    }
+
     public class Player : ICharacter
 	{
         public int ID { get; set; }

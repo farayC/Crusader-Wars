@@ -18,7 +18,7 @@ namespace Crusader_Wars
             this.WindowState = FormWindowState.Maximized;
 
             // Set PictureBox properties
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
             // Load background image
             pictureBox1.Image = Properties.Resources.loadingscreen1;
