@@ -72,6 +72,7 @@ namespace Crusader_Wars
 
 
         static bool NeedSkiping { get;set; }
+        static bool CombatResults_NeedsSkiping {  get; set; }
         public static void SendDataToFile(string savePath)
         {
 
@@ -94,9 +95,9 @@ namespace Crusader_Wars
                     {
                         NeedSkiping = false;
                     }
-                    else if (NeedSkiping && line == "\tcombats={")
+                    else if (CombatResults_NeedsSkiping && line == "\t\t}")
                     {
-                        NeedSkiping = false;
+                        CombatResults_NeedsSkiping = false;
                         resultsFound = false;
                     }
                     else if (NeedSkiping && line == "\tarmy_regiments={")
@@ -117,11 +118,25 @@ namespace Crusader_Wars
                         resultsFound = true;
                         streamWriter.WriteLine(line);
                     }
-                    else if (line == $"\t\t{BattleResult.ID}={{"&& resultsFound && !NeedSkiping)
+                    else if (line == $"\t\t{BattleResult.ID}={{"&& resultsFound && !CombatResults_NeedsSkiping)
                     {
-                        streamWriter.WriteLine($"\t\t{BattleResult.ID}={{\n" + Data.String_BattleResults);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        using (StringReader sr = new StringReader(Data.String_BattleResults))
+                        {
+                            while (true)
+                            {
+                                string l = sr.ReadLine();
+
+                                if (l is null) break;
+                                if (l == "\t\t}") continue;
+
+                                stringBuilder.Append(l);
+                            }
+                        }
+
+                        streamWriter.WriteLine("\t\t" + stringBuilder.ToString());
                         Console.WriteLine("EDITED BATTLE RESULTS SENT!");
-                        NeedSkiping = true;
+                        CombatResults_NeedsSkiping = true;
                     }
                     else if (line == "\tcombats={" && !NeedSkiping)
                     {
@@ -147,7 +162,7 @@ namespace Crusader_Wars
                         Console.WriteLine("EDITED LIVING SENT!");
                         NeedSkiping = true;
                     }
-                    else if (!NeedSkiping)
+                    else if (!NeedSkiping && !CombatResults_NeedsSkiping)
                     {
                         streamWriter.WriteLine(line); 
                     }

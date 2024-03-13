@@ -17,6 +17,7 @@ using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.locs;
 using static Crusader_Wars.Languages;
 using Crusader_Wars.data.attila_settings;
+using System.Security.Policy;
 
 namespace Crusader_Wars
 {
@@ -741,8 +742,11 @@ namespace Crusader_Wars
 
                     try
                     {
-                        BattleResult.EditCombatResults(Player);
-                        BattleResult.EditCombatResults(Enemy);
+                        bool side = false; ;
+                        if (Player.CombatSide == "attacker") side = false;//Attacker Player and Defender Enemy
+                        else side = true; //Defender Player and Attacker Enemy
+                        BattleResult.EditCombatResults(Player, Enemy, side);
+
                         BattleResult.SetAttackerGUIRegiments();
                         BattleResult.SetDefenderGUIRegiments();
                         BattleResult.SetWinner(Player.ID.ToString(), winner);
