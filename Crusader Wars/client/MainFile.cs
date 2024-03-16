@@ -18,6 +18,7 @@ using Crusader_Wars.locs;
 using static Crusader_Wars.Languages;
 using Crusader_Wars.data.attila_settings;
 using System.Security.Policy;
+using Crusader_Wars.data.save_file;
 
 namespace Crusader_Wars
 {
@@ -407,8 +408,6 @@ namespace Crusader_Wars
                     BattleResult.GetAllRegiments();
 
 
-
-
                 }
                 catch
                 {
@@ -426,6 +425,9 @@ namespace Crusader_Wars
                     continue;
 
                 }
+
+                //1.0 Beta Debug
+                ArmiesReader.ReadBattleArmies();
 
 
                 try
@@ -944,14 +946,6 @@ namespace Crusader_Wars
             optionsChild.ShowDialog();
         }
 
-        private void Info_Status_MouseHover(object sender, EventArgs e)
-        {
-            InformationToolTip.ToolTipTitle = "Crusader Wars Pre Beta";
-
-            InformationToolTip.SetToolTip(Info_Status, "Tips to work properly:\n" + 
-                                                       "1-Disable '1-1212scripts.pack' for the mod to work\n" +
-                                                       "2-In Total War Attila set Unit Size to Ultra\n");
-        }
 
         private void HomePage_FormClosing(object sender, FormClosingEventArgs e)
         {

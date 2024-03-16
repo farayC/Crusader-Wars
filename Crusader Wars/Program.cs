@@ -29,7 +29,7 @@ namespace Crusader_Wars
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             // Handle the exception
-            MessageBox.Show("An unexpected error occurred. Please contact support for assistance.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("An unexpected error occurred. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             // Log the exception for troubleshooting
             Logger.Log(e.Exception);
         }
@@ -37,7 +37,7 @@ namespace Crusader_Wars
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             // Handle the exception
-            MessageBox.Show("An unexpected error occurred. Please contact support for assistance.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("An unexpected error occurred. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             // Log the exception for troubleshooting
             Logger.Log((Exception)e.ExceptionObject);
         }
