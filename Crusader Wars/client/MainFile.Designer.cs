@@ -34,7 +34,6 @@
             this.btt_debug = new System.Windows.Forms.Button();
             this.infoLabel = new System.Windows.Forms.Label();
             this.SettingsBtn = new System.Windows.Forms.Button();
-            this.Info_Status = new System.Windows.Forms.PictureBox();
             this.InformationToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelVersion = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -43,7 +42,6 @@
             this.btnSteam = new System.Windows.Forms.Button();
             this.btnPatch = new System.Windows.Forms.Button();
             this.btnWebsite = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.Info_Status)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -87,15 +85,6 @@
             this.SettingsBtn.Name = "SettingsBtn";
             this.SettingsBtn.UseVisualStyleBackColor = false;
             this.SettingsBtn.Click += new System.EventHandler(this.SettingsBtn_Click);
-            // 
-            // Info_Status
-            // 
-            resources.ApplyResources(this.Info_Status, "Info_Status");
-            this.Info_Status.BackColor = System.Drawing.Color.Transparent;
-            this.Info_Status.BackgroundImage = global::Crusader_Wars.Properties.Resources.info_smaller;
-            this.Info_Status.Name = "Info_Status";
-            this.Info_Status.TabStop = false;
-            this.Info_Status.MouseHover += new System.EventHandler(this.Info_Status_MouseHover);
             // 
             // labelVersion
             // 
@@ -189,7 +178,6 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.labelVersion);
-            this.Controls.Add(this.Info_Status);
             this.Controls.Add(this.SettingsBtn);
             this.Controls.Add(this.btt_debug);
             this.DoubleBuffered = true;
@@ -199,7 +187,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HomePage_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.HomePage_Shown);
-            ((System.ComponentModel.ISupportInitialize)(this.Info_Status)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
@@ -214,7 +201,6 @@
         private System.Windows.Forms.Button btt_debug;
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Button SettingsBtn;
-        private System.Windows.Forms.PictureBox Info_Status;
         private System.Windows.Forms.ToolTip InformationToolTip;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.PictureBox pictureBox1;

@@ -731,6 +731,21 @@ namespace Crusader_Wars
                 WarningMessage.ShowWarningMessage(message);
             }
 
+            int start =1066;
+            foreach (var i in YearCollection)
+            {
+                if (i.Value.start > start){ start = i.Value.start; continue; }
+                else { start = Math.Min(i.Value.start, start); }
+                
+            }
+            if (start > 1066 && YearCollection.Count > 1)
+            {
+                string message = $"Your selected unit mappers only starts at {YearCollection.ElementAtOrDefault(0).Value.start}AD.\n" +
+                                 "If your CK3 campaign is below this year, the mod won't work!\n";
+                string title = "Empty Time Periods";
+                WarningMessage.ShowWarningMessage(message, title);
+            }
+
             
         }
 

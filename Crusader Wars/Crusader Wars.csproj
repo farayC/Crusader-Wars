@@ -152,6 +152,7 @@
     <Compile Include="data\battle results\BattleResults_Objects.cs" />
     <Compile Include="data\battle results\GUI_BattleResultTab.cs" />
     <Compile Include="data\ck3 log\SiegesSearch.cs" />
+    <Compile Include="data\save file\Armies Reader.cs" />
     <Compile Include="data\save file\Writter.cs" />
     <Compile Include="locs\BattleDetails.cs" />
     <Compile Include="locs\UnitsCardsNames.cs" />

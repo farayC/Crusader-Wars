@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
 
 namespace Crusader_Wars
 {
@@ -51,12 +52,16 @@ namespace Crusader_Wars
                     GetterKeys.ReadAccolades(line, Player, Enemy);
                     GetterKeys.ReadCourtPositions(line, Player, Enemy);
                     GetterKeys.ReadLivingCharacters(line, Player, Enemy);
+
                     SearchKeys.BattleResults(line);
                     SearchKeys.TraitsList(line);
+                    SearchKeys.Armies(line);
                     SearchKeys.Combats(line);
                     SearchKeys.Regiments(line);
                     SearchKeys.ArmyRegiments(line);
                     SearchKeys.Living(line);
+                    SearchKeys.Counties(line);
+                    SearchKeys.Cultures(line);
                      
                 }
                 Player = null;
@@ -211,17 +216,23 @@ namespace Crusader_Wars
         public static StringBuilder Traits = new StringBuilder();
         public static StringBuilder Combats = new StringBuilder();
         public static StringBuilder Living = new StringBuilder();
+        public static StringBuilder Armies = new StringBuilder();
         public static StringBuilder ArmyRegiments = new StringBuilder();
         public static StringBuilder Regiments = new StringBuilder();
         public static StringBuilder BattleResults = new StringBuilder();
+        public static StringBuilder Counties = new StringBuilder();
+        public static StringBuilder Cultures = new StringBuilder();
         public static int BattleID = 0;
 
         public static string String_Traits;
         public static string String_Combats;
         public static string String_Living;
+        public static string String_Armies;
         public static string String_ArmyRegiments;
         public static string String_Regiments;
         public static string String_BattleResults;
+        public static string String_Counties;
+        public static string String_Cultures;
 
         public static void ConvertDataToString()
         {
@@ -231,8 +242,11 @@ namespace Crusader_Wars
             String_Combats = Combats.ToString();
             String_Living = Living.ToString();
             String_ArmyRegiments = ArmyRegiments.ToString();
+            String_Armies = Armies.ToString();
             String_Regiments = Regiments.ToString();
             String_BattleResults = BattleResults.ToString();
+            String_Counties = Counties.ToString();
+            String_Cultures = Cultures.ToString();
 
 
             long endMemory = GC.GetTotalMemory(false);
@@ -256,23 +270,32 @@ namespace Crusader_Wars
             Traits = new StringBuilder();
             Combats = new StringBuilder();
             Living = new StringBuilder();
+            Armies = new StringBuilder();
             ArmyRegiments = new StringBuilder ();
             Regiments = new StringBuilder ();
             BattleResults = new StringBuilder ();
+            Counties = new StringBuilder();
+            Cultures = new StringBuilder();
 
             String_Traits = "";
             String_Combats = "";
             String_Living = "";
+            String_Armies = "";
             String_ArmyRegiments= "";
             String_Regiments = "";
             String_BattleResults = "";
+            String_Counties = "";
+            String_Cultures = "";
 
             SearchKeys.HasTraitsExtracted = false;
             SearchKeys.HasCombatsExtracted = false;
             SearchKeys.HasLivingExtracted = false;
             SearchKeys.HasArmyRegimentsExtracted = false;
             SearchKeys.HasRegimentsExtracted = false;
+            SearchKeys.HasArmiesExtracted = false;
             SearchKeys.HasBattleResultsExtracted = false;
+            SearchKeys.HasCountiesExtracted = false;
+            SearchKeys.HasCulturesExtracted = false;
         }
     }
 
@@ -947,6 +970,42 @@ namespace Crusader_Wars
             }
         }
 
+        private static bool Start_ArmiesFound { get; set; }
+        private static bool End_ArmiesFound { get; set; }
+        public static bool HasArmiesExtracted { get; set; }
+        public static void Armies(string line)
+        {
+            if (!HasArmiesExtracted)
+            {
+                if (!Start_ArmiesFound)
+                {
+                    if (line == "\tarmies={") { Start_ArmiesFound = true; Console.WriteLine("ARMIES START KEY FOUND!"); }
+                    else { Start_ArmiesFound = false; }
+                }
+
+                if (Start_ArmiesFound && !End_ArmiesFound)
+                {
+
+                    if (line == "\t}")
+                    {
+                        End_ArmiesFound = true;
+                        Console.WriteLine("ARMIES END KEY FOUND!");
+                        return;
+                    }
+                    else { End_ArmiesFound = false; }
+
+                    Data.Armies.Append(line + "\n");
+                }
+
+                if (End_ArmiesFound)
+                {
+                    HasArmiesExtracted = true;
+                    Start_ArmiesFound = false;
+                    End_ArmiesFound = false;
+                }
+            }
+        }
+
         private static bool Start_LivingFound { get; set; }
         private static bool End_LivingFound { get; set; }
         public static bool HasLivingExtracted { get; set; }
@@ -979,6 +1038,80 @@ namespace Crusader_Wars
                     HasLivingExtracted = true;
                     Start_LivingFound = false;
                     End_LivingFound = false;
+                }
+            }
+        }
+
+        private static bool Start_CountiesFound { get; set; }
+        private static bool End_CountiesFound { get; set; }
+        public static bool HasCountiesExtracted { get; set; }
+        public static void Counties(string line)
+        {
+            if (!HasCountiesExtracted)
+            {
+                if (!Start_CountiesFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "\tcounties={") 
+                    { Start_CountiesFound = true; Console.WriteLine("COUNTIES START KEY FOUND!"); }
+                    else { Start_CountiesFound = false; }
+                }
+
+                if (Start_CountiesFound && !End_CountiesFound)
+                {
+                    if (line == "}")
+                    {
+                        End_CountiesFound = true;
+                        Console.WriteLine("COUNTIES END KEY FOUND!");
+                        return;
+                    }
+                    else { End_CountiesFound = false; }
+
+                    Data.Counties.Append(line + "\n");
+                }
+
+                if (End_CountiesFound)
+                {
+                    HasCountiesExtracted = true;
+                    Start_CountiesFound = false;
+                    End_CountiesFound = false;
+                }
+            }
+        }
+
+        private static bool Start_CulturesFound { get; set; }
+        private static bool End_CulturesFound { get; set; }
+        public static bool HasCulturesExtracted { get; set; }
+        public static void Cultures(string line)
+        {
+            if (!HasCulturesExtracted)
+            {
+                if (!Start_CulturesFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "culture_manager={")
+                    { Start_CulturesFound = true; Console.WriteLine("CULTURES START KEY FOUND!"); }
+                    else { Start_CulturesFound = false; }
+                }
+
+                if (Start_CulturesFound && !End_CulturesFound)
+                {
+                    if (line == "}")
+                    {
+                        End_CulturesFound = true;
+                        Console.WriteLine("CULTURES END KEY FOUND!");
+                        return;
+                    }
+                    else { End_CulturesFound = false; }
+
+                    Data.Cultures.Append(line + "\n");
+                }
+
+                if (End_CulturesFound)
+                {
+                    HasCulturesExtracted = true;
+                    Start_CulturesFound = false;
+                    End_CulturesFound = false;
                 }
             }
         }

@@ -12,6 +12,7 @@ using Crusader_Wars.data;
 using System.Diagnostics.Eventing.Reader;
 using Crusader_Wars.data.battle_results;
 using System.CodeDom;
+using Crusader_Wars.data.save_file;
 
 namespace Crusader_Wars
 {
@@ -231,6 +232,9 @@ namespace Crusader_Wars
                     BattleResult.ID = Regex.Match(first, @"(.+)={").Groups[1].Value;
                 }
                 Console.WriteLine("Found player combat");
+
+                //1.0 Beta Debug
+                ArmiesReader.ReadCombats(Player_Combat);
             }
             catch
             {
@@ -238,6 +242,8 @@ namespace Crusader_Wars
             }
            
         }
+
+
 
         //Attacker Regiments
         static string Attacker;

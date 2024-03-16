@@ -24,7 +24,20 @@ namespace Crusader_Wars.client.WarningMessage
         {
             Text_Warning.Text = message;
         }
+        private void SetMessage(string message, string title)
+        {
+            Text_Warning.Text = message;
+            label1.Text = title;
+        }
 
+        public static void ShowWarningMessage(string message, string title)
+        {
+            var warning_message = new WarningMessage();
+            warning_message.SetMessage(message, title);
+            SystemSounds.Exclamation.Play();
+            warning_message.ShowDialog();
+
+        }
         public static void ShowWarningMessage(string message)
         {
             var warning_message = new WarningMessage();
