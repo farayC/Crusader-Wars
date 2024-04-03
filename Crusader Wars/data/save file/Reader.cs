@@ -40,12 +40,21 @@ namespace Crusader_Wars
         /// <param name="savePath">Path to the ck3 save file</param>  
         public static void ReadFile(string savePath)
         {
+            //Clear Battle Results File
+            File.WriteAllText(@".\data\save_file_data\BattleResults.txt", "");
+            //Clear Battle Results TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\BattleResults.txt", "");
+            //Clear Combats File
+            File.WriteAllText(@".\data\save_file_data\Combats.txt", "");
+            //Clear Combats TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Combats.txt", "");
+
 
             using (FileStream saveFile = File.Open(savePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(saveFile))
             {
                 string line = reader.ReadLine();
-                while(line != null && !reader.EndOfStream) 
+                while (line != null && !reader.EndOfStream)
                 {
                     line = reader.ReadLine();
                     //GetterKeys.ReadProvinceBuildings(line, "5984");
@@ -53,16 +62,20 @@ namespace Crusader_Wars
                     GetterKeys.ReadCourtPositions(line, Player, Enemy);
                     GetterKeys.ReadLivingCharacters(line, Player, Enemy);
 
-                    SearchKeys.BattleResults(line);
                     SearchKeys.TraitsList(line);
-                    SearchKeys.Armies(line);
+                    
+                    SearchKeys.BattleResults(line);
                     SearchKeys.Combats(line);
                     SearchKeys.Regiments(line);
                     SearchKeys.ArmyRegiments(line);
                     SearchKeys.Living(line);
-                    SearchKeys.Counties(line);
-                    SearchKeys.Cultures(line);
-                     
+
+
+                    //SearchKeys.Armies(line);
+                    //SearchKeys.Counties(line);
+                    //SearchKeys.Cultures(line);
+                    //SearchKeys.Mercenaries(line);
+
                 }
                 Player = null;
                 Enemy = null;
@@ -74,125 +87,10 @@ namespace Crusader_Wars
             Data.ConvertDataToString();
             SaveFile.ReadWoundedTraits();
         }
-
-
-        static bool NeedSkiping { get;set; }
-        static bool CombatResults_NeedsSkiping {  get; set; }
-        public static void SendDataToFile(string savePath)
-        {
-
-            long startMemory = GC.GetTotalMemory(false);
-            bool resultsFound = false;
-            string tempFilePath = Directory.GetCurrentDirectory() + "\\CrusaderWars_Battle.ck3";
-
-            using (var inputFileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using (var outputFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (var streamReader = new StreamReader(inputFileStream))
-            using (StreamWriter streamWriter = new StreamWriter(outputFileStream))
-            {
-                streamWriter.NewLine = "\n";
-                string line;
-                while ((line = streamReader.ReadLine()) != null || !streamReader.EndOfStream)
-                {
-
-                    //Line Skipper
-                    if (NeedSkiping && line == "pending_character_interactions={")
-                    {
-                        NeedSkiping = false;
-                    }
-                    else if (CombatResults_NeedsSkiping && line == "\t\t}")
-                    {
-                        CombatResults_NeedsSkiping = false;
-                        resultsFound = false;
-                    }
-                    else if (NeedSkiping && line == "\tarmy_regiments={")
-                    {
-                        NeedSkiping = false;
-                    }
-                    else if (NeedSkiping && line == "\tarmies={")
-                    {
-                        NeedSkiping = false;
-                    }
-                    else if (NeedSkiping && line == "dead_unprunable={")
-                    {
-                        NeedSkiping = false;
-                    }
-
-                    if(line == "\tcombat_results={")
-                    {
-                        resultsFound = true;
-                        streamWriter.WriteLine(line);
-                    }
-                    else if (line == $"\t\t{BattleResult.ID}={{"&& resultsFound && !CombatResults_NeedsSkiping)
-                    {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        using (StringReader sr = new StringReader(Data.String_BattleResults))
-                        {
-                            while (true)
-                            {
-                                string l = sr.ReadLine();
-
-                                if (l is null) break;
-                                if (l == "\t\t}") continue;
-
-                                stringBuilder.Append(l);
-                            }
-                        }
-
-                        streamWriter.WriteLine("\t\t" + stringBuilder.ToString());
-                        Console.WriteLine("EDITED BATTLE RESULTS SENT!");
-                        CombatResults_NeedsSkiping = true;
-                    }
-                    else if (line == "\tcombats={" && !NeedSkiping)
-                    {
-                        streamWriter.WriteLine(Data.String_Combats);
-                        
-                        NeedSkiping = true;
-                    }
-                    else if (line == "\tregiments={" && !NeedSkiping)
-                    {
-                        streamWriter.WriteLine(Data.String_Regiments);
-                        Console.WriteLine("EDITED REGIMENTS SENT!");
-                        NeedSkiping = true;
-                    }
-                    else if (line == "\tarmy_regiments={" && !NeedSkiping)
-                    {
-                        streamWriter.WriteLine(Data.String_ArmyRegiments);
-                        Console.WriteLine("EDITED ARMY REGIMENTS SENT!");
-                        NeedSkiping = true;
-                    }
-                    else if (line == "living={" && !NeedSkiping)
-                    {
-                        streamWriter.WriteLine(Data.String_Living);
-                        Console.WriteLine("EDITED LIVING SENT!");
-                        NeedSkiping = true;
-                    }
-                    else if (!NeedSkiping && !CombatResults_NeedsSkiping)
-                    {
-                        streamWriter.WriteLine(line); 
-                    }
-
-                }
-
-                streamWriter.Close();
-                streamReader.Close();
-                outputFileStream.Close();
-                inputFileStream.Close();
-            }
-
-            string save_games_path = Properties.Settings.Default.VAR_dir_save;
-            string editedSavePath = save_games_path + "\\CrusaderWars_Battle.ck3";
-
-            File.Delete(savePath);
-            File.Move(tempFilePath, editedSavePath);
-
-            long endMemory = GC.GetTotalMemory(false);
-            long memoryUsage = endMemory - startMemory;
-
-            Console.WriteLine($"----\nWritting data to save file\nMemory Usage: {memoryUsage/1048576} megabytes");
-        }
-
     }
+
+
+
 
     internal static class Data
     {
@@ -214,39 +112,39 @@ namespace Crusader_Wars
         public static List<string> Province_Buildings = new List<string>();
 
         public static StringBuilder Traits = new StringBuilder();
-        public static StringBuilder Combats = new StringBuilder();
         public static StringBuilder Living = new StringBuilder();
         public static StringBuilder Armies = new StringBuilder();
         public static StringBuilder ArmyRegiments = new StringBuilder();
         public static StringBuilder Regiments = new StringBuilder();
-        public static StringBuilder BattleResults = new StringBuilder();
         public static StringBuilder Counties = new StringBuilder();
         public static StringBuilder Cultures = new StringBuilder();
-        public static int BattleID = 0;
+        public static StringBuilder Mercenaries = new StringBuilder();
+        //public static int BattleID = 0;
 
         public static string String_Traits;
-        public static string String_Combats;
         public static string String_Living;
         public static string String_Armies;
         public static string String_ArmyRegiments;
         public static string String_Regiments;
-        public static string String_BattleResults;
         public static string String_Counties;
         public static string String_Cultures;
+        public static string String_Mercenaries;
 
         public static void ConvertDataToString()
         {
+            
             long startMemory = GC.GetTotalMemory(false);
 
             String_Traits = Traits.ToString();
-            String_Combats = Combats.ToString();
             String_Living = Living.ToString();
             String_ArmyRegiments = ArmyRegiments.ToString();
             String_Armies = Armies.ToString();
             String_Regiments = Regiments.ToString();
-            String_BattleResults = BattleResults.ToString();
             String_Counties = Counties.ToString();
             String_Cultures = Cultures.ToString();
+            String_Mercenaries = Mercenaries.ToString();
+            string path = @".\data\save_file_data\Mercenaries.txt";
+
 
 
             long endMemory = GC.GetTotalMemory(false);
@@ -257,6 +155,7 @@ namespace Crusader_Wars
 
         public static void Reset()
         {
+
             PlayerIDsAccolades = new List<string> ();
             EnemyIDsAccolades = new List<string>();
             PlayerAccolades = new List<(string, string, string)> ();
@@ -268,24 +167,23 @@ namespace Crusader_Wars
             EnemyCommanderAccolade = ("","","");
 
             Traits = new StringBuilder();
-            Combats = new StringBuilder();
             Living = new StringBuilder();
             Armies = new StringBuilder();
             ArmyRegiments = new StringBuilder ();
             Regiments = new StringBuilder ();
-            BattleResults = new StringBuilder ();
+
             Counties = new StringBuilder();
             Cultures = new StringBuilder();
+            Mercenaries = new StringBuilder();
 
             String_Traits = "";
-            String_Combats = "";
             String_Living = "";
             String_Armies = "";
             String_ArmyRegiments= "";
             String_Regiments = "";
-            String_BattleResults = "";
             String_Counties = "";
             String_Cultures = "";
+            String_Mercenaries = "";
 
             SearchKeys.HasTraitsExtracted = false;
             SearchKeys.HasCombatsExtracted = false;
@@ -296,6 +194,7 @@ namespace Crusader_Wars
             SearchKeys.HasBattleResultsExtracted = false;
             SearchKeys.HasCountiesExtracted = false;
             SearchKeys.HasCulturesExtracted = false;
+            SearchKeys.HasMercenariesExtracted = false;
         }
     }
 
@@ -684,7 +583,6 @@ namespace Crusader_Wars
             }
 
             //end line to all court positions data
-            //Second battle no knights bug is here!!!
             if (isSearchPermittedLiving && line == "dead_unprunable={")
             {
                 player_knights_list = null;
@@ -833,7 +731,6 @@ namespace Crusader_Wars
 
                 if(Start_CombatsFound && !End_CombatsFound)
                 {
-                    //Match end = Regex.Match(line, @"pending_character_interactions={");
                     if (line == "pending_character_interactions={") 
                     {
                         End_CombatsFound = true; 
@@ -842,8 +739,11 @@ namespace Crusader_Wars
                     }
                     else { End_CombatsFound = false; }
 
-                    Data.Combats.Append(line + "\n");
-                    
+                    using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Combats.txt"))
+                    {
+                        sw.WriteLine(line);
+                    }
+
                 }
 
                 if(End_CombatsFound)
@@ -884,7 +784,10 @@ namespace Crusader_Wars
                     }
                     else { End_BattleResultsFound = false; }
 
-                    Data.BattleResults.Append(line + "\n");
+                    using (StreamWriter sw = File.AppendText(@".\data\save_file_data\BattleResults.txt")) 
+                    {
+                        sw.WriteLine(line);
+                    }
 
                 }
 
@@ -1112,6 +1015,44 @@ namespace Crusader_Wars
                     HasCulturesExtracted = true;
                     Start_CulturesFound = false;
                     End_CulturesFound = false;
+                }
+            }
+        }
+
+        private static bool Start_MercenariesFound { get; set; }
+        private static bool End_MercenariesFound { get; set; }
+        public static bool HasMercenariesExtracted { get; set; }
+        public static void Mercenaries(string line)
+        {
+
+            if (!HasMercenariesExtracted)
+            {
+                if (!Start_MercenariesFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "mercenary_company_manager={")
+                    { Start_MercenariesFound = true; Console.WriteLine("MERCENARIES START KEY FOUND!"); }
+                    else { Start_MercenariesFound = false; }
+                }
+
+                if (Start_MercenariesFound && !End_MercenariesFound)
+                {
+
+                    if (line == "}")
+                    {
+                        HasMercenariesExtracted = true;
+                        Console.WriteLine("MERCENARIES END KEY FOUND!");
+                        return;
+                    }
+                    else { HasMercenariesExtracted = false; }
+                    
+                }
+
+                if (End_MercenariesFound)
+                {
+                    HasMercenariesExtracted = true;
+                    Start_MercenariesFound = false;
+                    End_MercenariesFound = false;
                 }
             }
         }

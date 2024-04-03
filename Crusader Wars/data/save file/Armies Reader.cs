@@ -5,9 +5,47 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Crusader_Wars.data.save_file
 {
+    public class Unit
+    {
+        string Name { get; set; }
+        RegimentType Type { get; set; }
+        Culture UnitCulture { get; set; }
+        int Soldiers {  get; set; }
+        string AttilaKey {  get; set; }
+        string AttilaFaction {  get; set; }
+        int Max {  get; set; }
+        
+        public Unit(string regiment_name, int soldiers ,Culture culture_obj, RegimentType type) 
+        {
+            Name = regiment_name;
+            UnitCulture = culture_obj;
+            Soldiers = soldiers;
+            Type = type;
+        }
+
+
+        public void SetAttilaFaction(string a) { AttilaFaction = a; }
+        public void SetUnitKey(string unit_key) { AttilaKey = unit_key; }
+        public void ChangeName(string y) {  Name = y; }
+        public void SetMax(int i ) {  Max = i; }
+
+
+        public int GetMax() { return Max; }
+        public string GetAttilaFaction() { return AttilaFaction; }
+        public string GetAttilaUnitKey() { return AttilaKey; }
+        public string GetName() { return Name; }
+        public Culture GetObjCulture() { return UnitCulture; }
+        public string GetCulture() { if (UnitCulture is null) return "Mercenary Placeholder"; return UnitCulture.GetCultureName(); }
+        public string GetHeritage() { if (UnitCulture is null) return "Mercenary Placeholder"; return UnitCulture.GetHeritageName(); }
+        public int GetSoldiers() { return Soldiers; }
+        public RegimentType GetRegimentType() { return Type; }
+
+
+    }
     public enum RegimentType
     {
         MenAtArms,
@@ -54,6 +92,8 @@ namespace Crusader_Wars.data.save_file
         public string ID { get; private set; }
         public string Index {  get; private set; }
         public string Origin {  get; private set; }
+        public string Owner { get; private set; }
+        public string StartingNum { get;private set; }
         public string CurrentNum {  get; private set; }
         public Culture Culture { get; private set; }
         string county_key { get; set; }
@@ -70,6 +110,8 @@ namespace Crusader_Wars.data.save_file
         public bool isMercenary() { return IsMercenary; }
 
         //Setters
+        public void SetOwner(string o) {  Owner = o; }
+        public void SetStartingSoldiers(string o) { StartingNum = o; }
         public void SetCulture(string id) { Culture = new Culture(id); }
         public void isMercenary(bool t) { IsMercenary = t; }
         public void SetOrigin(string origin) {  Origin = origin; }
@@ -88,7 +130,12 @@ namespace Crusader_Wars.data.save_file
             ID = id;
         }
 
-        public string GetCultureName() { return CultureName; }
+        public string GetCultureName() {
+            if (CultureName is null)
+                return "";
+            else
+                return CultureName; 
+        }
         public string GetHeritageName() { return HeritageName; }
 
 
@@ -108,7 +155,7 @@ namespace Crusader_Wars.data.save_file
         {
             ReadCombatArmies(g);
         }
-        public static void ReadBattleArmies()
+        public static (List<Army> attacker, List<Army> defender) ReadBattleArmies()
         {
             ReadArmiesData();
             ReadArmyRegiments();
@@ -126,15 +173,248 @@ namespace Crusader_Wars.data.save_file
                 defender_armies[i].ClearEmptyRegimnts();
             }
 
+            OrganizeIntoUnits();
+
             PrintArmiesData();
 
+            return (attacker_armies, defender_armies);
+        }
+
+
+        private static List<Unit> ReadUnitMapper(List<Unit> units)
+        {
+            //Get Unit Mapper Faction
+            foreach(var unit in units)
+            {
+               unit.SetAttilaFaction(UnitMapper.GetAttilaFaction(unit.GetCulture(), unit.GetHeritage()));                
+            }
+
+            //Read Unit Limit
+            foreach(var unit in units)
+            {
+                unit.SetMax(UnitMapper.GetMax(unit));
+            }
+
+            //Set Unit Keys
+            foreach(var unit in units)
+            {
+                string key = UnitMapper.GetUnitKey(unit);
+                if (key == "not_found")
+                    unit.SetUnitKey("cha_spa_royal_cav");
+                else 
+                    unit.SetUnitKey(key);
+            }
+
+            return units;
+        }
+
+        private static List<Unit> OrganizeLeviesUnits(List<Unit> units)
+        {
+            // Filter Levy units
+            var levyUnits = units.Where(u => u.GetName() == "Levy").OrderByDescending(u => u.GetSoldiers()).ToList();
+
+            // Calculate percentages
+            int totalLevyUnits = units.Sum(u => u.GetSoldiers());
+            int firstPercentage = (int)(totalLevyUnits * 0.65);
+            int secondPercentage = (int)(totalLevyUnits * 0.25);
+
+            // Distribute Levy units into three lists
+            var firstList = new List<Unit>();
+            var secondList = new List<Unit>();
+            var thirdList = new List<Unit>();
+
+            int currentSoldiers = 0;
+            if(levyUnits.Count == 1)
+            {
+                int levy_spearmen = (int)(totalLevyUnits * 0.65);
+                int levy_infantry = (int)(totalLevyUnits * 0.25);
+                int levy_ranged = (int)(totalLevyUnits * 0.10);
+
+                levyUnits = new List<Unit>{ new Unit("Levy Spearmen", levy_spearmen, levyUnits[0].GetObjCulture(), RegimentType.Levy),
+                                            new Unit("Levy Infantry", levy_infantry, levyUnits[0].GetObjCulture(), RegimentType.Levy),
+                                            new Unit("Levy Ranged", levy_ranged, levyUnits[0].GetObjCulture(), RegimentType.Levy) };
+
+
+                return levyUnits;
+            }
+            else
+            {
+                foreach (var unit in levyUnits)
+                {
+
+                    if (currentSoldiers < firstPercentage)
+                    {
+                        unit.ChangeName("Levy Spearmen");
+                    }
+                    else if (currentSoldiers < firstPercentage + secondPercentage)
+                    {
+                        unit.ChangeName("Levy Infantry");
+                    }
+                    else
+                    {
+                        unit.ChangeName("Levy Ranged");
+                    }
+
+                    currentSoldiers += unit.GetSoldiers();
+                }
+
+                return levyUnits;
+            }
+
+        }
+
+        private static string GetCharacterCultureID(string character_id)
+        {
+            bool isSearchStarted = false;
+            string culture_id = "";
+            using (StringReader stringReader = new StringReader(Data.String_Living))
+            {
+                while(true)
+                {
+                    string line = stringReader.ReadLine();
+                    if (line == null) break;
+
+                    if(line == $"{character_id}={{" && !isSearchStarted)
+                    {
+                        isSearchStarted = true;
+                    }
+                    
+                    if(isSearchStarted && Regex.IsMatch(line, @"\tculture=\d+"))
+                    {
+                        culture_id = Regex.Match(line, @"\tculture=(\d+)").Groups[1].Value;
+                        return culture_id;
+                    }
+
+                    if(isSearchStarted && line == "}")
+                    {
+                        return "";
+                    }
+                }
+
+                return culture_id;
+            }
+
+        }
+
+        public static List<Unit> OrganizeUnitsIntoCultures(List<Unit> units)
+        {
+            var organizedUnits = new List<Unit>();
+
+            // Group units by Name and Culture
+            var groupedUnits = units.GroupBy(u => new { Name = u.GetName(), Culture = u.GetCulture() });
+
+            // Merge units with the same Name and Culture
+            foreach (var group in groupedUnits)
+            {
+                int totalSoldiers = group.Sum(u => u.GetSoldiers());
+
+                // Create a new Unit with the merged NumberOfSoldiers
+                Unit mergedUnit = new Unit(group.Key.Name, totalSoldiers, group.ElementAt(0).GetObjCulture(), group.ElementAt(0).GetRegimentType());
+
+                organizedUnits.Add(mergedUnit);
+            }
+
+            return organizedUnits;
+        }
+
+
+
+        private static void OrganizeIntoUnits()
+        {
+            foreach(var army in attacker_armies)
+            {
+                List<(Regiment regiment, RegimentType type, string maa_name)> list = new List<(Regiment regiment, RegimentType type, string maa_name)>(); 
+                foreach(var army_regiment in army.ArmyRegiments)
+                {
+
+                    foreach(var regiment in  army_regiment.Regiments)
+                    {
+                        list.Add((regiment, army_regiment.Type, army_regiment.MAA_Name));   
+                    }
+                }            
+                
+                List<Unit> units = new List<Unit>();
+                foreach (var regiment in list)
+                {
+                    // if no soldiers, skip
+                    if (regiment.regiment.CurrentNum is null) continue;
+                    if (Int32.Parse(regiment.regiment.CurrentNum) == 0) continue;
+
+                    Unit unit;
+                    if(regiment.type == RegimentType.Levy)  
+                        unit = new Unit("Levy", Int32.Parse(regiment.regiment.CurrentNum), regiment.regiment.Culture, regiment.type);
+                    else if (regiment.type == RegimentType.MenAtArms)
+                        unit = new Unit(regiment.maa_name, Int32.Parse(regiment.regiment.CurrentNum), regiment.regiment.Culture, regiment.type);
+                    else
+                        continue;
+
+                    if(unit != null)
+                        units.Add(unit);
+
+                    
+                }
+
+                units = OrganizeUnitsIntoCultures(units);
+                var levies = OrganizeLeviesUnits(units);
+                units.RemoveAll(u => u.GetName() == "Levy");
+                units.InsertRange(0, levies);
+                units = ReadUnitMapper(units);
+
+                army.SetUnits(units);
+
+                army.PrintUnits();
+            }
+
+            foreach (var army in defender_armies)
+            {
+                List<(Regiment regiment, RegimentType type, string maa_name)> list = new List<(Regiment regiment, RegimentType type, string maa_name)>();
+                foreach (var army_regiment in army.ArmyRegiments)
+                {
+
+                    foreach (var regiment in army_regiment.Regiments)
+                    {
+                        list.Add((regiment, army_regiment.Type, army_regiment.MAA_Name));
+                    }
+                }
+
+                List<Unit> units = new List<Unit>();
+                foreach (var regiment in list)
+                {
+                    // if no soldiers, skip
+                    if (regiment.regiment.CurrentNum is null) continue;
+                    if (Int32.Parse(regiment.regiment.CurrentNum) == 0) continue;
+
+                    Unit unit;
+                    if (regiment.type == RegimentType.Levy)
+                        unit = new Unit("Levy", Int32.Parse(regiment.regiment.CurrentNum), regiment.regiment.Culture, regiment.type);
+                    else if (regiment.type == RegimentType.MenAtArms)
+                        unit = new Unit(regiment.maa_name, Int32.Parse(regiment.regiment.CurrentNum), regiment.regiment.Culture, regiment.type);
+                    else
+                        continue;
+
+                    if (unit != null)
+                        units.Add(unit);
+
+
+                }
+
+                units = OrganizeUnitsIntoCultures(units);
+                var levies = OrganizeLeviesUnits(units);
+                units.RemoveAll(u => u.GetName() == "Levy");
+                units.InsertRange(0, levies);
+                units = ReadUnitMapper(units);
+
+                army.SetUnits(units);
+                army.PrintUnits();
+            }
         }
 
         private static void PrintArmiesData()
         {
             foreach (var i in attacker_armies)
             {
-                Console.WriteLine($"Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID}");
+                Console.WriteLine($"#Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID}");
+                Console.WriteLine("------------------------------------------------------------");
                 foreach (var x in i.ArmyRegiments)
                 {
                     if (x.Type == RegimentType.Knight)
@@ -145,16 +425,16 @@ namespace Crusader_Wars.data.save_file
                     {
                         if(!t.isMercenary())
                             if(t.Culture is null)
-                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
+                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} |Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
                             else
-                                Console.WriteLine($"## ## Chunk Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
+                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
 
 
                         else
                             if(t.Culture is null)
-                            Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
+                            Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
                             else
-                            Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
+                            Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
 
 
                     }
@@ -168,7 +448,8 @@ namespace Crusader_Wars.data.save_file
 
             foreach (var i in defender_armies)
             {
-                Console.WriteLine($"Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID} ");
+                Console.WriteLine($"#Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID}");
+                Console.WriteLine("------------------------------------------------------------");
                 foreach (var x in i.ArmyRegiments)
                 {
                     if (x.Type == RegimentType.Knight)
@@ -179,18 +460,23 @@ namespace Crusader_Wars.data.save_file
                     {
                         if (!t.isMercenary())
                             if (t.Culture is null)
-                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
+                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
                             else
-                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
+                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
                         else
                             if(t.Culture is null)
-                                Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
+                                Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
                             else
-                                Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
+                                Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
                     }
                 }
                 Console.WriteLine("\n");
             }
+        }
+
+        private static void ReadMercenaries()
+        {
+            
         }
 
         private static void ReadCultureManager()
@@ -300,7 +586,6 @@ namespace Crusader_Wars.data.save_file
                         heritage_name = heritage_name.Replace("_", " ");
                         heritage_name = FirstCharToUpper(heritage_name);
 
-
                     }
 
                     if(isSearchStared && line == "\t\t}")
@@ -373,11 +658,6 @@ namespace Crusader_Wars.data.save_file
         }
         private static void ReadCountiesManager()
         {
-            /*
-             *          ..........................
-             *          TODO: REWORK THIS FUNCTION
-             *          ..........................    
-             */
 
             List<(string county_key, string culture_id)> FoundCounties = new List<(string county_key, string culture_id)>();
 
@@ -481,7 +761,7 @@ namespace Crusader_Wars.data.save_file
 
                 }
 
-
+                List<(string char_id, string culture_id)> temp_characters_cultures = new List<(string char_id, string culture_id)>();
                 //Populate regiments with culture id's
                 foreach(var county in FoundCounties)
                 {
@@ -498,6 +778,25 @@ namespace Crusader_Wars.data.save_file
                             for (int y = 0; y < attacker_armies[i].ArmyRegiments[x].Regiments.Count; y++)
                             {
                                 string regiment_county_key = attacker_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey();
+                                string owner = attacker_armies[i].ArmyRegiments[x].Regiments[y].Owner;
+                                if (!string.IsNullOrEmpty(owner))
+                                {
+                                    if(temp_characters_cultures.Exists(t => t.char_id == owner))
+                                    {
+                                        string culture_id = temp_characters_cultures.FirstOrDefault(p => p.char_id == owner).culture_id;
+                                        attacker_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        string culture_id = GetCharacterCultureID(owner);
+                                        temp_characters_cultures.Add((owner, culture_id));
+                                        attacker_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
+                                        continue;
+                                    }
+
+                                }
+                                
                                 if (county.county_key == regiment_county_key )
                                 {
                                     attacker_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(county.culture_id);
@@ -519,6 +818,23 @@ namespace Crusader_Wars.data.save_file
                             for (int y = 0; y < defender_armies[i].ArmyRegiments[x].Regiments.Count; y++)
                             {
                                 string regiment_county_key = defender_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey();
+                                string owner = defender_armies[i].ArmyRegiments[x].Regiments[y].Owner;
+                                if (!string.IsNullOrEmpty(owner))
+                                {
+                                    if (temp_characters_cultures.Exists(t => t.char_id == owner))
+                                    {
+                                        string culture_id = temp_characters_cultures.FirstOrDefault(p => p.char_id == owner).culture_id;
+                                        defender_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        string culture_id = GetCharacterCultureID(owner);
+                                        temp_characters_cultures.Add((owner, culture_id));
+                                        defender_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
+                                        continue;
+                                    }
+                                }
                                 if (county.county_key == regiment_county_key)
                                 {
                                     defender_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(county.culture_id);
@@ -611,7 +927,7 @@ namespace Crusader_Wars.data.save_file
                                         string origin = attacker_armies[i].ArmyRegiments[x].Regiments[y].Origin;
 
                                         //Regiment Province Origin
-                                        if (line.Contains($@"{origin} = {{"))
+                                        if (line.Contains($@"{origin} = {{") && !attacker_armies[i].ArmyRegiments[x].Regiments[y].isMercenary())
                                         {
                                             attacker_armies[i].ArmyRegiments[x].Regiments[y].StoreCountyKey(county_key);
                                         }
@@ -639,7 +955,7 @@ namespace Crusader_Wars.data.save_file
                                         string origin = defender_armies[i].ArmyRegiments[x].Regiments[y].Origin;
 
                                         //Regiment Province Origin
-                                        if (line.Contains($@"{origin} = {{"))
+                                        if (line.Contains($@"{origin} = {{") && !defender_armies[i].ArmyRegiments[x].Regiments[y].isMercenary())
                                         {
                                             defender_armies[i].ArmyRegiments[x].Regiments[y].StoreCountyKey(county_key);
                                         }
@@ -674,15 +990,18 @@ namespace Crusader_Wars.data.save_file
                     string line = SR.ReadLine();
                     if (line == null) break;
 
+
                     // Regiment ID Line
-                    if (Regex.IsMatch(line, @"\t\t\d+={"))
+                    if (Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStarted)
                     {
                         string regiment_id = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
                         for (int i = 0; i < attacker_armies.Count; i++)
                         {
+                            if (isSearchStarted) break;
                             for (int x = 0; x < attacker_armies[i].ArmyRegiments.Count; x++)
                             {
-                                for(int y = 0; y < attacker_armies[i].ArmyRegiments[x].Regiments.Count; y++)
+                                if (isSearchStarted) break;
+                                for (int y = 0; y < attacker_armies[i].ArmyRegiments[x].Regiments.Count; y++)
                                 {
                                     if (y == attacker_armies[i].ArmyRegiments[x].Regiments.Count) break;
                                     string id = attacker_armies[i].ArmyRegiments[x].Regiments[y].ID;
@@ -692,6 +1011,7 @@ namespace Crusader_Wars.data.save_file
                                         army_regiment_index = x;
                                         regiment_index = y;
                                         isAttacker = true;
+                                        isDefender = false;
                                         isSearchStarted = true;
                                         break;
                                     }
@@ -704,8 +1024,10 @@ namespace Crusader_Wars.data.save_file
                         {
                             for (int i = 0; i < defender_armies.Count; i++)
                             {
+                                if (isSearchStarted) break;
                                 for (int x = 0; x < defender_armies[i].ArmyRegiments.Count; x++)
                                 {
+                                    if (isSearchStarted) break;
                                     for (int y = 0; y < defender_armies[i].ArmyRegiments[x].Regiments.Count; y++)
                                     {
                                         string id = defender_armies[i].ArmyRegiments[x].Regiments[y].ID;
@@ -715,6 +1037,7 @@ namespace Crusader_Wars.data.save_file
                                             army_regiment_index = x;
                                             regiment_index = y;
                                             isDefender = true;
+                                            isAttacker = false;
                                             isSearchStarted = true;
                                             break;
                                         }
@@ -761,7 +1084,7 @@ namespace Crusader_Wars.data.save_file
                     }
 
                     // isMercenary 
-                    if (isSearchStarted && line.Contains("\t\t\tsource=hired"))
+                    else if (isSearchStarted && line.Contains("\t\t\tsource=hired"))
                     {
                         if (isAttacker)
                         {
@@ -773,9 +1096,8 @@ namespace Crusader_Wars.data.save_file
                         }
 
                     }
-
                     // Origin 
-                    if (isSearchStarted && line.Contains("\t\t\torigin="))
+                    else if (isSearchStarted && line.Contains("\t\t\torigin="))
                     {
                         string origin = Regex.Match(line, @"\d+").Value;
 
@@ -789,9 +1111,24 @@ namespace Crusader_Wars.data.save_file
                         }
 
                     }
+                    // Owner 
+                    else if (isSearchStarted && line.Contains("\t\t\towner="))
+                    {
+                        string owner = Regex.Match(line, @"\d+").Value;
+
+                        if (isAttacker)
+                        {
+                            attacker_armies[army_index].ArmyRegiments[army_regiment_index].Regiments[regiment_index].SetOwner(owner);
+                        }
+                        else if (isDefender)
+                        {
+                            defender_armies[army_index].ArmyRegiments[army_regiment_index].Regiments[regiment_index].SetOwner(owner);
+                        }
+
+                    }
 
                     // Soldiers
-                    if (isSearchStarted && line.Contains("\t\t\t\t\tcurrent="))
+                    else if (isSearchStarted && line.Contains("\t\t\t\t\tcurrent="))
                     {
                         string current = Regex.Match(line, @"\d+").Value;
 
@@ -805,9 +1142,24 @@ namespace Crusader_Wars.data.save_file
                         }
 
                     }
+                    // Max "StartingNum"
+                    else if (isSearchStarted && line.Contains("\t\t\t\t\tmax="))
+                    {
+                        string max = Regex.Match(line, @"\d+").Value;
+
+                        if (isAttacker && index == reg_chunk_index)
+                        {
+                            attacker_armies[army_index].ArmyRegiments[army_regiment_index].Regiments[regiment_index].SetStartingSoldiers(max);
+                        }
+                        else if (isDefender && index == reg_chunk_index)
+                        {
+                            defender_armies[army_index].ArmyRegiments[army_regiment_index].Regiments[regiment_index].SetStartingSoldiers(max);
+                        }
+
+                    }
 
                     //Regiment End Line
-                    if (isSearchStarted && line == "\t\t}")
+                    else if (isSearchStarted && line == "\t\t}")
                     {
                         isSearchStarted = false;
                         isAttacker = false;
@@ -836,6 +1188,8 @@ namespace Crusader_Wars.data.save_file
             string regiment_id = "";
             string index = "";
 
+            bool isNameSet = false;
+
 
             using (StringReader SR = new StringReader(Data.String_ArmyRegiments))
             {
@@ -846,7 +1200,7 @@ namespace Crusader_Wars.data.save_file
                     if (line == null) break;
 
                     // Army Regiment ID Line
-                    if (Regex.IsMatch(line, @"\t\t\d+={"))
+                    if (Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStarted)
                     {
                         string army_regiment_id = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
                         for (int i = 0; i < attacker_armies.Count; i++)
@@ -888,9 +1242,19 @@ namespace Crusader_Wars.data.save_file
                     //Regiment ID
                     if(isSearchStarted && line.Contains("\t\t\t\t\tregiment="))
                     {
-                        regiment_id = Regex.Match(line, @"(\d+)").Groups[1].Value;
-                       
-                        
+                        if(isNameSet == false)
+                        {
+                            if (isAttacker)
+                            {
+                                attacker_armies[army_index].ArmyRegiments[army_regiment_index].SetType(RegimentType.Levy);
+                            }
+                            else if (isDefender)
+                            {
+                                defender_armies[army_index].ArmyRegiments[army_regiment_index].SetType(RegimentType.Levy);
+                            }
+                        }
+
+                        regiment_id = Regex.Match(line, @"(\d+)").Groups[1].Value;                    
 
                     }
 
@@ -919,6 +1283,7 @@ namespace Crusader_Wars.data.save_file
                         {
                             defender_armies[army_index].ArmyRegiments[army_regiment_index].SetType(RegimentType.MenAtArms, type);
                         }
+                        isNameSet = true;
                     }
 
                     //Knight
@@ -933,6 +1298,7 @@ namespace Crusader_Wars.data.save_file
                         {
                             defender_armies[army_index].ArmyRegiments[army_regiment_index].SetType(RegimentType.Knight, character_id);
                         }
+                        isNameSet = true;
                     }
 
                     
@@ -947,6 +1313,7 @@ namespace Crusader_Wars.data.save_file
                         {
                             defender_armies[army_index].ArmyRegiments[army_regiment_index].SetType(RegimentType.Levy);
                         }
+                        isNameSet = true;
                     }
 
                     // Army Regiment End Line
@@ -970,6 +1337,7 @@ namespace Crusader_Wars.data.save_file
                         regiment_id = "";
                         index = "";
                         isSearchStarted = false;
+                        isNameSet= false;
 
 
                     }
@@ -992,7 +1360,7 @@ namespace Crusader_Wars.data.save_file
                     if (line == null) break;
 
                     // Army ID Line
-                    if(Regex.IsMatch(line, @"\t\t\d+={"))
+                    if(Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStarted)
                     {
                         // Check if it's an battle army
 
@@ -1003,6 +1371,7 @@ namespace Crusader_Wars.data.save_file
                             {
                                 index = i;
                                 isAttacker = true;
+                                isDefender = false;
                                 isSearchStarted = true;
                                 break;
                             }
@@ -1016,6 +1385,7 @@ namespace Crusader_Wars.data.save_file
                                 {
                                     index = i;
                                     isDefender = true;
+                                    isAttacker = false;
                                     isSearchStarted = true;
                                     break;
                                 }
@@ -1064,6 +1434,8 @@ namespace Crusader_Wars.data.save_file
                     if(isSearchStarted && line == "\t\t}")
                     {
                         index = 0;
+                        isAttacker = false;
+                        isDefender = false;
                         isSearchStarted = false;
                     }
 

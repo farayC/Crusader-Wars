@@ -19,7 +19,9 @@ namespace Crusader_Wars
     public static class BattleResult
     {
 
-        public static string ID { get; set; }
+        public static string CombatID { get; set; }
+        public static string ResultID { get; set; }
+        public static string ProvinceID { get; set; }
 
         public static void LoadSaveFile(string savePath)
         {
@@ -29,19 +31,61 @@ namespace Crusader_Wars
 
 
         //Combats
-        static List<string> CombatsList = new List<string>();
-        public static void GetAllCombats()
+        static string Player_Combat;
+        public static void ReadPlayerCombat(string playerID)
         {
             try
             {
-                MatchCollection Match_AllCombats = Regex.Matches(Data.String_Combats, @"(?s)(\d+).*?(?=\d+=|\z)");
-
-                //Get all ID's and Combats
-                foreach (Match ID in Match_AllCombats)
+                bool isSearchStarted = false;
+                string battleID = "";
+                StringBuilder sb = new StringBuilder();
+                using(StreamReader sr = new StreamReader(@".\data\save_file_data\Combats.txt"))
                 {
-                    CombatsList.Add(ID.Value);
-                }
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (line == null) break;
+                        if (Regex.IsMatch(line, @"\t\t\d+={"))
+                        {
+                            battleID = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
+                        }
+                        else if (line == $"\t\t\t\tcommander={playerID}")
+                        {
+                            break;
+                        }
+                    }
 
+                    sr.BaseStream.Position = 0;
+                    sr.DiscardBufferedData();
+
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if(line == null) break;
+
+                        //Battle ID
+                        if (!isSearchStarted && line == $"\t\t{battleID}={{")
+                        {
+                            sb.AppendLine(line);
+                            isSearchStarted = true;
+                        }
+                        //Battle end line
+                        else if (isSearchStarted && line == "\t\t}")
+                        {
+                            sb.AppendLine(line);
+                            isSearchStarted = false;
+                            break;
+                        }
+                        else if (isSearchStarted)
+                        {
+                            sb.AppendLine(line);
+                        }
+                    }
+                }
+                BattleResult.CombatID = battleID;
+                Player_Combat = sb.ToString();
+                File.WriteAllText(@".\data\save_file_data\temp\Combats.txt", Player_Combat);
+                File.WriteAllText(@".\data\save_file_data\Combats.txt", "");
                 Console.WriteLine("All combats were read successfully");
             }
             catch
@@ -53,32 +97,61 @@ namespace Crusader_Wars
 
         }
 
-        static List<string> CombatsResults = new List<string>();
-        public static void GetAllCombatResults(string PlayerID)
+        public static void GetPlayerCombatResult()
         {
             try
             {
-                MatchCollection Match_AllCombatsResults = Regex.Matches(Data.String_BattleResults, @"(?s)(\d+).*?(?=\d+=|\z)");
-
-                //Get all ID's and Combats
-                foreach (Match ID in Match_AllCombatsResults)
+                string battle_id="";
+                StringBuilder f = new StringBuilder();
+                using(StreamReader sr = new StreamReader(@".\data\save_file_data\BattleResults.txt"))
                 {
-                    CombatsResults.Add(ID.Value);
+                    while(!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (line == null) break;
+                        if (Regex.IsMatch(line, @"\t\t\d+={"))
+                        {
+                            battle_id = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
+                        }
+                        else if (line == $"\t\t\tlocation={ProvinceID}")
+                        {
+                            break;
+                        }
+                    }
+
+                    sr.BaseStream.Position = 0;
+                    sr.DiscardBufferedData();
+
+                    bool isSearchStarted = false;
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (line == null) break;
+                        if (line == $"\t\t{battle_id}={{")
+                        {
+                            f.AppendLine(line);
+                            isSearchStarted = true;
+                        }
+                        else if(isSearchStarted && line == "\t\t}")
+                        {
+                            f.AppendLine(line);
+                            isSearchStarted = false;
+                            break;
+                        }
+                        else if (isSearchStarted)
+                        {
+                            f.AppendLine(line);
+                        }
+                    }
                 }
 
-                
-                string player_result = CombatsResults.FirstOrDefault(x => x.Contains($"commander={PlayerID}"));
-                Data.String_BattleResults = player_result;
-                using (StringReader sr = new StringReader(player_result))
-                {
-                    string first_line = sr.ReadLine();
-                    BattleResult.ID = Regex.Match(first_line, @"(.+)={").Groups[1].Value;
-                }
-                Console.WriteLine("All combats were read successfully");
+                BattleResult.ResultID = battle_id;
+                File.WriteAllText(@".\data\save_file_data\BattleResults.txt", f.ToString());
+                Console.WriteLine("All combat results were read successfully");
             }
             catch
             {
-                Console.WriteLine("Error reading all combats!");
+                Console.WriteLine("Error reading all combat results!");
             }
         }
 
@@ -87,8 +160,8 @@ namespace Crusader_Wars
             string MAAtype = "";
 
             var regiment_type = RegimentType.None; 
-            StringBuilder sb = new StringBuilder();
-            using (StringReader sr = new StringReader(Data.String_BattleResults))
+            using (StreamReader sr = new StreamReader(@".\data\save_file_data\BattleResults.txt"))
+            using (StreamWriter sw = new StreamWriter(@".\data\save_file_data\temp\BattleResults.txt"))
             {
                 bool isSearchingAttacker = false;
                 bool isSearchingDefender = false;
@@ -143,7 +216,7 @@ namespace Crusader_Wars
 
                         //skip if they are siege maa
                         if (MAAtype == "mangonel" || MAAtype == "onager" || MAAtype == "bombard" || MAAtype == "trebuchet") { 
-                            sb.AppendLine(line); 
+                            sw.WriteLine(line); 
                             continue; 
                         }
                     }
@@ -179,11 +252,11 @@ namespace Crusader_Wars
                     if (line.Contains("\tfinal_count=") && regiment_type != RegimentType.None)
                         regiment_type = RegimentType.None;
 
-                    sb.AppendLine(line);
+                    sw.WriteLine(line);
                 }
             }
-
-            Data.String_BattleResults = sb.ToString();
+            File.Delete(@".\data\save_file_data\BattleResults.txt");
+            File.Copy(@".\data\save_file_data\temp\BattleResults.txt", @".\data\save_file_data\BattleResults.txt");
         }
 
         enum RegimentType
@@ -218,30 +291,6 @@ namespace Crusader_Wars
         
 
 
-        //Player Combat
-        static string Player_Combat;
-        public static void FindPlayerBattle(string PlayerID)
-        {
-            try
-            {
-                
-                Player_Combat = CombatsList.FirstOrDefault(stringToCheck => stringToCheck.Contains($"commander={PlayerID}"));
-                using (var reader = new StringReader(Player_Combat))
-                {
-                    string first = reader.ReadLine();
-                    BattleResult.ID = Regex.Match(first, @"(.+)={").Groups[1].Value;
-                }
-                Console.WriteLine("Found player combat");
-
-                //1.0 Beta Debug
-                ArmiesReader.ReadCombats(Player_Combat);
-            }
-            catch
-            {
-                Console.WriteLine("Error finding player combat");
-            }
-           
-        }
 
 
 
@@ -431,11 +480,10 @@ namespace Crusader_Wars
 
         }
 
-        public static void SetWinner(string PlayerID, string winner)
+        public static void SetWinner(string winner)
         {
             try
             {
-
                 //Set pursuit phase
                 Player_Combat = Regex.Replace(Player_Combat, @"(phase=)\w+", "$1" + "pursuit");
 
@@ -445,27 +493,13 @@ namespace Crusader_Wars
                 //Set winner
                 Player_Combat = Regex.Replace(Player_Combat, @"(base_combat_width=\d+)", "$1\n\t\t\twinning_side=" + winner);
 
-                
+                File.WriteAllText(@".\data\save_file_data\Combats.txt", Player_Combat);
 
-
-
-
-                int index = CombatsList.FindIndex(stringToCheck => stringToCheck.Contains($"commander={PlayerID}"));
-                CombatsList[index] = Player_Combat;
-
-                StringBuilder sb = new StringBuilder();
-                foreach (var combat in CombatsList)
-                {
-                    sb.Append(combat);
-                }
-                string Edited_CombatList = sb.ToString();
-                //AllCombats = Regex.Replace(AllCombats, @"\d+={[\s\S]*?\z", Edited_CombatList);
-                Data.String_Combats = Regex.Replace(Data.String_Combats, @"\d+={[\s\S]*?\z", Edited_CombatList);
-                Console.WriteLine("Winner of battld set sucessfully");
+                Console.WriteLine("Winner of battle set sucessfully");
             }
             catch
             {
-                Console.WriteLine("Erroe setting winner of battle!");
+                Console.WriteLine("Error setting winner of battle!");
             }
       
         }
@@ -667,27 +701,18 @@ namespace Crusader_Wars
 
         public static void SendToSaveFile(string filePath)
         {
-            try
-            {
-                Reader.SendDataToFile(filePath);
-            }
-            catch
-            {
-                Console.WriteLine("Error replacing data in save file!!");
-            }
+            Writter.SendDataToFile(filePath);
 
 
             Data.Reset();
 
-            Player_Combat = "";
-
             Attacker = "";
             Defender= "";
+            Player_Combat = "";
+
 
             Attacker_Regiments = new List<(string ID, string StartingNum, string CurrentNum)>();
             Defender_Regiments = new List<(string ID, string StartingNum, string CurrentNum)>();
-
-            CombatsList = new List<string>();
 
             ArmyRegimentsList = new List<(string ID, string Type, string[] ChunksIDs, string Full)>();
             RegimentsList = new List<(string ID, string Type, string Max, string Chunks, string Full)>();

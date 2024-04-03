@@ -116,6 +116,7 @@ namespace Crusader_Wars
             /*---------------------------------------------
              * :::::::::::::::::Terrain::::::::::::::::::::
              ---------------------------------------------*/
+            SearchForProvinceID(log);
 
             TerrainSearch(log);
 
@@ -208,7 +209,7 @@ namespace Crusader_Wars
 
         private static void BattleNameSearch(string log)
         {
-            string battle_name = Regex.Match(log, "BattleName:(?<BattleName>.+)\n").Groups["BattleName"].Value;
+            string battle_name = Regex.Match(log, @"BattleName:(?<BattleName>.+)\n").Groups["BattleName"].Value;
             BattleDetails.SetBattleName(battle_name);
         }
 
@@ -594,6 +595,21 @@ namespace Crusader_Wars
 
             return string.Empty;
 
+        }
+
+        private static void SearchForProvinceID(string log)
+        {
+            string provinceID;
+            try
+            {
+                provinceID = Regex.Match(log, @"ProvinceID:(.+)\n").Groups[1].Value;
+            }
+            catch
+            {
+                provinceID = "not found";
+            }
+
+            BattleResult.ProvinceID = provinceID;
         }
 
 

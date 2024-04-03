@@ -313,6 +313,16 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap loading_screen {
+            get {
+                object obj = ResourceManager.GetObject("loading_screen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap loadingscreen {
             get {
                 object obj = ResourceManager.GetObject("loadingscreen", resourceCulture);
@@ -337,6 +347,16 @@ namespace Crusader_Wars.Properties {
             get {
                 object obj = ResourceManager.GetObject("logo", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap modcon_loadingscreen {
+            get {
+                object obj = ResourceManager.GetObject("modcon_loadingscreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -456,6 +476,16 @@ namespace Crusader_Wars.Properties {
         internal static System.Drawing.Bitmap resume {
             get {
                 object obj = ResourceManager.GetObject("resume", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotating_loading {
+            get {
+                object obj = ResourceManager.GetObject("rotating_loading", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
