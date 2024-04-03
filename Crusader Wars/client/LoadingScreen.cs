@@ -12,17 +12,8 @@ namespace Crusader_Wars
         public LoadingScreen()
         {
             InitializeComponent();
-
-            // Set form properties
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-
-            // Set PictureBox properties
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-
-            // Load background image
-            pictureBox1.Image = Properties.Resources.loadingscreen1;
-
+            //Icon
+            this.Icon = Properties.Resources.logo;
         }
 
 
@@ -31,6 +22,10 @@ namespace Crusader_Wars
             Label_Message.Text = message;
         }
 
+        private void LoadingScreen_Shown(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

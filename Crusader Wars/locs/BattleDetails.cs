@@ -91,7 +91,7 @@ namespace Crusader_Wars.locs
                     //BATTLE NAME
                     if (line.Contains("battles_localised_name_tut_tutorial_battle"))
                     {
-                        line = Regex.Replace(line, @"\t(?<BattleName>.+)\t", $"\t{Name}\t");
+                        line = $"battles_localised_name_tut_tutorial_battle\t{Name}\ttrue";
                     }
 
                     //BATTLE DETAILS

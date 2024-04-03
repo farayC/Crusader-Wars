@@ -1,5 +1,7 @@
 ﻿using Crusader_Wars.client;
 using Crusader_Wars.client.RequiredMods;
+using Crusader_Wars.data.save_file;
+
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using System.Xml;
+using System.Data.SqlTypes;
 
 namespace Crusader_Wars
 {
@@ -142,7 +146,6 @@ namespace Crusader_Wars
 
             LoadedMapper = folderName;
         }
-
         private static void LoadMapperByTimePeriod()
         {
             foreach(var folderName in CheckedMappers)
@@ -420,6 +423,88 @@ namespace Crusader_Wars
             string trimmed = string.Concat(key.Where(c => !char.IsWhiteSpace(c)));
             return trimmed;
         }
+        
+        // V1.0 BETA----------------------
+        public static string GetAttilaFaction(string culture_name, string heritage_name)
+        {
+            string faction = "";
+            foreach(var heritage in Heritages)
+            {
+                if(heritage_name == heritage.Heritage)
+                {
+                    faction = heritage.Faction; break;
+                }
+            }
+
+            foreach(var culture in Cultures)
+            {
+                if(culture_name == culture.Cultures)
+                {
+                    faction = culture.Faction; break;
+                }
+            }
+
+            return faction;
+        }
+
+        public static string GetUnitKey(Unit unit)
+        {
+            string unit_key = "not found";
+            foreach(var file in MapperFactionFiles)
+            {
+                XElement root = XElement.Parse(file.InnerXml);
+                // Find the element with the specified attribute value
+                XElement element = root.Elements().FirstOrDefault(e => e.Attribute("name")?.Value == unit.GetAttilaFaction());
+                if (element is null)
+                {
+                    unit_key = "not_found";
+                    continue; //next file
+                }
+
+                // Find the subelement with a specific id attribute value within the found element
+                XElement subelement = element.Elements().FirstOrDefault(e => (string)e.Attribute("type") == unit.GetName());
+                if(subelement is null)
+                {
+                    unit_key = "not_found";
+                    continue; //next file
+                }
+                
+                unit_key = subelement?.Attribute("key")?.Value;
+                break;
+            }
+
+            return unit_key;
+        }
+
+        public static int GetMax(Unit unit)
+        {
+            string max = "not found";
+            foreach (var file in MapperFactionFiles)
+            {
+                XElement root = XElement.Parse(file.InnerXml);
+                // Find the element with the specified attribute value
+                XElement element = root.Elements().FirstOrDefault(e => e.Attribute("name")?.Value == "default");
+                if (element is null)
+                {
+                    max = "not found";
+                    continue; //next file
+                }
+
+                // Find the subelement with a specific id attribute value within the found element
+                XElement subelement = element.Elements().FirstOrDefault(e => (string)e.Attribute("type") == unit.GetName());
+                if (subelement is null)
+                {
+                    max = "not found";
+                    continue; //next file
+                }
+
+                max = subelement?.Attribute("max")?.Value;
+                break;
+            }
+
+            return MaxType.GetMax(max);
+        }
+        //----------------------------------
 
         private static void SetPlayerCultureUnits(XmlDocument[] factionFile, string attilaFaction)
         {
@@ -543,6 +628,7 @@ namespace Crusader_Wars
 
         }
 
+
         public static List<string> GetXmlFilePath(string folderName, string fileType)
         {
             string mapper_path = Directory.GetCurrentDirectory() + $@"\Mappers\{folderName}";
@@ -659,114 +745,10 @@ namespace Crusader_Wars
             CheckedMappers = new List<string>();
             RequiredMods = new List<string>();
 
-            Lan_Heritages = new List<(string origName, string lanName)>();
-            Lan_Cultures = new List<(string origName, string lanName)>();
-            Lan_Units = new List<(string origName, string lanName)>();
-
         }
 
 
-        static List<(string origName, string lanName)> Lan_Heritages { get; set; }
-        static List<(string origName, string lanName)> Lan_Cultures {  get; set; }
-        static List<(string origName, string lanName)> Lan_Units { get; set; }
-        private static void ReadCurrentLanguage(string ck3_language)
-        {
-            //If it is not english
-            if(ck3_language != "l_english") 
-            {
-                string language_path = $@".\languages\{ck3_language}";
-                var lan_files = Directory.GetFiles(language_path, "*.xml");
-                foreach (var file in lan_files)
-                {
-                    XmlDocument xmldoc = new XmlDocument();
-                    xmldoc.Load(file);
-
-                    //Read cultures file
-                    if (xmldoc.DocumentElement.Name == "CulturesLanguages")
-                    {
-                        Lan_Heritages = new List<(string origName, string lanName)>();
-                        Lan_Cultures = new List<(string origName, string lanName)>();
-
-                        foreach (XmlElement Heritage in xmldoc.DocumentElement.ChildNodes)
-                        {
-                            Lan_Heritages.Add((Heritage.Attributes["original_name"].Value, Heritage.Attributes["language_name"].Value));
-
-                            foreach (XmlNode Culture in Heritage)
-                            {
-                                Lan_Cultures.Add((Culture.Attributes["original_name"].Value, Culture.Attributes["language_name"].Value));
-                            }
-                        }
-                    }
-
-                    //Read units file
-                    if (xmldoc.DocumentElement.Name == "UnitsLanguages")
-                    {
-                        Lan_Units = new List<(string origName, string lanName)>();
-
-                        foreach (XmlElement Heritage in xmldoc.DocumentElement.ChildNodes)
-                        {
-                            Lan_Units.Add((Heritage.Attributes["original_name"].Value, Heritage.Attributes["language_name"].Value));
-
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void AddMapperLanguageData()
-        {
-
-        }
-
-        private static void ChangeToLanguage()
-        {
-            //Change the heritages names to the language names
-            for(int i = 0; i < Heritages.Count; i++)
-            {
-                foreach(var lan_heritage in Lan_Heritages)
-                {
-                    if (Heritages[i].Heritage == lan_heritage.origName) 
-                    {
-                        Heritages[i] = (lan_heritage.lanName, Heritages[i].Faction);
-                        break;
-                    }
-                }
-            }
-            
-            //Change the cultures names to the language names
-            for (int i = 0; i < Cultures.Count; i++)
-            {
-                foreach (var lan_culture in Lan_Cultures)
-                {
-                    if (Cultures[i].Cultures == lan_culture.origName)
-                    {
-                        Cultures[i] = (lan_culture.lanName, Cultures[i].Faction);
-                        break;
-                    }
-                }
-            }
-
-            //Change the units names to the language names
-            for (int i = 0; i < PlayerUnits.Count; i++)
-            {
-                foreach (var lan_maa in Lan_Units)
-                {
-                    if (PlayerUnits[i].Type == lan_maa.origName)
-                    {
-                        PlayerUnits[i] = (lan_maa.lanName, PlayerUnits[i].Key, PlayerUnits[i].Max, PlayerUnits[i].Script);
-                        break;
-                    }
-                }
-            }
-
-        }
-
-        static void ResetLanData()
-        {
-            Lan_Cultures = new List<(string origName, string lanName)> { };
-            Lan_Heritages = new List<(string origName, string lanName)> { };
-            Lan_Units = new List<(string origName, string lanName)> { };
-        }
+ 
 
         struct FileType
         {
@@ -775,8 +757,6 @@ namespace Crusader_Wars
             public static string TimePeriod() { return "TimePeriod"; }
             public static string Mods() { return "RequiredMods"; }
             public static string Terrains() { return "Terrains"; }
-            public static string LanCultures() { return "LanCultures"; }
-            public static string LanUnits() { return "LanUnits"; }
         };
 
         struct MaxType

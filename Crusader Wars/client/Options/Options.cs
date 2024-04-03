@@ -26,8 +26,6 @@ namespace Crusader_Wars
         {
             InitializeComponent();
             this.Icon = Properties.Resources.logo;
-
-
         }
 
         protected override CreateParams CreateParams
@@ -731,11 +729,28 @@ namespace Crusader_Wars
                 WarningMessage.ShowWarningMessage(message);
             }
 
+            foreach(var mapper_path in YearCollection)
+            {
+                if (mapper_path.Key.Contains("MK1212"))
+                {
+                    string text = "MK1212 has updated and it's temporarily not working with Crusader Wars, use the previous version of MK1212, and not to the most recent, to avoid crashes in Attila! You have been warned!";
+                    string title = "Warning";
+                    WarningMessage.ShowWarningMessage(text, title);
+                    break;
+                }
+            }
+
             int start =1066;
             foreach (var i in YearCollection)
             {
-                if (i.Value.start > start){ start = i.Value.start; continue; }
-                else { start = Math.Min(i.Value.start, start); }
+                if (i.Value.start < start)
+                { 
+                    start = i.Value.start; 
+                    continue; 
+                }
+                else { 
+                    start = Math.Min(i.Value.start, start); 
+                }
                 
             }
             if (start > 1066 && YearCollection.Count > 1)

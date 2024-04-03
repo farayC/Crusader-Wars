@@ -10,15 +10,11 @@ using System.Linq;
 using System.Drawing;
 using System.Xml.Linq;
 using System.Windows;
-using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using Crusader_Wars.client;
 using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.locs;
-using static Crusader_Wars.Languages;
 using Crusader_Wars.data.attila_settings;
-using System.Security.Policy;
-using Crusader_Wars.data.save_file;
 
 namespace Crusader_Wars
 {
@@ -173,13 +169,15 @@ namespace Crusader_Wars
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
-            
+
         }
         
 
         Player Player;
         Enemy Enemy;
 
+        //List<Army> attacker_armies;
+        //List<Army> defender_armies;
         private void HomePage_Shown(object sender, EventArgs e)
         {
             infoLabel.Text = "Loading DLLs...";
@@ -333,7 +331,8 @@ namespace Crusader_Wars
                         try
                         {
                             LoadingScreen = new LoadingScreen();
-                            //LoadingScreen.Show();
+                            LoadingScreen.Show();
+                            this.Hide();
 
                             infoLabel.Text = "Battle found...";
                             logFile.Position = 0;
@@ -357,6 +356,7 @@ namespace Crusader_Wars
                         }
                         catch
                         {
+                            this.Show();
                             LoadingScreen.Close();
                             MessageBox.Show("Error reading battle data.", "Data Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -392,25 +392,25 @@ namespace Crusader_Wars
                 long endMemory10 = GC.GetTotalMemory(false);
                 long memoryUsage10 = endMemory10 - startMemoryTotal;
                 Console.WriteLine($"----\nReading data from save file ...\nTotal Memory Usage: {memoryUsage10 / 1048576} mb\n----");
+                
+
+
                 try
                 {
-
                     LoadingScreen.ChangeMessage("Reading save file data...");
-
                     Reader.SetData(Player, Enemy);
                     BattleResult.LoadSaveFile(path_editedSave);
-                    BattleResult.GetAllCombatResults(Player.ID.ToString());
-                    BattleResult.GetAllCombats(); 
-                    BattleResult.FindPlayerBattle(Player.ID.ToString());
+                    BattleResult.GetPlayerCombatResult();
+                    BattleResult.ReadPlayerCombat(Player.ID.ToString());
                     BattleResult.GetAttackerRegiments();
                     BattleResult.GetDefenderRegiments();
                     BattleResult.GetAllArmyRegiments();
                     BattleResult.GetAllRegiments();
 
-
                 }
                 catch
                 {
+                    this.Show();
                     LoadingScreen.Close();
                     MessageBox.Show("Error reading the save file. Disable Ironman or Debug Mode.", "Save File Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -427,7 +427,10 @@ namespace Crusader_Wars
                 }
 
                 //1.0 Beta Debug
-                ArmiesReader.ReadBattleArmies();
+                //var armies = ArmiesReader.ReadBattleArmies();
+                //attacker_armies = armies.attacker;
+                //defender_armies = armies.defender;
+
 
 
                 try
@@ -446,6 +449,7 @@ namespace Crusader_Wars
                 }
                 catch
                 {
+                    this.Show();
                     LoadingScreen.Close();
                     MessageBox.Show("Error reading the save file. Disable Ironman or Debug Mode.", "Save File Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -478,6 +482,9 @@ namespace Crusader_Wars
                     ArmyProportions.AutoSizeUnits(Player.TotalNumber, Enemy.TotalNumber);
                     BattleFile.CreateBattle(Player, Enemy);
 
+                   // BattleFile.BETA_CreateBattle(attacker_armies, defender_armies, Player, Enemy);
+
+
                     //Close Script
                     BattleScript.CloseScript();
 
@@ -495,6 +502,7 @@ namespace Crusader_Wars
                 }
                 catch
                 {
+                    this.Show();
                     LoadingScreen.Close();
                     MessageBox.Show("Error creating the battle", "Data Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -517,9 +525,11 @@ namespace Crusader_Wars
 
                     LoadingScreen.ChangeMessage("Done!");
                     LoadingScreen.Close();
+                    this.Show();
                 }
                 catch
                 {
+                    this.Show();
                     LoadingScreen.Close();
                     MessageBox.Show("Couldn't find 'Attila.exe'. Change the Total War Attila path. ", "Path Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -539,6 +549,7 @@ namespace Crusader_Wars
                 }
                 catch
                 {
+                    
                     MessageBox.Show("Error", "Application Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     Games.CloseTotalWarAttilaProcess();
@@ -626,7 +637,7 @@ namespace Crusader_Wars
                         Player_Remaining = new List<(string Name, string Remaining)>();
                         Enemy_Remaining = new List<(string Name, string Remaining)>();
 
-                        if(Player.UnitsResults.Alive_PursuitPhase.Count > 0 )
+                        if(Player.UnitsResults.Alive_PursuitPhase != null )
                         {
                             Player_Remaining = Player.UnitsResults.Alive_PursuitPhase;
                         }
@@ -634,7 +645,7 @@ namespace Crusader_Wars
                         {
                             Player_Remaining = Player.UnitsResults.Alive_MainPhase;
                         }
-                        if (Enemy.UnitsResults.Alive_PursuitPhase.Count > 0)
+                        if (Enemy.UnitsResults.Alive_PursuitPhase != null)
                         {
                             Enemy_Remaining = Enemy.UnitsResults.Alive_PursuitPhase;
                         }
@@ -751,10 +762,10 @@ namespace Crusader_Wars
 
                         BattleResult.SetAttackerGUIRegiments();
                         BattleResult.SetDefenderGUIRegiments();
-                        BattleResult.SetWinner(Player.ID.ToString(), winner);
+                        BattleResult.SetWinner(winner);
                         BattleResult.SetAttackerDATA();
                         BattleResult.SetDefenderDATA();
-                        BattleResult.SendToSaveFile(path_editedSave); //hmmmm sus sus...
+                        BattleResult.SendToSaveFile(path_editedSave);
                         Games.LoadBattleResults();
                     }
                     catch

@@ -259,7 +259,7 @@
             this.OptionSelection_UnitCards.Size = new System.Drawing.Size(146, 26);
             this.OptionSelection_UnitCards.TabIndex = 11;
             this.General_ToopTip.SetToolTip(this.OptionSelection_UnitCards, "Disabled: Unit card names will be from the Attila mods.\r\nEnabled: Unit card names" +
-        " will use the names from CK3.\r\n");
+        " will use the names from CK3.");
             // 
             // General_ToopTip
             // 

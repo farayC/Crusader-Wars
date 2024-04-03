@@ -149,8 +149,8 @@
       <DependentUpon>WarningMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="data\attila settings\AttilaPreferences.cs" />
-    <Compile Include="data\battle results\BattleResults_Objects.cs" />
-    <Compile Include="data\battle results\GUI_BattleResultTab.cs" />
+    <Compile Include="data\battle results\gui\BattleResults_Objects.cs" />
+    <Compile Include="data\battle results\gui\GUI_BattleResultTab.cs" />
     <Compile Include="data\ck3 log\SiegesSearch.cs" />
     <Compile Include="data\save file\Armies Reader.cs" />
     <Compile Include="data\save file\Writter.cs" />
@@ -366,6 +366,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
+    <None Include="Resources\modcon_loadingscreen.png" />
+    <None Include="Resources\rotating_loading.gif" />
+    <None Include="Resources\loading_screen.gif" />
     <None Include="Resources\cha_evpic_charlemagne_prepares_for_war.png" />
     <None Include="Resources\loadingscreen2.png" />
     <None Include="Resources\rotating_logo1.gif" />

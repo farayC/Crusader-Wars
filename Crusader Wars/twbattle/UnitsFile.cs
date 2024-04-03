@@ -34,14 +34,14 @@ namespace Crusader_Wars
                 int commander_xp = Side.Commander.GetCommanderExperience();
                 int knights_xp = Side.Knights.SetExperience();
                 //Modifiers only decrease knights xp
-                if(modifiers_xp < 0) knights_xp += modifiers_xp;
+                if (modifiers_xp < 0) knights_xp += modifiers_xp;
 
 
                 //XP Limiters
-                if(army_xp < 0) army_xp = 0;
+                if (army_xp < 0) army_xp = 0;
                 if (army_xp > 9) army_xp = 9;
 
-                if(commander_xp < 0) commander_xp = 0;
+                if (commander_xp < 0) commander_xp = 0;
                 if (commander_xp > 9) commander_xp = 9;
 
                 if (knights_xp < 0) knights_xp = 0;
@@ -65,12 +65,12 @@ namespace Crusader_Wars
 
                 //Levies
                 var levies_units = Side.Army.Where(item => item.Type.Contains("Levy") || item.Type.Contains("Levies"));
-                if (levies_units.Count() > 0) 
+                if (levies_units.Count() > 0)
                 {
                     int levies_total_number = levies_units.ElementAt(0).SoldiersNum;
                     LevyDiversity(levies_units, levies_total_number, army_xp.ToString());
                 }
-                
+
 
                 //MenAtArms
                 foreach (var troop in Side.Army)
@@ -81,7 +81,7 @@ namespace Crusader_Wars
                     var MAA_Data = RetriveCalculatedUnits(troop.SoldiersNum, troop.Max);
 
                     //If is retinue maa, increase 2xp.
-                    if(troop.Script.Contains("accolade")) BattleFile.AddUnit(troop.Key, MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, troop.Script, (army_xp + 2).ToString());
+                    if (troop.Script.Contains("accolade")) BattleFile.AddUnit(troop.Key, MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, troop.Script, (army_xp + 2).ToString());
                     //If is normal maa
                     else BattleFile.AddUnit(troop.Key, MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, troop.Script, army_xp.ToString());
 
@@ -89,14 +89,21 @@ namespace Crusader_Wars
 
                 BattleFile.ResetPositions();
             }
-            catch 
+            catch
             {
                 MessageBox.Show("Error on converting units\nThis can happen if the wrong mapper is loaded", "Data Error",
                 MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 Application.Exit();
             }
-
         }
+
+
+
+
+
+
+
+
 
         private static void LevyDiversity(IEnumerable<(string Type, string Key, int Max, string Script, int SoldiersNum)> Units, int TroopTypeNumber, string unit_experience)
         {
@@ -140,7 +147,7 @@ namespace Crusader_Wars
         public static (int UnitSoldiers, int UnitNum, int SoldiersRest) RetriveCalculatedUnits(int soldiers, int unit_limit)
         {
             //if it's a special unit like siege equipement, monsters, etc...
-            if(unit_limit == 1111)
+            if (unit_limit == 1111)
             {
                 int special_num = soldiers / 10; //10, because siege equipement is 10 persons one equipement
                 return (special_num, 1, 0);
@@ -156,7 +163,7 @@ namespace Crusader_Wars
                     unit_num = i;
                     int rest = soldiers % i;
 
-                    return (result,unit_num, rest);
+                    return (result, unit_num, rest);
                 }
 
             }
@@ -165,7 +172,41 @@ namespace Crusader_Wars
         }
 
 
+        public static void BETA_ConvertandAddArmyUnits(Army army)
+        {
+
+
+            int levy_max = ModOptions.GetLevyMax();
+            //Levies
+            var levies_units = army.Units.Where(item => item.GetName().Contains("Levy"));
+            if (levies_units.Count() > 0)
+            {
+                foreach (var levy_culture in levies_units)
+                {
+                    var Levies_Data = RetriveCalculatedUnits(levy_culture.GetSoldiers(), levy_max);
+                    BattleFile.AddUnit(levy_culture.GetAttilaUnitKey(), Levies_Data.UnitSoldiers, Levies_Data.UnitNum, Levies_Data.SoldiersRest, $"{army.CombatSide}_{army.ID}_{levy_culture.GetName()}_", "0");
+                }
+            }
+
+
+            //MenAtArms
+            foreach (var unit in army.Units)
+            {
+                string unitName = unit.GetName();
+                //Skip if its not a Men at Arms Unit
+                if (unitName == "General" || unitName == "Knights" || unitName.Contains("Levy")) continue;
+
+                var MAA_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
+
+                //If is retinue maa, increase 2xp.
+                if (unitName.Contains("accolade")) BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}_{army.ID}_{unit.GetName()}_", "2");
+                //If is normal maa
+                else BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}_{army.ID}_{unit.GetName()}_", "0");
+
+            }
+
+
+        }
 
     }
-
 }
