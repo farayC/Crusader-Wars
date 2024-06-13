@@ -1,4 +1,5 @@
 ﻿using Crusader_Wars.armies;
+using Crusader_Wars.data.save_file;
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
@@ -46,124 +47,15 @@ namespace Crusader_Wars
         public static int Disfigured() { return SaveFile.GetWoundedTraitIndex("disfigured"); }
     }
 
+    static class Wounds
+    {
+
+    }
+
     public static  class SaveFile
     {
-        public static List<string> LivingList { get; private set; }
         static List<(string name, int index)> WoundedTraits_List { get; set; }
-        public static void ReadAll()
-        {
 
-            //---------Living text----------
-
-            long startMemory1 = GC.GetTotalMemory(false);
-            MatchCollection allLiving = Regex.Matches(Data.String_Living, @"(?s)\d+={.*?(?=\d+={|\z)");
-            LivingList = new List<string>();
-            foreach (Match match in allLiving)
-            {
-                LivingList.Add(match.Value);
-            }
-            long endMemory1 = GC.GetTotalMemory(false);
-            long memoryUsage1 = endMemory1 - startMemory1;
-            Console.WriteLine($"----\nAdding each char to Living list...\nMemory Usage: {memoryUsage1 / 1048576} mb");
-
-
-        }
-
-        public static void ReadWoundedTraits()
-        {
-            //---------Wounded Traits----------
-
-            MatchCollection allTraits = Regex.Matches(Data.String_Traits, @" (\w+)");
-            string[] traitList = new string[allTraits.Count];
-            for (int i = 0; i < allTraits.Count; i++)
-            {
-                traitList[i] = allTraits[i].Groups[1].Value;
-            }
-
-            List<(string name, int index)> wounded_traits;
-            wounded_traits = new List<(string name, int index)>();
-
-            for (int i = 0; i < traitList.Length; i++)
-            {
-                if (traitList[i] == "wounded_1") wounded_traits.Add(("wounded_1", i));
-                else if (traitList[i] == "wounded_2") wounded_traits.Add(("wounded_2", i));
-                else if (traitList[i] == "wounded_3") wounded_traits.Add(("wounded_3", i));
-                else if (traitList[i] == "maimed") wounded_traits.Add(("maimed", i));
-                else if (traitList[i] == "one_legged") wounded_traits.Add(("one_legged", i));
-                else if (traitList[i] == "one_eyed") wounded_traits.Add(("one_eyed", i));
-                else if (traitList[i] == "disfigured") wounded_traits.Add(("disfigured", i));
-            }
-
-            WoundedTraits_List = new List<(string name, int index)>();
-            WoundedTraits_List.AddRange(wounded_traits);
-        }
-
-        internal static int GetWoundedTraitIndex(string trait_name)
-        {
-            int index;
-            index = WoundedTraits_List.FirstOrDefault(x => x.name == trait_name).index;
-            return index;
-
-        }
-
-        public static void SetTraits(string character_id, string trait)
-        {
-
-            bool check =  Regex.Match(Data.String_Living, $@"(?<Character>(?<ID>\b{character_id}\b)={{\s+first_name=[\s\S]*?)\d+={{").Success;
-            if (check)
-            {
-                int index = LivingList.IndexOf(LivingList.FirstOrDefault(x => x.StartsWith($"{character_id}" + "={")));
-                string match_living = LivingList.FirstOrDefault(x => x.StartsWith($"{character_id}" + "={" ));
-                string traits = Regex.Match(match_living, @"traits=\{(?:\s+\d+)*").Value;
-                traits = VerifyTraits(traits, trait);
-                if (traits[traits.Length - 1] == ' ')
-                {
-                    string added_trait = Regex.Replace(match_living, @"traits=\{(?:\s+\d+)* }", traits + "}");
-                    LivingList[index] = added_trait;
-                }
-                else
-                {
-                    string added_trait = Regex.Replace(match_living, @"traits=\{(?:\s+\d+)* }", traits + " }");
-                    LivingList[index] = added_trait;
-                }
-
-
-            }            
-        }
-
-        public static void SendToFile()
-        {
-            long startMemory1 = GC.GetTotalMemory(false);
-            StringBuilder sb = new StringBuilder();
-            
-            sb.Append("living={\n");
-            foreach (string item in LivingList) 
-            {
-                sb.Append("\t" + item);
-            }
-            long endMemory1 = GC.GetTotalMemory(false);
-            long memoryUsage1 = endMemory1 - startMemory1;
-            Console.WriteLine($"----\nCreate Living string ...\nMemory Usage: {memoryUsage1 / 1048576} mb");
-
-
-            long startMemory = GC.GetTotalMemory(false);
-
-            Data.String_Living = "";
-            
-            Data.String_Living = sb.ToString();
-
-
-            long endMemory = GC.GetTotalMemory(false);
-            long memoryUsage = endMemory - startMemory;
-
-            Console.WriteLine($"----\nTurning living text to string\nMemory Usage: {memoryUsage/1048576} mb");
-
-
-            //Clear data
-            LivingList = new List<string>();
-            WoundedTraits_List = new List<(string name, int index)>();
-
-        }
 
         private static string VerifyTraits(string str, string trait)
         {
@@ -215,6 +107,47 @@ namespace Crusader_Wars
                 return str;
 
             }
+        }
+
+
+        /* --------------------------------- 
+         * ---------Wounded Traits----------
+         * ---------------------------------*/
+        public static void ReadWoundedTraits()
+        {
+            
+
+            MatchCollection allTraits = Regex.Matches(File.ReadAllText(Writter.DataFilesPaths.Traits_Path()), @" (\w+)");
+            string[] traitList = new string[allTraits.Count];
+            for (int i = 0; i < allTraits.Count; i++)
+            {
+                traitList[i] = allTraits[i].Groups[1].Value;
+            }
+
+            List<(string name, int index)> wounded_traits;
+            wounded_traits = new List<(string name, int index)>();
+
+            for (int i = 0; i < traitList.Length; i++)
+            {
+                if (traitList[i] == "wounded_1") wounded_traits.Add(("wounded_1", i));
+                else if (traitList[i] == "wounded_2") wounded_traits.Add(("wounded_2", i));
+                else if (traitList[i] == "wounded_3") wounded_traits.Add(("wounded_3", i));
+                else if (traitList[i] == "maimed") wounded_traits.Add(("maimed", i));
+                else if (traitList[i] == "one_legged") wounded_traits.Add(("one_legged", i));
+                else if (traitList[i] == "one_eyed") wounded_traits.Add(("one_eyed", i));
+                else if (traitList[i] == "disfigured") wounded_traits.Add(("disfigured", i));
+            }
+
+            WoundedTraits_List = new List<(string name, int index)>();
+            WoundedTraits_List.AddRange(wounded_traits);
+        }
+
+        internal static int GetWoundedTraitIndex(string trait_name)
+        {
+            int index;
+            index = WoundedTraits_List.FirstOrDefault(x => x.name == trait_name).index;
+            return index;
+
         }
     }
 

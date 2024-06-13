@@ -131,7 +131,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(445, 119);
+            this.label1.Location = new System.Drawing.Point(438, 118);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 21);
             this.label1.TabIndex = 16;
@@ -153,9 +153,9 @@
             this.MappersControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MappersControl.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.MappersControl.Font = new System.Drawing.Font("Yu Gothic UI Semibold", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MappersControl.Location = new System.Drawing.Point(442, 179);
+            this.MappersControl.Location = new System.Drawing.Point(442, 175);
             this.MappersControl.Name = "MappersControl";
-            this.MappersControl.Size = new System.Drawing.Size(246, 522);
+            this.MappersControl.Size = new System.Drawing.Size(258, 262);
             this.MappersControl.TabIndex = 18;
             this.MappersControl.WrapContents = false;
             // 
@@ -164,7 +164,7 @@
             this.infoBox.BackColor = System.Drawing.Color.Transparent;
             this.infoBox.BackgroundImage = global::Crusader_Wars.Properties.Resources.info_smaller;
             this.infoBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.infoBox.Location = new System.Drawing.Point(562, 107);
+            this.infoBox.Location = new System.Drawing.Point(555, 108);
             this.infoBox.Name = "infoBox";
             this.infoBox.Size = new System.Drawing.Size(30, 42);
             this.infoBox.TabIndex = 21;
@@ -187,7 +187,7 @@
             this.Label_MapperStatus.BackColor = System.Drawing.Color.Transparent;
             this.Label_MapperStatus.Font = new System.Drawing.Font("Yu Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Label_MapperStatus.ForeColor = System.Drawing.Color.White;
-            this.Label_MapperStatus.Location = new System.Drawing.Point(434, 155);
+            this.Label_MapperStatus.Location = new System.Drawing.Point(439, 155);
             this.Label_MapperStatus.Name = "Label_MapperStatus";
             this.Label_MapperStatus.Size = new System.Drawing.Size(50, 17);
             this.Label_MapperStatus.TabIndex = 22;
@@ -217,7 +217,7 @@
             this.OptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.OptionsPanel.Location = new System.Drawing.Point(25, 428);
             this.OptionsPanel.Name = "OptionsPanel";
-            this.OptionsPanel.Size = new System.Drawing.Size(408, 273);
+            this.OptionsPanel.Size = new System.Drawing.Size(408, 412);
             this.OptionsPanel.TabIndex = 28;
             // 
             // flowLayoutPanel1
@@ -290,8 +290,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::Crusader_Wars.Properties.Resources.options_bk;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ClientSize = new System.Drawing.Size(712, 713);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(712, 852);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.OptionsPanel);
             this.Controls.Add(this.label3);

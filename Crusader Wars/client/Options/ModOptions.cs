@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.terrain;
+﻿using Crusader_Wars.data.save_file;
+using Crusader_Wars.terrain;
 using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,30 @@ namespace Crusader_Wars.client
             }
             
         }
+
+        internal enum ArmiesSetup
+        {
+            All_Controled,
+            Friendly_Only,
+            All_Separate
+        }
+
+        public static ArmiesSetup SeparateArmies()
+        {
+            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "SeparateArmies");
+            switch (option.value)
+            {
+                case "All Controled":
+                    return ArmiesSetup.All_Controled;
+                case "Friendly Only":
+                    return ArmiesSetup.Friendly_Only;
+                case "All Separate":
+                    return ArmiesSetup.All_Separate;
+                default:
+                    return ArmiesSetup.Friendly_Only;
+
+            }
+        }
         
         public static string DeploymentsZones()
         {
@@ -146,51 +171,21 @@ namespace Crusader_Wars.client
 
             return "1500";
         }
-        public static string FullArmiesLevies(string army_composition_text)
+
+        public static string FullArmies(Regiment reg)
         {
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies");
-
-            string pattern_current_soldiers = "Levies.+?(?=)(?<SoldiersNum>\\d+)";
-            string pattern_full_soldiers;
-            if (army_composition_text.Contains("month"))
-            {
-                pattern_full_soldiers = "Levies.+V.(?<SoldiersNum>\\d+) ";
-            }
-            else
-            {
-                pattern_full_soldiers = "Levies.+V.(?<SoldiersNum>\\d+)";
-            }
-
 
             switch (option.value)
             {
                 case "Disabled":
-                    return pattern_current_soldiers;
+                    return reg.CurrentNum;
                 case "Enabled":
-                    return pattern_full_soldiers;
+                    return reg.StartingNum;
                 default:
-                    return pattern_current_soldiers;
+                    return reg.CurrentNum; 
             }
 
-        }
-        public static string FullArmiesMAA()
-        {
-            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies");
-
-            string pattern_current_soldiers = "L (?<MenAtArms>.+):.+?(?<SoldiersNum>\\d+)";
-            string pattern_full_soldiers = "L (?<MenAtArms>.+):.+\\d+V (?<SoldiersNum>\\d+)";
-
-
-            switch (option.value)
-            {
-                case "Disabled":
-                    return pattern_current_soldiers;
-                case "Enabled":
-                    return pattern_full_soldiers;
-                default:
-                    return pattern_current_soldiers;
-            }
-            
         }
 
         public static string TimeLimit()
@@ -233,6 +228,13 @@ namespace Crusader_Wars.client
                 default:
                     return true;
             }
+        }
+
+        public static int CulturalPreciseness()
+        {
+            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "CulturalPreciseness");
+            var value = Math.Abs(Int32.Parse(option.value));
+            return value;
         }
 
         private static void ShutdownAttila()

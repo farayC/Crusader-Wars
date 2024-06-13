@@ -57,7 +57,7 @@ namespace Crusader_Wars.data.save_file
                     {
                         NeedSkiping = false;
                     }
-
+                    //Combat Result START
                     if (line == "\tcombat_results={")
                     {
                         resultsFound = true;
@@ -66,24 +66,11 @@ namespace Crusader_Wars.data.save_file
                     //Combat Result
                     else if (line == $"\t\t{BattleResult.ResultID}={{" && resultsFound && !CombatResults_NeedsSkiping)
                     {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        using (StreamReader sr = new StreamReader(@".\data\save_file_data\BattleResults.txt"))
-                        {
-                            while (true)
-                            {
-                                string l = sr.ReadLine();
-
-                                if (l is null) break;
-                                if (l == "\t\t}") continue;
-
-                                stringBuilder.AppendLine(l);
-                            }
-                        }
-
-                        streamWriter.WriteLine(stringBuilder.ToString());
+                        WriteDataToSaveFile(streamWriter, DataFilesPaths.CombatResults_Path());
                         Console.WriteLine("EDITED BATTLE RESULTS SENT!");
                         CombatResults_NeedsSkiping = true;
                     }
+                    //Combat START
                     else if (line == "\tcombats={")
                     {
                         combatsFound = true;
@@ -92,37 +79,25 @@ namespace Crusader_Wars.data.save_file
                     //Combat
                     else if (line == $"\t\t{BattleResult.CombatID}={{" && combatsFound && !Combats_NeedsSkiping)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        using (StreamReader sr = new StreamReader(@".\data\save_file_data\Combats.txt"))
-                        {
-                            while (true)
-                            {
-                                string l = sr.ReadLine();
-                                if (l is null) break;
-                                if (l == "\t\t}") continue;
-                                sb.AppendLine(l);
-                            }
-                        }
-
-                        streamWriter.WriteLine(sb.ToString());
+                        WriteDataToSaveFile(streamWriter, DataFilesPaths.Combats_Path());
                         Console.WriteLine("EDITED COMBATS SENT!");
                         Combats_NeedsSkiping = true;
                     }
                     else if (line == "\tregiments={" && !NeedSkiping)
                     {
-                        streamWriter.WriteLine(Data.String_Regiments);
+                        //streamWriter.WriteLine(Data.String_Regiments);
                         Console.WriteLine("EDITED REGIMENTS SENT!");
                         NeedSkiping = true;
                     }
                     else if (line == "\tarmy_regiments={" && !NeedSkiping)
                     {
-                        streamWriter.WriteLine(Data.String_ArmyRegiments);
+                        //streamWriter.WriteLine(Data.String_ArmyRegiments);
                         Console.WriteLine("EDITED ARMY REGIMENTS SENT!");
                         NeedSkiping = true;
                     }
                     else if (line == "living={" && !NeedSkiping)
                     {
-                        streamWriter.WriteLine(Data.String_Living);
+                        //streamWriter.WriteLine(Data.String_Living);
                         Console.WriteLine("EDITED LIVING SENT!");
                         NeedSkiping = true;
                     }
@@ -149,6 +124,45 @@ namespace Crusader_Wars.data.save_file
             long memoryUsage = endMemory - startMemory;
 
             Console.WriteLine($"----\nWritting data to save file\nMemory Usage: {memoryUsage / 1048576} megabytes");
+        }
+
+
+
+
+
+
+
+        static void WriteDataToSaveFile(StreamWriter streamWriter, string data_file_path)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StreamReader sr = new StreamReader(data_file_path))
+            {
+                while (true)
+                {
+                    string l = sr.ReadLine();
+                    if (l is null) break;
+                    if (l == "\t\t}") continue;
+                    sb.AppendLine(l);
+                }
+            }
+
+            streamWriter.WriteLine(sb.ToString());
+        }
+
+        public struct DataFilesPaths
+        {
+            public static string CombatResults_Path() { return @".\data\save_file_data\BattleResults.txt"; }
+            public static string Combats_Path() { return @".\data\save_file_data\Combats.txt"; }
+            public static string Regiments_Path() { return @".\data\save_file_data\Regiments.txt"; }
+            public static string ArmyRegiments_Path() { return @".\data\save_file_data\ArmyRegiments.txt"; }
+            public static string Living_Path() { return @".\data\save_file_data\Living.txt"; }
+            public static string Cultures_Path() { return @".\data\save_file_data\Cultures.txt"; }
+            public static string Mercenaries_Path() { return @".\data\save_file_data\Mercenaries.txt"; }
+            public static string Armies_Path() { return @".\data\save_file_data\Armies.txt"; }
+            public static string Counties_Path() { return @".\data\save_file_data\Counties.txt"; }
+            public static string Traits_Path() { return @".\data\save_file_data\Traits.txt"; }
+            public static string Units_Path() { return @".\data\save_file_data\Units.txt"; }
+
         }
 
     }

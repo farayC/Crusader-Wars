@@ -7,7 +7,7 @@ namespace Crusader_Wars
 {
     public static class BattleScript
     {
-        static string filePath = Directory.GetFiles("Battle Files\\script", "tut_start.lua", SearchOption.AllDirectories)[0];
+        static string filePath = Directory.GetFiles("data\\battle files\\script", "tut_start.lua", SearchOption.AllDirectories)[0];
 
 
 

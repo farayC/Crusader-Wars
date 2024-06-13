@@ -2,6 +2,7 @@
 using Crusader_Wars.client;
 using Crusader_Wars.locs;
 using Crusader_Wars.terrain;
+using Crusader_Wars.unit_mapper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
@@ -10,12 +11,113 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Windows.Media.Media3D;
 using System.Xml.Linq;
 
 namespace Crusader_Wars
 {
+    internal enum DataSearchSides
+    {
+        LeftSide,
+        RightSide
+    }
+
+    public class PlayerChar
+    {
+        string ID { get; set; }
+        string Heritage { get; set; }
+        string Culture { get; set; }
+
+        public PlayerChar(string iD, string heritage, string culture)
+        {
+            ID = iD;
+            Heritage = heritage;
+            Culture = culture;
+        }
+
+        public string GetHeritage() { return Heritage; }
+        public string GetCulture() { return Culture; }
+    }
+
+
+    public static class CK3LogData
+    {
+
+        // COMMANDERS
+        static (string name, string id, int prowess, int martial, int rank) LeftSide_Commander { get; set; }
+        static (string name, string id, int prowess, int martial, int rank) RightSide_Commander { get; set; }
+
+        // MAIN REALM NAMES
+        static string LeftSide_RealmName { get; set; }
+        static string RightSide_RealmName { get; set; }
+
+        // MODIFIERS
+        static Modifiers LeftSide_Modifiers { get; set; }
+        static Modifiers RightSide_Modifiers { get; set; }
+
+        // KNIGHTS
+        static List<(string id, string prowess, string name, int effectiveness)> LeftSide_Knights { get; set; }
+        static List<(string id, string prowess, string name, int effectiveness)> RightSide_Knights { get; set; }
+
+
+
+
+        public struct LeftSide
+        {
+            public static void SetCommander((string name, string id, int prowess, int martial, int rank) data) { LeftSide_Commander = data; }
+            public static void  SetRealmName(string name) { LeftSide_RealmName = name; }
+            public static void SetModifiers(Modifiers t) { LeftSide_Modifiers = t; }
+            public static void SetKnights(List<(string id, string prowess, string name, int effectiveness)> t) { LeftSide_Knights = t; }
+
+            public static (string name, string id, int prowess, int martial, int rank) GetCommander() { return LeftSide_Commander; }
+            public static string GetRealmName() { return LeftSide_RealmName; }
+            public static Modifiers GetModifiers() { return LeftSide_Modifiers; }
+            public static List<(string id, string prowess, string name, int effectiveness)> GetKnights() { return LeftSide_Knights; }
+            public static bool CheckIfHasKnight(string character_id)
+            {
+                foreach(var knight in LeftSide_Knights)
+                {
+                    if(knight.id == character_id)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public struct RightSide
+        {
+            public static void SetCommander((string name, string id, int prowess, int martial, int rank) data) { RightSide_Commander = data; }
+            public static void SetRealmName(string name) { RightSide_RealmName = name; }
+            public static void SetModifiers(Modifiers t) { RightSide_Modifiers = t; }
+            public static void SetKnights(List<(string id, string prowess, string name, int effectiveness)> t) { RightSide_Knights = t; }
+
+            public static (string name, string id, int prowess, int martial, int rank) GetCommander() { return RightSide_Commander; }
+            public static string GetRealmName() { return RightSide_RealmName; }
+            public static Modifiers GetModifiers() { return RightSide_Modifiers; }
+            public static List<(string id, string prowess, string name, int effectiveness)> GetKnights() { return RightSide_Knights; }
+            public static bool CheckIfHasKnight(string character_id)
+            {
+                foreach (var knight in RightSide_Knights)
+                {
+                    if (knight.id == character_id)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+    }
+
     public static class DataSearch
     {
+
+
+        public static PlayerChar Player_Character { get; set; }
 
         static string LogPath = Properties.Settings.Default.VAR_log_ck3;
 
@@ -85,33 +187,42 @@ namespace Crusader_Wars
              * :::::::::::::::::::Geral Data:::::::::::::::
              ---------------------------------------------*/
 
-             DateSearch(log);
+            DateSearch(log);
             BattleNameSearch(log);
 
+            /*---------------------------------------------
+             * ::::::::::::::Player Character::::::::::::::
+             ---------------------------------------------*/
+            string player_culture = Regex.Match(log, @"PlayerCharacterCulture:(.+)\n").Groups[1].Value;
+            string player_heritage = Regex.Match(log, @"PlayerCharacterHeritage:(.+)\n").Groups[1].Value;
+            string playerID = Regex.Match(log, @"PlayerCharacterID:(.+)\n").Groups[1].Value;
+            Player_Character = new PlayerChar(playerID, player_heritage, player_culture);
 
             /*---------------------------------------------
              * ::::::::::::Commanders ID's:::::::::::::::::
              ---------------------------------------------*/
 
             //Search player ID
-            string player_id = Regex.Match(log, @"PlayerID:(\d+)").Groups[1].Value;
-            Player.ID = Int32.Parse(player_id);
+            string left_side_commander_id = Regex.Match(log, @"PlayerID:(\d+)").Groups[1].Value;
+            Player.ID = Int32.Parse(left_side_commander_id);
 
             //Search enemy ID
-            string enemy_id = Regex.Match(log, @"EnemyID:(\d+)").Groups[1].Value;
+            string right_side_commander_id = Regex.Match(log, @"EnemyID:(\d+)").Groups[1].Value;
 
             //No Commander Crash Fix 
             int commander_id;
-            if (int.TryParse(enemy_id, out commander_id))
+            if (int.TryParse(right_side_commander_id, out commander_id))
                 Enemy.ID = commander_id;
             else
                 Enemy.ID = 0;
 
-           /*---------------------------------------------
-             * :::::::::::::::Unit Mapper::::::::::::::::::
-             ---------------------------------------------*/
 
-            UnitMapper.LoadMapper();
+            /*---------------------------------------------
+              * :::::::::::::::Unit Mapper::::::::::::::::::
+              ---------------------------------------------*/
+
+            //UnitMapper.LoadMapper();
+            UnitMappers_BETA.ReadUnitMappers();
 
             /*---------------------------------------------
              * :::::::::::::::::Terrain::::::::::::::::::::
@@ -130,29 +241,16 @@ namespace Crusader_Wars
 
 
             /*---------------------------------------------
-             * :::::::::Player Culture & Heritage::::::::::
-             ---------------------------------------------*/
-
-             CultureAndHeritageSearch(PlayerArmy, Player);
-
-            /*---------------------------------------------
              * ::::::::::Player Commander System:::::::::::
              ---------------------------------------------*/
 
-            CommanderSearch(PlayerArmy, Player);
+            CommanderSearch(log, PlayerArmy, DataSearchSides.LeftSide, left_side_commander_id);
 
             /*---------------------------------------------
              * :::::::::::Player Knight System:::::::::::::
              ---------------------------------------------*/
 
-            KnightsSearch(PlayerArmy, Player);
-
-            /*---------------------------------------------
-             * ::::::::::::Player Composition::::::::::::::
-             ---------------------------------------------*/
-
-             UnitMapper.LoadCultureMAA(Player);
-             ArmyCompositionSearch(PlayerArmy, Player);
+            KnightsSearch(PlayerArmy, DataSearchSides.LeftSide);
 
             /*---------------------------------------------
              * :::::::::::::Player Modifiers:::::::::::::::
@@ -167,29 +265,16 @@ namespace Crusader_Wars
             string EnemyArmy = Regex.Match(log, @"---------Enemy Army---------([\s\S]*?)---------Completed---------").Groups[1].Value;
 
             /*---------------------------------------------
-             * :::::::::Enemy Culture & Heritage::::::::::
-             ---------------------------------------------*/
-
-             CultureAndHeritageSearch(EnemyArmy, Enemy);
-
-            /*---------------------------------------------
              * ::::::::::Enemy Commander System:::::::::::
              ---------------------------------------------*/
 
-            CommanderSearch(EnemyArmy, Enemy);
+            CommanderSearch(log, EnemyArmy, DataSearchSides.RightSide, right_side_commander_id);
 
             /*---------------------------------------------
              * :::::::::::Enemy Knight System:::::::::::::
              ---------------------------------------------*/
 
-            KnightsSearch(EnemyArmy, Enemy);
-
-            /*---------------------------------------------
-             * ::::::::::::Enemy Composition::::::::::::::
-             ---------------------------------------------*/
-
-            UnitMapper.LoadCultureMAA(Enemy);
-             ArmyCompositionSearch(EnemyArmy, Enemy);
+            KnightsSearch(EnemyArmy, DataSearchSides.RightSide);
 
             /*---------------------------------------------
              * :::::::::::::Enemy Modifiers:::::::::::::::
@@ -201,9 +286,7 @@ namespace Crusader_Wars
              * ::::::::::::::::Army Names::::::::::::::::::
              ---------------------------------------------*/
 
-            RealmsNamesSearch(log, Player, Enemy);
-            CharNamesSearch(log, Player, Enemy);
-            TitlesRanksSearch(log, Player, Enemy);
+             RealmsNamesSearch(log);
 
         }
 
@@ -243,176 +326,63 @@ namespace Crusader_Wars
             TerrainGenerator.TerrainType = SearchForTerrain(log);
             Weather.SetWinterSeverity(SearchForWinter(log));
         }
-        private static void CommanderSearch(string army_data, ICharacter Side)
+        private static void CommanderSearch(string log, string army_data, DataSearchSides side, string id)
         {
+            string name = "";
+            int martial = 0;
+            int prowess = 0;
+            int rank = 0;
 
-            Side.Commander = new CommanderSystem();
-            Side.Commander.SetID(Side.ID.ToString());
 
             Match martial_match = Regex.Match(army_data, Languages.SearchPatterns.martial_skill);
-              if (martial_match.Success)
+            if (martial_match.Success)
             {
                 string martial_str = martial_match.Groups["Martial"].Value;
-                int martial = Int32.Parse(martial_str);
-                Side.Commander.SetMartial(martial);
+                martial = Int32.Parse(martial_str);
             }
             else
             {
-                Side.Commander.SetMartial(0);
+                martial = 0;
             }
 
 
             string pattern = @"";
-            if(Side is Player) { pattern = @"PlayerProwess:(?<Num>\d+)"; }
-            else if (Side is Enemy) { pattern = @"EnemyProwess:(?<Num>\d+)"; }
+            if(side is DataSearchSides.LeftSide) { 
+                pattern = @"PlayerProwess:(?<Num>\d+)";
+                rank = Int32.Parse(Regex.Match(log, @"PlayerRank:(?<Name>.+)").Groups["Name"].Value);
+                name = Regex.Match(log, @"PlayerName:(?<Name>.+)").Groups["Name"].Value;
+            }
+            else if (side is DataSearchSides.RightSide) { 
+                pattern = @"EnemyProwess:(?<Num>\d+)"; 
+                rank = Int32.Parse(Regex.Match(log, @"EnemyRank:(?<Name>.+)").Groups["Name"].Value);
+                name = Regex.Match(log, @"EnemyName:(?<Name>.+)").Groups["Name"].Value;
+            }
 
             Match prowess_match = Regex.Match(army_data, pattern);
             if (prowess_match.Success)
             {
                 string prowess_str = prowess_match.Groups["Num"].Value;
-                int prowess = Int32.Parse(prowess_str);
-                Side.Commander.SetProwess(prowess);
+                prowess = Int32.Parse(prowess_str);
             }
             else
             {
-                Side.Commander.SetProwess(0);
+                prowess = 0;
+            }
+
+            
+            
+
+            if (side is DataSearchSides.LeftSide)
+            {
+                CK3LogData.LeftSide.SetCommander((name, id, prowess, martial, rank));
+            }
+            else if (side is DataSearchSides.RightSide)
+            {
+                CK3LogData.RightSide.SetCommander((name, id, prowess, martial, rank));
             }
 
         }
-        private static void ArmyCompositionSearch(string army_data, ICharacter side)
-        {
-            string ArmyComposition = Regex.Match(army_data, Languages.SearchPatterns.army_composition).Groups["ArmyComposition"].Value;
-
-            //Search player total soldiers
-            int TotalNumber = Int32.Parse(Regex.Match(army_data, Languages.SearchPatterns.total_soldiers).Groups["SoldiersNum"].Value);
-            side.TotalNumber = TotalNumber;
-
-            //Search army composition of player side
-
-            List<(string Type, int Number)> FoundMAA = new List<(string Type, int Number)>();
-
-            //Levies
-            MatchCollection levies_found = Regex.Matches(ArmyComposition, ModOptions.FullArmiesLevies(ArmyComposition));
-            int levies = 0;
-            foreach (Match match in levies_found)
-            {
-                if (match.Success)
-                {
-                    string num_of_soldiers = match.Groups["SoldiersNum"].Value;
-                    levies += Int32.Parse(num_of_soldiers);
-                }
-            }
-            if (levies > 0)
-            {
-                levies = ArmyProportions.SetSoldiersRatio(levies);
-                FoundMAA.Add(("Levy", levies));
-            }
-
-
-
-            MatchCollection maa_matches = Regex.Matches(ArmyComposition, ModOptions.FullArmiesMAA());
-
-            foreach (Match maa in maa_matches)
-            {
-                try
-                {
-                    string type = maa.Groups["MenAtArms"].Value;
-                    int soldiers = Int32.Parse(maa.Groups["SoldiersNum"].Value);
-
-                    bool containsSame = FoundMAA.Any(item => item.Type == type);
-
-                    //Repetead maa
-                    //Increase soldiers num
-                    if(containsSame)
-                    {
-                        var same_maa = FoundMAA.FirstOrDefault(x => x.Type == type);
-                        int i = FoundMAA.IndexOf(same_maa);
-
-                        soldiers = ArmyProportions.SetSoldiersRatio(soldiers);
-                        same_maa = (same_maa.Type, same_maa.Number + soldiers);
-                        FoundMAA[i] = same_maa;
-                        continue;
-                    }
-
-                    //Add to found maa
-                    if (soldiers > 0)
-                    {
-                        soldiers = ArmyProportions.SetSoldiersRatio(soldiers);
-                        FoundMAA.Add((type, soldiers));
-                    }
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-
-            //Populate the side object with the army composition
-            side.Army = new List<(string Type, string Key, int Max, string Script, int Soldiers)>();
-
-            if (side is Player)
-            {
-
-                //General
-                //if army has a commander
-                if(side.ID != 0)
-                {
-                    var general_unit = UnitMapper.PlayerUnits.FirstOrDefault(item => item.Type == "General");
-                    side.Army.Add((general_unit.Type, general_unit.Key,general_unit.Max, $"player_{general_unit.Script}", 50));
-                }
-
-                //Knights
-                var knights_unit = UnitMapper.PlayerUnits.FirstOrDefault(item => item.Type == "Knights");
-                side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"player_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
-                Match knights_name_match = Regex.Match(ArmyComposition, @":GAME_CONCEPTknight (?<KnightsName>.+):");
-                if (knights_name_match.Success) { UnitsCardsNames.SetPlayerKnightsName(knights_name_match.Groups["KnightsName"].Value); }
-                
-                foreach (var unit in UnitMapper.PlayerUnits)
-                {
-                    for (int i = 0; i < FoundMAA.Count; i++)
-                    {
-                        string found_type = FoundMAA[i].Type;
-                        int found_soldiers = FoundMAA[i].Number;
-                        if (unit.Type == found_type || (unit.Type.Contains("Levy") && FoundMAA[0].Type == "Levy"))
-                        {
-                            side.Army.Add((unit.Type, unit.Key, unit.Max, $"player_{unit.Script}", found_soldiers));
-                            break;
-                        }
-                    }
-                }
-            }
-            if (side is Enemy)
-            {
-                //General
-                //if army has a commander
-                if (side.ID != 0)
-                {
-                    var general_unit = UnitMapper.EnemyUnits.FirstOrDefault(item => item.Type == "General");
-                    side.Army.Add((general_unit.Type, general_unit.Key, general_unit.Max, $"enemy_{general_unit.Script}", 50));
-                }
-
-                //Knights
-                var knights_unit = UnitMapper.EnemyUnits.FirstOrDefault(item => item.Type == "Knights");
-                side.Army.Add((knights_unit.Type, knights_unit.Key, side.Knights.GetKnightsSoldiers(), $"enemy_{knights_unit.Script}", side.Knights.GetKnightsSoldiers()));
-                Match knights_name_match = Regex.Match(ArmyComposition, @":GAME_CONCEPTknight (?<KnightsName>.+):");
-                if (knights_name_match.Success) { UnitsCardsNames.SetEnemyKnightsName(knights_name_match.Groups["KnightsName"].Value); }
-
-                foreach (var unit in UnitMapper.EnemyUnits)
-                {
-                    for (int i = 0; i < FoundMAA.Count; i++)
-                    {
-                        string found_type = FoundMAA[i].Type;
-                        int found_soldiers = FoundMAA[i].Number;
-                        if (unit.Type == found_type || (unit.Type.Contains("Levy") && FoundMAA[0].Type == "Levy"))
-                        {
-                            side.Army.Add((unit.Type, unit.Key, unit.Max, $"enemy_{unit.Script}", found_soldiers));
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        static void RealmsNamesSearch(string log, Player Player, Enemy Enemy)
+        static void RealmsNamesSearch(string log)
         {
             string text = Regex.Match(log, "(Log[\\s\\S]*?)---------Player Army---------[\\s\\S]*?").Groups[1].Value;
             MatchCollection found_armies = Regex.Matches(text, "L (.+)");
@@ -421,50 +391,30 @@ namespace Crusader_Wars
                 string player_army = found_armies[0].Groups[1].Value;
                 string enemy_army = found_armies[1].Groups[1].Value;
 
-                Player.RealmName =  player_army;
-                Enemy.RealmName = enemy_army;
+                CK3LogData.LeftSide.SetRealmName(player_army);
+                CK3LogData.RightSide.SetRealmName(enemy_army);
             }
 
         }
 
-        static void TitlesRanksSearch(string log, Player Player, Enemy Enemy)
-        {
-            int player_rank = Int32.Parse(Regex.Match(log, @"PlayerRank:(?<Name>.+)").Groups["Name"].Value);
-            int enemy_rank = Int32.Parse(Regex.Match(log, @"EnemyRank:(?<Name>.+)").Groups["Name"].Value);
 
-            Player.Commander.SetRank(player_rank);
-            Enemy.Commander.SetRank(enemy_rank);
-        }
 
-        static void CharNamesSearch(string log, Player player, Enemy enemy)
-        {
-
-            string player_name = Regex.Match(log, @"PlayerName:(?<Name>.+)").Groups["Name"].Value;
-            string enemy_name = Regex.Match(log, @"EnemyName:(?<Name>.+)").Groups["Name"].Value;
-
-            player.Commander.SetName(player_name);
-            enemy.Commander.SetName(enemy_name);
-        }
-
-        private static void KnightsSearch(string army_data, ICharacter side)
+        private static void KnightsSearch(string army_data, DataSearchSides side)
         {
             string Knights = Regex.Match(army_data, @"(?<Knights>ONCLICK:CHARACTER[\s\S]*?)\z[\s\S]*?").Groups["Knights"].Value;
-            
+            MatchCollection knights_text_data = Regex.Matches(Knights, @"ONCLICK:CHARACTER(?<ID>\d+).+ (?<Prowess>\d+)");
 
-            side.Knights = new KnightSystem();
-
-            //Search Knights
-            List<(string, int, int, List<string>,BaseSkills, bool)> KnightsList = new List<(string, int, int, List<string>, BaseSkills,bool)>();
-            MatchCollection knights_collection = Regex.Matches(Knights, "(?<Prowess>\\d+) E TOOLTIP");
-            MatchCollection knights_id_collection = Regex.Matches(Knights, "CHARACTER(?<ID>\\d+) TOOLTIP");
-
-
-            for (int i = 0; i < knights_collection.Count; i++)
+            List<(string id, string prowess, string name, int effectivenss)> data = new List<(string id, string prowess, string name, int effectivenss)>();
+            string names = Knights;
+            names = names.Replace("high", "");
+            string[] names_arr = new string[knights_text_data.Count];
+            int count = 0;
+            foreach (Match knight in Regex.Matches(names, @"L  (.+): "))
             {
-                string id = knights_id_collection[i].Groups["ID"].Value;
-                if (id == side.ID.ToString()) continue; // if commander is on the list knight, skip it.
-                int knight_prowess = Int32.Parse(knights_collection[i].Groups["Prowess"].Value);
-                KnightsList.Add((id,3,knight_prowess, new List<string>(), null,false));
+                string name = knight.Groups[1].Value;
+                name = Regex.Replace(name,@"\s+", " ");
+                names_arr[count] = name;
+                count++;
             }
 
             MatchCollection knight_effectiveness = Regex.Matches(Knights, @"(?<Effectiveness>\d+)%");
@@ -475,52 +425,23 @@ namespace Crusader_Wars
                 effectiveness += value;
             }
 
-
-            
-
-            side.Knights.SetData(KnightsList, effectiveness);
-
-        }
-
-        //No commander bug error is here!!
-        private static void CultureAndHeritageSearch(string side_army, ICharacter side)
-        {
-            try
+            for (int i = 0; i< knights_text_data.Count; i++)
             {
-                string CulturesText = Regex.Match(side_army, Languages.SearchPatterns.cultures).Groups["CulturesText"].Value;
-
-                MatchCollection FoundCultureHeritage = Regex.Matches(CulturesText, "L (?<Match>.+)");
-                string Heritage = FoundCultureHeritage[0].Groups["Match"].Value;
-                string Culture = FoundCultureHeritage[1].Groups["Match"].Value;
-
-                string AttilaFaction;
-                for (int i = 0; i < UnitMapper.Heritages.Count; i++)
-                {
-                    if (Heritage == UnitMapper.Heritages[i].Heritage)
-                    {
-                        AttilaFaction = UnitMapper.Heritages[i].Faction;
-                        side.AttilaFaction = AttilaFaction;
-                        break;
-                    }
-                }
-
-                for (int i = 0; i < UnitMapper.Cultures.Count; i++)
-                {
-                    if (Culture == UnitMapper.Cultures[i].Cultures)
-                    {
-                        AttilaFaction = UnitMapper.Cultures[i].Faction;
-                        side.AttilaFaction = AttilaFaction;
-                        break;
-                    }
-                }
+                var knight = knights_text_data[i];
+                data.Add((knight.Groups["ID"].Value, knight.Groups["Prowess"].Value, names_arr[i], effectiveness));
             }
-            catch 
+
+
+
+
+            if (side == DataSearchSides.LeftSide)
             {
-                MessageBox.Show("The enemy side doesn't have a commander, unfortunaly this battle is impossible to fight....", "Impossible Battle Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                throw;
+                CK3LogData.LeftSide.SetKnights(data);
             }
- 
+            else if (side == DataSearchSides.RightSide)
+            {
+                CK3LogData.RightSide.SetKnights(data);
+            }
 
         }
 

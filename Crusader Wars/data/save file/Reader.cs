@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using System.Windows.Media.TextFormatting;
 
@@ -34,21 +35,71 @@ namespace Crusader_Wars
             Enemy = enemy;
         }
 
+        static void ClearFilesData()
+        {
+            //Clear Battle Results File
+            File.WriteAllText(@".\data\save_file_data\BattleResults.txt", "");
+            //Clear Battle Results TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\BattleResults.txt", "");
+
+            //Clear Combats File
+            File.WriteAllText(@".\data\save_file_data\Combats.txt", "");
+            //Clear Combats TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Combats.txt", "");
+
+            //Clear Regiments File
+            File.WriteAllText(@".\data\save_file_data\Regiments.txt", "");
+            //Clear Regiments TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Regiments.txt", "");
+
+            //Clear Army Regiments File
+            File.WriteAllText(@".\data\save_file_data\ArmyRegiments.txt", "");
+            //Clear Army Regiments TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\ArmyRegiments.txt", "");
+
+            //Clear Living Regiments File
+            File.WriteAllText(@".\data\save_file_data\Living.txt", "");
+            //Clear Living Regiments TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Living.txt", "");
+
+            //Clear Armies File
+            File.WriteAllText(@".\data\save_file_data\Armies.txt", "");
+            //Clear Armies TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Armies.txt", "");
+
+            //Clear Counties File
+            File.WriteAllText(@".\data\save_file_data\Counties.txt", "");
+            //Clear Counties TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Counties.txt", "");
+
+            //Clear Cultures File
+            File.WriteAllText(@".\data\save_file_data\Cultures.txt", "");
+            //Clear Cultures TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Cultures.txt", "");
+
+            //Clear Mercenaries File
+            File.WriteAllText(@".\data\save_file_data\Mercenaries.txt", "");
+            //Clear Mercenaries TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Mercenaries.txt", "");
+
+            //Clear Traits File
+            File.WriteAllText(@".\data\save_file_data\Traits.txt", "");
+            //Clear Traits TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Traits.txt", "");
+            //Clear Units File
+            File.WriteAllText(@".\data\save_file_data\Units.txt", "");
+            //Clear Units TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\Units.txt", "");
+        }
+
         /// <summary>  
         /// Reads the ck3 save file for all the needed data.  
         /// </summary>  
         /// <param name="savePath">Path to the ck3 save file</param>  
         public static void ReadFile(string savePath)
         {
-            //Clear Battle Results File
-            File.WriteAllText(@".\data\save_file_data\BattleResults.txt", "");
-            //Clear Battle Results TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\BattleResults.txt", "");
-            //Clear Combats File
-            File.WriteAllText(@".\data\save_file_data\Combats.txt", "");
-            //Clear Combats TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Combats.txt", "");
-
+            //Clean all data in save file data files
+            ClearFilesData();
 
             using (FileStream saveFile = File.Open(savePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(saveFile))
@@ -58,9 +109,13 @@ namespace Crusader_Wars
                 {
                     line = reader.ReadLine();
                     //GetterKeys.ReadProvinceBuildings(line, "5984");
-                    GetterKeys.ReadAccolades(line, Player, Enemy);
-                    GetterKeys.ReadCourtPositions(line, Player, Enemy);
-                    GetterKeys.ReadLivingCharacters(line, Player, Enemy);
+
+                    /*TO DO:
+                     * REWORK THIS LATER*/
+
+                    //GetterKeys.ReadAccolades(line, Player, Enemy);
+                    //GetterKeys.ReadCourtPositions(line, Player, Enemy);
+                    //GetterKeys.ReadLivingCharacters(line, Player, Enemy);
 
                     SearchKeys.TraitsList(line);
                     
@@ -71,12 +126,14 @@ namespace Crusader_Wars
                     SearchKeys.Living(line);
 
 
-                    //SearchKeys.Armies(line);
-                    //SearchKeys.Counties(line);
-                    //SearchKeys.Cultures(line);
-                    //SearchKeys.Mercenaries(line);
-
+                    SearchKeys.Armies(line);
+                    SearchKeys.Counties(line);
+                    SearchKeys.Cultures(line);
+                    SearchKeys.Mercenaries(line);
+                    SearchKeys.Units(line);
+                    
                 }
+                
                 Player = null;
                 Enemy = null;
 
@@ -84,8 +141,8 @@ namespace Crusader_Wars
                 saveFile.Close();
             }
 
-            Data.ConvertDataToString();
-            SaveFile.ReadWoundedTraits();
+            GC.Collect();
+
         }
     }
 
@@ -108,50 +165,22 @@ namespace Crusader_Wars
         public static (string, string, string) PlayerCommanderAccolade;
         public static (string, string, string) EnemyCommanderAccolade;
 
+        public static StringBuilder SB_Living = new StringBuilder();
+        public static StringBuilder SB_Regiments = new StringBuilder();
+        public static StringBuilder SB_ArmyRegiments = new StringBuilder();
+        public static StringBuilder SB_Armies = new StringBuilder();
+        public static StringBuilder SB_CombatResults = new StringBuilder();
+        public static StringBuilder SB_Combats = new StringBuilder();
+        public static StringBuilder SB_Counties = new StringBuilder();
+        public static StringBuilder SB_Cultures = new StringBuilder();
+        public static StringBuilder SB_Mercenaries = new StringBuilder();
+        public static StringBuilder SB_Units = new StringBuilder();
+
+
+
         //Sieges
         public static List<string> Province_Buildings = new List<string>();
 
-        public static StringBuilder Traits = new StringBuilder();
-        public static StringBuilder Living = new StringBuilder();
-        public static StringBuilder Armies = new StringBuilder();
-        public static StringBuilder ArmyRegiments = new StringBuilder();
-        public static StringBuilder Regiments = new StringBuilder();
-        public static StringBuilder Counties = new StringBuilder();
-        public static StringBuilder Cultures = new StringBuilder();
-        public static StringBuilder Mercenaries = new StringBuilder();
-        //public static int BattleID = 0;
-
-        public static string String_Traits;
-        public static string String_Living;
-        public static string String_Armies;
-        public static string String_ArmyRegiments;
-        public static string String_Regiments;
-        public static string String_Counties;
-        public static string String_Cultures;
-        public static string String_Mercenaries;
-
-        public static void ConvertDataToString()
-        {
-            
-            long startMemory = GC.GetTotalMemory(false);
-
-            String_Traits = Traits.ToString();
-            String_Living = Living.ToString();
-            String_ArmyRegiments = ArmyRegiments.ToString();
-            String_Armies = Armies.ToString();
-            String_Regiments = Regiments.ToString();
-            String_Counties = Counties.ToString();
-            String_Cultures = Cultures.ToString();
-            String_Mercenaries = Mercenaries.ToString();
-            string path = @".\data\save_file_data\Mercenaries.txt";
-
-
-
-            long endMemory = GC.GetTotalMemory(false);
-            long memoryUsage = endMemory - startMemory;
-
-            Console.WriteLine($"----\nConvert all data to string\nMemory Usage: {memoryUsage / 1048576} mb");
-        }
 
         public static void Reset()
         {
@@ -166,24 +195,6 @@ namespace Crusader_Wars
             PlayerCommanderAccolade = ("","","");
             EnemyCommanderAccolade = ("","","");
 
-            Traits = new StringBuilder();
-            Living = new StringBuilder();
-            Armies = new StringBuilder();
-            ArmyRegiments = new StringBuilder ();
-            Regiments = new StringBuilder ();
-
-            Counties = new StringBuilder();
-            Cultures = new StringBuilder();
-            Mercenaries = new StringBuilder();
-
-            String_Traits = "";
-            String_Living = "";
-            String_Armies = "";
-            String_ArmyRegiments= "";
-            String_Regiments = "";
-            String_Counties = "";
-            String_Cultures = "";
-            String_Mercenaries = "";
 
             SearchKeys.HasTraitsExtracted = false;
             SearchKeys.HasCombatsExtracted = false;
@@ -195,6 +206,7 @@ namespace Crusader_Wars
             SearchKeys.HasCountiesExtracted = false;
             SearchKeys.HasCulturesExtracted = false;
             SearchKeys.HasMercenariesExtracted = false;
+            SearchKeys.HasUnitsExtracted = false;
         }
     }
 
@@ -396,8 +408,8 @@ namespace Crusader_Wars
 
         static bool isSearchPermittedLiving = false;
         static bool StartCharacterSearchAllowed = false;
-        static List<(string, int, int, List<string>, BaseSkills, bool)> player_knights_list;
-        static List<(string, int, int, List<string>, BaseSkills, bool)> enemy_knights_list;
+        static List<Knight> player_knights_list;
+        static List<Knight> enemy_knights_list;
         static bool isPlayerCommander = false;
         static bool isEnemyCommander = false;
         static bool isPlayerKnight = false;
@@ -417,28 +429,28 @@ namespace Crusader_Wars
 
             if (isSearchPermittedLiving && !StartCharacterSearchAllowed)
             {
-                if(line == ($"\t{Player.Commander.CommanderID}={{") || line == $"{Player.Commander.CommanderID}={{")
+                if(line == ($"\t{Player.Commander.ID}={{") || line == $"{Player.Commander.ID}={{")
                 {
                     StartCharacterSearchAllowed = true;
                     isPlayerCommander=true;
-                    char_id = Player.Commander.CommanderID;
+                    char_id = Player.Commander.ID;
                 }
-                else if (line == $"\t{Enemy.Commander.CommanderID}={{" || line == $"{Enemy.Commander.CommanderID}={{")
+                else if (line == $"\t{Enemy.Commander.ID}={{" || line == $"{Enemy.Commander.ID}={{")
                 {
                     StartCharacterSearchAllowed = true;
                     isEnemyCommander=true;
-                    char_id = Enemy.Commander.CommanderID;
+                    char_id = Enemy.Commander.ID;
                 }
                 
                 if(player_knights_list != null)
                 {
                     foreach (var knight in player_knights_list)
                     {
-                        if (line == $"\t{knight.Item1}={{" || line == $"{knight.Item1}={{")
+                        if (line == $"\t{knight.GetID()}={{" || line == $"{knight.GetID()}={{")
                         {
                             StartCharacterSearchAllowed = true;
                             isPlayerKnight = true;
-                            char_id = knight.Item1;
+                            char_id = knight.GetID();
                         }
                     }
                 }
@@ -447,11 +459,11 @@ namespace Crusader_Wars
                 {
                     foreach (var knight in enemy_knights_list)
                     {
-                        if (line == $"\t{knight.Item1}={{" || line == $"{knight.Item1}={{")
+                        if (line == $"\t{knight.GetID()}={{" || line == $"{knight.GetID()}={{")
                         {
                             StartCharacterSearchAllowed = true;
                             isEnemyKnight = true;
-                            char_id = knight.Item1;
+                            char_id = knight.GetID();
                         }
                     }
                 }
@@ -484,6 +496,11 @@ namespace Crusader_Wars
                     }
 
                 }
+                if(line.Contains("\tculture="))
+                {
+                    string culture = Regex.Match(line, @"\d+").Value;
+
+                }
 
 
                 if(line.Contains("\tskill={"))
@@ -508,17 +525,17 @@ namespace Crusader_Wars
                 if (line.Contains("\t\taccolade="))
                 {
                    
-                    (string, int, int, List<string>, BaseSkills, bool) accolade_knight;
+                    Knight accolade_knight;
 
                     if (isPlayerKnight)
                     {
                         try
                         {
                             var player_knights = Player.Knights.GetKnightsList();
-                            accolade_knight = player_knights.First(x => x.Item1 == char_id);
+                            accolade_knight = player_knights.First(x => x.GetID() == char_id);
 
                             int index = player_knights.IndexOf(accolade_knight);
-                            accolade_knight = ((accolade_knight.Item1, 4, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
+                            accolade_knight = new Knight(accolade_knight.GetName(), accolade_knight.GetID(), null, accolade_knight.GetProwess(), 5, true);
                             player_knights[index] = accolade_knight;
 
                             string accolade_id = Regex.Match(line, @"\d+").Value;
@@ -536,10 +553,10 @@ namespace Crusader_Wars
                         try
                         {
                             var enemy_knights = Enemy.Knights.GetKnightsList();
-                            accolade_knight = enemy_knights.First(x => x.Item1 == char_id);
+                            accolade_knight = enemy_knights_list.First(x => x.GetID() == char_id);
 
                             int index = enemy_knights.IndexOf(accolade_knight);
-                            accolade_knight = ((accolade_knight.Item1, 4, accolade_knight.Item3, accolade_knight.Item4, accolade_knight.Item5, true));
+                            accolade_knight = new Knight(accolade_knight.GetName(), accolade_knight.GetID(), null, accolade_knight.GetProwess(), 5, true);
                             enemy_knights[index] = accolade_knight;
 
                             string accolade_id = Regex.Match(line, @"\d+").Value;
@@ -684,7 +701,7 @@ namespace Crusader_Wars
                 {
                     if (line.Contains("traits_lookup={"))
                     {
-                        Start_TraitsFound = true; Console.WriteLine("TRAITS START KEY FOUND!");
+                        Start_TraitsFound = true;
                     }
                     else { Start_TraitsFound = false; }
                 }
@@ -695,12 +712,15 @@ namespace Crusader_Wars
                     if (line == "provinces={")
                     {
                         End_TraitsFound = true;
-                        Console.WriteLine("TRAITS END KEY FOUND!");
+                        SaveFile.ReadWoundedTraits();
                         return;
                     }
                     else { End_TraitsFound = false; }
 
-                    Data.Traits.Append(line + "\n");
+                    using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Traits.txt"))
+                    {
+                        sw.WriteLine(line);
+                    }
 
                 }
 
@@ -724,7 +744,7 @@ namespace Crusader_Wars
                 if (!Start_CombatsFound)
                 {
                     if (line == "\tcombats={") { 
-                        Start_CombatsFound = true; Console.WriteLine("COMBAT START KEY FOUND!"); 
+                        Start_CombatsFound = true; 
                     }
                     else { Start_CombatsFound = false; }
                 }
@@ -733,16 +753,21 @@ namespace Crusader_Wars
                 {
                     if (line == "pending_character_interactions={") 
                     {
+                        //Write Combats Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Combats.txt"))
+                        {
+                            sw.Write(Data.SB_Combats);
+                            sw.Close();
+                        }
+                        Data.SB_Combats = null;
+                        GC.Collect();
+
                         End_CombatsFound = true; 
-                        Console.WriteLine("COMBAT END KEY FOUND!");
                         return;
                     }
                     else { End_CombatsFound = false; }
 
-                    using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Combats.txt"))
-                    {
-                        sw.WriteLine(line);
-                    }
+                    Data.SB_Combats.AppendLine(line);
 
                 }
 
@@ -767,7 +792,7 @@ namespace Crusader_Wars
                 {
                     if (line == "\tcombat_results={")
                     {
-                        Start_BattleResultsFound = true; Console.WriteLine("COMBAT RESULT START KEY FOUND!");
+                        Start_BattleResultsFound = true;
                     }
                     else { Start_BattleResultsFound = false; }
                 }
@@ -778,16 +803,21 @@ namespace Crusader_Wars
                 {
                     if (line == "\tcombats={")
                     {
+                        //Write CombatResults Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\BattleResults.txt"))
+                        {
+                            sw.Write(Data.SB_CombatResults);
+                            sw.Close();
+                        }
+                        Data.SB_CombatResults = null;
+                        GC.Collect();
+
                         End_BattleResultsFound = true;
-                        Console.WriteLine("COMBAT RESULT END KEY FOUND!");
                         return;
                     }
                     else { End_BattleResultsFound = false; }
 
-                    using (StreamWriter sw = File.AppendText(@".\data\save_file_data\BattleResults.txt")) 
-                    {
-                        sw.WriteLine(line);
-                    }
+                    Data.SB_CombatResults.AppendLine(line);
 
                 }
 
@@ -809,7 +839,7 @@ namespace Crusader_Wars
             {
                 if (!Start_RegimentsFound)
                 {
-                    if (line == "\tregiments={") { Start_RegimentsFound = true; Console.WriteLine("REGIMENTS START KEY FOUND!"); }
+                    if (line == "\tregiments={") { Start_RegimentsFound = true; }
                     else { Start_RegimentsFound = false; }
                 }
 
@@ -817,14 +847,21 @@ namespace Crusader_Wars
                 {
                   
                     if (line == "\tarmy_regiments={") 
-                    { 
+                    {
+                        //Write Regiments Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Regiments.txt"))
+                        {
+                            sw.Write(Data.SB_Regiments);
+                            sw.Close();
+                        }
+                        Data.SB_Regiments = null;
+                        GC.Collect();
                         End_RegimentsFound = true; 
-                        Console.WriteLine("REGIMENTS END KEY FOUND!");
                         return;
                     }
                     else { End_RegimentsFound = false; }
 
-                    Data.Regiments.Append(line + "\n");
+                    Data.SB_Regiments.AppendLine(line);
                 }
 
                 if (End_RegimentsFound)
@@ -832,7 +869,6 @@ namespace Crusader_Wars
                     HasRegimentsExtracted = true;
                     Start_RegimentsFound = false; 
                     End_RegimentsFound = false;
-                    //Console.WriteLine(Data.Regiments);
                 }
             }
         }
@@ -846,7 +882,7 @@ namespace Crusader_Wars
             {
                 if (!Start_ArmyRegimentsFound)
                 {
-                    if (line == "\tarmy_regiments={") { Start_ArmyRegimentsFound = true; Console.WriteLine("ARMY REGIMENTS START KEY FOUND!"); }
+                    if (line == "\tarmy_regiments={") { Start_ArmyRegimentsFound = true; }
                     else { Start_ArmyRegimentsFound = false; }
                 }
 
@@ -854,14 +890,21 @@ namespace Crusader_Wars
                 {
                     
                     if (line == "\tarmies={") 
-                    { 
+                    {
+                        //Write ArmyRegiments Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\ArmyRegiments.txt"))
+                        {
+                            sw.Write(Data.SB_ArmyRegiments);
+                            sw.Close();
+                        }
+                        Data.SB_ArmyRegiments = null;
+                        GC.Collect();
                         End_ArmyRegimentsFound = true; 
-                        Console.WriteLine("ARMY REGIMENTS END KEY FOUND!");
                         return;
                     }
                     else { End_ArmyRegimentsFound = false; }
 
-                    Data.ArmyRegiments.Append(line + "\n");
+                    Data.SB_ArmyRegiments.AppendLine(line);
                 }
 
                 if (End_ArmyRegimentsFound)
@@ -882,7 +925,7 @@ namespace Crusader_Wars
             {
                 if (!Start_ArmiesFound)
                 {
-                    if (line == "\tarmies={") { Start_ArmiesFound = true; Console.WriteLine("ARMIES START KEY FOUND!"); }
+                    if (line == "\tarmies={") { Start_ArmiesFound = true; }
                     else { Start_ArmiesFound = false; }
                 }
 
@@ -891,13 +934,20 @@ namespace Crusader_Wars
 
                     if (line == "\t}")
                     {
+                        //Write Armies Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Armies.txt"))
+                        {
+                            sw.Write(Data.SB_Armies);
+                            sw.Close();
+                        }
+                        Data.SB_Armies = null;
+                        GC.Collect();
                         End_ArmiesFound = true;
-                        Console.WriteLine("ARMIES END KEY FOUND!");
                         return;
                     }
                     else { End_ArmiesFound = false; }
 
-                    Data.Armies.Append(line + "\n");
+                    Data.SB_Armies.AppendLine(line);
                 }
 
                 if (End_ArmiesFound)
@@ -919,21 +969,29 @@ namespace Crusader_Wars
                 if (!Start_LivingFound)
                 {
                     //Match start = Regex.Match(line, @"living={");
-                    if (line == "living={") { Start_LivingFound = true; Console.WriteLine("LIVING START KEY FOUND!"); }
+                    if (line == "living={") { Start_LivingFound = true; }
                     else { Start_LivingFound = false; }
                 }
 
                 if (Start_LivingFound && !End_LivingFound)
                 {
                     if (line == "dead_unprunable={") 
-                    { 
-                        End_LivingFound = true; 
-                        Console.WriteLine("LIVING END KEY FOUND!");
+                    {
+                        //Write Living Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Living.txt"))
+                        {
+                            sw.Write(Data.SB_Living);
+                            sw.Close();
+                        }
+                        Data.SB_Living = null;
+                        GC.Collect();
+                        End_LivingFound = true;
                         return;
                     }
                     else { End_LivingFound = false; }
+                    
+                    Data.SB_Living.AppendLine(line);
 
-                    Data.Living.Append(line + "\n");
                 }
 
                 if (End_LivingFound)
@@ -956,7 +1014,7 @@ namespace Crusader_Wars
                 {
                     //Match start = Regex.Match(line, @"living={");
                     if (line == "\tcounties={") 
-                    { Start_CountiesFound = true; Console.WriteLine("COUNTIES START KEY FOUND!"); }
+                    { Start_CountiesFound = true; }
                     else { Start_CountiesFound = false; }
                 }
 
@@ -964,13 +1022,20 @@ namespace Crusader_Wars
                 {
                     if (line == "}")
                     {
+                        //Write Counties Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Counties.txt"))
+                        {
+                            sw.Write(Data.SB_Counties);
+                            sw.Close();
+                        }
+                        Data.SB_Counties = null;
+                        GC.Collect();
                         End_CountiesFound = true;
-                        Console.WriteLine("COUNTIES END KEY FOUND!");
                         return;
                     }
                     else { End_CountiesFound = false; }
 
-                    Data.Counties.Append(line + "\n");
+                    Data.SB_Counties.AppendLine(line);
                 }
 
                 if (End_CountiesFound)
@@ -978,6 +1043,50 @@ namespace Crusader_Wars
                     HasCountiesExtracted = true;
                     Start_CountiesFound = false;
                     End_CountiesFound = false;
+                }
+            }
+        }
+
+        private static bool Start_UnitsFound { get; set; }
+        private static bool End_UnitsFound { get; set; }
+        public static bool HasUnitsExtracted { get; set; }
+        public static void Units(string line)
+        {
+            if (!HasUnitsExtracted)
+            {
+                if (!Start_UnitsFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "units={")
+                    { Start_UnitsFound = true; }
+                    else { Start_UnitsFound = false; }
+                }
+
+                if (Start_UnitsFound && !End_UnitsFound)
+                {
+                    if (line == "}")
+                    {
+                        //Write Units Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Units.txt"))
+                        {
+                            sw.Write(Data.SB_Units);
+                            sw.Close();
+                        }
+                        Data.SB_Units = null;
+                        GC.Collect();
+                        End_UnitsFound = true;
+                        return;
+                    }
+                    else { End_UnitsFound = false; }
+
+                    Data.SB_Units.AppendLine(line);
+                }
+
+                if (End_UnitsFound)
+                {
+                    HasUnitsExtracted = true;
+                    Start_UnitsFound = false;
+                    End_UnitsFound = false;
                 }
             }
         }
@@ -993,7 +1102,7 @@ namespace Crusader_Wars
                 {
                     //Match start = Regex.Match(line, @"living={");
                     if (line == "culture_manager={")
-                    { Start_CulturesFound = true; Console.WriteLine("CULTURES START KEY FOUND!"); }
+                    { Start_CulturesFound = true; }
                     else { Start_CulturesFound = false; }
                 }
 
@@ -1001,13 +1110,21 @@ namespace Crusader_Wars
                 {
                     if (line == "}")
                     {
+                        //Write Cultures Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Cultures.txt"))
+                        {
+                            sw.Write(Data.SB_Cultures);
+                            sw.Close();
+                        }
+                        Data.SB_Cultures = null;
+                        GC.Collect();
                         End_CulturesFound = true;
-                        Console.WriteLine("CULTURES END KEY FOUND!");
                         return;
                     }
                     else { End_CulturesFound = false; }
 
-                    Data.Cultures.Append(line + "\n");
+                    Data.SB_Cultures.AppendLine(line);
+                
                 }
 
                 if (End_CulturesFound)
@@ -1031,7 +1148,7 @@ namespace Crusader_Wars
                 {
                     //Match start = Regex.Match(line, @"living={");
                     if (line == "mercenary_company_manager={")
-                    { Start_MercenariesFound = true; Console.WriteLine("MERCENARIES START KEY FOUND!"); }
+                    { Start_MercenariesFound = true; }
                     else { Start_MercenariesFound = false; }
                 }
 
@@ -1040,12 +1157,21 @@ namespace Crusader_Wars
 
                     if (line == "}")
                     {
+                        //Write Mercenaries Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Mercenaries.txt"))
+                        {
+                            sw.Write(Data.SB_Mercenaries);
+                            sw.Close();
+                        }
+                        Data.SB_Mercenaries = null;
+                        GC.Collect();
                         HasMercenariesExtracted = true;
-                        Console.WriteLine("MERCENARIES END KEY FOUND!");
                         return;
                     }
                     else { HasMercenariesExtracted = false; }
                     
+                    Data.SB_Mercenaries.AppendLine(line);
+
                 }
 
                 if (End_MercenariesFound)

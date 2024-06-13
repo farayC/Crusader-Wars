@@ -10,7 +10,7 @@
     <AssemblyName>Crusader Wars</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\ruben\OneDrive\Ambiente de Trabalho\</PublishUrl>
@@ -94,7 +94,11 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Text.Json, Version=7.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -151,8 +155,10 @@
     <Compile Include="data\attila settings\AttilaPreferences.cs" />
     <Compile Include="data\battle results\gui\BattleResults_Objects.cs" />
     <Compile Include="data\battle results\gui\GUI_BattleResultTab.cs" />
-    <Compile Include="data\ck3 log\SiegesSearch.cs" />
     <Compile Include="data\save file\Armies Reader.cs" />
+    <Compile Include="data\save file\Armies_Functions.cs" />
+    <Compile Include="data\save file\Armies_Objects.cs" />
+    <Compile Include="data\save file\LandedTitles.cs" />
     <Compile Include="data\save file\Writter.cs" />
     <Compile Include="locs\BattleDetails.cs" />
     <Compile Include="locs\UnitsCardsNames.cs" />
@@ -167,8 +173,8 @@
     <Compile Include="packfile\BattleScript.cs" />
     <Compile Include="packfile\DeclarationsFile.cs" />
     <Compile Include="sieges\Sieges.cs" />
+    <Compile Include="twbattle\Reinforcements.cs" />
     <Compile Include="twbattle\UnitsFile.cs" />
-    <Compile Include="data\battle results\FileData.cs" />
     <Compile Include="armies\characters\Characters_Data.cs" />
     <Compile Include="armies\battle scale\ArmyProportions.cs" />
     <Compile Include="data\language support\Languages.cs" />
@@ -207,6 +213,7 @@
       <DependentUpon>UpdaterControl.cs</DependentUpon>
     </Compile>
     <Compile Include="unit mapper\UnitMappers.cs" />
+    <Compile Include="unit mapper\UnitMappers_BETA.cs" />
     <EmbeddedResource Include="client\MainFile.resx">
       <DependentUpon>MainFile.cs</DependentUpon>
     </EmbeddedResource>
@@ -366,6 +373,36 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
+    <None Include="Resources\warfare_loadingscreen_smallerlogo.png" />
+    <None Include="Resources\website_btn_new_hover1.png" />
+    <None Include="Resources\steam_btn_new_hover1.png" />
+    <None Include="Resources\website_btn_new_hover.png" />
+    <None Include="Resources\website_btn_new_click.png" />
+    <None Include="Resources\steam_btn_new_hover.png" />
+    <None Include="Resources\steam_btn_new_click.png" />
+    <None Include="Resources\modcon_loadingscreen2.png" />
+    <None Include="Resources\warfare_loadingscreen.png" />
+    <None Include="Resources\options_btn_new_click.png" />
+    <None Include="Resources\options_btn_new_hover.png" />
+    <None Include="Resources\start_new_click.png" />
+    <None Include="Resources\start_new_disabled.png" />
+    <None Include="Resources\start_new_hover.png" />
+    <None Include="Resources\patreon_btn_clickpng.png" />
+    <None Include="Resources\patreon_btn_hover.png" />
+    <None Include="Resources\main_beta1.png" />
+    <None Include="Resources\steam_btn_new.png" />
+    <None Include="Resources\website_btn_new.png" />
+    <None Include="Resources\patreon_btn_new.png" />
+    <None Include="Resources\options_btn_new.png" />
+    <None Include="Resources\start_new.png" />
+    <None Include="Resources\patreon1.png" />
+    <None Include="Resources\patreon.png" />
+    <None Include="Resources\start.png" />
+    <None Include="Resources\options_btn.png" />
+    <None Include="Resources\start_btn.png" />
+    <None Include="Resources\main_beta.png" />
+    <None Include="Resources\progress_orange.png" />
+    <None Include="Resources\modcon_loadingscreen1.png" />
     <None Include="Resources\modcon_loadingscreen.png" />
     <None Include="Resources\rotating_loading.gif" />
     <None Include="Resources\loading_screen.gif" />

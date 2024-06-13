@@ -1,9 +1,12 @@
 ﻿using Crusader_Wars.armies;
 using Crusader_Wars.data.save_file;
+using Crusader_Wars.twbattle;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Crusader_Wars
@@ -22,7 +25,7 @@ namespace Crusader_Wars
         KnightSystem Knights { get; set; }
         DefensiveSystem Defences { get; set; }
         Modifiers Modifiers { get; set; }
-        Units UnitsResults {  get; set; }
+        UnitsResults UnitsResults {  get; set; }
         Supplys Supplys { get; set; }
 
 
@@ -43,7 +46,7 @@ namespace Crusader_Wars
         public KnightSystem Knights { get; set; }
         public DefensiveSystem Defences { get; set; }
         public Modifiers Modifiers { get; set; }
-        public Units UnitsResults { get; set; }
+        public UnitsResults UnitsResults { get; set; }
         public Supplys Supplys { get; set; }
 
 
@@ -68,7 +71,7 @@ namespace Crusader_Wars
         public KnightSystem Knights { get; set; }
         public DefensiveSystem Defences { get; set; }
         public Modifiers Modifiers { get; set; }
-        public Units UnitsResults { get; set; }
+        public UnitsResults UnitsResults { get; set; }
         public Supplys Supplys { get; set; }
 
         public Enemy()
@@ -76,25 +79,29 @@ namespace Crusader_Wars
         }
     }
 
-
     public class Army
     {
         public string ID { get; set; }
+        public string Owner { get; set; }
+        public string ArmyUnitID { get; set; }
+
         public List<ArmyRegiment> ArmyRegiments { get; private set; }
         public List<Unit> Units { get; private set; }
+        public KnightSystem Knights { get; private set; }
+        public CommanderSystem Commander { get; private set; }
+
         public string CommanderID { get; set; }
         public bool isMainArmy { get; private set; }
-        bool IsMercenaryArmy { get; set; }
         bool IsHumanPlayer { get; set; }
+        bool IsMainEnemy { get; set; }
+
+
 
         public string RealmName { get; set; }
-        public int TotalNumber { get; set; }
-        public string AttilaFaction { get; set; }
         public string CombatSide { get; set; }
+        public UnitsResults UnitsResults { get; set; }
 
-        //public Units UnitsResults { get; set; }
-        //public CommanderSystem Commander { get; set; }
-        //public KnightSystem Knights { get; set; }
+
         //public DefensiveSystem Defences { get; set; }
         //public Modifiers Modifiers { get; set; }
 
@@ -107,17 +114,32 @@ namespace Crusader_Wars
         }
 
         //Getters
-        public bool IsMercenary() { return IsMercenaryArmy; }
+        public bool IsEnemy() { return IsMainEnemy; }
         public bool IsPlayer() { return IsHumanPlayer; }
 
+
         //Setters
-        public void IsMercenary(bool u) { IsMercenaryArmy = u; }
         public void IsPlayer(bool u) { IsHumanPlayer = u; }
+        public void IsEnemy(bool u) { IsMainEnemy = u; }
         public void SetUnits(List<Unit> l) { Units = l; }
 
         public void SetArmyRegiments(List<ArmyRegiment> list)
         {
             ArmyRegiments = list;
+        }
+        public void SetKnights(KnightSystem knights)
+        {
+            Knights = knights;
+        }
+        public void ClearNullRegiments()
+        {
+            for (int i = 0; i < ArmyRegiments.Count; i++)
+            {
+                if (ArmyRegiments[i].Regiments is null)
+                {
+                    ArmyRegiments.Remove(ArmyRegiments[i]);
+                }
+            }
         }
 
         public void ClearEmptyRegimnts()
@@ -134,19 +156,66 @@ namespace Crusader_Wars
 
         }
 
+        public void RemoveNullUnits()
+        {
+            var ascending_list = Units.OrderBy(x => x.GetSoldiers()).ToList();
+            var major_levy_culture = ascending_list[0];
+
+            int total_soldiers = 0;
+            for(int i = 0; i< Units.Count;i++)
+            {
+                var unit = Units[i];
+                if(unit.GetObjCulture() == null)
+                {
+                    int soldiers = unit.GetSoldiers();
+                    total_soldiers += soldiers;
+                    Units.Remove(unit);
+                }
+            }
+
+            foreach(var unit in Units)
+            {
+                if(major_levy_culture == unit)
+                {
+                    unit.ChangeSoldiers(unit.GetSoldiers()+total_soldiers);
+                }
+            }
+        }
+
         public void PrintUnits()
         {
+           
             Console.WriteLine($"ARMY - {ID} | {CombatSide}");
+
+            if (Knights.GetKnightsList() != null)
+            {
+                foreach (var knight in Knights.GetKnightsList())
+                {
+                    
+                    if(knight.IsAccolade())
+                    {
+                        Console.WriteLine($"## ACCOLADE | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"## KNIGHT | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
+                    }
+                }
+            }
             foreach (var unit in Units)
             {
-                Console.WriteLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
-
+                if (unit.IsMerc())
+                {
+                    Console.WriteLine($"## Hired {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
+                }
+                else
+                {
+                    Console.WriteLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
+                }
             }
             Console.WriteLine();
         }
 
 
     }
-
-
 }

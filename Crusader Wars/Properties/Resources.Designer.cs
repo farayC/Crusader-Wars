@@ -353,9 +353,49 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap main_beta {
+            get {
+                object obj = ResourceManager.GetObject("main_beta", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap main_beta1 {
+            get {
+                object obj = ResourceManager.GetObject("main_beta1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap modcon_loadingscreen {
             get {
                 object obj = ResourceManager.GetObject("modcon_loadingscreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap modcon_loadingscreen1 {
+            get {
+                object obj = ResourceManager.GetObject("modcon_loadingscreen1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap modcon_loadingscreen2 {
+            get {
+                object obj = ResourceManager.GetObject("modcon_loadingscreen2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -423,6 +463,46 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap options_btn {
+            get {
+                object obj = ResourceManager.GetObject("options_btn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap options_btn_new {
+            get {
+                object obj = ResourceManager.GetObject("options_btn_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap options_btn_new_click {
+            get {
+                object obj = ResourceManager.GetObject("options_btn_new_click", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap options_btn_new_hover {
+            get {
+                object obj = ResourceManager.GetObject("options_btn_new_hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap options1 {
             get {
                 object obj = ResourceManager.GetObject("options1", resourceCulture);
@@ -463,9 +543,69 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap patreon {
+            get {
+                object obj = ResourceManager.GetObject("patreon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap patreon_btn_clickpng {
+            get {
+                object obj = ResourceManager.GetObject("patreon_btn_clickpng", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap patreon_btn_hover {
+            get {
+                object obj = ResourceManager.GetObject("patreon_btn_hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap patreon_btn_new {
+            get {
+                object obj = ResourceManager.GetObject("patreon_btn_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap patreon1 {
+            get {
+                object obj = ResourceManager.GetObject("patreon1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap playbutton {
             get {
                 object obj = ResourceManager.GetObject("playbutton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap progress_orange {
+            get {
+                object obj = ResourceManager.GetObject("progress_orange", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -523,9 +663,109 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap start {
+            get {
+                object obj = ResourceManager.GetObject("start", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap start_btn {
+            get {
+                object obj = ResourceManager.GetObject("start_btn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap start_new {
+            get {
+                object obj = ResourceManager.GetObject("start_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap start_new_click {
+            get {
+                object obj = ResourceManager.GetObject("start_new_click", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap start_new_disabled {
+            get {
+                object obj = ResourceManager.GetObject("start_new_disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap start_new_hover {
+            get {
+                object obj = ResourceManager.GetObject("start_new_hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap steam {
             get {
                 object obj = ResourceManager.GetObject("steam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap steam_btn_new {
+            get {
+                object obj = ResourceManager.GetObject("steam_btn_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap steam_btn_new_click {
+            get {
+                object obj = ResourceManager.GetObject("steam_btn_new_click", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap steam_btn_new_hover {
+            get {
+                object obj = ResourceManager.GetObject("steam_btn_new_hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap steam_btn_new_hover1 {
+            get {
+                object obj = ResourceManager.GetObject("steam_btn_new_hover1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -564,6 +804,26 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap warfare_loadingscreen {
+            get {
+                object obj = ResourceManager.GetObject("warfare_loadingscreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap warfare_loadingscreen_smallerlogo {
+            get {
+                object obj = ResourceManager.GetObject("warfare_loadingscreen_smallerlogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap warning__1_ {
             get {
                 object obj = ResourceManager.GetObject("warning (1)", resourceCulture);
@@ -587,6 +847,46 @@ namespace Crusader_Wars.Properties {
         internal static System.Drawing.Bitmap website {
             get {
                 object obj = ResourceManager.GetObject("website", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap website_btn_new {
+            get {
+                object obj = ResourceManager.GetObject("website_btn_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap website_btn_new_click {
+            get {
+                object obj = ResourceManager.GetObject("website_btn_new_click", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap website_btn_new_hover {
+            get {
+                object obj = ResourceManager.GetObject("website_btn_new_hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap website_btn_new_hover1 {
+            get {
+                object obj = ResourceManager.GetObject("website_btn_new_hover1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

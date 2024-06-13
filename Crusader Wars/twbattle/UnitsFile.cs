@@ -10,6 +10,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using Crusader_Wars.client;
+using Crusader_Wars.unit_mapper;
+using Crusader_Wars.data.save_file;
+using Crusader_Wars.terrain;
+using System.Windows;
 
 namespace Crusader_Wars
 {
@@ -19,130 +23,6 @@ namespace Crusader_Wars
         public static int MAX_CAVALRY_UNIT_NUMBER = ModOptions.GetCavalryMax();
         public static int MAX_INFANTRY_UNIT_NUMBER = ModOptions.GetInfantryMax();
         public static int MAX_RANGED_UNIT_NUMBER = ModOptions.GetRangedMax();
-
-        public static void ConvertandAddArmyUnits(ICharacter Side)
-        {
-            try
-            {
-                //Army XP
-                int commander_army_xp = Side.Commander.GetUnitsExperience();
-                int modifiers_xp = Side.Modifiers.GetXP();
-                //int supplies_xp = Side.Supplys.GetXP();
-                if (TerrainGenerator.isStrait && Side.CombatSide == "attacker") { modifiers_xp -= 2; }
-                int army_xp = commander_army_xp + modifiers_xp;
-                //Knights & Commanders XP
-                int commander_xp = Side.Commander.GetCommanderExperience();
-                int knights_xp = Side.Knights.SetExperience();
-                //Modifiers only decrease knights xp
-                if (modifiers_xp < 0) knights_xp += modifiers_xp;
-
-
-                //XP Limiters
-                if (army_xp < 0) army_xp = 0;
-                if (army_xp > 9) army_xp = 9;
-
-                if (commander_xp < 0) commander_xp = 0;
-                if (commander_xp > 9) commander_xp = 9;
-
-                if (knights_xp < 0) knights_xp = 0;
-                if (knights_xp > 9) knights_xp = 9;
-
-                //General
-                var knights = Side.Army.FirstOrDefault(item => item.Type == "Knights");
-                var general = Side.Army.FirstOrDefault(item => item.Type == "General");
-
-                if (Side.Commander.Rank == 1 || Side.Commander.Rank == 2)
-                {
-                    BattleFile.AddGeneralUnit(Side.Commander, knights.Key, general.Script, commander_xp);
-                }
-                else
-                {
-                    BattleFile.AddGeneralUnit(Side.Commander, general.Key, general.Script, commander_xp);
-                }
-
-                //Knights
-                BattleFile.AddKnightUnit(Side.Knights, knights.Key, knights.Script, knights_xp);
-
-                //Levies
-                var levies_units = Side.Army.Where(item => item.Type.Contains("Levy") || item.Type.Contains("Levies"));
-                if (levies_units.Count() > 0)
-                {
-                    int levies_total_number = levies_units.ElementAt(0).SoldiersNum;
-                    LevyDiversity(levies_units, levies_total_number, army_xp.ToString());
-                }
-
-
-                //MenAtArms
-                foreach (var troop in Side.Army)
-                {
-                    //Skip if its not a Men at Arms Unit
-                    if (troop.Type == "General" || troop.Type == "Knights" || troop.Type.Contains("Levy")) continue;
-
-                    var MAA_Data = RetriveCalculatedUnits(troop.SoldiersNum, troop.Max);
-
-                    //If is retinue maa, increase 2xp.
-                    if (troop.Script.Contains("accolade")) BattleFile.AddUnit(troop.Key, MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, troop.Script, (army_xp + 2).ToString());
-                    //If is normal maa
-                    else BattleFile.AddUnit(troop.Key, MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, troop.Script, army_xp.ToString());
-
-                }
-
-                BattleFile.ResetPositions();
-            }
-            catch
-            {
-                MessageBox.Show("Error on converting units\nThis can happen if the wrong mapper is loaded", "Data Error",
-                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                Application.Exit();
-            }
-        }
-
-
-
-
-
-
-
-
-
-        private static void LevyDiversity(IEnumerable<(string Type, string Key, int Max, string Script, int SoldiersNum)> Units, int TroopTypeNumber, string unit_experience)
-        {
-
-            //Units
-            var LevySpearmen = Units.ElementAt(0);
-            var LevyInfantry = Units.ElementAt(1);
-            var LevyRanged = Units.ElementAt(2);
-
-            //Spearmen
-            int spearmen_total = GivePorcentageNumber(TroopTypeNumber, 0.65); //65% porcent
-            int levy_spearmen_soldiers_per_unit = RetriveCalculatedUnits(spearmen_total, MAX_LEVIES_UNIT_NUMBER).UnitSoldiers;
-            int levy_spearmen_unitNumber = RetriveCalculatedUnits(spearmen_total, MAX_LEVIES_UNIT_NUMBER).UnitNum;
-            int levy_spearmen_leftoverNumber = RetriveCalculatedUnits(spearmen_total, MAX_LEVIES_UNIT_NUMBER).SoldiersRest;
-            BattleFile.AddUnit(LevySpearmen.Key, levy_spearmen_soldiers_per_unit, levy_spearmen_unitNumber, levy_spearmen_leftoverNumber, LevySpearmen.Script, unit_experience);
-
-            //Infantry
-            int infantry_total = GivePorcentageNumber(TroopTypeNumber, 0.25); //25% porcent
-            int levy_infantry_soldiers_per_unit = RetriveCalculatedUnits(infantry_total, MAX_LEVIES_UNIT_NUMBER).UnitSoldiers;
-            int levy_infantry_unitNumber = RetriveCalculatedUnits(infantry_total, MAX_LEVIES_UNIT_NUMBER).UnitNum;
-            int levy_iinfantry_leftoverNumber = RetriveCalculatedUnits(infantry_total, MAX_LEVIES_UNIT_NUMBER).SoldiersRest;
-            BattleFile.AddUnit(LevyInfantry.Key, levy_infantry_soldiers_per_unit, levy_infantry_unitNumber, levy_iinfantry_leftoverNumber, LevyInfantry.Script, unit_experience);
-
-            //Ranged
-            int ranged_total = GivePorcentageNumber(TroopTypeNumber, 0.10); //10% porcent
-            int levy_ranged_soldiers_per_unit = RetriveCalculatedUnits(ranged_total, MAX_LEVIES_UNIT_NUMBER).UnitSoldiers;
-            int levy_ranged_unitNumber = RetriveCalculatedUnits(ranged_total, MAX_LEVIES_UNIT_NUMBER).UnitNum;
-            int levy_ranged_leftoverNumber = RetriveCalculatedUnits(ranged_total, MAX_LEVIES_UNIT_NUMBER).SoldiersRest;
-            BattleFile.AddUnit(LevyRanged.Key, levy_ranged_soldiers_per_unit, levy_ranged_unitNumber, levy_ranged_leftoverNumber, LevyRanged.Script, unit_experience);
-        }
-
-
-
-        private static int GivePorcentageNumber(int total_number, double porcentage)
-        {
-            double value = total_number * porcentage;
-            value = Math.Round(value);
-            return (int)value;
-        }
 
         public static (int UnitSoldiers, int UnitNum, int SoldiersRest) RetriveCalculatedUnits(int soldiers, int unit_limit)
         {
@@ -171,20 +51,114 @@ namespace Crusader_Wars
             return (0, 0, 0);
         }
 
+        static void BETA_LevyComposition(Unit unit, Army army,List<(int porcentage, string unit_key, string name)> faction_levy_porcentages)
+        {
+
+            var Levies_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
+            
+            int total_soldiers = unit.GetSoldiers();
+            string culture = unit.GetCulture();
+
+
+            //  SINGULAR UNIT
+            //  select random levy type
+            if (unit.GetSoldiers() <= unit.GetMax())
+            {
+                Random r = new Random();
+                var random = faction_levy_porcentages[r.Next(faction_levy_porcentages.Count-1)];
+                BattleFile.AddUnit(random.unit_key, Levies_Data.UnitSoldiers, 1, Levies_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__Levy{random.porcentage}__{culture}__", "0", Deployments.beta_GeDirection(army.CombatSide));
+                return;
+            }
+
+
+            //  MULTIPLE UNITS
+            //  fulfill every levy type
+            int levySoldiers = unit.GetSoldiers();
+
+            int compareNum = 0;
+            
+            foreach (var porcentageData in faction_levy_porcentages)
+            {
+                
+
+                double t = (double)porcentageData.porcentage / 100;
+                //int result = (int)Math.Round(Levies_Data.UnitNum * t);
+                int result = (int)Math.Round(levySoldiers * t);
+                var levy_type_data = RetriveCalculatedUnits(result, unit.GetMax());
+                compareNum += (levy_type_data.UnitSoldiers * levy_type_data.UnitNum);
+                //if (Levies_Data.UnitNum * t >= 0.5 && Levies_Data.UnitNum * t < 1) result = 1;
+                BattleFile.AddUnit(porcentageData.unit_key, levy_type_data.UnitSoldiers, levy_type_data.UnitNum, Levies_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__Levy{t}__{culture}__", "0", Deployments.beta_GeDirection(army.CombatSide));
+            }
+
+            Console.WriteLine("OG-"+levySoldiers+"\t"+"Attila Num-"+compareNum);
+            Console.WriteLine("^Difference:" + (levySoldiers - compareNum));
+
+        }
 
         public static void BETA_ConvertandAddArmyUnits(Army army)
         {
+            /*
 
+                //Army XP
+                int commander_army_xp = Side.Commander.GetUnitsExperience();
+                //int modifiers_xp = army.Modifiers.GetXP();
+                //int supplies_xp = Side.Supplys.GetXP();
+                //if (TerrainGenerator.isStrait && army.CombatSide == "attacker") { modifiers_xp -= 2; }
+                //int army_xp = commander_army_xp + modifiers_xp;
+                //Knights & Commanders XP
+                //int commander_xp = Side.Commander.GetCommanderExperience();
+                //int knights_xp = Side.Knights.SetExperience();
+                //Modifiers only decrease knights xp
+                //int knights_xp = 0;
+                //if (modifiers_xp < 0) knights_xp += modifiers_xp;
+
+                //XP Limiters
+                if (army_xp < 0) army_xp = 0;
+                if (army_xp > 9) army_xp = 9;
+
+                if (commander_xp < 0) commander_xp = 0;
+                if (commander_xp > 9) commander_xp = 9;
+
+                if (knights_xp < 0) knights_xp = 0;
+                if (knights_xp > 9) knights_xp = 9;
+
+                //General
+                var knights = Side.Army.FirstOrDefault(item => item.Type == "Knights");
+                var general = Side.Army.FirstOrDefault(item => item.Type == "General");
+
+                if (Side.Commander.Rank == 1 || Side.Commander.Rank == 2)
+                {
+                    BattleFile.AddGeneralUnit(Side.Commander, knights.Key, general.Script, commander_xp);
+                }
+                else
+                {
+                    BattleFile.AddGeneralUnit(Side.Commander, general.Key, general.Script, commander_xp);
+                }
+             */
+
+            army.RemoveNullUnits();
+            if(army.Commander != null)
+            {
+                int commander_army_xp = army.Commander.GetUnitsExperience();
+                int commander_xp = army.Commander.GetCommanderExperience();
+                Unit commanderUnit = new Unit("General", army.Commander.GetUnitSoldiers(), UnitMappers_BETA.geta)
+            }
+            
+
+            //Knights
+            Unit knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.Knights.GetMajorCulture(), RegimentType.Knight);
+            knights_unit.SetAttilaFaction(UnitMappers_BETA.GetAttilaFaction(knights_unit.GetCulture(), knights_unit.GetHeritage()));
+            BattleFile.AddKnightUnit(army.Knights, UnitMappers_BETA.GetUnitKey(knights_unit), $"{army.CombatSide}__army{army.ID}__KNIGHTS__{army.Knights.GetMajorCulture().GetCultureName()}__", army.Knights.SetExperience(), Deployments.beta_GeDirection(army.CombatSide));
 
             int levy_max = ModOptions.GetLevyMax();
             //Levies
-            var levies_units = army.Units.Where(item => item.GetName().Contains("Levy"));
+            var levies_units = army.Units.Where(item => item.GetRegimentType() == data.save_file.RegimentType.Levy);
             if (levies_units.Count() > 0)
             {
                 foreach (var levy_culture in levies_units)
                 {
-                    var Levies_Data = RetriveCalculatedUnits(levy_culture.GetSoldiers(), levy_max);
-                    BattleFile.AddUnit(levy_culture.GetAttilaUnitKey(), Levies_Data.UnitSoldiers, Levies_Data.UnitNum, Levies_Data.SoldiersRest, $"{army.CombatSide}_{army.ID}_{levy_culture.GetName()}_", "0");
+                    var levy_porcentages = UnitMappers_BETA.GetFactionLevies(levy_culture.GetAttilaFaction());
+                    BETA_LevyComposition(levy_culture,army, levy_porcentages);                    
                 }
             }
 
@@ -194,18 +168,18 @@ namespace Crusader_Wars
             {
                 string unitName = unit.GetName();
                 //Skip if its not a Men at Arms Unit
-                if (unitName == "General" || unitName == "Knights" || unitName.Contains("Levy")) continue;
+                if (unitName == "General" || unit.GetRegimentType() == RegimentType.Knight || unit.GetRegimentType() == RegimentType.Levy) continue;
 
                 var MAA_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
 
                 //If is retinue maa, increase 2xp.
-                if (unitName.Contains("accolade")) BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}_{army.ID}_{unit.GetName()}_", "2");
+                if (unitName.Contains("accolade")) BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__{unit.GetName()}__{unit.GetCulture()}__", "2", Deployments.beta_GeDirection(army.CombatSide));
                 //If is normal maa
-                else BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}_{army.ID}_{unit.GetName()}_", "0");
+                else BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__{unit.GetName()}__{unit.GetCulture()}__", "0", Deployments.beta_GeDirection(army.CombatSide));
 
             }
 
-
+            army.PrintUnits();
         }
 
     }
