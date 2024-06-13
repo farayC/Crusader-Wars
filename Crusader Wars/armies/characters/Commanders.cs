@@ -11,8 +11,8 @@ namespace Crusader_Wars
     {
         private class CourtPosition
         {
-            private string Profession { get; set; }
-            private string Employee_ID { get; set; }
+            string Profession { get; set; }
+            string Employee_ID { get; set; }
 
 
             public CourtPosition(string profession, string employee_ID)
@@ -24,7 +24,7 @@ namespace Crusader_Wars
 
 
 
-        public string CommanderID { get; private set; }
+        public string ID { get; private set; }
         public string Name { get; private set; }
         public int Rank { get; private set; }
         public int Martial { get; private set; }
@@ -33,32 +33,18 @@ namespace Crusader_Wars
         private List<CourtPosition> Employees { get; set; }
         private (string PrimaryAttribute, string SecundaryAttribute, string Honor) Accolade { get; set; }
         private bool hasFallen { get; set; }
+        private bool MainCommander {  get; set; }
 
-        public void SetID(string charachter_id)
-        {
-            CommanderID = charachter_id;
-        }
-
-        public void SetName(string name)
+        public CommanderSystem(string name, string id, int prowess, int martial, int rank, bool mainCommander)
         {
             Name = name;
-        }
-
-        public void SetRank(int rank)
-        {
-            Rank = rank;
-        }
-
-        public void SetMartial(int martial)
-        {
-            Martial = martial;
-        }
-
-        public void SetProwess(int prowess)
-        {
+            ID = id;
             Prowess = prowess;
+            Martial = martial;
+            Rank = rank;
+            MainCommander = mainCommander;
         }
-
+        public bool IsMainCommander() { return MainCommander; }
         public void SetAccolade((string PrimaryAttribute, string SecundaryAttribute, string Honor) accolade)
         {
             Accolade = accolade;
@@ -102,7 +88,7 @@ namespace Crusader_Wars
             Traits_List = traits;
         }
 
-        private int UnitSoldiers()
+        int UnitSoldiers()
         {
 
             //Title rank soldiers
@@ -176,7 +162,7 @@ namespace Crusader_Wars
         }
 
 
-        private int StarExperience()
+        int StarExperience()
         {
             int martial = Martial;
             int value = 0;
@@ -212,7 +198,7 @@ namespace Crusader_Wars
             return value;
         }
 
-        private double ProwessExperience()
+        double ProwessExperience()
         {
             int prowess = Prowess;
             int value = 0;
@@ -241,7 +227,7 @@ namespace Crusader_Wars
             return value;
         }
 
-        private double MartialExperience()
+        double MartialExperience()
         {
             int martial = Martial;
             double value = 0;
@@ -272,7 +258,7 @@ namespace Crusader_Wars
             return value;
         }
 
-        private int MartialArmyExperience()
+        int MartialArmyExperience()
         {
             int martial = Martial;
             int value = 0;
@@ -354,52 +340,50 @@ namespace Crusader_Wars
             var Chance = new Random();
             var RandomNumber = Chance.Next(101);
 
-            string id = CommanderID;
+            string id = ID;
             if (hasFallen)
             {
-
-                Console.WriteLine($"Some general has fallen! - ");
 
                 // Determine which option to set based on its percentage chance
                 if (RandomNumber >= 0 && RandomNumber <= WoundedChance)
                 {
-                    SaveFile.SetTraits(id, Traits.Wounded().ToString());
+                    //SaveFile.SetTraits(id, Traits.Wounded().ToString());
                     Console.Write("Wounded ");
                     return;
                 }
                 else if (RandomNumber > WoundedChance && RandomNumber <= Severely_InjuredChance)
                 {
-                    SaveFile.SetTraits(id, Traits.Severely_Injured().ToString());
+                    //SaveFile.SetTraits(id, Traits.Severely_Injured().ToString());
                     Console.Write("Severely_Injured ");
                     return;
                 }
                 else if (RandomNumber > Severely_InjuredChance && RandomNumber <= Brutally_MauledChance)
                 {
-                    SaveFile.SetTraits(id, Traits.Brutally_Mauled().ToString());
+                    //SaveFile.SetTraits(id, Traits.Brutally_Mauled().ToString());
                     Console.Write("Brutally Mauled ");
                     return;
                 }
                 else if (RandomNumber > Brutally_MauledChance && RandomNumber <= MaimedChance)
                 {
-                    SaveFile.SetTraits(id, Traits.Maimed().ToString());
+                    //SaveFile.SetTraits(id, Traits.Maimed().ToString());
                     Console.Write("Maimed ");
                     return;
                 }
                 else if (RandomNumber > MaimedChance && RandomNumber <= One_LeggedChance)
                 {
-                    SaveFile.SetTraits(id, Traits.One_Legged().ToString());
+                    //SaveFile.SetTraits(id, Traits.One_Legged().ToString());
                     Console.Write("One Legged ");
                     return;
                 }
                 else if (RandomNumber > One_LeggedChance && RandomNumber <= One_EyedChance)
                 {
-                    SaveFile.SetTraits(id, Traits.One_Eyed().ToString());
+                    //SaveFile.SetTraits(id, Traits.One_Eyed().ToString());
                     Console.Write("One Eyed ");
                     return;
                 }
                 else if (RandomNumber > One_EyedChance && RandomNumber <= Disfigured)
                 {
-                    SaveFile.SetTraits(id, Traits.Disfigured().ToString());
+                    //SaveFile.SetTraits(id, Traits.Disfigured().ToString());
                     Console.Write("Disfigured ");
                     return;
                 }

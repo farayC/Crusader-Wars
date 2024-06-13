@@ -32,9 +32,9 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.OptionSelection_BattleSizeScale = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.OptionSelection_AutoScale = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.OptionSelection_AutoScale = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,6 +71,7 @@
             "10%",
             "25%",
             "50%",
+            "75%",
             "100%"});
             this.OptionSelection_BattleSizeScale.Location = new System.Drawing.Point(316, 3);
             this.OptionSelection_BattleSizeScale.Name = "OptionSelection_BattleSizeScale";
@@ -92,24 +93,6 @@
             this.label4.Text = "Overhaul battle size scale:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Paradox King Script", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label2.Location = new System.Drawing.Point(3, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(175, 19);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Auto Scale Units Max:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolTip1
-            // 
-            this.toolTip1.AutomaticDelay = 100000;
-            this.toolTip1.IsBalloon = true;
-            // 
             // OptionSelection_AutoScale
             // 
             this.OptionSelection_AutoScale.BackColor = System.Drawing.Color.White;
@@ -127,6 +110,24 @@
             this.toolTip1.SetToolTip(this.OptionSelection_AutoScale, "Enabled: CW will auto size the maximum number of soldiers an Attila can have acco" +
         "rding to huge scale battles. (Recommended)\r\nDisabled: Units maximum size will al" +
         "ways be from user set options.");
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Paradox King Script", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.White;
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label2.Location = new System.Drawing.Point(3, 40);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(175, 19);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Auto Scale Units Max:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 100000;
+            this.toolTip1.IsBalloon = true;
             // 
             // UC_BattleScaleOptions
             // 

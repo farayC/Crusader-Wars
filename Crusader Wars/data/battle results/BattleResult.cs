@@ -22,12 +22,7 @@ namespace Crusader_Wars
         public static string CombatID { get; set; }
         public static string ResultID { get; set; }
         public static string ProvinceID { get; set; }
-
-        public static void LoadSaveFile(string savePath)
-        {
-            Reader.ReadFile(savePath);
-
-        }
+        public static twbattle.Date FirstDay_Date { get; set; }
 
 
         //Combats
@@ -84,8 +79,11 @@ namespace Crusader_Wars
                 }
                 BattleResult.CombatID = battleID;
                 Player_Combat = sb.ToString();
+                Console.WriteLine("Combat ID - " + battleID);
                 File.WriteAllText(@".\data\save_file_data\temp\Combats.txt", Player_Combat);
                 File.WriteAllText(@".\data\save_file_data\Combats.txt", "");
+
+                ArmiesReader.ReadCombats(Player_Combat);
                 Console.WriteLine("All combats were read successfully");
             }
             catch
@@ -132,6 +130,14 @@ namespace Crusader_Wars
                             f.AppendLine(line);
                             isSearchStarted = true;
                         }
+                        else if (isSearchStarted && line.Contains("\t\t\tstart_date="))
+                        {
+                            f.AppendLine(line);
+                            Match date = Regex.Match(line, @"(?<year>\d+).(?<month>\d+).(?<day>\d+)");
+                            string year = date.Groups["year"].Value, month = date.Groups["month"].Value, day = date.Groups["day"].Value;
+                            FirstDay_Date = new twbattle.Date(Int32.Parse(year), Int32.Parse(month), Int32.Parse(day));
+
+                        }
                         else if(isSearchStarted && line == "\t\t}")
                         {
                             f.AppendLine(line);
@@ -146,6 +152,7 @@ namespace Crusader_Wars
                 }
 
                 BattleResult.ResultID = battle_id;
+                Console.WriteLine("ResultID - " + battle_id);
                 File.WriteAllText(@".\data\save_file_data\BattleResults.txt", f.ToString());
                 Console.WriteLine("All combat results were read successfully");
             }
@@ -220,6 +227,7 @@ namespace Crusader_Wars
                             continue; 
                         }
                     }
+
                     
 
 
@@ -288,195 +296,13 @@ namespace Crusader_Wars
             return line;
         }
 
-        
-
-
-
-
-
-        //Attacker Regiments
-        static string Attacker;
-        static public List<(string ID, string StartingNum, string CurrentNum)> Attacker_Regiments = new List<(string ID, string StartingNum, string CurrentNum)>();
-
-        public static void GetAttackerRegiments()
+        static void EditRegiments()
         {
-
-            try
-            {
-                //Get Attacker String
-                string pattern = @"(attacker={[\s\S]*?)(defender={[\s\S]*?)phase";
-                Attacker = Regex.Match(Player_Combat, pattern).Groups[1].Value;
-
-                MatchCollection Regiments = Regex.Matches(Attacker, @"regiment=(?<ID>\d+)\s+starting=(?<StartingNum>[\d.]+)\s+current=(?<CurrentNum>[\d.]+)");
-                (string ID, string StartingNum, string CurrentNum) data;
-                foreach (Match regiment in Regiments)
-                {
-                    data.ID = regiment.Groups["ID"].Value;
-                    data.StartingNum = regiment.Groups["StartingNum"].Value;
-                    data.CurrentNum = regiment.Groups["CurrentNum"].Value;
-
-                    Attacker_Regiments.Add(data);
-                }
-                Console.WriteLine("Regiments from attacker side read sucessfully");
-            }
-            catch
-            {
-                Console.WriteLine("Error reading attacker side regiments");
-            }
 
         }
 
-        static string Defender;
-        static List<(string ID, string StartingNum, string CurrentNum)> Defender_Regiments = new List<(string ID, string StartingNum, string CurrentNum)>();
-        public static void GetDefenderRegiments()
+        static void EditCombatGUI()
         {
-            try
-            {
-                //Get Defender String
-                string pattern = @"(attacker={[\s\S]*?)(defender={[\s\S]*?)phase";
-                Defender = Regex.Match(Player_Combat, pattern).Groups[2].Value;
-
-                MatchCollection Regiments = Regex.Matches(Defender, @"regiment=(?<ID>\d+)\s+starting=(?<StartingNum>[\d.]+)\s+current=(?<CurrentNum>[\d.]+)");
-                (string ID, string StartingNum, string CurrentNum) data;
-                foreach (Match regiment in Regiments)
-                {
-                    data.ID = regiment.Groups["ID"].Value;
-                    data.StartingNum = regiment.Groups["StartingNum"].Value;
-                    data.CurrentNum = regiment.Groups["CurrentNum"].Value;
-
-                    Defender_Regiments.Add(data);
-                }
-
-                Console.WriteLine("Regiments from defender side read sucessfully");
-            }
-            catch
-            {
-
-                Console.WriteLine("Error reading defender side regiments");
-            }
-
-        }
-
-        public static void GetCombatSides(Player Player, Enemy Enemy)
-        {
-            if(Attacker != null) 
-            {
-                string player_commander = "commander=" + Player.ID;
-                if (Attacker.Contains(player_commander))
-                {
-                    Player.CombatSide = "attacker";
-                    Enemy.CombatSide = "defender";
-                }
-                else
-                {
-                    Player.CombatSide = "defender";
-                    Enemy.CombatSide = "attacker";
-                }
-            }
-            else 
-            {
-                throw new NotImplementedException();
-            }
-
-
-        }
-
-        public static void SetAttackerGUIRegiments()
-        {
-            try
-            {
-
-                MatchCollection Regiments = Regex.Matches(Attacker, @"regiment=(?<ID>\d+)\s+starting=(?<StartingNum>[\d.]+)\s+current=(?<CurrentNum>[\d.]+)");
-                string Edited_Attacker = Attacker;
-
-                double totalSoldiers = 0;
-                for (int i = 0; i < Regiments.Count; i++)
-                {
-
-                    string remaining_num = Attacker_Regiments[i].CurrentNum;
-                    remaining_num = string.Format("{0:0.00}", remaining_num);
-                    remaining_num = remaining_num.Replace(',', '.');
-
-                    double starting_num = FileData.ConvertDouble(Attacker_Regiments[i].StartingNum);
-
-                    //If is not a knight
-                    if (starting_num > 1)
-                    {
-                        totalSoldiers += FileData.ConvertDouble(remaining_num);
-
-                        MatchCollection GG_Regiments = Regex.Matches(Edited_Attacker, @"current=(?<CurrentNum>[\d.|,]+)");
-                        int index = GG_Regiments[i].Groups["CurrentNum"].Index;
-                        int length = GG_Regiments[i].Groups["CurrentNum"].Length;
-
-                        Edited_Attacker = Edited_Attacker.Remove(index, length)
-                                                         .Insert(index, remaining_num);
-
-                    }
-                }
-                Edited_Attacker = Regex.Replace(Edited_Attacker, @"total_fighting_men=\d+", "total_fighting_men=" + totalSoldiers.ToString());
-                Attacker = Edited_Attacker;
-
-                //Add edited GUI to Player Combat
-                Player_Combat = Regex.Replace(Player_Combat, @"(attacker={[\s\S]*?)(defender={)", Attacker + "\n\t\t$2");
-
-                Console.WriteLine("GUI from attacker side set sucessfully");
-
-            }
-            catch
-            {
-                Console.WriteLine("Error setting GUI from attacker side!");
-            }
-  
-        }
-
-        public static void SetDefenderGUIRegiments()
-        {
-            try
-            {
-
-                MatchCollection Regiments = Regex.Matches(Defender, @"regiment=(?<ID>\d+)\s+starting=(?<StartingNum>[\d.]+)\s+current=(?<CurrentNum>[\d.]+)");
-                string Edited_Defender = Defender;
-
-                double totalSoldiers = 0;
-                for (int i = 0; i < Regiments.Count; i++)
-                {
-                    string remaining_num = Defender_Regiments[i].CurrentNum;
-                    remaining_num = string.Format("{0:0.00}", remaining_num);
-                    remaining_num = remaining_num.Replace(',', '.');
-
-                    double starting_num = FileData.ConvertDouble(Defender_Regiments[i].StartingNum);
-
-                    //If is not a knight
-                    if (starting_num > 1)
-                    {
-                        totalSoldiers += FileData.ConvertDouble(remaining_num);
-                        MatchCollection GG_Regiments = Regex.Matches(Edited_Defender, @"current=(?<CurrentNum>[\d.|,]+)");
-                        int index = GG_Regiments[i].Groups["CurrentNum"].Index;
-                        int length = GG_Regiments[i].Groups["CurrentNum"].Length;
-
-                        Edited_Defender = Edited_Defender.Remove(index, length)
-                                                         .Insert(index, remaining_num);
-
-                    }
-                }
-
-
-                Edited_Defender = Regex.Replace(Edited_Defender, @"total_fighting_men=[\d.]+", "total_fighting_men=" + totalSoldiers.ToString());
-                Defender = Edited_Defender;
-
-
-                //Add edited GUI to Player Combat
-                Player_Combat = Regex.Replace(Player_Combat, @"(defender={[\s\S]*?)(phase)", Defender + "\n\t\t\t$2");
-
-                Console.WriteLine("GUI from defender side set sucessfully");
-
-            }
-            catch
-            {
-                Console.WriteLine("Error setting GUI from defender side!");
-
-            }
-
 
         }
 
@@ -503,201 +329,7 @@ namespace Crusader_Wars
             }
       
         }
-
-        static List<(string ID, string Type ,string[] ChunksIDs, string Full)> ArmyRegimentsList = new List<(string ID, string Type, string[] ChunksID, string Full)>();
-        public static void GetAllArmyRegiments()
-        {
-            try
-            {
-                MatchCollection allRegiments = Regex.Matches(Data.String_ArmyRegiments, @"(?s)\s+(?<ID>\d+)={.*?(?=\t\t\d+={|\z)");
-
-                (string ID, string Type, string[] ChunksIDs, string Full) data;
-                List<string> chunks_id_list = new List<string>();
-                string[] ChunkIDs;
-                foreach (Match regiment in allRegiments)
-                {
-                    data.ID = regiment.Groups["ID"].Value;
-                    data.Full = regiment.Value;
-
-                    Match type_match = Regex.Match(regiment.Value, "type=(?<Type>\"\\w+\")");
-                    if (type_match.Success)
-                    {
-                        data.Type = type_match.Groups["Type"].Value;
-                    }
-                    else
-                    {
-                        Match knight_match = Regex.Match(regiment.Value, @"knight");
-                        if (knight_match.Success)
-                        {
-                            data.Type = "\"knight\"";
-                        }
-                        else
-                        {
-                            data.Type = "\"levy\"";
-                        }
-
-                    }
-
-                    //Chunks
-                    string Chunks = Regex.Match(regiment.Value, @"(?<Chunks>chunks={[\w\W]*?)\t\t\tcached={").Groups["Chunks"].Value;
-                    MatchCollection chunks_matches = Regex.Matches(Chunks, @"regiment=(?<ChunkID>\d+)");
-                    foreach (Match chunk in chunks_matches)
-                    {
-                        chunks_id_list.Add(chunk.Groups["ChunkID"].Value);
-
-                    }
-                    ChunkIDs = chunks_id_list.ToArray();
-
-                    data.ChunksIDs = ChunkIDs;
-
-                    ArmyRegimentsList.Add(data);
-                    chunks_id_list.Clear();
-                }
-
-                Console.WriteLine("All army regiments read sucessfully");
-            }
-            catch
-            {
-                Console.WriteLine("Erroe reading all army regiments !");
-            }
-         
-        }
-
-        static List<(string ID, string Type, string Max, string Chunks, string Full)> RegimentsList = new List<(string ID, string Type, string Max, string Chunks, string Full)>();
-        public static void GetAllRegiments()
-        {
-            try
-            {
-                MatchCollection allRegiments = Regex.Matches(Data.String_Regiments, "(?s)(?<ID>\\d+)={.*?(?=\\d+={|\\z)");
-                (string ID, string Type, string Max, string Chunks, string Full) data;
-                string type, max = String.Empty;
-                foreach (Match regiment in allRegiments)
-                {
-                    data.ID = regiment.Groups["ID"].Value;
-                    data.Full = regiment.Value;
-                    data.Chunks = Regex.Match(regiment.Value, @"\Wchunks={[\s\S]*?\z").Value;
-
-                    //--Type--
-                    Match type_match = Regex.Match(regiment.Value, @"type=(?<MAA_Type>\W\w+\W)");
-                    if (type_match.Success)
-                    {
-                        type = type_match.Groups["MAA_Type"].Value;
-                    }
-                    else
-                    {
-                        type = "levies";
-                    }
-
-                    data.Type = type;
-
-                    //--Max--
-                    if (data.Type == "levies")
-                    {
-                        MatchCollection size_match = Regex.Matches(regiment.Value, @"{\W+size=(?<Size>\d+)");
-                        foreach (Match size_found in size_match)
-                        {
-                            double size_num = FileData.ConvertDouble(size_found.Groups["Size"].Value);
-                            if (size_num != 0)
-                            {
-                                string Size = size_num.ToString();
-                                max = Size;
-                                break;
-                            }
-                        }
-
-                        MatchCollection max_match = Regex.Matches(regiment.Value, @"{\W+max=(?<Size>\d+)");
-                        foreach (Match max_found in max_match)
-                        {
-                            double max_num = FileData.ConvertDouble(max_found.Groups["Size"].Value);
-                            if (max_num != 0)
-                            {
-                                string Size = max_num.ToString();
-                                max = Size;
-                                break;
-                            }
-                        }
-
-                    }
-                    else //Men at Arms
-                    {
-                        Match size_match = Regex.Match(regiment.Value, @"size=(?<Size>\d+)");
-                        switch (size_match.Success)
-                        {
-                            case true:
-                                string Size = size_match.Groups["Size"].Value;
-                                max = Size;
-                                break;
-
-                            case false:
-                                Match max_match = Regex.Match(regiment.Value, @"max=(?<Max>\d+)");
-                                string Max = max_match.Groups["Max"].Value;
-                                max = Max;
-                                break;
-
-                        }
-                    }
-
-                    data.Max = max;
-
-                    RegimentsList.Add(data);
-                }
-
-                Console.WriteLine("All regiments read sucessfully");
-            }
-            catch
-            {
-                Console.WriteLine("Error reading all regiments!");
-            }
-
-        }
-
-        public static void SetAttackerDATA()
-        {
-            try
-            {
-                long startMemory = GC.GetTotalMemory(false);
-
-                FileData.SetChunks(Data.String_ArmyRegiments, ref Data.String_Regiments, Attacker_Regiments, ArmyRegimentsList, RegimentsList);
-                Console.WriteLine("Attacker Chunks data set sucessfully");
-
-                FileData.SetCache(ref Data.String_ArmyRegiments, Attacker_Regiments, ArmyRegimentsList);
-                Console.WriteLine("Attacker Cache data set sucessfully");
-
-                long endMemory = GC.GetTotalMemory(false);
-                long memoryUsage = endMemory - startMemory;
-
-                Console.WriteLine($"----\nSetting attacker casualities of battle...\nMemory Usage: {memoryUsage / 1048576} mb\n----");
-            }
-            catch 
-            {
-                Console.WriteLine("Error setting Attacker DATA");
-            }
-
-        }
-
-        public static void SetDefenderDATA()
-        {
-            try
-            {
-                long startMemory = GC.GetTotalMemory(false);
-
-                FileData.SetChunks(Data.String_ArmyRegiments, ref Data.String_Regiments, Defender_Regiments, ArmyRegimentsList, RegimentsList);
-                Console.WriteLine("Defender Chunks data set sucessfully");
-
-                FileData.SetCache(ref Data.String_ArmyRegiments, Defender_Regiments, ArmyRegimentsList);
-                Console.WriteLine("Defender Cache data set sucessfully");
-
-                long endMemory = GC.GetTotalMemory(false);
-                long memoryUsage = endMemory - startMemory;
-
-                Console.WriteLine($"----\nSetting defender casualities of battle...\nMemory Usage: {memoryUsage / 1048576} mb\n----");
-            }
-            catch
-            {
-                Console.WriteLine("Error setting Defender DATA");
-            }
-
-        }
+ 
 
         public static void SendToSaveFile(string filePath)
         {
@@ -706,47 +338,12 @@ namespace Crusader_Wars
 
             Data.Reset();
 
-            Attacker = "";
-            Defender= "";
             Player_Combat = "";
 
-
-            Attacker_Regiments = new List<(string ID, string StartingNum, string CurrentNum)>();
-            Defender_Regiments = new List<(string ID, string StartingNum, string CurrentNum)>();
-
-            ArmyRegimentsList = new List<(string ID, string Type, string[] ChunksIDs, string Full)>();
-            RegimentsList = new List<(string ID, string Type, string Max, string Chunks, string Full)>();
 
             GC.Collect();
         }
 
-        public static void SetRemainingAttacker(List<(string Name, string Remaining)> Attila_RemainingSoldiers)
-        {
-            try
-            {
-                FileData.SetRemainingSoldiers(Attila_RemainingSoldiers, ref Attacker_Regiments, ArmyRegimentsList);
-                Console.WriteLine("Attacker Remaining Soldiers are set!");
-            }
-            catch 
-            {
-                Console.WriteLine("Error setting attacker side remaining soldiers!");
-            }
-            
-        }
-
-        public static void SetRemainingDefender(List<(string Name, string Remaining)> Attila_RemainingSoldiers)
-        {
-            try
-            {
-                FileData.SetRemainingSoldiers(Attila_RemainingSoldiers, ref Defender_Regiments, ArmyRegimentsList);
-                Console.WriteLine("Defender Remaining Soldiers are set!");
-            }
-            catch
-            {
-                Console.WriteLine("Error setting defender side remaining soldiers!");
-            }
-            
-        }
 
 
 
@@ -757,9 +354,9 @@ namespace Crusader_Wars
 
 
         // Get attila remaining soldiers
-        public static void GetUnitsData(ICharacter Side, string path_attila_log)
+        public static void GetUnitsData(Army army, string path_attila_log)
         {
-            Units units = new Units();
+            UnitsResults units = new UnitsResults();
             try
             {
                 List<(string Name, string Remaining)> Alive_MainPhase = new List<(string Name, string Remaining)>();
@@ -786,28 +383,28 @@ namespace Crusader_Wars
                         alive_text = all_alive_texts[0].Groups[2].Value;
                         kills_text = all_kills_texts[0].Groups[1].Value;
 
-                        Alive_MainPhase = ReturnList(Side, alive_text, DataType.Alive);
+                        Alive_MainPhase = ReturnList(army, alive_text, DataType.Alive);
                         units.SetAliveMainPhase(Alive_MainPhase);
-                        Kills_MainPhase = ReturnList(Side, kills_text, DataType.Kills);
+                        Kills_MainPhase = ReturnList(army, kills_text, DataType.Kills);
                         units.SetKillsMainPhase(Kills_MainPhase);
 
                     }
                     else if(remaining_soldiers_ocurrences > 1 && kills_ocurrences > 1) 
                     {
                         string mainphase_alive_text = all_alive_texts[0].Groups[2].Value;
-                        Alive_MainPhase = ReturnList(Side, mainphase_alive_text, DataType.Alive);
+                        Alive_MainPhase = ReturnList(army, mainphase_alive_text, DataType.Alive);
                         units.SetAliveMainPhase(Alive_MainPhase);
 
                         string pursuitphase_alive_text = all_alive_texts[1].Groups[2].Value;
-                        Alive_PursuitPhase = ReturnList(Side, pursuitphase_alive_text, DataType.Alive);
+                        Alive_PursuitPhase = ReturnList(army, pursuitphase_alive_text, DataType.Alive);
                         units.SetAlivePursuitPhase (Alive_PursuitPhase);
 
                         string mainphase_kills_text = all_kills_texts[0].Groups[1].Value;
-                        Kills_MainPhase = ReturnList(Side, mainphase_kills_text, DataType.Kills);
+                        Kills_MainPhase = ReturnList(army, mainphase_kills_text, DataType.Kills);
                         units.SetKillsMainPhase(Kills_MainPhase);
 
                         string pursuitphase_kills_text = all_kills_texts[1].Groups[1].Value;
-                        Kills_PursuitPhase = ReturnList(Side, pursuitphase_kills_text, DataType.Kills);
+                        Kills_PursuitPhase = ReturnList(army, pursuitphase_kills_text, DataType.Kills);
                         units.SetKillsPursuitPhase(Kills_PursuitPhase) ;
                     }
  
@@ -817,14 +414,15 @@ namespace Crusader_Wars
 
                 }
 
-                Side.UnitsResults = units;
+                army.UnitsResults = units;
 
 
                 
             }
             catch
             {
-                Console.WriteLine("Error reading Attila results!");
+                MessageBox.Show("Error reading Attila results", "Battle Results Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 throw new Exception();
                 
             }
@@ -837,12 +435,12 @@ namespace Crusader_Wars
             Kills
         }
 
-        private static List<(string, string)> ReturnList(ICharacter Side, string text, DataType list_type)
+        private static List<(string, string)> ReturnList(Army army, string text, DataType list_type)
         {
 
             List<(string, string)> list = new List<(string, string)> ();
 
-            if(Side is Player)
+            if(army.IsPlayer())
             {
                 MatchCollection pattern;
                 switch (list_type)

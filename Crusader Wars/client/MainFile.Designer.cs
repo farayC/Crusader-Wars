@@ -37,33 +37,41 @@
             this.InformationToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.labelVersion = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnDiscord = new System.Windows.Forms.Button();
-            this.btnSteam = new System.Windows.Forms.Button();
-            this.btnPatch = new System.Windows.Forms.Button();
-            this.btnWebsite = new System.Windows.Forms.Button();
+            this.MainPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
+            this.BottomPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
+            this.patreonBtn = new System.Windows.Forms.Button();
+            this.WebsiteBTN = new System.Windows.Forms.Button();
+            this.SteamBTN = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.flowLayoutPanel1.SuspendLayout();
+            this.MainPanelLayout.SuspendLayout();
+            this.BottomPanelLayout.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ExecuteButton
             // 
             resources.ApplyResources(this.ExecuteButton, "ExecuteButton");
             this.ExecuteButton.BackColor = System.Drawing.Color.Transparent;
+            this.ExecuteButton.BackgroundImage = global::Crusader_Wars.Properties.Resources.start_new;
             this.ExecuteButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ExecuteButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.ExecuteButton.FlatAppearance.BorderSize = 0;
+            this.ExecuteButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.ExecuteButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.ExecuteButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ExecuteButton.Image = global::Crusader_Wars.Properties.Resources.Declare_war_interaction;
             this.ExecuteButton.Name = "ExecuteButton";
-            this.ExecuteButton.UseVisualStyleBackColor = false;
+            this.ExecuteButton.TabStop = false;
+            this.ExecuteButton.UseVisualStyleBackColor = true;
             this.ExecuteButton.Click += new System.EventHandler(this.ExecuteButton_Click);
+            this.ExecuteButton.MouseEnter += new System.EventHandler(this.ExecuteButton_MouseEnter);
+            this.ExecuteButton.MouseLeave += new System.EventHandler(this.ExecuteButton_MouseLeave);
             this.ExecuteButton.MouseHover += new System.EventHandler(this.ExecuteButton_MouseHover);
             // 
             // btt_debug
             // 
             resources.ApplyResources(this.btt_debug, "btt_debug");
-            this.btt_debug.BackColor = System.Drawing.Color.Blue;
+            this.btt_debug.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.btt_debug.Name = "btt_debug";
             this.btt_debug.UseVisualStyleBackColor = false;
             this.btt_debug.Click += new System.EventHandler(this.btt_debug_Click);
@@ -79,12 +87,23 @@
             // 
             resources.ApplyResources(this.SettingsBtn, "SettingsBtn");
             this.SettingsBtn.BackColor = System.Drawing.Color.Transparent;
+            this.SettingsBtn.BackgroundImage = global::Crusader_Wars.Properties.Resources.options_btn_new;
             this.SettingsBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SettingsBtn.FlatAppearance.BorderSize = 0;
-            this.SettingsBtn.Image = global::Crusader_Wars.Properties.Resources.imageedit_2_3450978699;
+            this.SettingsBtn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.SettingsBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.SettingsBtn.ForeColor = System.Drawing.Color.Black;
             this.SettingsBtn.Name = "SettingsBtn";
+            this.SettingsBtn.TabStop = false;
             this.SettingsBtn.UseVisualStyleBackColor = false;
             this.SettingsBtn.Click += new System.EventHandler(this.SettingsBtn_Click);
+            this.SettingsBtn.MouseEnter += new System.EventHandler(this.SettingsBtn_MouseEnter);
+            this.SettingsBtn.MouseLeave += new System.EventHandler(this.SettingsBtn_MouseLeave);
+            this.SettingsBtn.MouseHover += new System.EventHandler(this.SettingsBtn_MouseHover);
+            // 
+            // InformationToolTip
+            // 
+            this.InformationToolTip.IsBalloon = true;
             // 
             // labelVersion
             // 
@@ -95,91 +114,98 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.pictureBox1, "pictureBox1");
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::Crusader_Wars.Properties.Resources.Sem_nome;
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.TabStop = false;
             // 
-            // flowLayoutPanel1
+            // MainPanelLayout
             // 
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.flowLayoutPanel1.Controls.Add(this.ExecuteButton);
-            this.flowLayoutPanel1.Controls.Add(this.infoLabel);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            resources.ApplyResources(this.MainPanelLayout, "MainPanelLayout");
+            this.MainPanelLayout.BackColor = System.Drawing.Color.Transparent;
+            this.MainPanelLayout.Controls.Add(this.pictureBox1);
+            this.MainPanelLayout.Controls.Add(this.ExecuteButton);
+            this.MainPanelLayout.Controls.Add(this.infoLabel);
+            this.MainPanelLayout.Name = "MainPanelLayout";
             // 
-            // btnDiscord
+            // BottomPanelLayout
             // 
-            resources.ApplyResources(this.btnDiscord, "btnDiscord");
-            this.btnDiscord.BackColor = System.Drawing.Color.Transparent;
-            this.btnDiscord.BackgroundImage = global::Crusader_Wars.Properties.Resources.discord2;
-            this.btnDiscord.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnDiscord.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.btnDiscord.FlatAppearance.BorderSize = 0;
-            this.btnDiscord.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnDiscord.Name = "btnDiscord";
-            this.btnDiscord.UseVisualStyleBackColor = false;
-            this.btnDiscord.Click += new System.EventHandler(this.btnDiscord_Click);
-            this.btnDiscord.MouseHover += new System.EventHandler(this.btnDiscord_MouseHover);
+            this.BottomPanelLayout.BackColor = System.Drawing.Color.Transparent;
+            this.BottomPanelLayout.Controls.Add(this.labelVersion);
+            resources.ApplyResources(this.BottomPanelLayout, "BottomPanelLayout");
+            this.BottomPanelLayout.Name = "BottomPanelLayout";
             // 
-            // btnSteam
+            // patreonBtn
             // 
-            resources.ApplyResources(this.btnSteam, "btnSteam");
-            this.btnSteam.BackColor = System.Drawing.Color.Transparent;
-            this.btnSteam.BackgroundImage = global::Crusader_Wars.Properties.Resources.steam;
-            this.btnSteam.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSteam.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.btnSteam.FlatAppearance.BorderSize = 0;
-            this.btnSteam.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnSteam.Name = "btnSteam";
-            this.btnSteam.UseVisualStyleBackColor = false;
-            this.btnSteam.Click += new System.EventHandler(this.btnSteam_Click);
-            this.btnSteam.MouseHover += new System.EventHandler(this.btnSteam_MouseHover);
+            resources.ApplyResources(this.patreonBtn, "patreonBtn");
+            this.patreonBtn.BackColor = System.Drawing.Color.Transparent;
+            this.patreonBtn.BackgroundImage = global::Crusader_Wars.Properties.Resources.patreon_btn_new;
+            this.patreonBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.patreonBtn.FlatAppearance.BorderSize = 0;
+            this.patreonBtn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.patreonBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.patreonBtn.Name = "patreonBtn";
+            this.patreonBtn.UseVisualStyleBackColor = false;
+            this.patreonBtn.Click += new System.EventHandler(this.patreonBtn_Click);
+            this.patreonBtn.MouseEnter += new System.EventHandler(this.patreonBtn_MouseEnter);
+            this.patreonBtn.MouseLeave += new System.EventHandler(this.patreonBtn_MouseLeave);
+            this.patreonBtn.MouseHover += new System.EventHandler(this.patreonBtn_MouseHover_1);
             // 
-            // btnPatch
+            // WebsiteBTN
             // 
-            resources.ApplyResources(this.btnPatch, "btnPatch");
-            this.btnPatch.BackColor = System.Drawing.Color.Transparent;
-            this.btnPatch.BackgroundImage = global::Crusader_Wars.Properties.Resources.patch;
-            this.btnPatch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnPatch.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.btnPatch.FlatAppearance.BorderSize = 0;
-            this.btnPatch.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnPatch.Name = "btnPatch";
-            this.btnPatch.UseVisualStyleBackColor = false;
-            this.btnPatch.Click += new System.EventHandler(this.btnPatch_Click);
-            this.btnPatch.MouseHover += new System.EventHandler(this.btnPatch_MouseHover);
+            resources.ApplyResources(this.WebsiteBTN, "WebsiteBTN");
+            this.WebsiteBTN.BackColor = System.Drawing.Color.Transparent;
+            this.WebsiteBTN.BackgroundImage = global::Crusader_Wars.Properties.Resources.website_btn_new;
+            this.WebsiteBTN.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.WebsiteBTN.FlatAppearance.BorderSize = 0;
+            this.WebsiteBTN.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.WebsiteBTN.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.WebsiteBTN.Name = "WebsiteBTN";
+            this.WebsiteBTN.TabStop = false;
+            this.WebsiteBTN.UseVisualStyleBackColor = false;
+            this.WebsiteBTN.Click += new System.EventHandler(this.WebsiteBTN_Click);
+            this.WebsiteBTN.MouseEnter += new System.EventHandler(this.WebsiteBTN_MouseEnter);
+            this.WebsiteBTN.MouseLeave += new System.EventHandler(this.WebsiteBTN_MouseLeave);
+            this.WebsiteBTN.MouseHover += new System.EventHandler(this.WebsiteBTN_MouseHover);
             // 
-            // btnWebsite
+            // SteamBTN
             // 
-            resources.ApplyResources(this.btnWebsite, "btnWebsite");
-            this.btnWebsite.BackColor = System.Drawing.Color.Transparent;
-            this.btnWebsite.BackgroundImage = global::Crusader_Wars.Properties.Resources.website1;
-            this.btnWebsite.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnWebsite.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.btnWebsite.FlatAppearance.BorderSize = 0;
-            this.btnWebsite.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnWebsite.Name = "btnWebsite";
-            this.btnWebsite.UseVisualStyleBackColor = false;
-            this.btnWebsite.Click += new System.EventHandler(this.btnWebsite_Click);
-            this.btnWebsite.MouseHover += new System.EventHandler(this.btnWebsite_MouseHover);
+            resources.ApplyResources(this.SteamBTN, "SteamBTN");
+            this.SteamBTN.BackColor = System.Drawing.Color.Transparent;
+            this.SteamBTN.BackgroundImage = global::Crusader_Wars.Properties.Resources.steam_btn_new;
+            this.SteamBTN.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.SteamBTN.FlatAppearance.BorderSize = 0;
+            this.SteamBTN.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.SteamBTN.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.SteamBTN.Name = "SteamBTN";
+            this.SteamBTN.TabStop = false;
+            this.SteamBTN.UseVisualStyleBackColor = false;
+            this.SteamBTN.Click += new System.EventHandler(this.SteamBTN_Click);
+            this.SteamBTN.MouseEnter += new System.EventHandler(this.SteamBTN_MouseEnter);
+            this.SteamBTN.MouseLeave += new System.EventHandler(this.SteamBTN_MouseLeave);
+            this.SteamBTN.MouseHover += new System.EventHandler(this.SteamBTN_MouseHover);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.WebsiteBTN, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.SteamBTN, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.patreonBtn, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.SettingsBtn, 0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // HomePage
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.IndianRed;
-            this.BackgroundImage = global::Crusader_Wars.Properties.Resources.wider_original;
-            this.Controls.Add(this.btnWebsite);
-            this.Controls.Add(this.btnPatch);
-            this.Controls.Add(this.btnSteam);
-            this.Controls.Add(this.btnDiscord);
-            this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.labelVersion);
-            this.Controls.Add(this.SettingsBtn);
+            this.BackgroundImage = global::Crusader_Wars.Properties.Resources.main_beta1;
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.btt_debug);
+            this.Controls.Add(this.MainPanelLayout);
+            this.Controls.Add(this.BottomPanelLayout);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -188,10 +214,12 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.HomePage_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
+            this.MainPanelLayout.ResumeLayout(false);
+            this.MainPanelLayout.PerformLayout();
+            this.BottomPanelLayout.ResumeLayout(false);
+            this.BottomPanelLayout.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -204,11 +232,12 @@
         private System.Windows.Forms.ToolTip InformationToolTip;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button btnDiscord;
-        private System.Windows.Forms.Button btnSteam;
-        private System.Windows.Forms.Button btnPatch;
-        private System.Windows.Forms.Button btnWebsite;
+        private System.Windows.Forms.FlowLayoutPanel MainPanelLayout;
+        private System.Windows.Forms.FlowLayoutPanel BottomPanelLayout;
+        private System.Windows.Forms.Button patreonBtn;
+        private System.Windows.Forms.Button WebsiteBTN;
+        private System.Windows.Forms.Button SteamBTN;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }
 

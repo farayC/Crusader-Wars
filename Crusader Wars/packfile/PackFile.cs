@@ -16,7 +16,7 @@ namespace Crusader_Wars
             // Create and import .pack file
 
             string create_path =Directory.GetCurrentDirectory() + @"\CrusaderWars.pack";
-            string add_path = Directory.GetCurrentDirectory() + @"\battle files";
+            string add_path = Directory.GetCurrentDirectory() + @"\data\battle files";
             string thumbnail_path = Directory.GetCurrentDirectory() + @"\Settings\CrusaderWars.png";
             string tsv_path = Directory.GetCurrentDirectory() + @"\data\schema_att.ron";
 
@@ -47,7 +47,7 @@ namespace Crusader_Wars
 
         private static string CreatePackFile(string command)
         {
-            string rpfm_client_path = Directory.GetCurrentDirectory() + @"\"+Directory.GetFiles("rpfm", "rpfm_cli.exe", SearchOption.AllDirectories)[0];
+            string rpfm_client_path =  @".\data\rpfm\rpfm_cli.exe";
 
             ProcessStartInfo procStartInfo = new ProcessStartInfo(rpfm_client_path, command)
 

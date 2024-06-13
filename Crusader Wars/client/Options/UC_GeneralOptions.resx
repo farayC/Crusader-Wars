@@ -120,6 +120,11 @@
   <metadata name="General_ToopTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="OptionSelection_SeparateArmies.ToolTip" xml:space="preserve">
+    <value>All Controled: Every allied and friendly army will be controled by the you.
+Friendly Only: Friendly armies are controled by you but allied armies are controled by AI. (DEFAULT)
+All Separate: Every separate army is controled by AI but your main army.</value>
+  </data>
   <data name="OptionSelection_BattleMapsSize.ToolTip" xml:space="preserve">
     <value>Dynamic: Battle maps sizes will change according to the amount of soldiers in battle. (Recommended)
 Medium: Small sized battle maps.

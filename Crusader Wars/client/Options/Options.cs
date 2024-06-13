@@ -19,6 +19,8 @@ namespace Crusader_Wars
         private string CK3_Path { get; set; }
         private string Attila_Path { get; set; }
 
+
+
         UserControl General_Tab;
         UserControl Units_Tab;
         UserControl BattleScale_Tab;
@@ -86,6 +88,7 @@ namespace Crusader_Wars
                 var BattleMapsSize_Value = xmlDoc.SelectSingleNode("//Option [@name='BattleMapsSize']").InnerText;
                 var DefensiveDeployables_Value = xmlDoc.SelectSingleNode("//Option [@name='DefensiveDeployables']").InnerText;
                 var UnitCards_Value = xmlDoc.SelectSingleNode("//Option [@name='UnitCards']").InnerText;
+                var CulturalPreciseness = xmlDoc.SelectSingleNode("//Option [@name='CulturalPreciseness']").InnerText;
 
                 var LeviesMax_Value = xmlDoc.SelectSingleNode("//Option [@name='LeviesMax']").InnerText;
                 var RangedMax_Value = xmlDoc.SelectSingleNode("//Option [@name='RangedMax']").InnerText;
@@ -94,6 +97,7 @@ namespace Crusader_Wars
 
                 var BattleScale_Value = xmlDoc.SelectSingleNode("//Option [@name='BattleScale']").InnerText;
                 var AutoScaleUnits_Value = xmlDoc.SelectSingleNode("//Option [@name='AutoScaleUnits']").InnerText;
+                var SeparateArmies_Value = xmlDoc.SelectSingleNode("//Option [@name='SeparateArmies']").InnerText;
 
                 optionsValuesCollection.AddRange(new List<(string, string)>
                 {
@@ -103,6 +107,8 @@ namespace Crusader_Wars
                     ("BattleMapsSize", BattleMapsSize_Value) ,
                     ("DefensiveDeployables", DefensiveDeployables_Value),
                     ("UnitCards", UnitCards_Value),
+                    ("SeparateArmies", SeparateArmies_Value),
+                    ("CulturalPreciseness", CulturalPreciseness),
 
                     ("LeviesMax", LeviesMax_Value),
                     ("RangedMax", RangedMax_Value),
@@ -111,6 +117,7 @@ namespace Crusader_Wars
 
                     ("BattleScale", BattleScale_Value),
                     ("AutoScaleUnits", AutoScaleUnits_Value),
+
                 });
 
 
@@ -131,6 +138,8 @@ namespace Crusader_Wars
             var BattleMapsSize_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_BattleMapsSize", true).FirstOrDefault() as ComboBox;
             var DefensiveDeployables_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_DefensiveDeployables", true).FirstOrDefault() as ComboBox;
             var UnitCards_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_UnitCards", true).FirstOrDefault() as ComboBox;
+            var SeparateArmies_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_SeparateArmies", true).FirstOrDefault() as ComboBox;
+            var CulturalPreciseness_TrackBar = General_Tab.Controls[0].Controls.Find("OptionSelection_CulturalPreciseness", true).FirstOrDefault() as TrackBar;
 
             var LeviesMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_LeviesMax", true).FirstOrDefault() as ComboBox;
             var RangedMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_RangedMax", true).FirstOrDefault() as ComboBox;
@@ -139,13 +148,16 @@ namespace Crusader_Wars
 
             var BattleScale_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_BattleSizeScale", true).FirstOrDefault() as ComboBox;            
             var AutoScaleUnits_ComboBox = BattleScale_Tab.Controls[0].Controls.Find("OptionSelection_AutoScale", true).FirstOrDefault() as ComboBox;
-            
+
+
             CloseAttila_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "CloseAttila").value; 
             FullArmies_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies").value;
             TimeLimit_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "TimeLimit").value;
             BattleMapsSize_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleMapsSize").value;
             DefensiveDeployables_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "DefensiveDeployables").value;
             UnitCards_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "UnitCards").value;
+            SeparateArmies_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "SeparateArmies").value;
+            CulturalPreciseness_TrackBar.Value = Int32.Parse(optionsValuesCollection.FirstOrDefault(x => x.option == "CulturalPreciseness").value);
 
             LeviesMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "LeviesMax").value;
             RangedMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "RangedMax").value;
@@ -154,6 +166,7 @@ namespace Crusader_Wars
 
             BattleScale_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "BattleScale").value;
             AutoScaleUnits_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "AutoScaleUnits").value;
+            
 
             ChangeOptionsTab(General_Tab);
         }
@@ -171,6 +184,8 @@ namespace Crusader_Wars
             var BattleMapsSize_ComboBox = General_Tab.Controls.Find("OptionSelection_BattleMapsSize", true)[0] as ComboBox;
             var DefensiveDeployables_ComboBox = General_Tab.Controls.Find("OptionSelection_DefensiveDeployables", true)[0] as ComboBox;
             var UnitCards_ComboBox = General_Tab.Controls.Find("OptionSelection_UnitCards", true)[0] as ComboBox;
+            var SeparateArmies_ComboBox = General_Tab.Controls.Find("OptionSelection_SeparateArmies", true)[0] as ComboBox;
+            var CulturalPreciseness_TrackBar = General_Tab.Controls.Find("OptionSelection_CulturalPreciseness", true)[0] as TrackBar;
 
             var LeviesMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_LeviesMax", true)[0] as ComboBox;
             var RangedMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_RangedMax", true)[0] as ComboBox;
@@ -179,6 +194,7 @@ namespace Crusader_Wars
 
             var BattleScale_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_BattleSizeScale", true)[0] as ComboBox;
             var AutoScaleUnits_ComboBox = BattleScale_Tab.Controls.Find("OptionSelection_AutoScale", true)[0] as ComboBox;
+            
 
 
 
@@ -194,6 +210,10 @@ namespace Crusader_Wars
             DefensiveDeployables_Node.InnerText = DefensiveDeployables_ComboBox.Text;
             var UnitCards_Node = xmlDoc.SelectSingleNode("//Option [@name='UnitCards']");
             UnitCards_Node.InnerText = UnitCards_ComboBox.Text;
+            var SeparateArmies_Node = xmlDoc.SelectSingleNode("//Option [@name='SeparateArmies']");
+            SeparateArmies_Node.InnerText = SeparateArmies_ComboBox.Text;
+            var CulturalPreciseness_Node = xmlDoc.SelectSingleNode("//Option [@name='CulturalPreciseness']");
+            CulturalPreciseness_Node.InnerText = CulturalPreciseness_TrackBar.Value.ToString();
 
             var LeviesMax_Node = xmlDoc.SelectSingleNode("//Option [@name='LeviesMax']");
             LeviesMax_Node.InnerText = LeviesMax_ComboBox.Text;
@@ -209,6 +229,7 @@ namespace Crusader_Wars
             var AutoScaleUnits_Node = xmlDoc.SelectSingleNode("//Option [@name='AutoScaleUnits']");
             AutoScaleUnits_Node.InnerText = AutoScaleUnits_ComboBox.Text;
 
+
             xmlDoc.Save(file);
         }
 
@@ -218,7 +239,7 @@ namespace Crusader_Wars
         {
             timePeriodCollecion = new List<(string mapper, string start_year, string end_year)>();
 
-            string mappers_folder = Directory.GetCurrentDirectory() + @"\Mappers";
+            string mappers_folder = Directory.GetCurrentDirectory() + @"\unit mappers";
             var folderNames = Directory.GetDirectories(mappers_folder).Select(Path.GetFileName).ToArray();
             foreach (string folder in folderNames)
             {
@@ -250,7 +271,7 @@ namespace Crusader_Wars
         private static Dictionary<string, bool> folderCheckStates = new Dictionary<string, bool>();
         private void CreateDynamicListControl()
         {
-            string directoryPath = Directory.GetCurrentDirectory() + @"\Mappers";
+            string directoryPath = Directory.GetCurrentDirectory() + @"\unit mappers";
             List<string> folderNames = new List<string>();
             folderNames.AddRange(Directory.GetDirectories(directoryPath));
 
@@ -292,7 +313,7 @@ namespace Crusader_Wars
         {
             MappersDescriptions = new List<(string mapper, string description)>();
 
-            var all_mappers_folders = Directory.GetDirectories(@".\Mappers");
+            var all_mappers_folders = Directory.GetDirectories(@".\unit mappers");
             foreach(var folder in all_mappers_folders)
             {
                 string mapper_name = Path.GetFileName(folder);
@@ -729,16 +750,6 @@ namespace Crusader_Wars
                 WarningMessage.ShowWarningMessage(message);
             }
 
-            foreach(var mapper_path in YearCollection)
-            {
-                if (mapper_path.Key.Contains("MK1212"))
-                {
-                    string text = "MK1212 has updated and it's temporarily not working with Crusader Wars, use the previous version of MK1212, and not to the most recent, to avoid crashes in Attila! You have been warned!";
-                    string title = "Warning";
-                    WarningMessage.ShowWarningMessage(text, title);
-                    break;
-                }
-            }
 
             int start =1066;
             foreach (var i in YearCollection)

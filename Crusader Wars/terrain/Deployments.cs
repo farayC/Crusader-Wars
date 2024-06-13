@@ -1,8 +1,10 @@
 ﻿using Crusader_Wars.client;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +14,6 @@ namespace Crusader_Wars.terrain
 {
     public static class Deployments
     {
-        public static string Direction { get; private set; }
 
         //Radius
         static string ROTATION_0º = "0.00";
@@ -104,10 +105,81 @@ namespace Crusader_Wars.terrain
 
                 return null;
             }
+
+            public static string GetOppositeDirection(string direction)
+            {
+                switch (direction)
+                {
+                    case "N":
+                        return "S";
+                    case "S":
+                        return "N";
+                    case "E":
+                        return "W";
+                    case "W":
+                        return "E";
+                }
+
+                return "";
+            }
         }
 
+        static string attacker_direction = "", defender_direction = "";
+        static string attacker_deployment="", defender_deployment = "";
+        public static void beta_SetSidesDirections(int total_soldiers, (string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
+        {
+            Random random = new Random();
+            //All directions battle maps
+            if (battle_map.attacker_dir[0] == "All")
+            {
+                string[] coords = { "N", "S", "E", "W" };
+                int index = random.Next(0, 4);
+                attacker_direction = coords[index];
+                defender_direction = Directions.GetOppositeDirection(attacker_direction);
+                attacker_deployment =  Directions.SetDirection(attacker_direction, total_soldiers);
+                defender_deployment = Directions.SetOppositeDirection(attacker_direction, total_soldiers);
 
 
+            }
+            //Defined directions battle maps
+            else
+            {
+                int defender_index = random.Next(0, 2);
+                defender_direction = battle_map.defender_dir[defender_index];
+                attacker_direction = Directions.GetOppositeDirection(defender_direction);
+                defender_deployment = Directions.SetDirection(defender_direction, total_soldiers);
+                attacker_deployment = Directions.SetOppositeDirection(defender_direction, total_soldiers);
+
+            }
+
+        }
+
+        public static string beta_GetDeployment(string combat_side)
+        {
+            switch(combat_side)
+            {
+                case "attacker":
+                    return attacker_deployment;
+                case "defender":
+                    return defender_deployment;
+            }
+
+            return attacker_deployment;
+        }
+        public static string beta_GeDirection(string combat_side)
+        {
+            switch (combat_side)
+            {
+                case "attacker":
+                    return attacker_direction;
+                case "defender":
+                    return defender_direction;
+            }
+
+            return attacker_direction;
+        }
+
+        /*
         static bool isFirstDirectionSet;
         static string OppositeDirection;
         public static string SetDirection(int total_soldiers, string combat_side,(string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
@@ -166,6 +238,7 @@ namespace Crusader_Wars.terrain
 
             return "";
         }
+        */
 
 
     }

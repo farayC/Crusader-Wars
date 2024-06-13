@@ -24,7 +24,7 @@ namespace Crusader_Wars.locs
 
             EditButtonVersion();
             EditBattleTextDetails(player, enemy);
-            EditCombatSidesDetails(player, enemy);
+            EditCombatSidesDetails();
             EditTerrainImage();
 
         }
@@ -36,7 +36,7 @@ namespace Crusader_Wars.locs
             version = Regex.Match(version, @"""(.+)""").Groups[1].Value;
 
             
-            string original_buttonVersion_path = @".\battle files\text\db\tutorial_historical_battles_uied_component_texts.loc.tsv";
+            string original_buttonVersion_path = @".\data\battle files\text\db\tutorial_historical_battles_uied_component_texts.loc.tsv";
             string copy_path = @".\data\tutorial_historical_battles_uied_component_texts.loc.tsv";
             File.Copy(original_buttonVersion_path, copy_path);
             File.WriteAllText(copy_path, string.Empty);
@@ -71,9 +71,9 @@ namespace Crusader_Wars.locs
 
         private static void EditBattleTextDetails(Player player, Enemy enemy)
         {
-            string patreon_text = "Special thanks to our patreons for supporting the development of the mod: Jermaine, Kameron, Michael Nathan Chananja Klaassen, Kyra, Gav, Carl Enqvist, I Regret This Already, Oron Gabay, Kyle T David, Ryan Merklen, Chris Kelly, Kieran Britt & Galahad.";
+            string patreon_text = "Special thanks to our patreons for supporting the development of the mod: Features History, Douglas Dosaga, Micheal N. C. Klaassen, Kyra, Gav, Carl Enqvist, I Regret This Alredy, Oron Gabay, Kyle T David, Ryan Merklen, Chris Kelly, Kieran Britt, Galahad.";
 
-            string original_battle_details_path = @".\battle files\text\db\tutorial_historical_battles.loc.tsv";
+            string original_battle_details_path = @".\data\battle files\text\db\tutorial_historical_battles.loc.tsv";
             string copy_path = @".\data\tutorial_historical_battles.loc.tsv";
             File.Copy(original_battle_details_path, copy_path);
             File.WriteAllText(copy_path, string.Empty);
@@ -123,9 +123,9 @@ namespace Crusader_Wars.locs
             File.Move(copy_path, original_battle_details_path);
         }
 
-        private static void EditCombatSidesDetails(Player player, Enemy enemy)
+        private static void EditCombatSidesDetails()
         {
-            string original_attila_file_path = @".\battle files\text\db\tutorial_historical_battles_factions.loc.tsv";
+            string original_attila_file_path = @".\data\battle files\text\db\tutorial_historical_battles_factions.loc.tsv";
             string copy_path = @".\data\tutorial_historical_battles_factions.loc.tsv";
             File.Copy(original_attila_file_path, copy_path);
             File.WriteAllText(copy_path, string.Empty);
@@ -142,13 +142,13 @@ namespace Crusader_Wars.locs
                     //Enemy Side
                     if (line.Contains("factions_screen_name_historical_house_bolton"))
                     {
-                        line = Regex.Replace(line, @"\t(?<CombatSide>.+)\t", $"\t{enemy.CombatSide}\t");
+                        line = Regex.Replace(line, @"\t(?<CombatSide>.+)\t", $"\t{CK3LogData.RightSide.GetRealmName()}\t");
                     }
 
                     //Player Side
                     if(line.Contains("factions_screen_name_historical_house_stark"))
                     {
-                        line = Regex.Replace(line, @"\t(?<CombatSide>.+)\t", $"\t{player.CombatSide}\t");
+                        line = Regex.Replace(line, @"\t(?<CombatSide>.+)\t", $"\t{CK3LogData.LeftSide.GetRealmName()}\t");
                     }
 
                     new_data += line + "\n";
@@ -243,7 +243,7 @@ namespace Crusader_Wars.locs
                 image_to_copy_path = default_image_path;
             }
 
-            string battle_files_image_path = @".\battle files\script\tut_tutorial_battle\screenshot_small.png";
+            string battle_files_image_path = @".\data\battle files\script\tut_tutorial_battle\screenshot_small.png";
 
             if(File.Exists(battle_files_image_path)) File.Delete(battle_files_image_path);
             File.Copy(image_to_copy_path, battle_files_image_path);

@@ -1,11 +1,14 @@
 ﻿using Crusader_Wars.armies;
 using Crusader_Wars.client;
+using Crusader_Wars.data.save_file;
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using static Crusader_Wars.terrain.Lands;
 
 
 namespace Crusader_Wars
@@ -16,7 +19,7 @@ namespace Crusader_Wars
         public static string Unit_Script_Name { get; set; }
 
         //Get User Path
-        static string battlePath = Directory.GetFiles("Battle Files\\script", "tut_battle.xml", SearchOption.AllDirectories)[0];
+        static string battlePath = Directory.GetFiles("data\\battle files\\script", "tut_battle.xml", SearchOption.AllDirectories)[0];
 
         public static void ClearFile()
         {
@@ -33,284 +36,367 @@ namespace Crusader_Wars
             }
         }
 
-        
-        public static void CreateBattle(Player Player, Enemy Enemy)
+        public static void SetArmiesSides(List<Army> attacker_armies, List<Army> defender_armies)
         {
-            var battleMap = TerrainGenerator.GetBattleMap();
-            int total_soldiers = Player.TotalNumber + Enemy.TotalNumber;
+            foreach (var army in attacker_armies)
+            {
+                if (army.CommanderID == CK3LogData.LeftSide.GetCommanderID())
+                {
+                    army.IsPlayer(true);
+                }
+                else if (army.CommanderID == CK3LogData.RightSide.GetCommanderID())
+                {
+                    army.IsEnemy(true);
+                }
+            }
+            foreach (var army in defender_armies)
+            {
+                if (army.CommanderID == CK3LogData.LeftSide.GetCommanderID())
+                {
+                    army.IsPlayer(true);
+                }
+                else if (army.CommanderID == CK3LogData.RightSide.GetCommanderID())
+                {
+                    army.IsEnemy(true);
+                }
 
-            //Write essential data
-            OpenBattle();
-            //Write essential data
-            OpenPlayerAlliance();
-            //Write essential data
-            OpenArmy();
-            //Write player army name
-            AddArmyName(Player.RealmName);
-            //Write essential data
-            SetPlayerFaction();
-            //Write player deployment area
-            SetDeploymentArea(total_soldiers, Player.CombatSide, battleMap);
-            //Write player deployables defenses
-            AddDeployablesDefenses(Player);
-            //Set unit positions values
-            SetPositions(total_soldiers);
-            //Write all player army units
-            UnitsFile.ConvertandAddArmyUnits(Player);
-            //Write essential data
-            CloseArmy();
-            //Write essential data
-            SetVictoryCondition();
-            //Write essential data
-            CloseAlliance();
-            //Write essential data
-            OpenEnemyAlliance();
-            //Write essential data
-            OpenArmy();
-            //Write enemy army name
-            AddArmyName(Enemy.RealmName);
-            //Write essential data
-            SetEnemyFaction();
-            //Write enemy deployment area
-            SetDeploymentArea(total_soldiers, Enemy.CombatSide, battleMap);
-            //Write enemy deployables defenses
-            AddDeployablesDefenses(Enemy);
-            //Write unit positions values
-            SetPositions(total_soldiers);
-            //Write all enemy army units
-            UnitsFile.ConvertandAddArmyUnits(Enemy);
-            //Write essential data
-            CloseArmy();
-            //Write essential data
-            SetVictoryCondition();
-            //Write essential data
-            CloseAlliance();
-            //Write battle description
-            SetBattleDescription(Player, total_soldiers);
-            //Write battle map
-            SetBattleTerrain(battleMap.X, battleMap.Y, Weather.GetWeather(), GetAttilaMap());
-            //Write essential data
-            CloseBattle();
-
+            }
+        }
+        // Merge armies until there are only four
+        static void MergeArmiesUntilFour(List<Army> armies)
+        {
+            while (armies.Count > 4)
+            {
+                for (int i = 4; i < armies.Count; i++)
+                {
+                    armies[0].Units.AddRange(armies[i].Units);
+                    armies.RemoveAt(i);
+                }
+            }
+        }
+        static void MergeIntoOneArmy(List<Army> armies)
+        {
+            if (armies.Count > 1)
+            {
+                for (int i = 1; i < armies.Count; i++)
+                {
+                    armies[0].Units.AddRange(armies[i].Units);
+                }
+                armies.RemoveRange(1, armies.Count - 1); // Remove all armies except the first one
+            }
         }
 
-        public static void BETA_CreateBattle(List<Army> attacker_armies, List<Army> defender_armies, Player Player, Enemy Enemy)
+        static Army MergeFriendlies(List<Army> armies, Army main_army)
+        {
+            string main_owner = main_army.Owner;
+            armies.Remove(main_army);
+            for (int i = 0; i < armies.Count; i++)
+            {
+                if (armies[i].Owner == main_owner)
+                {
+                    main_army.Units.AddRange(armies[i].Units);
+                    armies.RemoveAt(i);
+                }
+            }
+
+            return main_army;
+        }
+
+
+        public static void BETA_CreateBattle(List<Army> attacker_armies, List<Army> defender_armies)
         {
 
-
-            var battleMap = TerrainGenerator.GetBattleMap();
-            int total_soldiers = 0;
-
+            // SIDES MAIN ARMIES
             Army player_army = null;
             Army enemy_main_army = null;
+            player_army = attacker_armies.FirstOrDefault(x => x.IsPlayer()) ?? defender_armies.FirstOrDefault(x => x.IsPlayer());
+            enemy_main_army = attacker_armies.FirstOrDefault(x => x.IsEnemy()) ?? defender_armies.FirstOrDefault(x => x.IsEnemy());
+
+
             // TOTAL SOLDIERS
-            foreach (var army in attacker_armies) 
+            int total_soldiers = 0;
+            total_soldiers = attacker_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers()) +
+                             defender_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers());
+
+            //  BATTLE MAP
+            var battleMap = TerrainGenerator.GetBattleMap();
+            Deployments.beta_SetSidesDirections(total_soldiers, battleMap);
+
+
+
+            //  ALL CONTROLED ARMIES
+            //
+            if (ModOptions.SeparateArmies() == ModOptions.ArmiesSetup.All_Controled)
             {
-                if(army.CommanderID == Player.ID.ToString())
+
+                //----------------------------------------------
+                //  Merge armies until there are only one      
+                //----------------------------------------------
+                MergeIntoOneArmy(attacker_armies);
+                MergeIntoOneArmy(defender_armies);
+
+                //Write essential data
+                OpenBattle();
+                //Write essential data
+                OpenPlayerAlliance();
+
+
+                if (player_army.CombatSide == "attacker")
                 {
-                    army.IsPlayer(true);
-                    player_army = army;
+                    //#### WRITE HUMAN PLAYER ARMY
+                    WriteArmy(attacker_armies[0], battleMap, total_soldiers, false, "stark");
                 }
-                else if(army.CommanderID == Enemy.ID.ToString())
+                else if (player_army.CombatSide == "defender")
                 {
-                    enemy_main_army = army;
+                    //#### WRITE HUMAN PLAYER ARMY
+                    WriteArmy(defender_armies[0], battleMap, total_soldiers, false, "stark");
                 }
-                foreach(var unit in army.Units)
+
+                //Write essential data
+                SetVictoryCondition();
+                //Write essential data
+                CloseAlliance();
+                //Write essential data
+                OpenEnemyAlliance();
+
+                if (enemy_main_army.CombatSide == "attacker")
                 {
-                    total_soldiers += unit.GetSoldiers();
+                    //#### WRITE HUMAN PLAYER ARMY
+                    WriteArmy(attacker_armies[0], battleMap, total_soldiers, false, "bolton");
                 }
+                else if (enemy_main_army.CombatSide == "defender")
+                {
+                    //#### WRITE HUMAN PLAYER ARMY
+                    WriteArmy(defender_armies[0], battleMap, total_soldiers, false, "bolton");
+                }
+
+                //Write essential data
+                SetVictoryCondition();
+                //Write essential data
+                CloseAlliance();
+                //Write battle description
+                SetBattleDescription(player_army, total_soldiers);
+                //Write battle map
+                SetBattleTerrain(battleMap.X, battleMap.Y, Weather.GetWeather(), GetAttilaMap());
+                //Write essential data
+                CloseBattle();
             }
-            foreach(var army in defender_armies)
+            //  FRIENDLIES ONLY ARMIES
+            //
+            else if (ModOptions.SeparateArmies() == ModOptions.ArmiesSetup.Friendly_Only)
             {
-                if (army.CommanderID == Player.ID.ToString())
+                //----------------------------------------------
+                //  Merge friendly armies to main army     
+                //----------------------------------------------
+                if (player_army.CombatSide == "attacker")
                 {
-                    army.IsPlayer(true);
-                    player_army = army;
+                    player_army = MergeFriendlies(attacker_armies, player_army);
                 }
-                else if (army.CommanderID == Enemy.ID.ToString())
+                else if (player_army.CombatSide == "defender")
                 {
-                    enemy_main_army = army;
+                    player_army = MergeFriendlies(defender_armies, player_army);
                 }
-                foreach (var unit in army.Units)
-                {
-                    total_soldiers += unit.GetSoldiers();
-                }
-            }
 
-            //----------------------------------------------
-            //  TODO: Merge armies until there are only four
-            //----------------------------------------------
-            if(attacker_armies.Count > 4)
+                if (enemy_main_army.CombatSide == "attacker")
+                {
+                    enemy_main_army = MergeFriendlies(attacker_armies, enemy_main_army);
+                }
+                else if (enemy_main_army.CombatSide == "defender")
+                {
+                    enemy_main_army = MergeFriendlies(defender_armies, enemy_main_army);
+                }
+                //----------------------------------------------
+                //  Merge armies until there are only four      
+                //----------------------------------------------
+                MergeArmiesUntilFour(attacker_armies);
+                MergeArmiesUntilFour(defender_armies);
+
+                //Write essential data
+                OpenBattle();
+                //Write essential data
+                OpenPlayerAlliance();
+
+                //#### WRITE HUMAN PLAYER ARMY
+                WriteArmy(player_army, battleMap, total_soldiers, false, "stark");
+
+                //#### WRITE AI ALLIED ARMIES
+                if (player_army.CombatSide == "attacker")
+                {
+                    foreach (var army in attacker_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "stark");
+
+                    }
+                }
+                else if (player_army.CombatSide == "defender")
+                {
+                    foreach (var army in defender_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "stark");
+                    }
+                }
+
+                //Write essential data
+                SetVictoryCondition();
+                //Write essential data
+                CloseAlliance();
+                //Write essential data
+                OpenEnemyAlliance();
+
+
+
+                //#### WRITE ENEMY MAIN ARMY
+                WriteArmy(enemy_main_army, battleMap, total_soldiers, false, "bolton");
+
+                //#### WRITE ENEMY ALLIED ARMIES
+                if (enemy_main_army.CombatSide == "attacker")
+                {
+                    foreach (var army in attacker_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "bolton");
+                    }
+                }
+                else if (enemy_main_army.CombatSide == "defender")
+                {
+                    foreach (var army in defender_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "bolton");
+                    }
+                }
+
+                //Write essential data
+                SetVictoryCondition();
+                //Write essential data
+                CloseAlliance();
+                //Write battle description
+                SetBattleDescription(player_army, total_soldiers);
+                //Write battle map
+                SetBattleTerrain(battleMap.X, battleMap.Y, Weather.GetWeather(), GetAttilaMap());
+                //Write essential data
+                CloseBattle();
+            }
+            //  ALL SEPARATE ARMIES
+            //
+            else if (ModOptions.SeparateArmies() == ModOptions.ArmiesSetup.All_Separate)
             {
-            }
-            if(defender_armies.Count > 4)
-            {
-            }
+                //----------------------------------------------
+                //  Merge armies until there are only four      
+                //----------------------------------------------
+                MergeArmiesUntilFour(attacker_armies);
+                MergeArmiesUntilFour(defender_armies);
 
+                //Write essential data
+                OpenBattle();
+                //Write essential data
+                OpenPlayerAlliance();
 
+                //#### WRITE HUMAN PLAYER ARMY
+                WriteArmy(player_army, battleMap, total_soldiers, false, "stark");
 
-            
-
-            //Write essential data
-            OpenBattle();
-            //Write essential data
-            OpenPlayerAlliance();
-
-            //#### WRITE HUMAN PLAYER ARMY
-            //Write essential data
-            OpenArmy();
-            //Write player army name
-            AddArmyName(player_army.RealmName);
-            //Write essential data
-            SetPlayerFaction();
-            //Write player deployment area
-            SetDeploymentArea(total_soldiers, player_army.CombatSide, battleMap);
-            //Write player deployables defenses
-            AddDeployablesDefenses(player_army);
-            //Set unit positions values
-            SetPositions(total_soldiers);
-            //Write all player army units
-            UnitsFile.BETA_ConvertandAddArmyUnits(player_army);
-            //Write essential data
-            CloseArmy();
-
-            //#### WRITE AI ALLIED ARMIES
-            if(player_army.CombatSide == "attacker")
-            {
-                attacker_armies.Remove(player_army);
-                foreach(var army in attacker_armies)
+                //#### WRITE AI ALLIED ARMIES
+                if (player_army.CombatSide == "attacker")
                 {
-                    //Write essential data
-                    OpenArmy();
-                    //Write player army name
-                    AddArmyName(army.RealmName);
-                    //Write essential data
-                    SetPlayerFaction();
-                    //Write player deployment area
-                    SetDeploymentArea(total_soldiers, army.CombatSide, battleMap);
-                    //Write player deployables defenses
-                    AddDeployablesDefenses(army);
-                    //Set unit positions values
-                    SetPositions(total_soldiers);
-                    //Write all player army units
-                    UnitsFile.BETA_ConvertandAddArmyUnits(army);
-                    //Write essential data
-                    CloseArmy();
+                    attacker_armies.Remove(player_army);
+                    foreach (var army in attacker_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "stark");
+
+                    }
                 }
-            }
-            else if(player_army.CombatSide == "defender")
-            {
-                defender_armies.Remove(player_army);
-                foreach (var army in defender_armies)
+                else if (player_army.CombatSide == "defender")
                 {
-                    //Write essential data
-                    OpenArmy();
-                    //Write player army name
-                    AddArmyName(army.RealmName);
-                    //Write essential data
-                    SetPlayerFaction();
-                    //Write player deployment area
-                    SetDeploymentArea(total_soldiers, army.CombatSide, battleMap);
-                    //Write player deployables defenses
-                    AddDeployablesDefenses(army);
-                    //Set unit positions values
-                    SetPositions(total_soldiers);
-                    //Write all player army units
-                    UnitsFile.BETA_ConvertandAddArmyUnits(army);
-                    //Write essential data
-                    CloseArmy();
+                    defender_armies.Remove(player_army);
+                    foreach (var army in defender_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "stark");
+                    }
                 }
-            }
 
-            //Write essential data
-            SetVictoryCondition();
-            //Write essential data
-            CloseAlliance();
-            //Write essential data
-            OpenEnemyAlliance();
-
+                //Write essential data
+                SetVictoryCondition();
+                //Write essential data
+                CloseAlliance();
+                //Write essential data
+                OpenEnemyAlliance();
 
 
-            //#### WRITE ENEMY MAIN ARMY
-            //Write essential data
-            OpenArmy();
-            //Write player army name
-            AddArmyName(enemy_main_army.RealmName);
-            //Write essential data
-            SetPlayerFaction();
-            //Write player deployment area
-            SetDeploymentArea(total_soldiers, enemy_main_army.CombatSide, battleMap);
-            //Write player deployables defenses
-            AddDeployablesDefenses(enemy_main_army);
-            //Set unit positions values
-            SetPositions(total_soldiers);
-            //Write all player army units
-           UnitsFile.BETA_ConvertandAddArmyUnits(enemy_main_army);
-            //Write essential data
-            CloseArmy();
 
-            //#### WRITE ENEMY ALLIED ARMIES
-            if (enemy_main_army.CombatSide == "attacker")
-            {
-                attacker_armies.Remove(enemy_main_army);
-                foreach (var army in attacker_armies)
+                //#### WRITE ENEMY MAIN ARMY
+                WriteArmy(enemy_main_army, battleMap, total_soldiers, false, "bolton");
+
+                //#### WRITE ENEMY ALLIED ARMIES
+                if (enemy_main_army.CombatSide == "attacker")
                 {
-                    //Write essential data
-                    OpenArmy();
-                    //Write player army name
-                    AddArmyName(army.RealmName);
-                    //Write essential data
-                    SetPlayerFaction();
-                    //Write player deployment area
-                    SetDeploymentArea(total_soldiers, army.CombatSide, battleMap);
-                    //Write player deployables defenses
-                    AddDeployablesDefenses(army);
-                    //Set unit positions values
-                    SetPositions(total_soldiers);
-                    //Write all player army units
-                    UnitsFile.BETA_ConvertandAddArmyUnits(army);
-                    //Write essential data
-                    CloseArmy();
+                    attacker_armies.Remove(enemy_main_army);
+                    foreach (var army in attacker_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "bolton");
+                    }
                 }
-            }
-            else if (enemy_main_army.CombatSide == "defender")
-            {
-                defender_armies.Remove(enemy_main_army);
-                foreach (var army in defender_armies)
+                else if (enemy_main_army.CombatSide == "defender")
                 {
-                    //Write essential data
-                    OpenArmy();
-                    //Write player army name
-                    AddArmyName(army.RealmName);
-                    //Write essential data
-                    SetPlayerFaction();
-                    //Write player deployment area
-                    SetDeploymentArea(total_soldiers, army.CombatSide, battleMap);
-                    //Write player deployables defenses
-                    AddDeployablesDefenses(army);
-                    //Set unit positions values
-                    SetPositions(total_soldiers);
-                    //Write all player army units
-                   UnitsFile.BETA_ConvertandAddArmyUnits(army);
-                    //Write essential data
-                    CloseArmy();
+                    defender_armies.Remove(enemy_main_army);
+                    foreach (var army in defender_armies)
+                    {
+                        WriteArmy(army, battleMap, total_soldiers, false, "bolton");
+                    }
                 }
+
+                //Write essential data
+                SetVictoryCondition();
+                //Write essential data
+                CloseAlliance();
+                //Write battle description
+                SetBattleDescription(player_army, total_soldiers);
+                //Write battle map
+                SetBattleTerrain(battleMap.X, battleMap.Y, Weather.GetWeather(), GetAttilaMap());
+                //Write essential data
+                CloseBattle();
             }
 
 
 
-
-            //Write essential data
-            SetVictoryCondition();
-            //Write essential data
-            CloseAlliance();
-            //Write battle description
-            SetBattleDescription(Player, total_soldiers);
-            //Write battle map
-            SetBattleTerrain(battleMap.X, battleMap.Y, Weather.GetWeather(), GetAttilaMap());
-            //Write essential data
-            CloseBattle();
+ 
         }
+
+        private static void WriteArmy(Army army, (string X, string Y, string[] attPositions, string[] defPositions) battleMap, int total_soldiers, bool isReinforcement, string x)
+        {
+            //Write essential data
+            if (isReinforcement)
+                //OpenReinforcementArmy();
+                OpenArmy();
+            else
+                OpenArmy();
+            //Write player army name
+            if(army.RealmName is null) {
+                AddArmyName("Army");
+            }
+            else
+                AddArmyName(army.RealmName);
+
+
+            //Write essential data
+            if (x == "stark")
+                SetPlayerFaction();
+            else
+                SetEnemyFaction();
+
+            //Write player deployment area
+            SetDeploymentArea(total_soldiers, army.CombatSide, battleMap);
+            //Write player deployables defenses
+            AddDeployablesDefenses(army);
+            //Set unit positions values
+            SetPositions(total_soldiers, Deployments.beta_GeDirection(army.CombatSide));
+            //Write all player army units
+            UnitsFile.BETA_ConvertandAddArmyUnits(army);
+            //Write essential data
+            if (isReinforcement)
+                //CloseReinforcementArmy();
+                CloseArmy();
+            else
+                CloseArmy();
+        }
+
 
         private static string GetAttilaMap()
         {
@@ -343,6 +429,13 @@ namespace Crusader_Wars
             File.AppendAllText(battlePath, PR_OpenArmy);
         }
 
+        private static void OpenReinforcementArmy()
+        {
+            string PR_OpenArmy = "<reinforcement_army>\n\n";
+
+            File.AppendAllText(battlePath, PR_OpenArmy);
+        }
+
         private static void AddArmyName(string name)
         {
             if(name != String.Empty)
@@ -363,7 +456,7 @@ namespace Crusader_Wars
 
         private static void SetDeploymentArea(int total_soldiers,string combat_side, (string, string, string[], string[]) battlemap)
         {
-            string PR_Deployment = Deployments.SetDirection(total_soldiers, combat_side, battlemap); ;
+            string PR_Deployment = Deployments.beta_GetDeployment(combat_side); 
 
             File.AppendAllText(battlePath, PR_Deployment);
 
@@ -401,14 +494,14 @@ namespace Crusader_Wars
         static string south_rotation = "0.00";
         static string north_rotation = "3.14";
 
-        static string Direction = Deployments.Direction;
+
         static string Rotation;
 
         static bool isFirstDirection = false;
-        public static void SetPositions(int total_soldiers)
+        public static void SetPositions(int total_soldiers, string direction)
         {
-            Direction = Deployments.Direction;
-            UnitsDeploymentsPosition UnitsPosition = new UnitsDeploymentsPosition(Direction, ModOptions.DeploymentsZones(), total_soldiers) ;
+
+            UnitsDeploymentsPosition UnitsPosition = new UnitsDeploymentsPosition(direction, ModOptions.DeploymentsZones(), total_soldiers) ;
 
             if (!isFirstDirection) { isFirstDirection = true; }
             else
@@ -447,7 +540,7 @@ namespace Crusader_Wars
         }
 
 
-        public static void AddUnit(string troopKey, int numSoldiers, int numUnits, int numRest, string unitScript, string unit_experience)
+        public static void AddUnit(string troopKey, int numSoldiers, int numUnits, int numRest, string unitScript, string unit_experience, string direction)
         {
             if(numSoldiers <= 1 || numUnits == 0) return;
 
@@ -470,11 +563,11 @@ namespace Crusader_Wars
                  "</unit>\n\n";
 
                 //Add horizontal spacing between units
-                if(Direction is "N" || Direction is "S")
-                    Position.AddUnitXSpacing(Direction);
+                if(direction is "N" || direction is "S")
+                    Position.AddUnitXSpacing(direction);
                 else
                 {
-                    Position.AddUnitYSpacing(Direction);
+                    Position.AddUnitYSpacing(direction);
                 }
 
                 //Reset soldiers num to normal
@@ -490,14 +583,14 @@ namespace Crusader_Wars
             }
 
             //Add vertical spacing between units
-            if (Direction is "N" || Direction is "S")
-            Position.AddUnitYSpacing(Direction);
+            if (direction is "N" || direction is "S")
+            Position.AddUnitYSpacing(direction);
             else
-            Position.AddUnitXSpacing(Direction);
+            Position.AddUnitXSpacing(direction);
 
         }
 
-        public static void AddGeneralUnit(CommanderSystem Commander, string troopType, string unitScript, int experience)
+        public static void AddGeneralUnit(CommanderSystem Commander, string troopType, string unitScript, int experience, string direction)
         {
             if(Commander != null)
             {
@@ -547,11 +640,11 @@ namespace Crusader_Wars
                      "</unit>\n\n";
 
                     //Add horizontal spacing between units
-                    if (Direction is "N" || Direction is "S")
-                        Position.AddUnitXSpacing(Direction);
+                    if (direction is "N" || direction is "S")
+                        Position.AddUnitXSpacing(direction);
                     else
                     {
-                        Position.AddUnitYSpacing(Direction);
+                        Position.AddUnitYSpacing(direction);
                     }
 
                     DeclarationsFile.AddUnitDeclaration("UNIT_" + Unit_Script_Name, Unit_Script_Name);
@@ -561,15 +654,15 @@ namespace Crusader_Wars
                 }
 
                 //Add vertical spacing between units
-                if (Direction is "N" || Direction is "S")
-                    Position.AddUnitYSpacing(Direction);
+                if (direction is "N" || direction is "S")
+                    Position.AddUnitYSpacing(direction);
                 else
-                    Position.AddUnitXSpacing(Direction);
+                    Position.AddUnitXSpacing(direction);
             }
 
         }
 
-        public static void AddKnightUnit(KnightSystem Knights, string troopType, string unitScript, int experience)
+        public static void AddKnightUnit(KnightSystem Knights, string troopType, string unitScript, int experience, string direction)
         {
 
             Knights.WoundedDebuffs();
@@ -621,10 +714,10 @@ namespace Crusader_Wars
                 PR_Unit += "</unit>\n\n";
 
                 //Add vertical spacing between units
-                if (Direction is "N" || Direction is "S")
-                    Position.AddUnitYSpacing(Direction);
+                if (direction is "N" || direction is "S")
+                    Position.AddUnitYSpacing(direction);
                 else
-                    Position.AddUnitXSpacing(Direction);
+                    Position.AddUnitXSpacing(direction);
 
 
                 DeclarationsFile.AddUnitDeclaration("UNIT_" + Unit_Script_Name, Unit_Script_Name);
@@ -634,10 +727,10 @@ namespace Crusader_Wars
             }
 
             //Add vertical spacing between units
-            if (Direction is "N" || Direction is "S")
-                Position.AddUnitYSpacing(Direction);
+            if (direction is "N" || direction is "S")
+                Position.AddUnitYSpacing(direction);
             else
-                Position.AddUnitXSpacing(Direction);
+                Position.AddUnitXSpacing(direction);
 
         }
 
@@ -658,6 +751,13 @@ namespace Crusader_Wars
         private static void CloseArmy()
         {
             string PR_CloseArmy = "</army>\n\n";
+
+            File.AppendAllText(battlePath, PR_CloseArmy);
+
+        }
+        private static void CloseReinforcementArmy()
+        {
+            string PR_CloseArmy = "</reinforcement_army>\n\n";
 
             File.AppendAllText(battlePath, PR_CloseArmy);
 
@@ -686,9 +786,9 @@ namespace Crusader_Wars
             File.AppendAllText(battlePath, PR_EnemyFaction);
         }
 
-        private static void SetBattleDescription(Player Player, int total_soldiers)
+        private static void SetBattleDescription(Army army, int total_soldiers)
         {
-            switch (Player.CombatSide)
+            switch (army.CombatSide)
             {
                 // 0 = player defender 
                 // 1 = enemy defender

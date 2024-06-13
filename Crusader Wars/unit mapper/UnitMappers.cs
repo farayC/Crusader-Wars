@@ -119,11 +119,7 @@ namespace Crusader_Wars
 
         //Load a specific Faction units on top of the Default ones
         static XmlDocument[] MapperFactionFiles { get; set; }
-        public static void LoadCultureMAA(ICharacter side)
-        {
-            if(side is Player) { SetPlayerCultureUnits(MapperFactionFiles, side.AttilaFaction); }
-            if(side is Enemy) { SetEnemyCultureUnits(MapperFactionFiles, side.AttilaFaction); }
-        }
+
 
         private static void LoadSingleMapper(string folderName)
         {
@@ -339,7 +335,7 @@ namespace Crusader_Wars
         {
             try
             {
-                var cultures_files = GetXmlFilePath(folderName, FileType.Culture());
+                var cultures_files = GetXmlFilePath(folderName+@"\Cultures", FileType.Culture());
                 Heritages = new List<(string Heritage, string Faction)>();
                 Cultures = new List<(string Heritage, string Faction)>();
                 foreach (var file in cultures_files)
@@ -370,7 +366,7 @@ namespace Crusader_Wars
 
             try
             {
-                var factions_files = GetXmlFilePath(folderName, FileType.Factions());
+                var factions_files = GetXmlFilePath(folderName+@"\Factions", FileType.Factions());
                 PlayerUnits = new List<(string Type, string Key, int Max, string Script)>();
                 EnemyUnits = new List<(string Type, string Key, int Max, string Script)>();
                 var files_list = new List<XmlDocument>();
@@ -417,221 +413,19 @@ namespace Crusader_Wars
 
         }
 
-        //Remove whitespaces from unit keys to prevent Attila Crashes
+        //Removes whitespaces from unit keys to prevent Attila Crashes
         static string TrimKey(string key)
         {
             string trimmed = string.Concat(key.Where(c => !char.IsWhiteSpace(c)));
             return trimmed;
         }
         
-        // V1.0 BETA----------------------
-        public static string GetAttilaFaction(string culture_name, string heritage_name)
-        {
-            string faction = "";
-            foreach(var heritage in Heritages)
-            {
-                if(heritage_name == heritage.Heritage)
-                {
-                    faction = heritage.Faction; break;
-                }
-            }
 
-            foreach(var culture in Cultures)
-            {
-                if(culture_name == culture.Cultures)
-                {
-                    faction = culture.Faction; break;
-                }
-            }
-
-            return faction;
-        }
-
-        public static string GetUnitKey(Unit unit)
-        {
-            string unit_key = "not found";
-            foreach(var file in MapperFactionFiles)
-            {
-                XElement root = XElement.Parse(file.InnerXml);
-                // Find the element with the specified attribute value
-                XElement element = root.Elements().FirstOrDefault(e => e.Attribute("name")?.Value == unit.GetAttilaFaction());
-                if (element is null)
-                {
-                    unit_key = "not_found";
-                    continue; //next file
-                }
-
-                // Find the subelement with a specific id attribute value within the found element
-                XElement subelement = element.Elements().FirstOrDefault(e => (string)e.Attribute("type") == unit.GetName());
-                if(subelement is null)
-                {
-                    unit_key = "not_found";
-                    continue; //next file
-                }
-                
-                unit_key = subelement?.Attribute("key")?.Value;
-                break;
-            }
-
-            return unit_key;
-        }
-
-        public static int GetMax(Unit unit)
-        {
-            string max = "not found";
-            foreach (var file in MapperFactionFiles)
-            {
-                XElement root = XElement.Parse(file.InnerXml);
-                // Find the element with the specified attribute value
-                XElement element = root.Elements().FirstOrDefault(e => e.Attribute("name")?.Value == "default");
-                if (element is null)
-                {
-                    max = "not found";
-                    continue; //next file
-                }
-
-                // Find the subelement with a specific id attribute value within the found element
-                XElement subelement = element.Elements().FirstOrDefault(e => (string)e.Attribute("type") == unit.GetName());
-                if (subelement is null)
-                {
-                    max = "not found";
-                    continue; //next file
-                }
-
-                max = subelement?.Attribute("max")?.Value;
-                break;
-            }
-
-            return MaxType.GetMax(max);
-        }
-        //----------------------------------
-
-        private static void SetPlayerCultureUnits(XmlDocument[] factionFile, string attilaFaction)
-        {
-
-            try
-            {
-                foreach(var file in factionFile)
-                {
-                    foreach (XmlElement Faction in file.DocumentElement.ChildNodes)
-                    {
-                        //Faction Culture Units
-                        if (Faction.Attributes["name"].Value == attilaFaction)
-                        {
-                            foreach (XmlNode Unit in Faction.ChildNodes)
-                            {
-                                for (int i = 0; i < PlayerUnits.Count; i++)
-                                {
-                                    if (Unit.Name is "General" || Unit.Name is "Knights")
-                                    {
-                                        if (PlayerUnits[i].Type == Unit.Name && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
-                                        {
-                                            string key = TrimKey(Unit.Attributes["key"].Value);
-                                            //default unit keys bug quick fix
-                                            if (key == "DEFAULT") { key = PlayerUnits[i].Key; }
-                                            PlayerUnits[i] = (Unit.Name, key, PlayerUnits[i].Max, PlayerUnits[i].Script);
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            continue;
-                                        }
-                                    }
-
-                                    if ((Unit.Attributes["type"].Value == PlayerUnits[i].Type) &&
-                                       (Unit.Name != "General" || Unit.Name != "Knights") && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
-                                    {
-                                        
-                                        string key = TrimKey(Unit.Attributes["key"].Value);
-
-                                        //default unit keys bug quick fix
-                                        if (key == "DEFAULT") { key = PlayerUnits[i].Key; }
-                                        PlayerUnits[i] = (PlayerUnits[i].Type, key, PlayerUnits[i].Max, PlayerUnits[i].Script);
-                                    }
-                                    else
-                                    {
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
-
-            }
-            catch 
-            {
-                MessageBox.Show("Error setting army cultural unit!", "Unit Mapper Error",
-                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-            }   
-
-            
-        }
-
-        private static void SetEnemyCultureUnits(XmlDocument[] factionFile, string attilaFaction)
-        {
-
-            try
-            {
-                foreach(var file in factionFile)
-                {
-                    foreach (XmlElement Faction in file.DocumentElement.ChildNodes)
-                    {
-                        //Faction Culture Units
-                        if (Faction.Attributes["name"].Value == attilaFaction)
-                        {
-                            foreach (XmlNode Unit in Faction.ChildNodes)
-                            {
-                                for (int i = 0; i < EnemyUnits.Count; i++)
-                                {
-                                    if (Unit.Name is "General" || Unit.Name is "Knights" && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
-                                    {
-                                        if (EnemyUnits[i].Type == Unit.Name)
-                                        {
-                                            string key = TrimKey(Unit.Attributes["key"].Value);
-                                            //default unit keys bug quick fix
-                                            if (key == "DEFAULT") { key = EnemyUnits[i].Key; }
-                                            EnemyUnits[i] = (Unit.Name, key, EnemyUnits[i].Max, EnemyUnits[i].Script);
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            continue;
-                                        }
-                                    }
-
-                                    if ((Unit.Attributes["type"].Value == EnemyUnits[i].Type) &&
-                                       (Unit.Name != "General" || Unit.Name != "Knights") && (Unit.Attributes["key"].Value != "DEFAULT" || Unit.Attributes["key"].Value != "default"))
-                                    {
-                                        string key = TrimKey(Unit.Attributes["key"].Value);
-                                        //default unit keys bug quick fix
-                                        if (key == "DEFAULT") { key = EnemyUnits[i].Key; }
-                                        EnemyUnits[i] = (EnemyUnits[i].Type, key, EnemyUnits[i].Max, EnemyUnits[i].Script);
-                                    }
-                                    else
-                                    {
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
- 
-            }
-            catch
-            {
-                MessageBox.Show("Error setting army cultural unit!", "Unit Mapper Error",
-                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-            }
-
-        }
 
 
         public static List<string> GetXmlFilePath(string folderName, string fileType)
         {
-            string mapper_path = Directory.GetCurrentDirectory() + $@"\Mappers\{folderName}";
+            string mapper_path = Directory.GetCurrentDirectory() + $@"\unit mappers\{folderName}";
             string languages_path = $@".\Languages\{Languages.Language}";
             var files = Directory.GetFiles(mapper_path, "*.xml");
             switch (fileType)

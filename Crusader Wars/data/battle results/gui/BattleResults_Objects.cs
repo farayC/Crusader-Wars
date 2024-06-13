@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Crusader_Wars
 {
-    public class Units
+    public class UnitsResults
     {
         //SOLDIERS ALIVE
         public List<(string Name, string Remaining)> Alive_MainPhase { get; private  set; }

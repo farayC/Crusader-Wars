@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Media;
 using System.Linq;
 using System.Drawing;
 using System.Xml.Linq;
@@ -15,6 +16,9 @@ using Crusader_Wars.client;
 using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.locs;
 using Crusader_Wars.data.attila_settings;
+using Crusader_Wars.data.save_file;
+using Crusader_Wars.unit_mapper;
+using Crusader_Wars.terrain;
 
 namespace Crusader_Wars
 {
@@ -66,8 +70,7 @@ namespace Crusader_Wars
             Properties.Settings.Default.VAR_log_ck3 = debugLog_Path;
             Properties.Settings.Default.Save();
 
-            Updater.CheckAppVersion(this);
-            RemoveFiles();            
+            Updater.CheckAppVersion(this);       
 
             labelVersion.Text = $"V{Updater.AppVersion}";
 
@@ -79,42 +82,6 @@ namespace Crusader_Wars
         }
 
 
-        void RemoveFiles()
-        {
-
-            string remove_file = @".\Settings\filestoremove.txt";
-            if (File.Exists(remove_file))
-            {
-                string[] files=  File.ReadAllLines(remove_file);
-                foreach (string file in files) 
-                {
-                    try
-                    {
-                        //to delete files
-                        if(File.Exists(file))
-                        {
-                            File.Delete(file);
-                            continue;
-                        }
-                        //to delete folders
-                        if(Directory.Exists(file))
-                        {
-                            Directory.Delete(file);
-                            continue;
-                        }
-                        
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-
-                }
-                
-                //Auto destroy itself
-                File.Delete(remove_file);
-            }
-        }
 
         Color Original_Color;
         private void Timer_Tick(object sender, EventArgs e)
@@ -146,11 +113,12 @@ namespace Crusader_Wars
         string saveGames_Path = documentsPath + "\\Paradox Interactive\\Crusader Kings III\\save games";
         private void Form1_Load(object sender, EventArgs e)
         {
+
             //Load Game Paths
             Options.ReadGamePaths();
 
             //Hide debug button
-            btt_debug.Visible = false;
+            btt_debug.Visible = true;
 
             Color myColor = Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
@@ -169,15 +137,14 @@ namespace Crusader_Wars
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
-
         }
         
 
         Player Player;
         Enemy Enemy;
 
-        //List<Army> attacker_armies;
-        //List<Army> defender_armies;
+        List<Army> attacker_armies;
+        List<Army> defender_armies;
         private void HomePage_Shown(object sender, EventArgs e)
         {
             infoLabel.Text = "Loading DLLs...";
@@ -229,9 +196,14 @@ namespace Crusader_Wars
         LoadingScreen LoadingScreen;
         private async void ExecuteButton_Click(object sender, EventArgs e)
         {
+            sounds = new SoundPlayer(@".\data\sounds\sword-slash-with-metal-shield-impact-185433.wav");
+            sounds.Play();
+
             _myVariable = 1;
 
             ExecuteButton.Enabled = false;
+            ExecuteButton.BackgroundImage = Properties.Resources.start_new_disabled;
+            this.Text = "Crusader Wars (Waiting for battle...)";
 
             ProcessCommands.ResumeProcess();
 
@@ -248,15 +220,18 @@ namespace Crusader_Wars
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Ready to start!";
                     ExecuteButton.Enabled = true;
+                    this.Text = "Crusader Wars";
                     break;
                 }
 
+                DataSearch.ClearLogFile();
+                DeclarationsFile.Erase();
+                BattleScript.EraseScript();
+                BattleResult.ClearAttilaLog();
+
                 try
                 {
-                    DataSearch.ClearLogFile();
-                    DeclarationsFile.Erase();
-                    BattleScript.EraseScript();
-                    BattleResult.ClearAttilaLog();
+
                 }
                 catch
                 {
@@ -264,6 +239,7 @@ namespace Crusader_Wars
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Ready to start!";
                     ExecuteButton.Enabled = true;
+                    this.Text = "Crusader Wars";
                     break;
                 }
 
@@ -278,6 +254,7 @@ namespace Crusader_Wars
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Ready to start!";
                     ExecuteButton.Enabled = true;
+                    this.Text = "Crusader Wars";
                     break;
                 }
 
@@ -324,9 +301,11 @@ namespace Crusader_Wars
                             MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                             infoLabel.Text = "Ready to start!";
                             ExecuteButton.Enabled = true;
+                            this.Text = "Crusader Wars";
                             LoadingScreen.Close();
                             break;
                         }
+
 
                         try
                         {
@@ -344,7 +323,8 @@ namespace Crusader_Wars
                             {
                                 LoadingScreen.ChangeMessage("Reading battle data...");
 
-                                infoLabel.Text = "Reading data...";
+                                infoLabel.Text = "Reading battle data...";
+                                this.Text = "Crusader Wars (Reading battle data...)";
 
                                 Player = new Player();
                                 Enemy = new Enemy();
@@ -361,6 +341,7 @@ namespace Crusader_Wars
                             MessageBox.Show("Error reading battle data.", "Data Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                             infoLabel.Text = "Waiting for battle...";
+                            this.Text = "Crusader Wars (Waiting for battle...)";
 
                             //Data Clear
                             Data.Reset();
@@ -385,27 +366,14 @@ namespace Crusader_Wars
 
                 path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
 
-                long startMemoryTotal = GC.GetTotalMemory(false);
-
-
-
-                long endMemory10 = GC.GetTotalMemory(false);
-                long memoryUsage10 = endMemory10 - startMemoryTotal;
-                Console.WriteLine($"----\nReading data from save file ...\nTotal Memory Usage: {memoryUsage10 / 1048576} mb\n----");
-                
-
+                LoadingScreen.ChangeMessage("Reading save file data...");
+                Reader.SetData(Player, Enemy);
+                Reader.ReadFile(path_editedSave);
+                BattleResult.GetPlayerCombatResult();
+                BattleResult.ReadPlayerCombat(Player.ID.ToString());
 
                 try
                 {
-                    LoadingScreen.ChangeMessage("Reading save file data...");
-                    Reader.SetData(Player, Enemy);
-                    BattleResult.LoadSaveFile(path_editedSave);
-                    BattleResult.GetPlayerCombatResult();
-                    BattleResult.ReadPlayerCombat(Player.ID.ToString());
-                    BattleResult.GetAttackerRegiments();
-                    BattleResult.GetDefenderRegiments();
-                    BattleResult.GetAllArmyRegiments();
-                    BattleResult.GetAllRegiments();
 
                 }
                 catch
@@ -427,34 +395,32 @@ namespace Crusader_Wars
                 }
 
                 //1.0 Beta Debug
-                //var armies = ArmiesReader.ReadBattleArmies();
-                //attacker_armies = armies.attacker;
-                //defender_armies = armies.defender;
+                var armies = ArmiesReader.ReadBattleArmies();
+                attacker_armies = armies.attacker;
+                defender_armies = armies.defender;
 
+                if (ModOptions.UnitCards())
+                {
+                    LoadingScreen.ChangeMessage("Changing unit cards names...");
+                    UnitsCardsNames.ChangeUnitsCardsNames(UnitMapper.LoadedMapper, Player, Enemy);
+                }
 
+                LoadingScreen.ChangeMessage("Adding battle details...");
+                BattleDetails.ChangeBattleDetails(Player, Enemy);
 
                 try
                 {
-                    LoadingScreen.ChangeMessage("Reading combat sides...");
-                    BattleResult.GetCombatSides(Player, Enemy);
 
-                    if (ModOptions.UnitCards())
-                    {
-                        LoadingScreen.ChangeMessage("Changing unit cards names...");
-                        UnitsCardsNames.ChangeUnitsCardsNames(UnitMapper.LoadedMapper, Player, Enemy);
-                    }
-
-                    LoadingScreen.ChangeMessage("Adding battle details...");
-                    BattleDetails.ChangeBattleDetails(Player, Enemy);
                 }
                 catch
                 {
                     this.Show();
                     LoadingScreen.Close();
-                    MessageBox.Show("Error reading the save file. Disable Ironman or Debug Mode.", "Save File Error",
+                    MessageBox.Show("Error reading the battle armies.", "Beta Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";
+                    this.Text = "Crusader Wars (Waiting for battle...)";
 
                     //Data Clear
                     Data.Reset();
@@ -464,41 +430,36 @@ namespace Crusader_Wars
                     continue;
                 }
 
+                Games.CloseTotalWarAttilaProcess();
+                LoadingScreen.ChangeMessage("Creating battle in Total War: Attila...");
+
+                //Create Declarations
+                DeclarationsFile.CreateAlliances(attacker_armies, defender_armies);
+
+                //Create Remaining Soldiers Script
+                BattleScript.CreateScript();
+
+                //Create Battle
+                ArmyProportions.AutoSizeUnits(Player.TotalNumber, Enemy.TotalNumber); // # FIX THIS!
+
+                //BattleFile.CreateBattle(Player, Enemy); <-- old pre-beta
+                BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
 
 
+                //Close Script
+                BattleScript.CloseScript();
+
+                //Set Units Kills Script
+                BattleScript.SetLocalsKills(Data.units_scripts);
+
+                //Close Script
+                BattleScript.CloseScript();
+
+                //Creates .pack mod file
+                PackFile.PackFileCreator();
                 try
                 {
-                    Games.CloseTotalWarAttilaProcess();
 
-                    LoadingScreen.ChangeMessage("Creating battle in Total War Attila...");
-
-                    //Create Declarations
-                    DeclarationsFile.CreateAlliances();
-
-                    //Create Remaining Soldiers Script
-                    BattleScript.CreateScript();
-
-                    //Create Battle
-                    ArmyProportions.AutoSizeUnits(Player.TotalNumber, Enemy.TotalNumber);
-                    BattleFile.CreateBattle(Player, Enemy);
-
-                   // BattleFile.BETA_CreateBattle(attacker_armies, defender_armies, Player, Enemy);
-
-
-                    //Close Script
-                    BattleScript.CloseScript();
-
-                    //Set Units Kills Script
-                    BattleScript.SetLocalsKills(Data.units_scripts);
-
-                    //Close Script
-                    BattleScript.CloseScript();
-
-                    //Set Units Declarations
-                    DeclarationsFile.SetDeclarations();
-
-                    //Creates .pack mod file
-                    PackFile.PackFileCreator();
                 }
                 catch
                 {
@@ -508,6 +469,7 @@ namespace Crusader_Wars
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";
+                    this.Text = "Crusader Wars (Waiting for battle...)";
 
                     //Data Clear
                     Data.Reset();
@@ -536,6 +498,7 @@ namespace Crusader_Wars
                     infoLabel.Text = "Ready to start!";
                     ProcessCommands.ResumeProcess();
                     ExecuteButton.Enabled = true;
+                    this.Text = "Crusader Wars";
                     break;
                 }
 
@@ -555,6 +518,7 @@ namespace Crusader_Wars
                     Games.CloseTotalWarAttilaProcess();
                     Games.StartCrusaderKingsProcess();
                     infoLabel.Text = "Waiting for battle...";
+                    this.Text = "Crusader Wars (Waiting for battle...)";
 
                     //Data Clear
                     Data.Reset();
@@ -569,7 +533,7 @@ namespace Crusader_Wars
                 Console.WriteLine("Conversion Completed");
                 infoLabel.Text = "Battle Converted!";
 
-                // Retrieve battle result to ck3
+                //               Retrieve battle result to ck3
                 //-----------------------------------------------------------
                 //                       Battle Results                     |
                 //-----------------------------------------------------------
@@ -579,33 +543,39 @@ namespace Crusader_Wars
                 bool battleEnded = false;
 
                 infoLabel.Text = "Waiting battle to end...";
+                this.Text = "Crusader Wars (Waiting battle to end...)";
 
-                try
+                while (battleEnded == false)
                 {
-                    while (battleEnded == false)
+                    battleEnded = BattleResult.HasBattleEnded(attilaLogPath);
+                    await Task.Delay(10);
+                }
+
+                if(battleEnded)
+                {
+                    ModOptions.CloseAttila();
+                    RequiredModsMessage.CloseAllWindows();
+
+                    infoLabel.Text = "Battle has ended!";
+                    this.Text = "Battle has eneded";
+                    string path_log_attila = Properties.Settings.Default.VAR_log_attila;
+
+
+                    //Attila Remaining Soldiers
+                    foreach(var army in attacker_armies)
                     {
-                        battleEnded = BattleResult.HasBattleEnded(attilaLogPath);
-                        await Task.Delay(10);
+                        BattleResult.GetUnitsData(army, path_log_attila);
                     }
-                }
-                catch
-                {
-                    MessageBox.Show("Error while waiting for battle results", "Data Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                    Games.CloseTotalWarAttilaProcess();
-                    Games.StartCrusaderKingsProcess();
-                    infoLabel.Text = "Waiting for battle...";
+                    foreach(var army in defender_armies)
+                    {
+                        BattleResult.GetUnitsData(army, path_log_attila);
+                    }
 
-                    //Data Clear
-                    Data.Reset();
-                    Player = new Player();
-                    Enemy = new Enemy();
-
-                    continue;
+                    
+                    
                 }
 
-
-
+                /*
                 if (battleEnded)
                 {
                     ModOptions.CloseAttila();
@@ -626,13 +596,10 @@ namespace Crusader_Wars
                     {
                         //Attila Remaining Soldiers
 
-                        long startMemory = GC.GetTotalMemory(false);
                         //Remaining_Soldiers_List = BattleResult.GetRemainingSoldiersData(path_log_attila);
                         BattleResult.GetUnitsData(Player, path_log_attila);
                         BattleResult.GetUnitsData(Enemy, path_log_attila);
-                        long endMemory = GC.GetTotalMemory(false);
-                        long memoryUsage = endMemory - startMemory;
-                        Console.WriteLine($"----\nGetting from Attila log the remaining soldiers...\nMemory Usage: {memoryUsage / 1048576} mb\n----");
+
 
                         Player_Remaining = new List<(string Name, string Remaining)>();
                         Enemy_Remaining = new List<(string Name, string Remaining)>();
@@ -707,32 +674,15 @@ namespace Crusader_Wars
 
                         
                         //Commanders Health System
-                        SaveFile.ReadAll(); //memory intensive
-                        Player.Commander.Health();
-                        Enemy.Commander.Health();
+                        //Player.Commander.Health();
+                        //Enemy.Commander.Health();
 
                         //Knights Health System
-                        Player.Knights.Health();
-                        Enemy.Knights.Health();
-                        SaveFile.SendToFile(); //hmmm sus...
+                        //Player.Knights.Health();
+                        //Enemy.Knights.Health();
 
                         winner = BattleResult.GetAttilaWinner(attilaLogPath, Player.CombatSide, Enemy.CombatSide);
 
-                        switch (Player.CombatSide)
-                        {
-                            case "attacker":
-
-                                BattleResult.SetRemainingAttacker(Player_Remaining);
-                                BattleResult.SetRemainingDefender(Enemy_Remaining);
-
-                                break;
-                            case "defender":
-
-                                BattleResult.SetRemainingAttacker(Enemy_Remaining);
-                                BattleResult.SetRemainingDefender(Player_Remaining);
-
-                                break;
-                        }
                     }
                     catch
                     {
@@ -741,6 +691,7 @@ namespace Crusader_Wars
                         Games.CloseTotalWarAttilaProcess();
                         Games.StartCrusaderKingsProcess();
                         infoLabel.Text = "Waiting for battle...";
+                        this.Text = "Crusader Wars (Waiting for battle...)";
 
                         //Data Clear
                         Data.Reset();
@@ -760,11 +711,8 @@ namespace Crusader_Wars
                         else side = true; //Defender Player and Attacker Enemy
                         BattleResult.EditCombatResults(Player, Enemy, side);
 
-                        BattleResult.SetAttackerGUIRegiments();
-                        BattleResult.SetDefenderGUIRegiments();
                         BattleResult.SetWinner(winner);
-                        BattleResult.SetAttackerDATA();
-                        BattleResult.SetDefenderDATA();
+
                         BattleResult.SendToSaveFile(path_editedSave);
                         Games.LoadBattleResults();
                     }
@@ -775,6 +723,7 @@ namespace Crusader_Wars
                         Games.CloseTotalWarAttilaProcess();
                         Games.StartCrusaderKingsProcess();
                         infoLabel.Text = "Waiting for battle...";
+                        this.Text = "Crusader Wars (Waiting for battle...)";
 
                         //Data Clear
                         Data.Reset();
@@ -789,6 +738,7 @@ namespace Crusader_Wars
                     infoLabel.Text = "Battle results sent!";
 
                 }
+                */
 
                 await Task.Delay(10);
 
@@ -816,7 +766,7 @@ namespace Crusader_Wars
             private static string ProcessRuntime(string command)
             {
                 //Get User Path
-                string filePath = Directory.GetFiles("runtime", "pssuspend64.exe", SearchOption.AllDirectories)[0];
+                string filePath = Directory.GetFiles(@".\data\runtime", "pssuspend64.exe", SearchOption.AllDirectories)[0];
                 ProcessStartInfo procStartInfo = new ProcessStartInfo(filePath, command)
                 {
                     RedirectStandardOutput = true,
@@ -916,9 +866,11 @@ namespace Crusader_Wars
 
             }
         };
-        
 
-  
+
+      /*---------------------------------------------
+       * :::::::::::LOW-LEVEL FUNCTIONS  :::::::::::::
+       ---------------------------------------------*/
         private string RemoveASCII(string inputString)
         {
             StringBuilder sb = new StringBuilder();
@@ -937,7 +889,7 @@ namespace Crusader_Wars
         {
             try
             {
-                string dll_folder = @".\dlls";
+                string dll_folder = @".\data\dlls";
                 foreach (string dllFile in Directory.GetFiles(dll_folder, "*.dll"))
                 {
                     Assembly assembly = Assembly.LoadFrom(dllFile);
@@ -953,6 +905,9 @@ namespace Crusader_Wars
 
         private void SettingsBtn_Click(object sender, EventArgs e)
         {
+            SettingsBtn.BackgroundImage = Properties.Resources.options_btn_new_click;
+            sounds = new SoundPlayer(@".\data\sounds\metal-dagger-hit-185444.wav");
+            sounds.Play();
             Options optionsChild = new Options();
             optionsChild.ShowDialog();
         }
@@ -963,65 +918,110 @@ namespace Crusader_Wars
             ProcessCommands.ResumeProcess();
         }
 
+        SoundPlayer sounds;
+
+        private void patreonBtn_Click(object sender, EventArgs e)
+        {
+            patreonBtn.BackgroundImage = Properties.Resources.patreon_btn_clickpng;
+            sounds = new SoundPlayer(@".\data\sounds\metal-dagger-hit-185444.wav");
+            sounds.Play();
+            Process.Start("https://www.patreon.com/user?u=83859552");
+
+        }
+
+        private void WebsiteBTN_Click(object sender, EventArgs e)
+        {
+            WebsiteBTN.BackgroundImage = Properties.Resources.website_btn_new_click;
+            sounds = new SoundPlayer(@".\data\sounds\metal-dagger-hit-185444.wav");
+            sounds.Play();
+            Process.Start("https://www.crusaderwars.com");
+
+        }
+
+        private void SteamBTN_Click(object sender, EventArgs e)
+        {
+            SteamBTN.BackgroundImage = Properties.Resources.steam_btn_new_click;
+            sounds = new SoundPlayer(@".\data\sounds\metal-dagger-hit-185444.wav");
+            sounds.Play();
+            Process.Start("https://steamcommunity.com/sharedfiles/filedetails/?id=2977969008");
+        }
+
+        private void patreonBtn_MouseEnter(object sender, EventArgs e)
+        {
+            patreonBtn.BackgroundImage = Properties.Resources.patreon_btn_hover;
+        }
+
+        private void patreonBtn_MouseLeave(object sender, EventArgs e)
+        {
+            patreonBtn.BackgroundImage = Properties.Resources.patreon_btn_new;
+        }
+
+        private void patreonBtn_MouseHover_1(object sender, EventArgs e)
+        {
+            patreonBtn.BackgroundImage = Properties.Resources.patreon_btn_hover;
+        }
+
+        private void ExecuteButton_MouseEnter(object sender, EventArgs e)
+        {
+            if (ExecuteButton.Enabled)
+                ExecuteButton.BackgroundImage = Properties.Resources.start_new_hover;
+        }
 
         private void ExecuteButton_MouseHover(object sender, EventArgs e)
         {
             if(ExecuteButton.Enabled)
-            {
-                InformationToolTip.ToolTipTitle = "";
-                InformationToolTip.SetToolTip(ExecuteButton, "Start");
-            }
-            else
-            {
-                InformationToolTip.ToolTipTitle = "";
-                InformationToolTip.SetToolTip(ExecuteButton, "Running...");
-            }
-
+            ExecuteButton.BackgroundImage = Properties.Resources.start_new_hover;
         }
 
-
-        private void btnWebsite_Click(object sender, EventArgs e)
+        private void ExecuteButton_MouseLeave(object sender, EventArgs e)
         {
-            Process.Start("https://crusaderwars.com/");
+            if (ExecuteButton.Enabled)
+                ExecuteButton.BackgroundImage = Properties.Resources.start_new;
         }
 
-        private void btnWebsite_MouseHover(object sender, EventArgs e)
+        private void SettingsBtn_MouseHover(object sender, EventArgs e)
         {
-            InformationToolTip.ToolTipTitle = "Check our website!";
-            InformationToolTip.SetToolTip(btnWebsite, "You can find useful information about the mod.");
+            SettingsBtn.BackgroundImage = Properties.Resources.options_btn_new_hover;
         }
 
-        private void btnDiscord_Click(object sender, EventArgs e)
+        private void SettingsBtn_MouseLeave(object sender, EventArgs e)
         {
-            Process.Start("https://discord.gg/8tVhPMRT9A");
+            SettingsBtn.BackgroundImage = Properties.Resources.options_btn_new;
         }
 
-        private void btnDiscord_MouseHover(object sender, EventArgs e)
+        private void SettingsBtn_MouseEnter(object sender, EventArgs e)
         {
-            InformationToolTip.ToolTipTitle = "Join our community!";
-            InformationToolTip.SetToolTip(btnDiscord, "If you need support ask us, we answer fast.");
+            SettingsBtn.BackgroundImage = Properties.Resources.options_btn_new_hover;
         }
 
-        private void btnSteam_Click(object sender, EventArgs e)
+        private void WebsiteBTN_MouseEnter(object sender, EventArgs e)
         {
-            Process.Start("https://steamcommunity.com/sharedfiles/filedetails/?id=2977969008");
+            WebsiteBTN.BackgroundImage = Properties.Resources.website_btn_new_hover1;
         }
 
-        private void btnSteam_MouseHover(object sender, EventArgs e)
+        private void WebsiteBTN_MouseHover(object sender, EventArgs e)
         {
-            InformationToolTip.ToolTipTitle = "Crusader Kings 3 required mod";
-            InformationToolTip.SetToolTip(btnSteam, "Subscribe to Crusader Wars mod.");
+            WebsiteBTN.BackgroundImage = Properties.Resources.website_btn_new_hover1;
         }
 
-        private void btnPatch_Click(object sender, EventArgs e)
+        private void WebsiteBTN_MouseLeave(object sender, EventArgs e)
         {
-            Process.Start("https://crusaderwars.com/patches/");
+            WebsiteBTN.BackgroundImage = Properties.Resources.website_btn_new;
         }
 
-        private void btnPatch_MouseHover(object sender, EventArgs e)
+        private void SteamBTN_MouseEnter(object sender, EventArgs e)
         {
-            InformationToolTip.ToolTipTitle = "Check recent update changes!";
-            InformationToolTip.SetToolTip(btnPatch, "See what we added, fixed, improved, etc..");
+            SteamBTN.BackgroundImage = Properties.Resources.steam_btn_new_hover1;
+        }
+
+        private void SteamBTN_MouseHover(object sender, EventArgs e)
+        {
+            SteamBTN.BackgroundImage = Properties.Resources.steam_btn_new_hover1;
+        }
+
+        private void SteamBTN_MouseLeave(object sender, EventArgs e)
+        {
+            SteamBTN.BackgroundImage = Properties.Resources.steam_btn_new;
         }
     }
 }

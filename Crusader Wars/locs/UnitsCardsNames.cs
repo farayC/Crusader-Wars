@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crusader_Wars.data.save_file;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace Crusader_Wars.locs
 {
+    /*
+     *      REWORK ALL OF THIS SECTION FOR BETA
+     * 
+     */
     static class UnitsCardsNames
     {
 
@@ -31,31 +36,31 @@ namespace Crusader_Wars.locs
                 case "OfficialCW_DarkAges_AOC":
                 case "OfficialCW_EarlyMedieval_919Mod":
                     string[] loc_files = Directory.GetFiles(@".\data\units_cards_names\anno domini\");
-                    EditUnitCardsFiles(loc_files, Player, Enemy);
+                    //EditUnitCardsFiles(loc_files, Player, Enemy);
                     break;
                 case "OfficialCW_HighMedieval_MK1212":
                 case "OfficialCW_LateMedieval_MK1212":
                 case "OfficialCW_Renaissance_MK1212":
                     string[] mk1212_loc_files = Directory.GetFiles(@".\data\units_cards_names\mk1212\");
-                    EditUnitCardsFiles(mk1212_loc_files, Player, Enemy);
+                    //EditUnitCardsFiles(mk1212_loc_files, Player, Enemy);
                     break;
                 case "xCW_FallenEagle_AgeOfJustinian":
                     string[] aoj_loc_files = Directory.GetFiles(@".\data\units_cards_names\age of justinian\");
-                    EditUnitCardsFiles(aoj_loc_files, Player, Enemy);
+                    //EditUnitCardsFiles(aoj_loc_files, Player, Enemy);
                     break;
                 case "xCW_FallenEagle_FallofTheEagle":
                     string[] fte_loc_files = Directory.GetFiles(@".\data\units_cards_names\fall of the eagles\");
-                    EditUnitCardsFiles(fte_loc_files, Player, Enemy);
+                    //EditUnitCardsFiles(fte_loc_files, Player, Enemy);
                     break;
                 case "xCW_RealmsInExile_TheDawnlessDays":
                     string[] lotr_loc_files = Directory.GetFiles(@".\data\units_cards_names\dawnless days\");
-                    EditUnitCardsFiles(lotr_loc_files, Player, Enemy);
+                    //EditUnitCardsFiles(lotr_loc_files, Player, Enemy);
                     break;
             }
 
         }
-
-        private static void EditUnitCardsFiles(string[] unit_cards_files, Player Player, Enemy Enemy)
+        /*
+        private static void EditUnitCardsFiles(string[] unit_cards_files, List<Army> attacker, List<Army> defender)
         {
             for (int i = 0; i < unit_cards_files.Length; i++)
             {
@@ -81,74 +86,84 @@ namespace Crusader_Wars.locs
                     {
                         line = reader.ReadLine();
 
-                        foreach (var regiment in Player.Army)
+                        foreach(var army in attacker)
                         {
-                            if (line.Contains($"land_units_onscreen_name_{regiment.Key}\t"))
+                            foreach(var unit in army.Units)
                             {
-                                //Commander
-                                if (regiment.Type == "General")
+                                if (line.Contains($"land_units_onscreen_name_{unit.GetAttilaUnitKey()}\t"))
                                 {
-                                    string commander_name = ReturnGeneralName(Player);
-                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
+                                    //Commander
+                                    if (unit.GetRegimentType() == RegimentType.Knight)
+                                    {
+                                        string commander_name = ReturnGeneralName(Player);
+                                        line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
+                                        break;
+                                    }
+
+                                    //Knights
+                                    if (unit.GetRegimentType() == RegimentType.Knight && unit.GetSoldiers() > 0)
+                                    {
+                                        string knights_name = RemoveDiacritics(Player_KnightsName);
+                                        line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{knights_name}\t");
+                                        break;
+                                    }
+
+
+                                    //Levies
+                                    if (unit.GetRegimentType() == RegimentType.Levy)
+                                    {
+                                        string levies_name = ReturnLeviesName(regiment.Type);
+
+                                        line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
+                                        break;
+                                    }
+
+                                    //Men-At-Arms
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{unit.GetName()}\t");
                                     break;
                                 }
-
-                                //Knights
-                                if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
-                                {
-                                    string knights_name = RemoveDiacritics(Player_KnightsName);
-                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{knights_name}\t");
-                                    break;
-                                }
-
-
-                                //Levies
-                                if (regiment.Type.Contains("Levy"))
-                                {
-                                    string levies_name = ReturnLeviesName(regiment.Type);
-
-                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
-                                    break;
-                                }
-
-                                //Men-At-Arms
-                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{regiment.Type}\t");
-                                break;
                             }
+
                         }
 
-                        foreach (var regiment in Enemy.Army)
+                        foreach (var army in defender)
                         {
-                            if (line.Contains($"land_units_onscreen_name_{regiment.Key}\t"))
+                            foreach (var unit in army.Units)
                             {
-                                //Commander
-                                if (regiment.Type == "General")
+                                if (line.Contains($"land_units_onscreen_name_{unit.GetAttilaUnitKey()}\t"))
                                 {
-                                    string commander_name = ReturnGeneralName(Enemy);
-                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
+                                    //Commander
+                                    if (unit.GetRegimentType() == RegimentType.Knight)
+                                    {
+                                        string commander_name = ReturnGeneralName(Player);
+                                        line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{commander_name}\t");
+                                        break;
+                                    }
+
+                                    //Knights
+                                    if (unit.GetRegimentType() == RegimentType.Knight && unit.GetSoldiers() > 0)
+                                    {
+                                        string knights_name = RemoveDiacritics(Player_KnightsName);
+                                        line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{knights_name}\t");
+                                        break;
+                                    }
+
+
+                                    //Levies
+                                    if (unit.GetRegimentType() == RegimentType.Levy)
+                                    {
+                                        string levies_name = ReturnLeviesName(regiment.Type);
+
+                                        line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
+                                        break;
+                                    }
+
+                                    //Men-At-Arms
+                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{unit.GetName()}\t");
                                     break;
                                 }
-
-                                //Knights
-                                if (regiment.Type == "Knights" && regiment.SoldiersNum > 0)
-                                {
-                                    string knights_name = RemoveDiacritics(Enemy_KnightsName);
-                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{knights_name}\t");
-                                    break;
-                                }
-
-
-                                if (regiment.Type.Contains("Levy"))
-                                {
-                                    string levies_name = ReturnLeviesName(regiment.Type);
-
-                                    line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{levies_name}\t");
-                                    break;
-                                }
-
-                                line = Regex.Replace(line, @"\t(?<UnitName>.+)\t", $"\t{regiment.Type}\t");
-                                break;
                             }
+
                         }
 
                         edited_names += line + "\n"; // write to string every line
@@ -169,6 +184,8 @@ namespace Crusader_Wars.locs
 
 
         }
+        */
+
 
 
         private static string ReturnLeviesName(string levy_type)
