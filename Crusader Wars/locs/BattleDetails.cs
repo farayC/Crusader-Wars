@@ -19,11 +19,11 @@ namespace Crusader_Wars.locs
             Name = a;
         }
 
-        public static void ChangeBattleDetails(Player player, Enemy enemy)
+        public static void ChangeBattleDetails(int left_total, int right_total)
         {
 
             EditButtonVersion();
-            EditBattleTextDetails(player, enemy);
+            EditBattleTextDetails(left_total, right_total);
             EditCombatSidesDetails();
             EditTerrainImage();
 
@@ -69,7 +69,7 @@ namespace Crusader_Wars.locs
             File.Move(copy_path, original_buttonVersion_path);
         }
 
-        private static void EditBattleTextDetails(Player player, Enemy enemy)
+        private static void EditBattleTextDetails(int left_side_total, int right_side_total)
         {
             string patreon_text = "Special thanks to our patreons for supporting the development of the mod: Features History, Douglas Dosaga, Micheal N. C. Klaassen, Kyra, Gav, Carl Enqvist, I Regret This Alredy, Oron Gabay, Kyle T David, Ryan Merklen, Chris Kelly, Kieran Britt, Galahad.";
 
@@ -97,11 +97,11 @@ namespace Crusader_Wars.locs
                     //BATTLE DETAILS
                     if (line.Contains("battles_description_tut_tutorial_battle"))
                     {
-                        string player_side_realm_name = player.RealmName;
-                        string enemy_side_realm_name = enemy.RealmName;
+                        string player_side_realm_name = CK3LogData.LeftSide.GetRealmName();
+                        string enemy_side_realm_name = CK3LogData.RightSide.GetRealmName();
 
-                        double player_total_soldiers = player.TotalNumber;
-                        double enemy_total_soldiers = enemy.TotalNumber;
+                        double player_total_soldiers = left_side_total;
+                        double enemy_total_soldiers = right_side_total;
 
                         string new_text = $"{player_side_realm_name}" + "  VS  " + $"{enemy_side_realm_name}" +
                                            "\\\\n" +

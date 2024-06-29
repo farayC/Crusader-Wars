@@ -19,6 +19,7 @@ namespace Crusader_Wars.armies
         }
 
         static int TotalDeployments { get; set; }
+        string Text { get; set; }
 
         public void IncreaseDeployables(int plus_number)
         {
@@ -71,7 +72,7 @@ namespace Crusader_Wars.armies
             if(total < 1) { total = 1; }
             TotalDeployments = (int)total;
         }
-        public string SetDefenses(int army_size, int martial_skill)
+        public DefensiveSystem(int army_size, int martial_skill)
         {
             int defensive_level = GetDefensiveLevel(martial_skill);
             GetTotalOfDeployments (army_size);
@@ -149,8 +150,10 @@ namespace Crusader_Wars.armies
 
             TotalDeployments = 0;
 
-            return text;
+            Text = text;
         }
+
+        public string GetText() { return Text; }
 
 
     }

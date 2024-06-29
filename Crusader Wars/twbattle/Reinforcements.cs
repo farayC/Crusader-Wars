@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace Crusader_Wars.twbattle
 {
+
+    /* --------------
+     * NOT BEING USED 
+     * ______________
+    
     public class Date
     {
         public int Year;
@@ -57,5 +62,7 @@ namespace Crusader_Wars.twbattle
         }
 
     }
+    */
+
  
 }

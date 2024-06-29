@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crusader_Wars.data.save_file;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace Crusader_Wars
         public int Rank { get; private set; }
         public int Martial { get; private set; }
         public int Prowess { get; private set; }
+        private Culture CultureObj { get; set; }
         public List<string> Traits_List { get; private set; }
         private List<CourtPosition> Employees { get; set; }
         private (string PrimaryAttribute, string SecundaryAttribute, string Honor) Accolade { get; set; }
@@ -44,6 +46,10 @@ namespace Crusader_Wars
             Rank = rank;
             MainCommander = mainCommander;
         }
+        public void ChangeCulture(Culture obj) {CultureObj = obj;}
+        public string GetCultureName() { return CultureObj.GetCultureName(); }
+        public string GetHeritageName() { return CultureObj.GetHeritageName(); }
+        public Culture GetCultureObj () { return CultureObj; }
         public bool IsMainCommander() { return MainCommander; }
         public void SetAccolade((string PrimaryAttribute, string SecundaryAttribute, string Honor) accolade)
         {
@@ -147,6 +153,7 @@ namespace Crusader_Wars
             }
 
             //Health soldiers debuff
+            /*
             if (Traits_List.Contains(Traits.Wounded().ToString())) soldiers += -5;
             if (Traits_List.Contains(Traits.Severely_Injured().ToString())) soldiers += -10;
             if (Traits_List.Contains(Traits.Brutally_Mauled().ToString())) soldiers += -15;
@@ -154,6 +161,7 @@ namespace Crusader_Wars
             if (Traits_List.Contains(Traits.One_Eyed().ToString())) soldiers += -5;
             if (Traits_List.Contains(Traits.One_Legged().ToString())) soldiers += -10;
             if (Traits_List.Contains(Traits.Disfigured().ToString())) soldiers += -5;
+            */
 
             //Minimum of 1 soldier
             if (soldiers < 1) soldiers = 1;

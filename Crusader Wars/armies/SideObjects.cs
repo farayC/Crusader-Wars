@@ -1,4 +1,5 @@
 ﻿using Crusader_Wars.armies;
+using Crusader_Wars.armies.commander_traits;
 using Crusader_Wars.data.save_file;
 using Crusader_Wars.twbattle;
 using System;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Media3D;
 
 namespace Crusader_Wars
 {
@@ -89,20 +91,18 @@ namespace Crusader_Wars
         public List<Unit> Units { get; private set; }
         public KnightSystem Knights { get; private set; }
         public CommanderSystem Commander { get; private set; }
+        public CommanderTraits Traits { get; private set; }
+        public DefensiveSystem Defences { get; private set; }
 
         public string CommanderID { get; set; }
         public bool isMainArmy { get; private set; }
         bool IsHumanPlayer { get; set; }
         bool IsMainEnemy { get; set; }
 
-
-
         public string RealmName { get; set; }
         public string CombatSide { get; set; }
         public UnitsResults UnitsResults { get; set; }
 
-
-        //public DefensiveSystem Defences { get; set; }
         //public Modifiers Modifiers { get; set; }
 
 
@@ -122,15 +122,12 @@ namespace Crusader_Wars
         public void IsPlayer(bool u) { IsHumanPlayer = u; }
         public void IsEnemy(bool u) { IsMainEnemy = u; }
         public void SetUnits(List<Unit> l) { Units = l; }
+        public void SetCommander(CommanderSystem l) { Commander = l; }
+        public void SetCommanderTraits(CommanderTraits l) { Traits = l; }
+        public void SetDefences(DefensiveSystem l) { Defences = l; }
 
-        public void SetArmyRegiments(List<ArmyRegiment> list)
-        {
-            ArmyRegiments = list;
-        }
-        public void SetKnights(KnightSystem knights)
-        {
-            Knights = knights;
-        }
+        public void SetArmyRegiments(List<ArmyRegiment> list) { ArmyRegiments = list; }
+        public void SetKnights(KnightSystem knights){ Knights = knights; }
         public void ClearNullRegiments()
         {
             for (int i = 0; i < ArmyRegiments.Count; i++)
@@ -153,6 +150,30 @@ namespace Crusader_Wars
                 }
             }
 
+
+        }
+
+        public int GetTotalSoldiers()
+        {
+            return Units.Sum(x => x.GetSoldiers());
+        }
+
+        public void ScaleUnits(int ratio)
+        {
+            if (ratio > 0)
+            {
+                foreach (var unit in Units)
+                {
+                    if (unit.GetRegimentType() == RegimentType.Knight || unit.GetRegimentType() == RegimentType.Commander) continue;
+
+                    double porcentage = (double)ratio / 100;
+                    double num_ratio = unit.GetSoldiers() * porcentage;
+                    num_ratio = Math.Round(num_ratio);
+                    unit.ChangeSoldiers((int)num_ratio);
+                }
+
+                Console.WriteLine("Army scaled by " + (double)ratio / 100 + '%');
+            }
 
         }
 
@@ -187,6 +208,10 @@ namespace Crusader_Wars
            
             Console.WriteLine($"ARMY - {ID} | {CombatSide}");
 
+            if(Commander != null)
+            {
+                Console.WriteLine($"## GENERAL | Name: {Commander.Name} | Soldiers: {Commander.GetUnitSoldiers()} | NobleRank: {Commander.Rank} | ArmyXP: +{Commander.GetUnitsExperience()} | Culture: {Commander.GetCultureName()} | Heritage: {Commander.GetHeritageName()}");
+            }
             if (Knights.GetKnightsList() != null)
             {
                 foreach (var knight in Knights.GetKnightsList())

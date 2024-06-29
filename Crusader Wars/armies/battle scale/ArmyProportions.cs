@@ -18,9 +18,8 @@ namespace Crusader_Wars
         static int no_auto_infantry;
         static int no_auto_ranged;
         static int no_auto_cavalry;
-        public static void AutoSizeUnits(int player_total, int enemy_total)
+        public static void AutoSizeUnits(int total)
         {
-            int total = player_total + enemy_total;
 
             //Before auto size unit sizes
             no_auto_levy = ModOptions.GetLevyMax();
@@ -72,21 +71,6 @@ namespace Crusader_Wars
             no_auto_cavalry = 0;
         }
 
-
-
-        public static int SetSoldiersRatio(int num_soldiers)
-        {
-            if(Ratio > 0)
-            {
-                double porcentage = (double)Ratio / 100;
-                double num_ratio = num_soldiers * porcentage;
-                num_ratio = Math.Round(num_ratio);
-
-                return (int)num_ratio;
-            }
-
-            return num_soldiers;
-        }
 
         public static int SetResultsRatio(int num_soldiers)
         {

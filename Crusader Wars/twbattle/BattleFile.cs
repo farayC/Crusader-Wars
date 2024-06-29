@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using static Crusader_Wars.terrain.Lands;
 
 
 namespace Crusader_Wars
@@ -40,22 +39,22 @@ namespace Crusader_Wars
         {
             foreach (var army in attacker_armies)
             {
-                if (army.CommanderID == CK3LogData.LeftSide.GetCommanderID())
+                if (army.CommanderID == CK3LogData.LeftSide.GetCommander().id)
                 {
                     army.IsPlayer(true);
                 }
-                else if (army.CommanderID == CK3LogData.RightSide.GetCommanderID())
+                else if (army.CommanderID == CK3LogData.RightSide.GetCommander().id)
                 {
                     army.IsEnemy(true);
                 }
             }
             foreach (var army in defender_armies)
             {
-                if (army.CommanderID == CK3LogData.LeftSide.GetCommanderID())
+                if (army.CommanderID == CK3LogData.LeftSide.GetCommander().id)
                 {
                     army.IsPlayer(true);
                 }
-                else if (army.CommanderID == CK3LogData.RightSide.GetCommanderID())
+                else if (army.CommanderID == CK3LogData.RightSide.GetCommander().id)
                 {
                     army.IsEnemy(true);
                 }
@@ -381,9 +380,9 @@ namespace Crusader_Wars
             else
                 SetEnemyFaction();
 
-            //Write player deployment area
+            //Write deployment area
             SetDeploymentArea(total_soldiers, army.CombatSide, battleMap);
-            //Write player deployables defenses
+            //Write deployables defenses
             AddDeployablesDefenses(army);
             //Set unit positions values
             SetPositions(total_soldiers, Deployments.beta_GeDirection(army.CombatSide));
@@ -462,21 +461,15 @@ namespace Crusader_Wars
 
         }
 
-        private static void AddDeployablesDefenses(ICharacter Side)
-        {
-            if(Side.CombatSide == "defender" && ModOptions.DefensiveDeployables() is true)
-            {
-                Side.Defences = new DefensiveSystem();
-                string PR_DefensiveDeployments = Side.Defences.SetDefenses(Side.TotalNumber, Side.Commander.Martial);
-                File.AppendAllText(battlePath, PR_DefensiveDeployments);
-            }
-            
-        }
-
         private static void AddDeployablesDefenses(Army army)
         {
-            //NEED TO DO THIS!
-
+            if (army.CombatSide == "defender" && ModOptions.DefensiveDeployables() is true)
+            {
+                int army_soldiers = army.Units.Sum(unit => unit.GetSoldiers());
+                army.SetDefences(new DefensiveSystem(army_soldiers, army.Commander.Martial));
+                string PR_DefensiveDeployments = army.Defences.GetText();
+                File.AppendAllText(battlePath, PR_DefensiveDeployments);
+            }
         }
 
 

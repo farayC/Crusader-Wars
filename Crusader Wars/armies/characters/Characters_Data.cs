@@ -3,16 +3,8 @@ using Crusader_Wars.data.save_file;
 using Crusader_Wars.terrain;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Media.TextFormatting;
+
 
 namespace Crusader_Wars
 {
@@ -36,15 +28,15 @@ namespace Crusader_Wars
         public static double Excellent() { return 0.4; }
     }
 
-    struct Traits
+    struct WoundedTraits
     {
-        public static int Wounded() { return SaveFile.GetWoundedTraitIndex("wounded_1"); }
-        public static int Severely_Injured() { return SaveFile.GetWoundedTraitIndex("wounded_2"); }
-        public static int Brutally_Mauled() { return SaveFile.GetWoundedTraitIndex("wounded_3"); }
-        public static int Maimed() { return SaveFile.GetWoundedTraitIndex("maimed"); }
-        public static int One_Legged() { return SaveFile.GetWoundedTraitIndex("one_legged"); }
-        public static int One_Eyed() { return SaveFile.GetWoundedTraitIndex("one_eyed"); }
-        public static int Disfigured() { return SaveFile.GetWoundedTraitIndex("disfigured"); }
+        public static int Wounded() { return ArmiesReader.GetTraitIndex("wounded_1"); }
+        public static int Severely_Injured() { return ArmiesReader.GetTraitIndex("wounded_2"); }
+        public static int Brutally_Mauled() { return ArmiesReader.GetTraitIndex("wounded_3"); }
+        public static int Maimed() { return ArmiesReader.GetTraitIndex("maimed"); }
+        public static int One_Legged() { return ArmiesReader.GetTraitIndex("one_legged"); }
+        public static int One_Eyed() { return ArmiesReader.GetTraitIndex("one_eyed"); }
+        public static int Disfigured() { return ArmiesReader.GetTraitIndex("disfigured"); }
     }
 
     static class Wounds
@@ -54,14 +46,12 @@ namespace Crusader_Wars
 
     public static  class SaveFile
     {
-        static List<(string name, int index)> WoundedTraits_List { get; set; }
-
 
         private static string VerifyTraits(string str, string trait)
         {
-            string[] ids = { Traits.Wounded().ToString(), Traits.Severely_Injured().ToString(), Traits.Brutally_Mauled().ToString(),
-                             Traits.Maimed().ToString(), Traits.One_Eyed().ToString(),
-                             Traits.One_Legged().ToString(), Traits.Disfigured().ToString() };
+            string[] ids = { WoundedTraits.Wounded().ToString(), WoundedTraits.Severely_Injured().ToString(), WoundedTraits.Brutally_Mauled().ToString(),
+                             WoundedTraits.Maimed().ToString(), WoundedTraits.One_Eyed().ToString(),
+                             WoundedTraits.One_Legged().ToString(), WoundedTraits.Disfigured().ToString() };
 
             //check if it is already wounded
             string already_wounded_trait="";
@@ -92,7 +82,7 @@ namespace Crusader_Wars
                 var match_1 = Regex.Match(str, $" {already_wounded_trait} ");
                 if(match_1.Success)
                 {
-                    string edited_str = Regex.Replace(str, $" {already_wounded_trait} ", $" {Traits.Brutally_Mauled()} ");
+                    string edited_str = Regex.Replace(str, $" {already_wounded_trait} ", $" {WoundedTraits.Brutally_Mauled()} ");
                     return edited_str;
                 }
 
@@ -100,54 +90,13 @@ namespace Crusader_Wars
                 var match_2 = Regex.Match(str, $" {already_wounded_trait}");
                 if (match_2.Success)
                 {
-                    string edited_str = Regex.Replace(str, $" {already_wounded_trait}", $" {Traits.Brutally_Mauled()} ");
+                    string edited_str = Regex.Replace(str, $" {already_wounded_trait}", $" {WoundedTraits.Brutally_Mauled()} ");
                     return edited_str;
                 }
 
                 return str;
 
             }
-        }
-
-
-        /* --------------------------------- 
-         * ---------Wounded Traits----------
-         * ---------------------------------*/
-        public static void ReadWoundedTraits()
-        {
-            
-
-            MatchCollection allTraits = Regex.Matches(File.ReadAllText(Writter.DataFilesPaths.Traits_Path()), @" (\w+)");
-            string[] traitList = new string[allTraits.Count];
-            for (int i = 0; i < allTraits.Count; i++)
-            {
-                traitList[i] = allTraits[i].Groups[1].Value;
-            }
-
-            List<(string name, int index)> wounded_traits;
-            wounded_traits = new List<(string name, int index)>();
-
-            for (int i = 0; i < traitList.Length; i++)
-            {
-                if (traitList[i] == "wounded_1") wounded_traits.Add(("wounded_1", i));
-                else if (traitList[i] == "wounded_2") wounded_traits.Add(("wounded_2", i));
-                else if (traitList[i] == "wounded_3") wounded_traits.Add(("wounded_3", i));
-                else if (traitList[i] == "maimed") wounded_traits.Add(("maimed", i));
-                else if (traitList[i] == "one_legged") wounded_traits.Add(("one_legged", i));
-                else if (traitList[i] == "one_eyed") wounded_traits.Add(("one_eyed", i));
-                else if (traitList[i] == "disfigured") wounded_traits.Add(("disfigured", i));
-            }
-
-            WoundedTraits_List = new List<(string name, int index)>();
-            WoundedTraits_List.AddRange(wounded_traits);
-        }
-
-        internal static int GetWoundedTraitIndex(string trait_name)
-        {
-            int index;
-            index = WoundedTraits_List.FirstOrDefault(x => x.name == trait_name).index;
-            return index;
-
         }
     }
 

@@ -111,6 +111,7 @@
   <ItemGroup>
     <Compile Include="armies\characters\Commanders.cs" />
     <Compile Include="armies\characters\Knights.cs" />
+    <Compile Include="armies\commander_traits\Commander Traits.cs" />
     <Compile Include="armies\defensive deployables\Deployables.cs" />
     <Compile Include="armies\battle modifiers\Modifiers.cs" />
     <Compile Include="armies\characters\SpecialAbilities.cs" />
@@ -206,12 +207,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="terrain\TerrainGenerator.cs" />
     <Compile Include="data\Updater.cs" />
-    <Compile Include="client\UpdaterControl.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="client\UpdaterControl.Designer.cs">
-      <DependentUpon>UpdaterControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="unit mapper\UnitMappers.cs" />
     <Compile Include="unit mapper\UnitMappers_BETA.cs" />
     <EmbeddedResource Include="client\MainFile.resx">
@@ -231,9 +226,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="client\RequiredMods\RequiredModsMessage.resx">
       <DependentUpon>RequiredModsMessage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="client\UpdaterControl.resx">
-      <DependentUpon>UpdaterControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="client\Options\UC_UnitsOptions.resx">
       <DependentUpon>UC_UnitsOptions.cs</DependentUpon>

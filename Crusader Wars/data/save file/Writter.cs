@@ -57,6 +57,13 @@ namespace Crusader_Wars.data.save_file
                     {
                         NeedSkiping = false;
                     }
+
+                    //Achievements
+                    if(line == "\tcan_get_achievements=no")
+                    {
+                        streamWriter.WriteLine("\tcan_get_achievements=yes");
+                    }
+
                     //Combat Result START
                     if (line == "\tcombat_results={")
                     {
