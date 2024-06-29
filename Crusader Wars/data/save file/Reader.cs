@@ -21,19 +21,6 @@ namespace Crusader_Wars
      */
     internal static class Reader
     {
-        private static ICharacter Player { get; set; }
-        private static ICharacter Enemy { get; set; }
-
-        /// <summary>  
-        /// Sets essential data to the Reader. Important to set this before using the Reader!  
-        /// </summary>  
-        /// <param name="player">Player side object</param>  
-        /// <param name="enemy">Enemy side object</param>  
-        public static void SetData(ICharacter player, ICharacter enemy)
-        {
-            Player = player;
-            Enemy = enemy;
-        }
 
         static void ClearFilesData()
         {
@@ -90,6 +77,11 @@ namespace Crusader_Wars
             File.WriteAllText(@".\data\save_file_data\Units.txt", "");
             //Clear Units TEMP File
             File.WriteAllText(@".\data\save_file_data\temp\Units.txt", "");
+
+            //Clear Units File
+            File.WriteAllText(@".\data\save_file_data\CourtPositions.txt", "");
+            //Clear Units TEMP File
+            File.WriteAllText(@".\data\save_file_data\temp\CourtPositions.txt", "");
         }
 
         /// <summary>  
@@ -131,12 +123,10 @@ namespace Crusader_Wars
                     SearchKeys.Cultures(line);
                     SearchKeys.Mercenaries(line);
                     SearchKeys.Units(line);
+                    SearchKeys.CourtPositions(line);
                     
                 }
-                
-                Player = null;
-                Enemy = null;
-
+               
                 reader.Close();
                 saveFile.Close();
             }
@@ -175,6 +165,7 @@ namespace Crusader_Wars
         public static StringBuilder SB_Cultures = new StringBuilder();
         public static StringBuilder SB_Mercenaries = new StringBuilder();
         public static StringBuilder SB_Units = new StringBuilder();
+        public static StringBuilder SB_CourtPositions = new StringBuilder();
 
 
 
@@ -207,6 +198,7 @@ namespace Crusader_Wars
             SearchKeys.HasCulturesExtracted = false;
             SearchKeys.HasMercenariesExtracted = false;
             SearchKeys.HasUnitsExtracted = false;
+            SearchKeys.HasCourtPositionsExtracted = false;
         }
     }
 
@@ -1087,6 +1079,50 @@ namespace Crusader_Wars
                     HasUnitsExtracted = true;
                     Start_UnitsFound = false;
                     End_UnitsFound = false;
+                }
+            }
+        }
+
+        private static bool Start_CourtPositionsFound { get; set; }
+        private static bool End_CourtPositionsFound { get; set; }
+        public static bool HasCourtPositionsExtracted { get; set; }
+        public static void CourtPositions(string line)
+        {
+            if (!HasCourtPositionsExtracted)
+            {
+                if (!Start_CourtPositionsFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "court_positions={")
+                    { Start_CourtPositionsFound = true; }
+                    else { Start_CourtPositionsFound = false; }
+                }
+
+                if (Start_CourtPositionsFound && !End_CourtPositionsFound)
+                {
+                    if (line == "}")
+                    {
+                        //Write Units Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\CourtPositions.txt"))
+                        {
+                            sw.Write(Data.SB_CourtPositions);
+                            sw.Close();
+                        }
+                        Data.SB_CourtPositions = null;
+                        GC.Collect();
+                        End_CourtPositionsFound = true;
+                        return;
+                    }
+                    else { End_CourtPositionsFound = false; }
+
+                    Data.SB_CourtPositions.AppendLine(line);
+                }
+
+                if (End_CourtPositionsFound)
+                {
+                    HasCourtPositionsExtracted = true;
+                    Start_CourtPositionsFound = false;
+                    End_CourtPositionsFound = false;
                 }
             }
         }

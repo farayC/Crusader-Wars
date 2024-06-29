@@ -51,7 +51,7 @@ namespace Crusader_Wars
             return (0, 0, 0);
         }
 
-        static void BETA_LevyComposition(Unit unit, Army army,List<(int porcentage, string unit_key, string name)> faction_levy_porcentages)
+        static void BETA_LevyComposition(Unit unit, Army army,List<(int porcentage, string unit_key, string name)> faction_levy_porcentages, int army_xp)
         {
 
             var Levies_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
@@ -66,7 +66,7 @@ namespace Crusader_Wars
             {
                 Random r = new Random();
                 var random = faction_levy_porcentages[r.Next(faction_levy_porcentages.Count-1)];
-                BattleFile.AddUnit(random.unit_key, Levies_Data.UnitSoldiers, 1, Levies_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__Levy{random.porcentage}__{culture}__", "0", Deployments.beta_GeDirection(army.CombatSide));
+                BattleFile.AddUnit(random.unit_key, Levies_Data.UnitSoldiers, 1, Levies_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__Levy{random.porcentage}__{culture}__", army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 return;
             }
 
@@ -87,11 +87,8 @@ namespace Crusader_Wars
                 var levy_type_data = RetriveCalculatedUnits(result, unit.GetMax());
                 compareNum += (levy_type_data.UnitSoldiers * levy_type_data.UnitNum);
                 //if (Levies_Data.UnitNum * t >= 0.5 && Levies_Data.UnitNum * t < 1) result = 1;
-                BattleFile.AddUnit(porcentageData.unit_key, levy_type_data.UnitSoldiers, levy_type_data.UnitNum, Levies_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__Levy{t}__{culture}__", "0", Deployments.beta_GeDirection(army.CombatSide));
+                BattleFile.AddUnit(porcentageData.unit_key, levy_type_data.UnitSoldiers, levy_type_data.UnitNum, Levies_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__Levy{porcentageData.porcentage}__{culture}__", army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
             }
-
-            Console.WriteLine("OG-"+levySoldiers+"\t"+"Attila Num-"+compareNum);
-            Console.WriteLine("^Difference:" + (levySoldiers - compareNum));
 
         }
 
@@ -137,11 +134,18 @@ namespace Crusader_Wars
              */
 
             army.RemoveNullUnits();
-            if(army.Commander != null)
+            int army_xp = 0;
+
+            //General
+            int commander_army_xp = 0;
+            if (army.Commander != null)
             {
-                int commander_army_xp = army.Commander.GetUnitsExperience();
+                commander_army_xp = army.Commander.GetUnitsExperience();
                 int commander_xp = army.Commander.GetCommanderExperience();
-                Unit commanderUnit = new Unit("General", army.Commander.GetUnitSoldiers(), UnitMappers_BETA.geta)
+                int commander_soldiers = army.Commander.GetUnitSoldiers();
+                Unit commander_unit = new Unit("General", commander_soldiers, army.Commander.GetCultureObj(), RegimentType.Commander);
+                commander_unit.SetAttilaFaction(UnitMappers_BETA.GetAttilaFaction(army.Commander.GetCultureName(), army.Commander.GetHeritageName()));
+                BattleFile.AddGeneralUnit(army.Commander, UnitMappers_BETA.GetUnitKey(commander_unit), $"{army.CombatSide}__army{army.ID}__COMMANDER__{army.Commander.GetCultureName()}__", commander_xp, Deployments.beta_GeDirection(army.CombatSide));
             }
             
 
@@ -150,15 +154,17 @@ namespace Crusader_Wars
             knights_unit.SetAttilaFaction(UnitMappers_BETA.GetAttilaFaction(knights_unit.GetCulture(), knights_unit.GetHeritage()));
             BattleFile.AddKnightUnit(army.Knights, UnitMappers_BETA.GetUnitKey(knights_unit), $"{army.CombatSide}__army{army.ID}__KNIGHTS__{army.Knights.GetMajorCulture().GetCultureName()}__", army.Knights.SetExperience(), Deployments.beta_GeDirection(army.CombatSide));
 
-            int levy_max = ModOptions.GetLevyMax();
+            army_xp += commander_army_xp;
+
             //Levies
+            int levy_max = ModOptions.GetLevyMax();
             var levies_units = army.Units.Where(item => item.GetRegimentType() == data.save_file.RegimentType.Levy);
             if (levies_units.Count() > 0)
             {
                 foreach (var levy_culture in levies_units)
                 {
                     var levy_porcentages = UnitMappers_BETA.GetFactionLevies(levy_culture.GetAttilaFaction());
-                    BETA_LevyComposition(levy_culture,army, levy_porcentages);                    
+                    BETA_LevyComposition(levy_culture,army, levy_porcentages, army_xp);                    
                 }
             }
 
@@ -173,9 +179,9 @@ namespace Crusader_Wars
                 var MAA_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
 
                 //If is retinue maa, increase 2xp.
-                if (unitName.Contains("accolade")) BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__{unit.GetName()}__{unit.GetCulture()}__", "2", Deployments.beta_GeDirection(army.CombatSide));
+                if (unitName.Contains("accolade")) BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__{unit.GetName()}__{unit.GetCulture()}__", army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 //If is normal maa
-                else BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}__army{army.ID}__{unit.GetName()}__{unit.GetCulture()}__", "0", Deployments.beta_GeDirection(army.CombatSide));
+                else BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, $"{army.CombatSide}_army{army.ID}_{unit.GetName()}_{unit.GetCulture()}_", army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
 
             }
 

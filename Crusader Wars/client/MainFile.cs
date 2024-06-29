@@ -361,20 +361,19 @@ namespace Crusader_Wars
 
                 }
 
-                await Task.Delay(3000);
-                ProcessCommands.SuspendProcess();
 
-                path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
-
-                LoadingScreen.ChangeMessage("Reading save file data...");
-                Reader.SetData(Player, Enemy);
-                Reader.ReadFile(path_editedSave);
-                BattleResult.GetPlayerCombatResult();
-                BattleResult.ReadPlayerCombat(Player.ID.ToString());
 
                 try
                 {
+                    await Task.Delay(3000);
+                    ProcessCommands.SuspendProcess();
 
+                    path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
+
+                    LoadingScreen.ChangeMessage("Reading save file data...");
+                    Reader.ReadFile(path_editedSave);
+                    BattleResult.GetPlayerCombatResult();
+                    BattleResult.ReadPlayerCombat(Player.ID.ToString());
                 }
                 catch
                 {
@@ -406,7 +405,13 @@ namespace Crusader_Wars
                 }
 
                 LoadingScreen.ChangeMessage("Adding battle details...");
-                BattleDetails.ChangeBattleDetails(Player, Enemy);
+
+
+                var left_side = ArmiesReader.GetSideArmies("left");
+                var right_side = ArmiesReader.GetSideArmies("left");
+                int left_side_total = left_side.Sum(army => army.GetTotalSoldiers());
+                int right_side_total = right_side.Sum(army => army.GetTotalSoldiers());
+                BattleDetails.ChangeBattleDetails(left_side_total, right_side_total);
 
                 try
                 {
@@ -439,10 +444,14 @@ namespace Crusader_Wars
                 //Create Remaining Soldiers Script
                 BattleScript.CreateScript();
 
-                //Create Battle
-                ArmyProportions.AutoSizeUnits(Player.TotalNumber, Enemy.TotalNumber); // # FIX THIS!
+                // Set Battle Scale
+                int total_soldiers = attacker_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers()) +
+                                     defender_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers());
+                ArmyProportions.AutoSizeUnits(total_soldiers);
+                foreach (var army in attacker_armies) army.ScaleUnits(ModOptions.GetBattleScale());
+                foreach (var army in defender_armies) army.ScaleUnits(ModOptions.GetBattleScale());
 
-                //BattleFile.CreateBattle(Player, Enemy); <-- old pre-beta
+                //Create Battle
                 BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
 
 

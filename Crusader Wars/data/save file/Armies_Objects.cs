@@ -81,7 +81,6 @@ namespace Crusader_Wars.data.save_file
 
         public void PrintData()
         {
-            Console.WriteLine("NULL UNIT");
             Console.WriteLine("Name:" + Name);
             Console.WriteLine("Type:" +  Type.ToString());
             Console.WriteLine("Culture:" + UnitCulture.GetCultureName());
@@ -90,6 +89,8 @@ namespace Crusader_Wars.data.save_file
             Console.WriteLine("Key:" + AttilaKey);
             Console.WriteLine("Faction:" + AttilaFaction);
             Console.WriteLine("Max:" + Max);
+            Console.WriteLine();
+            Console.WriteLine();
 
         }
 
@@ -152,6 +153,7 @@ namespace Crusader_Wars.data.save_file
     }
     public enum RegimentType
     {
+        Commander,
         MenAtArms,
         Levy,
         Knight

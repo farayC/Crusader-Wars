@@ -25,7 +25,7 @@ namespace Crusader_Wars.data.save_file
         // V1.0 Beta
         static List<Army> attacker_armies;
         static List<Army> defender_armies;
-
+        static List<(string name, int index)> save_file_traits;
         public static void ReadCombats(string g)
         {
             ReadCombatArmies(g);
@@ -50,7 +50,9 @@ namespace Crusader_Wars.data.save_file
             ReadCountiesManager();
             ReadMercenaries();
             BattleFile.SetArmiesSides(attacker_armies, defender_armies);
+            ReadSaveFileTraits();
             CreateKnights();
+            CreateCommanders();
             ReadCharacters();
             ReadCultureManager();
 
@@ -75,11 +77,39 @@ namespace Crusader_Wars.data.save_file
             return (attacker_armies, defender_armies);
         }
 
+        static void ReadSaveFileTraits()
+        {
+            MatchCollection allTraits = Regex.Matches(File.ReadAllText(Writter.DataFilesPaths.Traits_Path()), @" (\w+)");
+            var save_file_traits = new List<(string name, int index)>();
+
+            for (int i = 0; i < allTraits.Count; i++)
+            {
+                save_file_traits[i] = (allTraits[i].Groups[1].Value, i);
+            }
+        }
+
+        public static int GetTraitIndex(string trait_name)
+        {
+            int index;
+            index = save_file_traits.FirstOrDefault(x => x.name == trait_name).index;
+            return index;
+
+        }
+
+        public static string GetTraitKey(int trait_index)
+        {
+            string key;
+            key = save_file_traits.FirstOrDefault(x => x.index == trait_index).name;
+            return key;
+
+        }
+
 
         static void ReadCharacters()
         {
             bool searchStarted = false;
             bool isAttacker = false, isDefender = false;
+            bool isKnight = false, isCommander = false;
             Army attacker_army = null;
             Army defender_army = null;
             Knight attacker_knight = null;
@@ -95,9 +125,21 @@ namespace Crusader_Wars.data.save_file
                     if(Regex.IsMatch(line, @"\d+={") && !searchStarted)
                     {
                         string line_id = Regex.Match(line, @"(\d)+={").Groups[1].Value;
+
                         foreach (var army in attacker_armies)
                         {
-                            if(army.Knights.GetKnightsList() != null)
+                            //COMMANDERS
+                            if (army.Commander != null && line == army.Commander.ID + "={")
+                            {
+                                searchStarted = true;
+                                attacker_army = army;
+                                isAttacker = true;
+                                isCommander = true;
+                                break;
+                            }
+
+                            // KNIGHTS
+                            else if (army.Knights.GetKnightsList() != null)
                             {
                                 foreach (var knight in army.Knights.GetKnightsList())
                                 {
@@ -107,15 +149,32 @@ namespace Crusader_Wars.data.save_file
                                         attacker_knight = knight;
                                         attacker_army = army;
                                         isAttacker = true;
+                                        isKnight = true;
                                         break;
                                     }
                                 }
+                                if (searchStarted) break;
                             }
 
+                            
                         }
+
+                        if (searchStarted) continue;
+                        
                         foreach (var army in defender_armies)
                         {
-                            if (army.Knights.GetKnightsList() != null)
+                            //COMMANDERS
+                            if (army.Commander != null && line == army.Commander.ID + "={")
+                            {
+                                searchStarted = true;
+                                defender_army = army;
+                                isDefender = true;
+                                isCommander = true;
+                                break;
+                            }
+
+                            // KNIGHTS
+                            else if (army.Knights.GetKnightsList() != null)
                             {
                                 foreach (var knight in army.Knights.GetKnightsList())
                                 {
@@ -125,29 +184,42 @@ namespace Crusader_Wars.data.save_file
                                         defender_knight = knight;
                                         defender_army = army;
                                         isDefender = true;
+                                        isKnight = true;
                                         break;
                                     }
                                 }
+                                if (searchStarted) break;
                             }
-
                         }
                     }
-                    else if (searchStarted && line.Contains("\ttraits={")) //# TRAITS
+                    else if (searchStarted && isCommander && line.Contains("\ttraits={")) //# TRAITS
                     {
+                        MatchCollection found_traits = Regex.Matches(line, @"\d+");
+                        foreach(var trait in found_traits)
+                        {
 
+                        }
                     }
                     else if(searchStarted && line.Contains("\tculture=")) //# CULTURE
                     {
                         string culture_id = Regex.Match(line,@"\d+").Value;
-                        if(isAttacker)
+                        if(isAttacker && isKnight)
                         {
                             attacker_army.Knights.GetKnightsList().Find(x => x == attacker_knight).ChangeCulture(new Culture(culture_id));
                             attacker_army.Knights.SetMajorCulture();
                         }
-                        else if (isDefender)
+                        else if (isDefender && isKnight)
                         {
                             defender_army.Knights.GetKnightsList().Find(x => x == defender_knight).ChangeCulture(new Culture(culture_id));
                             defender_army.Knights.SetMajorCulture();
+                        }
+                        else if (isAttacker && isCommander)
+                        {
+                            attacker_army.Commander.ChangeCulture(new Culture(culture_id));
+                        }
+                        else if (isDefender && isCommander)
+                        {
+                            defender_army.Commander.ChangeCulture(new Culture(culture_id));
                         }
 
                     }
@@ -160,6 +232,8 @@ namespace Crusader_Wars.data.save_file
                         defender_knight = null;
                         attacker_army = null;
                         defender_army = null;
+                        isCommander = false;
+                        isKnight = false;
                     }
                 }
 
@@ -196,7 +270,7 @@ namespace Crusader_Wars.data.save_file
             }
         }
         
-        static List<Army> GetSideArmies(string side)
+        public static List<Army> GetSideArmies(string side)
         {
             List<Army> left_side = null, right_side = null;
             foreach (var army in attacker_armies)
@@ -231,7 +305,33 @@ namespace Crusader_Wars.data.save_file
             else
                 return right_side;
         }
-        public static void CreateKnights()
+
+        static void CreateCommanders()
+        {
+            var left_side_armies = GetSideArmies("left");
+            var right_side_armies = GetSideArmies("right");
+            for (int x = 0; x < left_side_armies.Count; x++)
+            {
+                var army = left_side_armies[x];
+                if(army.isMainArmy)
+                {
+                    var main_commander_data = CK3LogData.LeftSide.GetCommander();
+                    army.SetCommander(new CommanderSystem(main_commander_data.name, main_commander_data.id, main_commander_data.prowess, main_commander_data.martial, main_commander_data.rank, true));
+                }
+            }
+
+            for (int x = 0; x < right_side_armies.Count; x++)
+            {
+                var army = right_side_armies[x];
+                if (army.isMainArmy)
+                {
+                    var main_commander_data = CK3LogData.RightSide.GetCommander();
+                    army.SetCommander(new CommanderSystem(main_commander_data.name, main_commander_data.id, main_commander_data.prowess, main_commander_data.martial, main_commander_data.rank, true));
+                }
+            }
+
+        }
+        static void CreateKnights()
         {
             RemoveCommandersAsKnights();
 
@@ -502,8 +602,18 @@ namespace Crusader_Wars.data.save_file
                         {
                             if (isSearchStared) break;
 
+                            //Commanders
+                            if (attacker_armies[i].Commander != null)
+                            {
+                                if(attacker_armies[i].Commander.GetCultureObj().ID == culture_id)
+                                {
+                                    isSearchStared = true;
+                                    break;
+                                }
+                            }
+
                             //Knights
-                            if(attacker_armies[i].Knights.GetKnightsList() != null)
+                            if (attacker_armies[i].Knights.GetKnightsList() != null)
                             {
                                 foreach (var knight in attacker_armies[i].Knights.GetKnightsList())
                                 {
@@ -574,6 +684,16 @@ namespace Crusader_Wars.data.save_file
                             for (int i = 0; i < defender_armies.Count; i++)
                             {
                                 if (isSearchStared) break;
+
+                                //Commanders
+                                if (defender_armies[i].Commander != null)
+                                {
+                                    if (defender_armies[i].Commander.GetCultureObj().ID == culture_id)
+                                    {
+                                        isSearchStared = true;
+                                        break;
+                                    }
+                                }
 
                                 //Knights
                                 if (defender_armies[i].Knights.GetKnightsList() != null)
@@ -671,9 +791,18 @@ namespace Crusader_Wars.data.save_file
                     //Armies
                     for (int i = 0; i < attacker_armies.Count; i++)
                     {
+                        //Commanders
+                        if (attacker_armies[i].Commander != null)
+                        {
+                            if (attacker_armies[i].Commander.GetCultureObj().ID == culture.culture_id)
+                            {
+                                attacker_armies[i].Commander.GetCultureObj().SetName(culture.culture_name);
+                                attacker_armies[i].Commander.GetCultureObj().SetHeritage(culture.culture_name);
+                            }
+                        }
 
                         //Knights
-                        if(attacker_armies[i].Knights.GetKnightsList() != null)
+                        if (attacker_armies[i].Knights.GetKnightsList() != null)
                         {
                             foreach (var knight in attacker_armies[i].Knights.GetKnightsList())
                             {
@@ -681,7 +810,6 @@ namespace Crusader_Wars.data.save_file
 
                                 if (knight_culture_id == culture.culture_id)
                                 {
-                                    isSearchStared = true;
                                     knight.GetCultureObj().SetName(culture.culture_name);
                                     knight.GetCultureObj().SetHeritage(culture.heritage_name);
                                 }
@@ -713,6 +841,15 @@ namespace Crusader_Wars.data.save_file
                     //Armies
                     for (int i = 0; i < defender_armies.Count; i++)
                     {
+                        //Commanders
+                        if (defender_armies[i].Commander != null)
+                        {
+                            if (defender_armies[i].Commander.GetCultureObj().ID == culture.culture_id)
+                            {
+                                defender_armies[i].Commander.GetCultureObj().SetName(culture.culture_name);
+                                defender_armies[i].Commander.GetCultureObj().SetHeritage(culture.culture_name);
+                            }
+                        }
                         //Knights
                         if (defender_armies[i].Knights.GetKnightsList() != null)
                         {
@@ -722,7 +859,6 @@ namespace Crusader_Wars.data.save_file
 
                                 if (knight_culture_id == culture.culture_id)
                                 {
-                                    isSearchStared = true;
                                     knight.GetCultureObj().SetName(culture.culture_name);
                                     knight.GetCultureObj().SetHeritage(culture.heritage_name);
                                 }

@@ -18,6 +18,8 @@ namespace Crusader_Wars.unit_mapper
          * TO DO:
          * Enable by year;
          * Terrains files reader ;
+         * Titles files reader
+         * House files reader
          ----------------------------------------------------------------*/
 
 
@@ -43,7 +45,37 @@ namespace Crusader_Wars.unit_mapper
             //Multiple Unit Mappers enabled
             else if (UnitMappers_FolderPaths.Count > 1)
             {
-                //TO DO: load correct based on time period
+                int ck3_year = Date.Year;
+                string start_year="", end_year="";
+                foreach (string path in UnitMappers_FolderPaths)
+                {
+                    //If unit mapper folder exists
+                    if (File.Exists(path))
+                    {
+                        foreach(var file_path in Directory.GetFiles(path))
+                        {
+                            if(Path.GetExtension(file_path) == ".xml")
+                            {
+                                XmlDocument xmlDocument = new XmlDocument();
+                                xmlDocument.LoadXml(file_path);
+                                if(xmlDocument.DocumentElement.Name == "TimePeriod")
+                                {
+                                    start_year = xmlDocument.DocumentElement.ChildNodes[0].InnerText;
+                                    end_year = xmlDocument.DocumentElement.ChildNodes[1].InnerText;
+                                }
+                                
+                                if(int.TryParse(start_year, out int d) && int.TryParse(end_year, out int t))
+                                {
+                                    if(ck3_year >= d && ck3_year <= t)
+                                    {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
             //No Unit Mapper enabled
             else
@@ -252,7 +284,13 @@ namespace Crusader_Wars.unit_mapper
                             foreach (XmlNode node in element.ChildNodes)
                             {
                                 if (node is XmlComment) continue;
-                                if (node.Name == "General" || node.Name == "Levies") continue;
+                                if (node.Name == "Levies") continue;
+
+                                //General
+                                if (node.Name == "General" && unit.GetRegimentType() == RegimentType.Commander)
+                                {
+                                    unit_key = node.Attributes["key"].Value;
+                                }
 
                                 //Knights
                                 if (node.Name == "Knights" && unit.GetRegimentType() == RegimentType.Knight)
@@ -276,10 +314,16 @@ namespace Crusader_Wars.unit_mapper
                             foreach (XmlNode node in element.ChildNodes)
                             {
                                 if (node is XmlComment) continue;
-                                if (node.Name == "General" || node.Name == "Levies") continue;
-                               
+                                if (node.Name == "Levies") continue;
+
+                                //General
+                                if (node.Name == "General" && unit.GetRegimentType() == RegimentType.Commander)
+                                {
+                                    unit_key = node.Attributes["key"].Value;
+                                }
+
                                 //Knights
-                                if(node.Name == "Knights"  && unit.GetRegimentType() == RegimentType.Knight)
+                                if (node.Name == "Knights"  && unit.GetRegimentType() == RegimentType.Knight)
                                 {
                                     unit_key = node.Attributes["key"].Value;
                                 }

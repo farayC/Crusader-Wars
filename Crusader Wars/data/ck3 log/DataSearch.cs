@@ -218,8 +218,8 @@ namespace Crusader_Wars
 
 
             /*---------------------------------------------
-              * :::::::::::::::Unit Mapper::::::::::::::::::
-              ---------------------------------------------*/
+             * :::::::::::::::Unit Mapper::::::::::::::::::
+             ---------------------------------------------*/
 
             //UnitMapper.LoadMapper();
             UnitMappers_BETA.ReadUnitMappers();
@@ -296,7 +296,7 @@ namespace Crusader_Wars
             BattleDetails.SetBattleName(battle_name);
         }
 
-        private static void DateSearch(string log)
+        static void DateSearch(string log)
         {
             string month;
             string year;
@@ -321,12 +321,12 @@ namespace Crusader_Wars
 
         }
 
-        private static void TerrainSearch(string log)
+        static void TerrainSearch(string log)
         {
             TerrainGenerator.TerrainType = SearchForTerrain(log);
             Weather.SetWinterSeverity(SearchForWinter(log));
         }
-        private static void CommanderSearch(string log, string army_data, DataSearchSides side, string id)
+        static void CommanderSearch(string log, string army_data, DataSearchSides side, string id)
         {
             string name = "";
             int martial = 0;
@@ -399,7 +399,7 @@ namespace Crusader_Wars
 
 
 
-        private static void KnightsSearch(string army_data, DataSearchSides side)
+        static void KnightsSearch(string army_data, DataSearchSides side)
         {
             string Knights = Regex.Match(army_data, @"(?<Knights>ONCLICK:CHARACTER[\s\S]*?)\z[\s\S]*?").Groups["Knights"].Value;
             MatchCollection knights_text_data = Regex.Matches(Knights, @"ONCLICK:CHARACTER(?<ID>\d+).+ (?<Prowess>\d+)");
@@ -445,14 +445,14 @@ namespace Crusader_Wars
 
         }
 
-        private static void ArmyModifiersSearch(string log, ICharacter Side)
+        static void ArmyModifiersSearch(string log, ICharacter Side)
         {
             Modifiers army_modifiers = new Modifiers();
             army_modifiers.ReadModifiers(log, Side);
             Side.Modifiers = army_modifiers;
         }
 
-        private static void UniqueMapsSearch(string log)
+        static void UniqueMapsSearch(string log)
         {
 
 
@@ -465,7 +465,7 @@ namespace Crusader_Wars
         }
 
 
-        private static string SearchForTerrain(string content)
+        static string SearchForTerrain(string content)
         {
             string terrain_data = Regex.Match(content, "---------Completed---------([\\s\\S]*?)PlayerID").Groups[1].Value;
             
@@ -499,7 +499,7 @@ namespace Crusader_Wars
 
         }
 
-        private static string SearchForWinter(string content)
+        static string SearchForWinter(string content)
         {
             string terrain_data = Regex.Match(content, "---------Completed---------([\\s\\S]*?)PlayerID").Groups[1].Value;
 
@@ -518,7 +518,7 @@ namespace Crusader_Wars
 
         }
 
-        private static void SearchForProvinceID(string log)
+        static void SearchForProvinceID(string log)
         {
             string provinceID;
             try

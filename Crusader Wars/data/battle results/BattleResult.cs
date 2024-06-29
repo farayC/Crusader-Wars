@@ -22,7 +22,7 @@ namespace Crusader_Wars
         public static string CombatID { get; set; }
         public static string ResultID { get; set; }
         public static string ProvinceID { get; set; }
-        public static twbattle.Date FirstDay_Date { get; set; }
+        //public static twbattle.Date FirstDay_Date { get; set; }
 
 
         //Combats
@@ -135,7 +135,7 @@ namespace Crusader_Wars
                             f.AppendLine(line);
                             Match date = Regex.Match(line, @"(?<year>\d+).(?<month>\d+).(?<day>\d+)");
                             string year = date.Groups["year"].Value, month = date.Groups["month"].Value, day = date.Groups["day"].Value;
-                            FirstDay_Date = new twbattle.Date(Int32.Parse(year), Int32.Parse(month), Int32.Parse(day));
+                            //FirstDay_Date = new twbattle.Date(Int32.Parse(year), Int32.Parse(month), Int32.Parse(day));
 
                         }
                         else if(isSearchStarted && line == "\t\t}")
