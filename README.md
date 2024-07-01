@@ -4,7 +4,7 @@ Crusader Wars is a complete overhaul of Crusader Kings 3 warfare system making i
 # Installation Guide (Steam):
 ### Read very carefully!
 * Download CW Launcher at https://crusaderwars.com/
-* Subcribe to CW on the [Steam Workshop Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2977969008).
+* Subscribe to CW on the [Steam Workshop Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2977969008).
 * Start CW Launcher and go to Settings
 * Set both games .exe paths
 * Enable the desired Unit Mappers
@@ -23,7 +23,7 @@ Crusader Wars is a complete overhaul of Crusader Kings 3 warfare system making i
 ### Accurate Armies Composition
 The armies in the Total War battle will be 1:1 scale of the Crusader Kings 3 battle, their unit's culture is based on the commander's culture or heritage.
 ### Levies
-Levies are not just simply converted as one type of unit made of pitchfork peasants, each culture has its type of levy composition trying to be the more historically accurate possible.
+Levies are not just simply converted as one type of unit made of pitchfork peasants, each culture has its type of levy composition trying to be the most historically accurate possible.
 ### Automatic Battle Results Transfer
 When the Total War battle ends, CK3 opens up automatically with the battle results with a 98% accuracy, counting each regiment's soldiers dead and killed.
 ### Commander & Knights
@@ -44,7 +44,7 @@ Ruler leading the soldiers will increase the army XP level, and Realm in Debt, A
 ### Unit Cards Names
 The Total War unit cards' names will be their CK3 regiment name equivalent.
 ### Period Accurate
-We have mapped each CK3 culture, heritage and Men-At-Arms with a collection of a bunch of Attila mods to be the more historically accurate possible. We have two unit mappers for Anno Domini and three for Medieval Kingdoms 1212 covering the range from 8th-Century to 15th-Century.
+We have mapped each CK3 culture, heritage, and Men-At-Arms with a collection of Attila mods to be the most historically accurate possible. We have two unit mappers for Anno Domini and three for Medieval Kingdoms 1212 covering the range from 8th-Century to 15th-Century.
 ### CK3 "LOTR: Realms of Exile" & "The Fallen Eagle" Compatible!
 We also have 1 unit mapper for the Attila Dawnless Days and some sub-mods to be used with CK3 "LOTR: Realms of Exile".
 Then we got a unit mapper for Attila's "Fall of the Eagle", one for "Fireforged Empires" and one for "Age of Justinian" to be used with CK3 "The Fallen Eagle".
