@@ -50,6 +50,5 @@ We also have 1 unit mapper for the Attila Dawnless Days and some sub-mods to be 
 Then we got a unit mapper for Attila's "Fall of the Eagle", one for "Fireforged Empires" and one for "Age of Justinian" to be used with CK3 "The Fallen Eagle".
 # Roadmap
 Here you can see all our concepts, ideas, and plans for the mod.
-![ROADMAP](https://i.imgur.com/BKru2vr.png)
-
+[<img src="https://i.imgur.com/BKru2vr.png">](https://trello.com/b/abR09huC/crusader-wars)
 # How does it work?
