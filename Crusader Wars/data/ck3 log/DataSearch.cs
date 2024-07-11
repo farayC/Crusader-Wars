@@ -25,27 +25,28 @@ namespace Crusader_Wars
     public class PlayerChar
     {
         string ID { get; set; }
-        string Heritage { get; set; }
-        string Culture { get; set; }
+        string CultureID { get; set; }
 
-        public PlayerChar(string iD, string heritage, string culture)
+        public PlayerChar(string iD,string culture_id)
         {
-            ID = iD;
-            Heritage = heritage;
-            Culture = culture;
+            ID = iD;;
+            CultureID = culture_id;
         }
 
-        public string GetHeritage() { return Heritage; }
-        public string GetCulture() { return Culture; }
+        public string GetID() { return ID; }
+        public string GetCultureID() { return CultureID; }
     }
 
 
     public static class CK3LogData
     {
+        // MAIN PARTICIPANTS
+        static (string id, string culture_id) LeftSide_MainParticipant { get; set; }
+        static (string id, string culture_id) RightSide_MainParticipant { get; set; }
 
         // COMMANDERS
-        static (string name, string id, int prowess, int martial, int rank) LeftSide_Commander { get; set; }
-        static (string name, string id, int prowess, int martial, int rank) RightSide_Commander { get; set; }
+        static (string name, string id, int prowess, int martial, int rank, string culture_id) LeftSide_Commander { get; set; }
+        static (string name, string id, int prowess, int martial, int rank, string culture_id) RightSide_Commander { get; set; }
 
         // MAIN REALM NAMES
         static string LeftSide_RealmName { get; set; }
@@ -64,12 +65,14 @@ namespace Crusader_Wars
 
         public struct LeftSide
         {
-            public static void SetCommander((string name, string id, int prowess, int martial, int rank) data) { LeftSide_Commander = data; }
-            public static void  SetRealmName(string name) { LeftSide_RealmName = name; }
-            public static void SetModifiers(Modifiers t) { LeftSide_Modifiers = t; }
-            public static void SetKnights(List<(string id, string prowess, string name, int effectiveness)> t) { LeftSide_Knights = t; }
+            internal static void SetMainParticipant((string id, string culture_id) data) { LeftSide_MainParticipant = data; }
+            internal static void SetCommander((string name, string id, int prowess, int martial, int rank, string culture_id) data) { LeftSide_Commander = data; }
+            internal static void  SetRealmName(string name) { LeftSide_RealmName = name; }
+            internal static void SetModifiers(Modifiers t) { LeftSide_Modifiers = t; }
+            internal static void SetKnights(List<(string id, string prowess, string name, int effectiveness)> t) { LeftSide_Knights = t; }
 
-            public static (string name, string id, int prowess, int martial, int rank) GetCommander() { return LeftSide_Commander; }
+            public static (string id, string culture_id) GetMainParticipant() { return LeftSide_MainParticipant; }
+            public static (string name, string id, int prowess, int martial, int rank, string culture_id) GetCommander() { return LeftSide_Commander; }
             public static string GetRealmName() { return LeftSide_RealmName; }
             public static Modifiers GetModifiers() { return LeftSide_Modifiers; }
             public static List<(string id, string prowess, string name, int effectiveness)> GetKnights() { return LeftSide_Knights; }
@@ -89,12 +92,14 @@ namespace Crusader_Wars
 
         public struct RightSide
         {
-            public static void SetCommander((string name, string id, int prowess, int martial, int rank) data) { RightSide_Commander = data; }
-            public static void SetRealmName(string name) { RightSide_RealmName = name; }
-            public static void SetModifiers(Modifiers t) { RightSide_Modifiers = t; }
-            public static void SetKnights(List<(string id, string prowess, string name, int effectiveness)> t) { RightSide_Knights = t; }
+            internal static void SetMainParticipant((string id, string culture_id)data) { RightSide_MainParticipant = data; }
+            internal static void SetCommander((string name, string id, int prowess, int martial, int rank, string culture_id) data) { RightSide_Commander = data; }
+            internal static void SetRealmName(string name) { RightSide_RealmName = name; }
+            internal static void SetModifiers(Modifiers t) { RightSide_Modifiers = t; }
+            internal static void SetKnights(List<(string id, string prowess, string name, int effectiveness)> t) { RightSide_Knights = t; }
 
-            public static (string name, string id, int prowess, int martial, int rank) GetCommander() { return RightSide_Commander; }
+            public static (string id, string culture_id) GetMainParticipant() { return RightSide_MainParticipant; }
+            public static (string name, string id, int prowess, int martial, int rank, string culture_id) GetCommander() { return RightSide_Commander; }
             public static string GetRealmName() { return RightSide_RealmName; }
             public static Modifiers GetModifiers() { return RightSide_Modifiers; }
             public static List<(string id, string prowess, string name, int effectiveness)> GetKnights() { return RightSide_Knights; }
@@ -174,7 +179,7 @@ namespace Crusader_Wars
 
 
 
-        public static void Search(string log, Player Player, Enemy Enemy)
+        public static void Search(string log)
         {
             /*---------------------------------------------
              * ::::::::::::::::Army Ratio::::::::::::::::::
@@ -191,12 +196,21 @@ namespace Crusader_Wars
             BattleNameSearch(log);
 
             /*---------------------------------------------
+             * ::::::::::::::Main Participants::::::::::::::
+             ---------------------------------------------*/
+            string left_side_mainparticipant_id = Regex.Match(log, @"LeftSide_Owner_ID:(.+)\n").Groups[1].Value;
+            string left_side_mainparticipant_culture_id = Regex.Match(log, @"LeftSide_Owner_Culture:(.+)\n").Groups[1].Value;
+            CK3LogData.LeftSide.SetMainParticipant((left_side_mainparticipant_id, left_side_mainparticipant_culture_id));
+
+            string right_side_mainparticipant_id = Regex.Match(log, @"RightSide_Owner_ID:(.+)\n").Groups[1].Value;
+            string right_side_mainparticipant_culture_id = Regex.Match(log, @"RightSide_Owner_Culture:(.+)\n").Groups[1].Value;
+            CK3LogData.RightSide.SetMainParticipant((right_side_mainparticipant_id, right_side_mainparticipant_culture_id));
+            /*---------------------------------------------
              * ::::::::::::::Player Character::::::::::::::
              ---------------------------------------------*/
-            string player_culture = Regex.Match(log, @"PlayerCharacterCulture:(.+)\n").Groups[1].Value;
-            string player_heritage = Regex.Match(log, @"PlayerCharacterHeritage:(.+)\n").Groups[1].Value;
+            string player_culture_id = Regex.Match(log, @"PlayerCharacterCulture:(.+)\n").Groups[1].Value;
             string playerID = Regex.Match(log, @"PlayerCharacterID:(.+)\n").Groups[1].Value;
-            Player_Character = new PlayerChar(playerID, player_heritage, player_culture);
+            Player_Character = new PlayerChar(playerID, player_culture_id);
 
             /*---------------------------------------------
              * ::::::::::::Commanders ID's:::::::::::::::::
@@ -204,24 +218,17 @@ namespace Crusader_Wars
 
             //Search player ID
             string left_side_commander_id = Regex.Match(log, @"PlayerID:(\d+)").Groups[1].Value;
-            Player.ID = Int32.Parse(left_side_commander_id);
+            string left_side_commander_culture_id = Regex.Match(log, @"LeftSide_Commander_Culture:(\d+)").Groups[1].Value;
 
             //Search enemy ID
             string right_side_commander_id = Regex.Match(log, @"EnemyID:(\d+)").Groups[1].Value;
-
-            //No Commander Crash Fix 
-            int commander_id;
-            if (int.TryParse(right_side_commander_id, out commander_id))
-                Enemy.ID = commander_id;
-            else
-                Enemy.ID = 0;
+            string right_side_commander_culture_id = Regex.Match(log, @"RightSide_Commander_Culture:(\d+)").Groups[1].Value;
 
 
             /*---------------------------------------------
              * :::::::::::::::Unit Mapper::::::::::::::::::
              ---------------------------------------------*/
 
-            //UnitMapper.LoadMapper();
             UnitMappers_BETA.ReadUnitMappers();
 
             /*---------------------------------------------
@@ -244,7 +251,7 @@ namespace Crusader_Wars
              * ::::::::::Player Commander System:::::::::::
              ---------------------------------------------*/
 
-            CommanderSearch(log, PlayerArmy, DataSearchSides.LeftSide, left_side_commander_id);
+            CommanderSearch(log, PlayerArmy, DataSearchSides.LeftSide, left_side_commander_id, left_side_commander_culture_id);
 
             /*---------------------------------------------
              * :::::::::::Player Knight System:::::::::::::
@@ -256,7 +263,7 @@ namespace Crusader_Wars
              * :::::::::::::Player Modifiers:::::::::::::::
              ---------------------------------------------*/
              
-            ArmyModifiersSearch(log, Player);
+            //ArmyModifiersSearch(log, Player);
 
             /*---------------------------------------------
              * ::::::::::::::::Enemy Army::::::::::::::::::
@@ -268,7 +275,7 @@ namespace Crusader_Wars
              * ::::::::::Enemy Commander System:::::::::::
              ---------------------------------------------*/
 
-            CommanderSearch(log, EnemyArmy, DataSearchSides.RightSide, right_side_commander_id);
+            CommanderSearch(log, EnemyArmy, DataSearchSides.RightSide, right_side_commander_id, right_side_commander_culture_id);
 
             /*---------------------------------------------
              * :::::::::::Enemy Knight System:::::::::::::
@@ -280,7 +287,7 @@ namespace Crusader_Wars
              * :::::::::::::Enemy Modifiers:::::::::::::::
              ---------------------------------------------*/
 
-             ArmyModifiersSearch(log, Enemy);
+             //ArmyModifiersSearch(log, Enemy);
 
             /*---------------------------------------------
              * ::::::::::::::::Army Names::::::::::::::::::
@@ -326,7 +333,7 @@ namespace Crusader_Wars
             TerrainGenerator.TerrainType = SearchForTerrain(log);
             Weather.SetWinterSeverity(SearchForWinter(log));
         }
-        static void CommanderSearch(string log, string army_data, DataSearchSides side, string id)
+        static void CommanderSearch(string log, string army_data, DataSearchSides side, string id, string culture_id)
         {
             string name = "";
             int martial = 0;
@@ -374,11 +381,11 @@ namespace Crusader_Wars
 
             if (side is DataSearchSides.LeftSide)
             {
-                CK3LogData.LeftSide.SetCommander((name, id, prowess, martial, rank));
+                CK3LogData.LeftSide.SetCommander((name, id, prowess, martial, rank, culture_id));
             }
             else if (side is DataSearchSides.RightSide)
             {
-                CK3LogData.RightSide.SetCommander((name, id, prowess, martial, rank));
+                CK3LogData.RightSide.SetCommander((name, id, prowess, martial, rank,culture_id));
             }
 
         }
@@ -445,17 +452,15 @@ namespace Crusader_Wars
 
         }
 
-        static void ArmyModifiersSearch(string log, ICharacter Side)
+        static void ArmyModifiersSearch(string log)
         {
             Modifiers army_modifiers = new Modifiers();
-            army_modifiers.ReadModifiers(log, Side);
-            Side.Modifiers = army_modifiers;
+            //army_modifiers.ReadModifiers(log, Side);
+            //Side.Modifiers = army_modifiers;
         }
 
         static void UniqueMapsSearch(string log)
         {
-
-
             Match match = Regex.Match(log, @"SpecialBuilding:(.+)");
             if(match.Success)
             {
@@ -489,6 +494,7 @@ namespace Crusader_Wars
 
         public static void ClearLogFile()
         {
+            if(!File.Exists(LogPath)) File.Create(LogPath);
 
             using (var fileStream = new FileStream(LogPath, FileMode.Truncate))
             {

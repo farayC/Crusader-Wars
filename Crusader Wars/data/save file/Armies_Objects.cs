@@ -1,4 +1,6 @@
-﻿using Crusader_Wars.client;
+﻿using Crusader_Wars.armies.commander_traits;
+using Crusader_Wars.armies;
+using Crusader_Wars.client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +74,6 @@ namespace Crusader_Wars.data.save_file
         string Name { get; set; }
         RegimentType Type { get; set; }
         Culture UnitCulture { get; set; }
-        string IDArmyRegiment { get; set; }
         bool IsMercenaryBool { get; set; }
         int Soldiers { get; set; }
         string AttilaKey { get; set; }
@@ -165,6 +166,9 @@ namespace Crusader_Wars.data.save_file
         public RegimentType Type { get; private set; }
         public string MAA_Name { get; private set; }
         public List<Regiment> Regiments { get; private set; }
+        public int CurrentNum { get; private set; }
+        public int StartingNum { get; private set; }
+        public int Max { get; private set; }
 
 
         public ArmyRegiment(string id)
@@ -187,6 +191,18 @@ namespace Crusader_Wars.data.save_file
             Regiments = regiments;
 
         }
+        public void SetCurrentNum (string x)
+        {
+            CurrentNum = Int32.Parse(x);
+        }
+        public void SetMax(string x)
+        {
+            Max = Int32.Parse(x);
+        }
+        public void SetStartingNum(string x)
+        {
+            StartingNum = Int32.Parse(x);
+        }
 
 
 
@@ -198,7 +214,6 @@ namespace Crusader_Wars.data.save_file
         public string Index { get; private set; }
         public string Origin { get; private set; }
         public string Owner { get; private set; }
-        public string StartingNum { get; private set; }
         public string CurrentNum { get; private set; }
         public Culture Culture { get; private set; }
         string county_key { get; set; }
@@ -216,7 +231,6 @@ namespace Crusader_Wars.data.save_file
 
         //Setters
         public void SetOwner(string o) { Owner = o; }
-        public void SetStartingSoldiers(string o) { StartingNum = o; }
         public void SetCulture(string id) { Culture = new Culture(id); }
         public void isMercenary(bool t) { IsMercenary = t; }
         public void SetOrigin(string origin) { Origin = origin; }
@@ -255,6 +269,4 @@ namespace Crusader_Wars.data.save_file
         public void SetHeritage(string t) { HeritageName = t; }
 
     }
-
-
 }

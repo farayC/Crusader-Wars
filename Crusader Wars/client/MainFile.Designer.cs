@@ -39,10 +39,12 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.MainPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
             this.BottomPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
+            this.EA_Label = new System.Windows.Forms.Label();
             this.patreonBtn = new System.Windows.Forms.Button();
             this.WebsiteBTN = new System.Windows.Forms.Button();
             this.SteamBTN = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.EA_Text = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.MainPanelLayout.SuspendLayout();
             this.BottomPanelLayout.SuspendLayout();
@@ -133,8 +135,16 @@
             // 
             this.BottomPanelLayout.BackColor = System.Drawing.Color.Transparent;
             this.BottomPanelLayout.Controls.Add(this.labelVersion);
+            this.BottomPanelLayout.Controls.Add(this.EA_Label);
             resources.ApplyResources(this.BottomPanelLayout, "BottomPanelLayout");
             this.BottomPanelLayout.Name = "BottomPanelLayout";
+            // 
+            // EA_Label
+            // 
+            resources.ApplyResources(this.EA_Label, "EA_Label");
+            this.EA_Label.BackColor = System.Drawing.Color.Transparent;
+            this.EA_Label.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.EA_Label.Name = "EA_Label";
             // 
             // patreonBtn
             // 
@@ -196,6 +206,13 @@
             this.tableLayoutPanel1.Controls.Add(this.SettingsBtn, 0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
+            // EA_Text
+            // 
+            resources.ApplyResources(this.EA_Text, "EA_Text");
+            this.EA_Text.BackColor = System.Drawing.Color.Transparent;
+            this.EA_Text.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.EA_Text.Name = "EA_Text";
+            // 
             // HomePage
             // 
             resources.ApplyResources(this, "$this");
@@ -205,6 +222,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.btt_debug);
             this.Controls.Add(this.MainPanelLayout);
+            this.Controls.Add(this.EA_Text);
             this.Controls.Add(this.BottomPanelLayout);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -220,6 +238,7 @@
             this.BottomPanelLayout.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -238,6 +257,8 @@
         private System.Windows.Forms.Button WebsiteBTN;
         private System.Windows.Forms.Button SteamBTN;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label EA_Label;
+        private System.Windows.Forms.Label EA_Text;
     }
 }
 

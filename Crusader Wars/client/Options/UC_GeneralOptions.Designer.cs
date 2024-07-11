@@ -283,7 +283,6 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OptionSelection_DefensiveDeployables.BackColor = System.Drawing.Color.White;
             this.OptionSelection_DefensiveDeployables.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OptionSelection_DefensiveDeployables.Enabled = false;
             this.OptionSelection_DefensiveDeployables.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptionSelection_DefensiveDeployables.FormattingEnabled = true;
             this.OptionSelection_DefensiveDeployables.Items.AddRange(new object[] {
@@ -327,7 +326,9 @@
             this.OptionSelection_CulturalPreciseness.Size = new System.Drawing.Size(146, 45);
             this.OptionSelection_CulturalPreciseness.TabIndex = 15;
             this.OptionSelection_CulturalPreciseness.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.General_ToopTip.SetToolTip(this.OptionSelection_CulturalPreciseness, "The more you increase, the more units there will be in battle!");
+            this.General_ToopTip.SetToolTip(this.OptionSelection_CulturalPreciseness, "Higher values will show every culture in battle, with the cost of more units.\r\nLo" +
+        "wer values will be less accurate focusing more on major cultures in battle, with" +
+        " less units.\r\n");
             this.OptionSelection_CulturalPreciseness.Value = -130;
             this.OptionSelection_CulturalPreciseness.ValueChanged += new System.EventHandler(this.OptionSelection_CulturalPreciseness_ValueChanged);
             // 

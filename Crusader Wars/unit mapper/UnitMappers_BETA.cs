@@ -30,6 +30,8 @@ namespace Crusader_Wars.unit_mapper
             UnitMappers_FolderPaths = new List<string>();
             LoadedUnitMapper_FolderPath = "";
             LoadUnitMapper();
+            
+            
 
         }
 
@@ -45,43 +47,15 @@ namespace Crusader_Wars.unit_mapper
             //Multiple Unit Mappers enabled
             else if (UnitMappers_FolderPaths.Count > 1)
             {
-                int ck3_year = Date.Year;
-                string start_year="", end_year="";
-                foreach (string path in UnitMappers_FolderPaths)
-                {
-                    //If unit mapper folder exists
-                    if (File.Exists(path))
-                    {
-                        foreach(var file_path in Directory.GetFiles(path))
-                        {
-                            if(Path.GetExtension(file_path) == ".xml")
-                            {
-                                XmlDocument xmlDocument = new XmlDocument();
-                                xmlDocument.LoadXml(file_path);
-                                if(xmlDocument.DocumentElement.Name == "TimePeriod")
-                                {
-                                    start_year = xmlDocument.DocumentElement.ChildNodes[0].InnerText;
-                                    end_year = xmlDocument.DocumentElement.ChildNodes[1].InnerText;
-                                }
-                                
-                                if(int.TryParse(start_year, out int d) && int.TryParse(end_year, out int t))
-                                {
-                                    if(ck3_year >= d && ck3_year <= t)
-                                    {
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
+                LoadedUnitMapper_FolderPath = UnitMappers_FolderPaths[0];
             }
             //No Unit Mapper enabled
             else
             {
-
+                LoadedUnitMapper_FolderPath = UnitMappers_FolderPaths[0];
             }
+
+            SetMapperImage(LoadedUnitMapper_FolderPath);
         }
 
         /*
@@ -385,6 +359,30 @@ namespace Crusader_Wars.unit_mapper
             }
 
             return faction;
+        }
+
+        static void SetMapperImage(string loadedUnitMapperPath)
+        {
+
+            try
+            {
+                //Copy mapper image to files
+                var image_path = Directory.GetFiles(loadedUnitMapperPath).Where(x => x.EndsWith(".png")).FirstOrDefault();
+                string destination_path = Directory.GetCurrentDirectory() + @"\data\battle Files\campaign_maps\main_attila_map\main_attila_map.png";
+                File.Copy(image_path, destination_path, true);
+                return;
+            }
+            catch
+            {
+                //In case of error, use default image
+
+                string default_image_path = Directory.GetCurrentDirectory() + "\\settings\\main_attila_map.png";
+                string destination_path = Directory.GetCurrentDirectory() + @"\data\battle Files\campaign_maps\main_attila_map\main_attila_map.png";
+                File.Copy(default_image_path, destination_path, true);
+                return;
+            }
+
+
         }
     }
 }

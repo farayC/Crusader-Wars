@@ -298,6 +298,7 @@ namespace Crusader_Wars
 
         }
 
+        /*
         public void HasGeneralFallen(string path_attila_log, ICharacter Side)
         {
             using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -329,6 +330,7 @@ namespace Crusader_Wars
                 hasFallen = false;
             }
         }
+        */
 
         public void Health()
         {
