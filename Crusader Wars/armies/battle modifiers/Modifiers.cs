@@ -30,6 +30,11 @@ namespace Crusader_Wars.armies
             return xp;
         }
 
+
+        /*
+         * COMPLETLY REWORK THIS
+         */
+        /*
         public void ReadModifiers(string log, ICharacter Side)
         {
             if(Side is Player)
@@ -62,5 +67,6 @@ namespace Crusader_Wars.armies
 
 
         }
+        */
     }
 }

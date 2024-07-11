@@ -10,7 +10,7 @@
     <AssemblyName>Crusader Wars</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\ruben\OneDrive\Ambiente de Trabalho\</PublishUrl>
@@ -24,14 +24,14 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
     <ProductName>Crusader Wars</ProductName>
-    <PublisherName>Faray Mods</PublisherName>
+    <PublisherName>Faray</PublisherName>
     <MinimumRequiredVersion>1.0.0.0</MinimumRequiredVersion>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <DisallowUrlActivation>true</DisallowUrlActivation>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.9.3.0</ApplicationVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -45,6 +45,8 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -115,7 +117,6 @@
     <Compile Include="armies\defensive deployables\Deployables.cs" />
     <Compile Include="armies\battle modifiers\Modifiers.cs" />
     <Compile Include="armies\characters\SpecialAbilities.cs" />
-    <Compile Include="armies\SupplySystem.cs" />
     <Compile Include="client\Options\ModOptions.cs" />
     <Compile Include="client\Options\UC_BattleScaleOptions.cs">
       <SubType>UserControl</SubType>
@@ -180,7 +181,7 @@
     <Compile Include="armies\battle scale\ArmyProportions.cs" />
     <Compile Include="data\language support\Languages.cs" />
     <Compile Include="data\save file\Reader.cs" />
-    <Compile Include="time periods\TimePeriods.cs" />
+    <Compile Include="time\Date.cs" />
     <Compile Include="data\ck3 log\DataSearch.cs" />
     <Compile Include="client\MainFile.cs">
       <SubType>Form</SubType>

@@ -29,6 +29,7 @@ namespace Crusader_Wars.locs
             Enemy_KnightsName = name;
         }
 
+        /*
         public static void ChangeUnitsCardsNames(string Mapper_Name, Player Player, Enemy Enemy)
         {
             switch (Mapper_Name)
@@ -59,6 +60,8 @@ namespace Crusader_Wars.locs
             }
 
         }
+        */
+
         /*
         private static void EditUnitCardsFiles(string[] unit_cards_files, List<Army> attacker, List<Army> defender)
         {

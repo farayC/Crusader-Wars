@@ -174,16 +174,18 @@ namespace Crusader_Wars.client
 
         public static string FullArmies(Regiment reg)
         {
+            if (reg.CurrentNum == null) return null;
+
             var option = optionsValuesCollection.FirstOrDefault(x => x.option == "FullArmies");
 
             switch (option.value)
             {
                 case "Disabled":
-                    return reg.CurrentNum;
+                    return reg.CurrentNum.ToString();
                 case "Enabled":
-                    return reg.StartingNum;
+                    return reg.CurrentNum.ToString();
                 default:
-                    return reg.CurrentNum; 
+                    return reg.CurrentNum.ToString(); 
             }
 
         }

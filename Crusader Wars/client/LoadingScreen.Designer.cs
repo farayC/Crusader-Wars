@@ -47,9 +47,9 @@
             this.Label_Message.ForeColor = System.Drawing.Color.White;
             this.Label_Message.Location = new System.Drawing.Point(3, 0);
             this.Label_Message.Name = "Label_Message";
-            this.Label_Message.Size = new System.Drawing.Size(156, 42);
+            this.Label_Message.Size = new System.Drawing.Size(255, 42);
             this.Label_Message.TabIndex = 0;
-            this.Label_Message.Text = "Message";
+            this.Label_Message.Text = "Battle found...";
             this.Label_Message.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // GIF
@@ -73,9 +73,9 @@
             this.flowLayoutPanel1.BackgroundImage = global::Crusader_Wars.Properties.Resources.progress_orange;
             this.flowLayoutPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.flowLayoutPanel1.Controls.Add(this.Label_Message);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(1628, 29);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(1529, 29);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(162, 42);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(261, 42);
             this.flowLayoutPanel1.TabIndex = 3;
             this.flowLayoutPanel1.WrapContents = false;
             // 
@@ -112,6 +112,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Crusader Wars";
+            this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Shown += new System.EventHandler(this.LoadingScreen_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.GIF)).EndInit();

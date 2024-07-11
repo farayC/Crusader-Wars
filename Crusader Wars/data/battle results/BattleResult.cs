@@ -26,7 +26,7 @@ namespace Crusader_Wars
 
 
         //Combats
-        static string Player_Combat;
+        public static string Player_Combat;
         public static void ReadPlayerCombat(string playerID)
         {
             try
@@ -438,65 +438,33 @@ namespace Crusader_Wars
         private static List<(string, string)> ReturnList(Army army, string text, DataType list_type)
         {
 
+
             List<(string, string)> list = new List<(string, string)> ();
 
-            if(army.IsPlayer())
+            MatchCollection pattern;
+            switch (list_type)
             {
-                MatchCollection pattern;
-                switch (list_type)
-                {
-                    case DataType.Alive:
-                        pattern = Regex.Matches(text, "\\n(?<Unit>player_.+)-(?<Remaining>.+)");
-                        foreach (Match match in pattern)
-                        {
-                            string unit_name = match.Groups["Unit"].Value;
-                            string remaining = match.Groups["Remaining"].Value;
+                case DataType.Alive:
+                    pattern = Regex.Matches(text, $@"(?<Unit>.+_army{army.ID}_.+)-(?<Remaining>.+)");
+                    foreach (Match match in pattern)
+                    {
+                        string unit_name = match.Groups["Unit"].Value;
+                        string remaining = match.Groups["Remaining"].Value;
 
-                            list.Add((unit_name, remaining));
-                        }
-                        break;
-                    case DataType.Kills:
-                        pattern = Regex.Matches(text, "(?<Unit>kills_player_.+)-(?<Remaining>.+)");
-                        foreach (Match match in pattern)
-                        {
-                            string unit_name = match.Groups["Unit"].Value;
-                            string remaining = match.Groups["Remaining"].Value;
+                        list.Add((unit_name, remaining));
+                    }
+                    break;
+                case DataType.Kills:
+                    pattern = Regex.Matches(text, $@"(?<Unit>kills_.+_army{army.ID}_.+)-(?<Remaining>.+)");
+                    foreach (Match match in pattern)
+                    {
+                        string unit_name = match.Groups["Unit"].Value;
+                        string remaining = match.Groups["Remaining"].Value;
 
-                            list.Add((unit_name, remaining));
-                        }
-                        break;
-                }
+                        list.Add((unit_name, remaining));
+                    }
+                    break;
             }
-            //Enemy
-            else
-            {
-                MatchCollection pattern;
-                switch (list_type)
-                {
-                    case DataType.Alive:
-                        pattern = Regex.Matches(text, "\\n(?<Unit>enemy_.+)-(?<Remaining>.+)");
-                        foreach (Match match in pattern)
-                        {
-                            string unit_name = match.Groups["Unit"].Value;
-                            string remaining = match.Groups["Remaining"].Value;
-
-                            list.Add((unit_name, remaining));
-                        }
-                        break;
-                    case DataType.Kills:
-                        pattern = Regex.Matches(text, "(?<Unit>kills_enemy_.+)-(?<Remaining>.+)");
-                        foreach (Match match in pattern)
-                        {
-                            string unit_name = match.Groups["Unit"].Value;
-                            string remaining = match.Groups["Remaining"].Value;
-
-                            list.Add((unit_name, remaining));
-                        }
-                        break;
-                }
-            }
-
-
 
             return list;
         }

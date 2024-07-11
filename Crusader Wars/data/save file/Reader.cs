@@ -704,7 +704,7 @@ namespace Crusader_Wars
                     if (line == "provinces={")
                     {
                         End_TraitsFound = true;
-                        SaveFile.ReadWoundedTraits();
+                        //SaveFile.ReadWoundedTraits();
                         return;
                     }
                     else { End_TraitsFound = false; }
