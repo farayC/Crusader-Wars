@@ -78,9 +78,9 @@ namespace Crusader_Wars
             //Clear Units TEMP File
             File.WriteAllText(@".\data\save_file_data\temp\Units.txt", "");
 
-            //Clear Units File
+            //Clear Court Positions File
             File.WriteAllText(@".\data\save_file_data\CourtPositions.txt", "");
-            //Clear Units TEMP File
+            //Clear Court Positions TEMP File
             File.WriteAllText(@".\data\save_file_data\temp\CourtPositions.txt", "");
         }
 

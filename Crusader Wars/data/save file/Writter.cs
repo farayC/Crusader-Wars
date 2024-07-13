@@ -135,10 +135,6 @@ namespace Crusader_Wars.data.save_file
 
 
 
-
-
-
-
         static void WriteDataToSaveFile(StreamWriter streamWriter, string data_file_path)
         {
             StringBuilder sb = new StringBuilder();
@@ -169,6 +165,22 @@ namespace Crusader_Wars.data.save_file
             public static string Counties_Path() { return @".\data\save_file_data\Counties.txt"; }
             public static string Traits_Path() { return @".\data\save_file_data\Traits.txt"; }
             public static string Units_Path() { return @".\data\save_file_data\Units.txt"; }
+
+        }
+
+        public struct DataTEMPFilesPaths
+        {
+            public static string CombatResults_Path() { return @".\data\save_file_data\temp\BattleResults.txt"; }
+            public static string Combats_Path() { return @".\data\save_file_data\temp\Combats.txt"; }
+            public static string Regiments_Path() { return @".\data\save_file_data\temp\Regiments.txt"; }
+            public static string ArmyRegiments_Path() { return @".\data\save_file_data\temp\ArmyRegiments.txt"; }
+            public static string Living_Path() { return @".\data\save_file_data\temp\Living.txt"; }
+            public static string Cultures_Path() { return @".\data\save_file_data\temp\Cultures.txt"; }
+            public static string Mercenaries_Path() { return @".\data\save_file_data\temp\Mercenaries.txt"; }
+            public static string Armies_Path() { return @".\data\save_file_data\temp\Armies.txt"; }
+            public static string Counties_Path() { return @".\data\save_file_data\temp\Counties.txt"; }
+            public static string Traits_Path() { return @".\data\save_file_data\temp\Traits.txt"; }
+            public static string Units_Path() { return @".\data\save_file_data\temp\Units.txt"; }
 
         }
 

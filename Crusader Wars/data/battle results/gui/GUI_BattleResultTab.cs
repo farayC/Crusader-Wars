@@ -20,7 +20,7 @@ namespace Crusader_Wars.data.battle_results
                 int kills = 0;
                 foreach (var unit in Side.UnitsResults.Kills_MainPhase)
                 {
-                    if (unit.Name.Contains("levy_"))
+                    if (unit.Script.Contains("levy_"))
                     {
                         kills += Int32.Parse(unit.Kills);
                     }
@@ -43,7 +43,7 @@ namespace Crusader_Wars.data.battle_results
                 {
                     foreach (var unit in Side.UnitsResults.Kills_PursuitPhase)
                     {
-                        if (unit.Name.Contains("levy_"))
+                        if (unit.Script.Contains("levy_"))
                         {
                             kills += Int32.Parse(unit.Kills);
                         }
@@ -52,7 +52,7 @@ namespace Crusader_Wars.data.battle_results
                     int main_kills = 0;
                     foreach(var main_unit in Side.UnitsResults.Kills_MainPhase)
                     {
-                        if (main_unit.Name.Contains("levy_"))
+                        if (main_unit.Script.Contains("levy_"))
                         {
                             main_kills += Int32.Parse(main_unit.Kills);
                         }
@@ -80,7 +80,7 @@ namespace Crusader_Wars.data.battle_results
                 int losses = 0;
                 foreach (var unit in Side.UnitsResults.Alive_MainPhase)
                 {
-                    if (unit.Name.Contains("levy_"))
+                    if (unit.Script.Contains("levy_"))
                     {
                         alive += Int32.Parse(unit.Remaining);
                     }
@@ -105,7 +105,7 @@ namespace Crusader_Wars.data.battle_results
                     int initial = 0;
                     foreach (var i in Side.UnitsResults.Alive_MainPhase)
                     {
-                        if (i.Name.Contains("levy_"))
+                        if (i.Script.Contains("levy_"))
                         {
                             initial += Int32.Parse(i.Remaining);
                         }
@@ -115,7 +115,7 @@ namespace Crusader_Wars.data.battle_results
                     int alive = 0;
                     foreach (var unit in Side.UnitsResults.Alive_PursuitPhase)
                     {
-                        if (unit.Name.Contains("levy_"))
+                        if (unit.Script.Contains("levy_"))
                         {
                             //Main Phase alive soldiers
                             alive += Int32.Parse(unit.Remaining);
@@ -152,7 +152,7 @@ namespace Crusader_Wars.data.battle_results
                 int kills = 0;
                 foreach (var unit in Side.UnitsResults.Kills_MainPhase)
                 {
-                    if (unit.Name.Contains(MAAtype))
+                    if (unit.Script.Contains(MAAtype))
                     {
                         kills += Int32.Parse(unit.Kills);
                     }
@@ -176,7 +176,7 @@ namespace Crusader_Wars.data.battle_results
                     
                     foreach (var unit in Side.UnitsResults.Kills_PursuitPhase)
                     {
-                        if (unit.Name.Contains(MAAtype))
+                        if (unit.Script.Contains(MAAtype))
                         {
                             kills += Int32.Parse(unit.Kills);
                         }
@@ -186,7 +186,7 @@ namespace Crusader_Wars.data.battle_results
                     int main_kills = 0;
                     foreach (var main_unit in Side.UnitsResults.Kills_MainPhase)
                     {
-                        if (main_unit.Name.Contains(MAAtype))
+                        if (main_unit.Script.Contains(MAAtype))
                         {
                             main_kills += Int32.Parse(main_unit.Kills);
                         }
@@ -215,7 +215,7 @@ namespace Crusader_Wars.data.battle_results
                 int losses = 0;
                 foreach (var unit in Side.UnitsResults.Alive_MainPhase)
                 {
-                    if (unit.Name.Contains(MAAtype))
+                    if (unit.Script.Contains(MAAtype))
                     {
                         alive += Int32.Parse(unit.Remaining);
                     }
@@ -241,14 +241,14 @@ namespace Crusader_Wars.data.battle_results
 
                     foreach (var i in Side.UnitsResults.Alive_MainPhase)
                     {
-                        if (i.Name.Contains(MAAtype))
+                        if (i.Script.Contains(MAAtype))
                             initial += Int32.Parse(i.Remaining);
                     }
 
                     int alive = 0;
                     foreach (var unit in Side.UnitsResults.Alive_PursuitPhase)
                     {
-                        if (unit.Name.Contains(MAAtype))
+                        if (unit.Script.Contains(MAAtype))
                         {
                             //Main Phase alive soldiers
                             alive += Int32.Parse(unit.Remaining);

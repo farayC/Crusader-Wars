@@ -57,6 +57,7 @@ namespace Crusader_Wars
         public string RealmName { get; set; }
         public string CombatSide { get; set; }
         public UnitsResults UnitsResults { get; set; }
+        public List<UnitCasualitiesReport> CasualitiesReports { get; private set; }
 
         //public Modifiers Modifiers { get; set; }
 
@@ -87,6 +88,7 @@ namespace Crusader_Wars
 
         public void SetArmyRegiments(List<ArmyRegiment> list) { ArmyRegiments = list; }
         public void SetKnights(KnightSystem knights){ Knights = knights; }
+        public void SetCasualitiesReport(List<UnitCasualitiesReport> reports) { CasualitiesReports = reports; } 
         public void ClearNullArmyRegiments()
         {
             for (int i = 0; i < ArmyRegiments.Count; i++)

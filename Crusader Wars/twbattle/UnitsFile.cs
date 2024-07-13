@@ -88,7 +88,7 @@ namespace Crusader_Wars
                 Unit commander_unit = new Unit("General", commander_soldiers, army.Commander.GetCultureObj(), RegimentType.Commander);
                 commander_unit.SetAttilaFaction(UnitMappers_BETA.GetAttilaFaction(army.Commander.GetCultureName(), army.Commander.GetHeritageName()));
 
-                string general_script_name = $"{i}_{army.CombatSide}_army{army.ID}_COMMANDER{army.Commander.ID}_{army.Commander.GetCultureName()}_";
+                string general_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEcommander{army.Commander.ID}_CULTURE{army.Commander.GetCultureName()}{army.Commander.GetCultureObj().ID}_";
                 BattleFile.AddGeneralUnit(army.Commander, UnitMappers_BETA.GetUnitKey(commander_unit), general_script_name, commander_xp, Deployments.beta_GeDirection(army.CombatSide));
                 i++;
             }
@@ -111,9 +111,9 @@ namespace Crusader_Wars
 
                 string knights_script_name;
                 if (army.Knights.GetMajorCulture() != null)
-                    knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_KNIGHTS_{army.Knights.GetMajorCulture().GetCultureName()}_";
+                    knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEknights_MAJORCULTURE{army.Knights.GetMajorCulture().GetCultureName()}{army.Knights.GetMajorCulture().ID}_";
                 else
-                    knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_KNIGHTS_{army.OwnerCulture.GetCultureName()}_";
+                    knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEknights_MAJORCULTURE{army.OwnerCulture.GetCultureName()}{army.OwnerCulture.ID}_";
 
 
                 BattleFile.AddKnightUnit(army.Knights, UnitMappers_BETA.GetUnitKey(knights_unit), knights_script_name, army.Knights.SetExperience(), Deployments.beta_GeDirection(army.CombatSide));
@@ -161,13 +161,13 @@ namespace Crusader_Wars
                 //If is retinue maa, increase 2xp.
                 if (unitName.Contains("accolade"))
                 {
-                    string unit_script_name = $"{i}_{army.CombatSide}_army{army.ID}_{unit.GetName()}_{unit.GetCulture()}_";
+                    string unit_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPE{unit.GetName()}_CULTURE{unit.GetCulture()}{unit.GetObjCulture().ID}_";
                     BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, unit_script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 }
                 //If is normal maa
                 else
                 {
-                    string unit_script_name = $"{i}_{army.CombatSide}_army{army.ID}_{unit.GetName()}_{unit.GetCulture()}_";
+                    string unit_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPE{unit.GetName()}_CULTURE{unit.GetCulture()}{unit.GetObjCulture().ID}_";
                     BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, unit_script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 }
                 i++;
@@ -193,7 +193,7 @@ namespace Crusader_Wars
             {
                 Random r = new Random();
                 var random = faction_levy_porcentages[r.Next(faction_levy_porcentages.Count - 1)];
-                string script_name = $"{i}_{army.CombatSide}_army{army.ID}_Levy{random.porcentage}_{culture}_";
+                string script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPELevy{random.porcentage}_CULTURE{culture}{unit.GetObjCulture().ID}_";
                 BattleFile.AddUnit(random.unit_key, Levies_Data.UnitSoldiers, 1, Levies_Data.SoldiersRest, script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 i++;
                 return;
@@ -216,7 +216,7 @@ namespace Crusader_Wars
                 var levy_type_data = RetriveCalculatedUnits(result, unit.GetMax());
                 compareNum += (levy_type_data.UnitSoldiers * levy_type_data.UnitNum);
                 //if (Levies_Data.UnitNum * t >= 0.5 && Levies_Data.UnitNum * t < 1) result = 1;
-                string script_name = $"{i}_{army.CombatSide}_army{army.ID}_Levy{porcentageData.porcentage}_{culture}_";
+                string script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPELevy{porcentageData.porcentage}_CULTURE{culture}{unit.GetObjCulture().ID}_";
                 BattleFile.AddUnit(porcentageData.unit_key, levy_type_data.UnitSoldiers, levy_type_data.UnitNum, Levies_Data.SoldiersRest, script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 i++;
             }

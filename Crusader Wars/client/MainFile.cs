@@ -547,10 +547,24 @@ namespace Crusader_Wars
                     foreach(var army in attacker_armies)
                     {
                         BattleResult.GetUnitsData(army, path_log_attila);
+                        if(army.MergedArmies != null)
+                        {
+                            foreach(var merged_army in army.MergedArmies)
+                            {
+                                BattleResult.GetUnitsData(merged_army, path_log_attila);
+                            }
+                        }
                     }
                     foreach(var army in defender_armies)
                     {
                         BattleResult.GetUnitsData(army, path_log_attila);
+                        if (army.MergedArmies != null)
+                        {
+                            foreach (var merged_army in army.MergedArmies)
+                            {
+                                BattleResult.GetUnitsData(merged_army, path_log_attila);
+                            }
+                        }
                     }
 
                     
