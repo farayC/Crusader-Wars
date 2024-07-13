@@ -13,6 +13,8 @@ using System.Diagnostics.Eventing.Reader;
 using Crusader_Wars.data.battle_results;
 using System.CodeDom;
 using Crusader_Wars.data.save_file;
+using static Crusader_Wars.data.save_file.Writter;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Crusader_Wars
 {
@@ -296,10 +298,6 @@ namespace Crusader_Wars
             return line;
         }
 
-        static void EditRegiments()
-        {
-
-        }
 
         static void EditCombatGUI()
         {
@@ -357,67 +355,67 @@ namespace Crusader_Wars
         public static void GetUnitsData(Army army, string path_attila_log)
         {
             UnitsResults units = new UnitsResults();
-            try
+            List<(string Script, string Type, string CultureID, string Remaining)> Alive_MainPhase = new List<(string Script, string Type, string CultureID, string Remaining)>();
+            List<(string Script, string Type, string CultureID, string Remaining)> Alive_PursuitPhase = new List<(string Script, string Type, string CultureID, string Remaining)>();
+            List<(string Script, string Type, string CultureID, string Kills)> Kills_MainPhase = new List<(string Name, string Type, string CultureID, string Kills)>();
+            List<(string Script, string Type, string CultureID, string Kills)> Kills_PursuitPhase = new List<(string Name, string Type, string CultureID, string Kills)>();
+
+            using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (StreamReader reader = new StreamReader(logFile))
             {
-                List<(string Name, string Remaining)> Alive_MainPhase = new List<(string Name, string Remaining)>();
-                List<(string Name, string Remaining)> Alive_PursuitPhase = new List<(string Name, string Remaining)>();
-                List<(string Name, string Remaining)> Kills_MainPhase = new List<(string Name, string Kills)>();
-                List<(string Name, string Remaining)> Kills_PursuitPhase = new List<(string Name, string Kills)>();
+                string alltext = reader.ReadToEnd();
 
-                using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (StreamReader reader = new StreamReader(logFile))
+                MatchCollection all_alive_texts = Regex.Matches(alltext, "-----REMAINING SOLDIERS-----!!\\r\\n([\\s\\S]*?)([\\s\\S]*?)-----NUMBERS OF KILLS-----!!");
+                MatchCollection all_kills_texts = Regex.Matches(alltext, "-----NUMBERS OF KILLS-----!!\\r\\n([\\s\\S]*?)(-----REMAINING SOLDIERS-----!!|Battle has finished)");
+                string alive_text = "";
+                string kills_text = "";
+
+                int remaining_soldiers_ocurrences = Regex.Matches(alltext, "-----REMAINING SOLDIERS-----!!").Count;
+                int kills_ocurrences = Regex.Matches(alltext, "-----NUMBERS OF KILLS-----!!").Count;
+
+
+                if (remaining_soldiers_ocurrences == 1 && kills_ocurrences == 1)
                 {
-                    string alltext = reader.ReadToEnd();
+                    alive_text = all_alive_texts[0].Groups[2].Value;
+                    kills_text = all_kills_texts[0].Groups[1].Value;
 
-                    MatchCollection all_alive_texts = Regex.Matches(alltext, "-----REMAINING SOLDIERS-----!!\\r\\n([\\s\\S]*?)([\\s\\S]*?)-----NUMBERS OF KILLS-----!!");
-                    MatchCollection all_kills_texts = Regex.Matches(alltext, "-----NUMBERS OF KILLS-----!!\\r\\n([\\s\\S]*?)(-----REMAINING SOLDIERS-----!!|Battle has finished)");
-                    string alive_text = "";
-                    string kills_text = "";
-
-                    int remaining_soldiers_ocurrences = Regex.Matches(alltext, "-----REMAINING SOLDIERS-----!!").Count;
-                    int kills_ocurrences = Regex.Matches(alltext, "-----NUMBERS OF KILLS-----!!").Count;
-
-
-                    if(remaining_soldiers_ocurrences == 1 && kills_ocurrences == 1)
-                    {
-                        alive_text = all_alive_texts[0].Groups[2].Value;
-                        kills_text = all_kills_texts[0].Groups[1].Value;
-
-                        Alive_MainPhase = ReturnList(army, alive_text, DataType.Alive);
-                        units.SetAliveMainPhase(Alive_MainPhase);
-                        Kills_MainPhase = ReturnList(army, kills_text, DataType.Kills);
-                        units.SetKillsMainPhase(Kills_MainPhase);
-
-                    }
-                    else if(remaining_soldiers_ocurrences > 1 && kills_ocurrences > 1) 
-                    {
-                        string mainphase_alive_text = all_alive_texts[0].Groups[2].Value;
-                        Alive_MainPhase = ReturnList(army, mainphase_alive_text, DataType.Alive);
-                        units.SetAliveMainPhase(Alive_MainPhase);
-
-                        string pursuitphase_alive_text = all_alive_texts[1].Groups[2].Value;
-                        Alive_PursuitPhase = ReturnList(army, pursuitphase_alive_text, DataType.Alive);
-                        units.SetAlivePursuitPhase (Alive_PursuitPhase);
-
-                        string mainphase_kills_text = all_kills_texts[0].Groups[1].Value;
-                        Kills_MainPhase = ReturnList(army, mainphase_kills_text, DataType.Kills);
-                        units.SetKillsMainPhase(Kills_MainPhase);
-
-                        string pursuitphase_kills_text = all_kills_texts[1].Groups[1].Value;
-                        Kills_PursuitPhase = ReturnList(army, pursuitphase_kills_text, DataType.Kills);
-                        units.SetKillsPursuitPhase(Kills_PursuitPhase) ;
-                    }
- 
-                    reader.Close();
-                    logFile.Close();
-
+                    Alive_MainPhase = ReturnList(army, alive_text, DataType.Alive);
+                    units.SetAliveMainPhase(Alive_MainPhase);
+                    Kills_MainPhase = ReturnList(army, kills_text, DataType.Kills);
+                    units.SetKillsMainPhase(Kills_MainPhase);
 
                 }
+                else if (remaining_soldiers_ocurrences > 1 && kills_ocurrences > 1)
+                {
+                    string mainphase_alive_text = all_alive_texts[0].Groups[2].Value;
+                    Alive_MainPhase = ReturnList(army, mainphase_alive_text, DataType.Alive);
+                    units.SetAliveMainPhase(Alive_MainPhase);
 
-                army.UnitsResults = units;
+                    string pursuitphase_alive_text = all_alive_texts[1].Groups[2].Value;
+                    Alive_PursuitPhase = ReturnList(army, pursuitphase_alive_text, DataType.Alive);
+                    units.SetAlivePursuitPhase(Alive_PursuitPhase);
+
+                    string mainphase_kills_text = all_kills_texts[0].Groups[1].Value;
+                    Kills_MainPhase = ReturnList(army, mainphase_kills_text, DataType.Kills);
+                    units.SetKillsMainPhase(Kills_MainPhase);
+
+                    string pursuitphase_kills_text = all_kills_texts[1].Groups[1].Value;
+                    Kills_PursuitPhase = ReturnList(army, pursuitphase_kills_text, DataType.Kills);
+                    units.SetKillsPursuitPhase(Kills_PursuitPhase);
+                }
+
+                reader.Close();
+                logFile.Close();
+
+            }
+
+            army.UnitsResults = units;
+            CreateUnitsReports(army);
+
+            try
+            {
 
 
-                
             }
             catch
             {
@@ -435,33 +433,40 @@ namespace Crusader_Wars
             Kills
         }
 
-        private static List<(string, string)> ReturnList(Army army, string text, DataType list_type)
+
+        private static List<(string, string, string, string)> ReturnList(Army army, string text, DataType list_type)
         {
-
-
-            List<(string, string)> list = new List<(string, string)> ();
+            var list = new List<(string, string, string, string)> ();
 
             MatchCollection pattern;
             switch (list_type)
             {
                 case DataType.Alive:
-                    pattern = Regex.Matches(text, $@"(?<Unit>.+_army{army.ID}_.+)-(?<Remaining>.+)");
+                    pattern = Regex.Matches(text, $@"(?<Unit>.+_army{army.ID}_TYPE(?<Type>.+)_CULTURE(?<Culture>.+)_.+)-(?<Remaining>.+)");
                     foreach (Match match in pattern)
                     {
-                        string unit_name = match.Groups["Unit"].Value;
-                        string remaining = match.Groups["Remaining"].Value;
+                        string culture_match = match.Groups["Culture"].Value;
 
-                        list.Add((unit_name, remaining));
+                        string unit_script = match.Groups["Unit"].Value;
+                        string remaining = match.Groups["Remaining"].Value;
+                        string culture_id = Regex.Match(culture_match, @"(?<Name>\D+)(?<ID>\d+)").Groups["ID"].Value;
+                        string type = Regex.Match(match.Groups["Type"].Value, @"\D+").Value;
+
+                        list.Add((unit_script, type, culture_id, remaining));
                     }
                     break;
                 case DataType.Kills:
-                    pattern = Regex.Matches(text, $@"(?<Unit>kills_.+_army{army.ID}_.+)-(?<Remaining>.+)");
+                    pattern = Regex.Matches(text, $@"(?<Unit>kills_.+_army{army.ID}_TYPE(?<Type>.+)_CULTURE(?<Culture>.+)_.+)-(?<Kills>.+)");
                     foreach (Match match in pattern)
                     {
-                        string unit_name = match.Groups["Unit"].Value;
-                        string remaining = match.Groups["Remaining"].Value;
+                        string culture_match = match.Groups["Culture"].Value;
 
-                        list.Add((unit_name, remaining));
+                        string unit_script = match.Groups["Unit"].Value;
+                        string kills = match.Groups["Kills"].Value;
+                        string culture_id = Regex.Match(culture_match, @"(?<Name>\D+)(?<ID>\d+)").Groups["ID"].Value;
+                        string type = match.Groups["Type"].Value;
+
+                        list.Add((unit_script, type, culture_id, kills));
                     }
                     break;
             }
@@ -469,8 +474,10 @@ namespace Crusader_Wars
             return list;
         }
 
+
+
         //Get winner from Attila
-        public static string GetAttilaWinner(string path_attila_log, string playerCombatSide, string enemyCombatSide)
+        static string GetAttilaWinner(string path_attila_log, string playerCombatSide, string enemyCombatSide)
         {
             string winner = "";
             using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -490,9 +497,125 @@ namespace Crusader_Wars
 
                 return winner;
             }
-
-
         }
+
+        static void ChangeRegimentsSoldiers(Army army)
+        {
+            foreach(ArmyRegiment armyRegiment in army.ArmyRegiments)
+            {
+                if (armyRegiment.Type == data.save_file.RegimentType.Commander || armyRegiment.Type == data.save_file.RegimentType.Knight) continue;
+
+                foreach (Regiment regiment in armyRegiment.Regiments)
+                {
+                    var unitReport = army.CasualitiesReports.FirstOrDefault(x => x.GetUnitType() == armyRegiment.Type && x.GetCulture().ID == regiment.Culture.ID && x.GetTypeName() == armyRegiment.MAA_Name);
+                    if (unitReport == null)
+                        continue;
+
+                    int regSoldiers = Int32.Parse(regiment.CurrentNum);
+                    int killed = unitReport.GetKilled();
+
+                    while (regSoldiers > 0 && killed > 0)
+                    {
+                        if (regSoldiers > killed)
+                        {
+                            regSoldiers -= killed;
+                            killed = 0;
+                        }
+                        else
+                        {
+                            killed -= regSoldiers;
+                            regSoldiers = 0;
+                        }
+                    }
+
+                    regiment.SetSoldiers(regSoldiers.ToString());
+                    unitReport.SetKilled(killed);
+
+                }
+            }
+        }
+
+        static void CreateUnitsReports(Army army)
+        {
+            List<UnitCasualitiesReport> reportsList = new List<UnitCasualitiesReport>();
+
+            // Group by Type and CultureID
+            var grouped = army.UnitsResults.Alive_MainPhase.GroupBy(item => new { item.Type, item.CultureID });
+
+            Console.WriteLine("#############################");
+            Console.WriteLine($"REPORT FROM {army.CombatSide.ToUpper()} ARMY {army.ID}");
+            foreach(var group in grouped)
+            {
+                data.save_file.RegimentType unitType;
+                if (group.Key.Type.Contains("Levy")) { unitType = data.save_file.RegimentType.Levy; }
+                else if (group.Key.Type.Contains("commander") || group.Key.Type == "knights") { continue; }
+                else { unitType = data.save_file.RegimentType.MenAtArms; }
+
+                string type = Regex.Match(group.Key.Type, @"\D+").Value;
+                Culture culture = army.Units.FirstOrDefault(x => x.GetObjCulture().ID == group.Key.CultureID).GetObjCulture();
+
+                int starting = army.Units.First(x => x.GetRegimentType() == unitType && x.GetObjCulture().ID == culture.ID && x.GetName() == type).GetSoldiers();
+                int remaining = group.Sum(x => Int32.Parse(x.Remaining));
+
+                var unitReport = new UnitCasualitiesReport(unitType, type, culture, starting, remaining);
+                unitReport.PrintReport();
+
+                reportsList.Add(unitReport);
+            }
+
+            if (army.UnitsResults.Alive_PursuitPhase != null)
+            {
+                // TODO: Alive_PursuitPhase
+                /*
+                 * 
+                 */
+            }
+
+            army.SetCasualitiesReport(reportsList);
+        }
+
+        static void EditRegimentsFile(List<Army> armies)
+        {
+            bool editStarted = false;
+            Regiment editRegiment;
+
+            using (StreamReader streamReader = new StreamReader(DataFilesPaths.Regiments_Path()))
+            using (StreamWriter streamWriter = new StreamWriter(DataTEMPFilesPaths.Regiments_Path()))
+            {
+                string line;
+                while((line = streamReader.ReadLine()) != null || !streamReader.EndOfStream)
+                {
+                    //Regiment ID line
+                    if(!editStarted && Regex.IsMatch(line, @"\t\t\d+={"))
+                    {
+                        string regiment_id = Regex.Match(line, @"\d+").Value;
+                        foreach(Army army in armies)
+                        {
+                            foreach(ArmyRegiment army_regiment in army.ArmyRegiments)
+                            {
+                                foreach(Regiment regiment in army_regiment.Regiments)
+                                {
+                                    if(regiment.ID == regiment_id)
+                                    {
+                                        editStarted = true;
+                                        editRegiment = regiment;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if(editStarted && line == "")
+                    {
+
+                    }
+
+                    streamWriter.WriteLine(line);
+                }
+            }
+        }
+
 
         public static bool HasBattleEnded(string path_attila_log)
         {

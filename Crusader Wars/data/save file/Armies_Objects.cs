@@ -179,6 +179,7 @@ namespace Crusader_Wars.data.save_file
         public void SetType(RegimentType type)
         {
             Type = type;
+            if (type == RegimentType.Levy) MAA_Name = "Levy";
         }
         public void SetType(RegimentType type, string maa_name)
         {
@@ -214,6 +215,7 @@ namespace Crusader_Wars.data.save_file
         public string Index { get; private set; }
         public string Origin { get; private set; }
         public string Owner { get; private set; }
+        public string Max {  get; private set; }
         public string CurrentNum { get; private set; }
         public Culture Culture { get; private set; }
         string county_key { get; set; }
@@ -234,6 +236,7 @@ namespace Crusader_Wars.data.save_file
         public void SetCulture(string id) { Culture = new Culture(id); }
         public void isMercenary(bool t) { IsMercenary = t; }
         public void SetOrigin(string origin) { Origin = origin; }
+        public void SetMax(string max) { Max = max; }
         public void SetSoldiers(string soldiers) { CurrentNum = soldiers; }
         public void StoreCountyKey(string key) { county_key = key; }
     }

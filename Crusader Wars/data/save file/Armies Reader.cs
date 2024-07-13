@@ -987,6 +987,21 @@ namespace Crusader_Wars.data.save_file
 
                     }
 
+                    else if (isSearchStarted && line.Contains("\t\t\t\t\tmax="))
+                    {
+                        string max = Regex.Match(line, @"\d+").Value;
+
+                        if (isAttacker)
+                        {
+                            attacker_armies[army_index].ArmyRegiments[army_regiment_index].Regiments[regiment_index].SetMax(max);
+                        }
+                        else if (isDefender)
+                        {
+                            defender_armies[army_index].ArmyRegiments[army_regiment_index].Regiments[regiment_index].SetMax(max);
+                        }
+
+                    }
+
                     // Soldiers
                     else if (isSearchStarted && line.Contains("\t\t\t\t\tcurrent="))
                     {
