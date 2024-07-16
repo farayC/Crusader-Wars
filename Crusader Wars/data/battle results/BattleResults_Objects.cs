@@ -63,6 +63,42 @@ namespace Crusader_Wars
         public List<(string Script, string Type, string CultureID, string Kills)> Kills_PursuitPhase { get; private set; }
 
 
+        public int GetKillsAmountOfMainPhase(string type)
+        {
+            int kills = 0;
+            kills = Kills_MainPhase.Where(y => y.Type == type).Sum(x => Int32.Parse(x.Kills));
+            return kills;
+        }
+
+        public int GetKillsAmountOfPursuitPhase(string type)
+        {
+            int kills = 0;
+            if (Kills_PursuitPhase is null)
+                return 0;
+            else
+                kills = Kills_PursuitPhase.Where(y => y.Type == type).Sum(x => Int32.Parse(x.Kills));
+            return kills;
+        }
+
+        public int GetDeathAmountOfMainPhase(List<UnitCasualitiesReport> army_reports, string type)
+        {
+            int deaths = 0;
+            deaths = army_reports.Where(y => y.GetTypeName() == type).Sum(x => x.GetStarting() - x.GetAlive());
+            return deaths;
+        }
+        public int GetDeathAmountOfPursuitPhase(List<UnitCasualitiesReport> army_reports, string type)
+        {
+            int deaths = 0;
+            if (Alive_PursuitPhase is null)
+                return 0;
+            else
+                deaths = army_reports.Where(y => y.GetTypeName() == type).Sum(x => x.GetStarting() - x.GetAlive());
+
+            return deaths;
+        }
+
+
+
 
         //DATA SETTERS
 

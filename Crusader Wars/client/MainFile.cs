@@ -542,8 +542,7 @@ namespace Crusader_Wars
                     
                     string path_log_attila = Properties.Settings.Default.VAR_log_attila;
 
-
-                    //Attila Remaining Soldiers
+                    //  SET CASUALITIES
                     foreach(var army in attacker_armies)
                     {
                         BattleResult.GetUnitsData(army, path_log_attila);
@@ -567,8 +566,21 @@ namespace Crusader_Wars
                         }
                     }
 
-                    
-                    
+                    //  EDIT COMBATS FILE
+                    BattleResult.EditCombatFile(attacker_armies, defender_armies,left_side[0].CombatSide, right_side[0].CombatSide, path_log_attila);
+
+                    //  EDIT COMBATS RESULTS FILE
+                    BattleResult.EditCombatResultsFile(attacker_armies, defender_armies);
+
+                    //  EDIT REGIMENTS FILE
+                    BattleResult.EditRegimentsFile(attacker_armies, defender_armies);
+
+                    //  EDIT ARMY REGIMENTS FILE
+                    BattleResult.EditArmyRegimentsFile(attacker_armies, defender_armies);
+
+
+                    //  WRITE TO SAVE FILE
+                    BattleResult.SendToSaveFile(path_editedSave);
                 }
 
                 /*
