@@ -155,8 +155,7 @@
       <DependentUpon>WarningMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="data\attila settings\AttilaPreferences.cs" />
-    <Compile Include="data\battle results\gui\BattleResults_Objects.cs" />
-    <Compile Include="data\battle results\gui\GUI_BattleResultTab.cs" />
+    <Compile Include="data\battle results\BattleResults_Objects.cs" />
     <Compile Include="data\save file\Armies Reader.cs" />
     <Compile Include="data\save file\Armies_Functions.cs" />
     <Compile Include="data\save file\Armies_Objects.cs" />

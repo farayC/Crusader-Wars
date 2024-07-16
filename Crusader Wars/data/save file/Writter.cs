@@ -62,21 +62,25 @@ namespace Crusader_Wars.data.save_file
                     if(line == "\tcan_get_achievements=no")
                     {
                         streamWriter.WriteLine("\tcan_get_achievements=yes");
+                        continue;
                     }
 
                     //Combat Result START
-                    if (line == "\tcombat_results={")
+                    else if (line == "\tcombat_results={")
                     {
                         resultsFound = true;
                         streamWriter.WriteLine(line);
+                        continue;
                     }
+
                     //Combat Result
                     else if (line == $"\t\t{BattleResult.ResultID}={{" && resultsFound && !CombatResults_NeedsSkiping)
                     {
-                        WriteDataToSaveFile(streamWriter, DataFilesPaths.CombatResults_Path());
+                        WriteDataToSaveFile(streamWriter, DataTEMPFilesPaths.CombatResults_Path(), FileType.CombatResults);
                         Console.WriteLine("EDITED BATTLE RESULTS SENT!");
                         CombatResults_NeedsSkiping = true;
                     }
+                    
                     //Combat START
                     else if (line == "\tcombats={")
                     {
@@ -86,27 +90,28 @@ namespace Crusader_Wars.data.save_file
                     //Combat
                     else if (line == $"\t\t{BattleResult.CombatID}={{" && combatsFound && !Combats_NeedsSkiping)
                     {
-                        WriteDataToSaveFile(streamWriter, DataFilesPaths.Combats_Path());
+                        WriteDataToSaveFile(streamWriter, DataTEMPFilesPaths.Combats_Path(), FileType.Combats);
                         Console.WriteLine("EDITED COMBATS SENT!");
                         Combats_NeedsSkiping = true;
                     }
                     else if (line == "\tregiments={" && !NeedSkiping)
                     {
-                        //streamWriter.WriteLine(Data.String_Regiments);
+                        WriteDataToSaveFile(streamWriter, DataTEMPFilesPaths.Regiments_Path(), FileType.Regiments);
                         Console.WriteLine("EDITED REGIMENTS SENT!");
                         NeedSkiping = true;
                     }
                     else if (line == "\tarmy_regiments={" && !NeedSkiping)
                     {
-                        //streamWriter.WriteLine(Data.String_ArmyRegiments);
+                        WriteDataToSaveFile(streamWriter, DataTEMPFilesPaths.ArmyRegiments_Path(), FileType.ArmyRegiments);
                         Console.WriteLine("EDITED ARMY REGIMENTS SENT!");
                         NeedSkiping = true;
                     }
                     else if (line == "living={" && !NeedSkiping)
                     {
                         //streamWriter.WriteLine(Data.String_Living);
-                        Console.WriteLine("EDITED LIVING SENT!");
-                        NeedSkiping = true;
+                        //Console.WriteLine("EDITED LIVING SENT!");
+                        //NeedSkiping = true;
+                        streamWriter.WriteLine(line);
                     }
                     else if (!NeedSkiping && !CombatResults_NeedsSkiping && !Combats_NeedsSkiping)
                     {
@@ -134,8 +139,15 @@ namespace Crusader_Wars.data.save_file
         }
 
 
-
-        static void WriteDataToSaveFile(StreamWriter streamWriter, string data_file_path)
+        enum FileType
+        {
+            Living,
+            CombatResults,
+            Combats,
+            ArmyRegiments,
+            Regiments            
+        }
+        static void WriteDataToSaveFile(StreamWriter streamWriter, string data_file_path, FileType fileType)
         {
             StringBuilder sb = new StringBuilder();
             using (StreamReader sr = new StreamReader(data_file_path))
@@ -144,7 +156,14 @@ namespace Crusader_Wars.data.save_file
                 {
                     string l = sr.ReadLine();
                     if (l is null) break;
-                    if (l == "\t\t}") continue;
+                    switch(fileType)
+                    {
+                        case FileType.Combats:
+                        case FileType.CombatResults:
+                            if (l == "\t\t}") continue;
+                            break;
+                    }
+                    
                     sb.AppendLine(l);
                 }
             }

@@ -239,6 +239,7 @@ namespace Crusader_Wars.data.save_file
         public void SetMax(string max) { Max = max; }
         public void SetSoldiers(string soldiers) { CurrentNum = soldiers; }
         public void StoreCountyKey(string key) { county_key = key; }
+        public void ChangeIndex(string index) { Index = index; }
     }
 
     public class Culture
