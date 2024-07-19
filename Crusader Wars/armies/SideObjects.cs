@@ -133,7 +133,7 @@ namespace Crusader_Wars
                     unit.ChangeSoldiers((int)num_ratio);
                 }
 
-                Console.WriteLine("Army scaled by " + (double)ratio / 100 + '%');
+                Console.WriteLine("Army scaled by " + (double)ratio + '%');
             }
 
         }

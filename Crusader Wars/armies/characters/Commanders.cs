@@ -32,9 +32,10 @@ namespace Crusader_Wars
         public int Prowess { get; private set; }
         private Culture CultureObj { get; set; }
         public List<string> Traits_List { get; private set; }
+
         private List<CourtPosition> Employees { get; set; }
         private (string PrimaryAttribute, string SecundaryAttribute, string Honor) Accolade { get; set; }
-        private bool hasFallen { get; set; }
+        public bool hasFallen { get; private set; }
         private bool MainCommander {  get; set; }
 
         public CommanderSystem(string name, string id, int prowess, int martial, int rank, bool mainCommander)
@@ -153,15 +154,15 @@ namespace Crusader_Wars
             }
 
             //Health soldiers debuff
-            /*
-            if (Traits_List.Contains(Traits.Wounded().ToString())) soldiers += -5;
-            if (Traits_List.Contains(Traits.Severely_Injured().ToString())) soldiers += -10;
-            if (Traits_List.Contains(Traits.Brutally_Mauled().ToString())) soldiers += -15;
-            if (Traits_List.Contains(Traits.Maimed().ToString())) soldiers += -10;
-            if (Traits_List.Contains(Traits.One_Eyed().ToString())) soldiers += -5;
-            if (Traits_List.Contains(Traits.One_Legged().ToString())) soldiers += -10;
-            if (Traits_List.Contains(Traits.Disfigured().ToString())) soldiers += -5;
-            */
+            
+            if (Traits_List.Contains(" " + WoundedTraits.Wounded().ToString() + " ")) soldiers += -5;
+            if (Traits_List.Contains(" " + WoundedTraits.Severely_Injured().ToString() + " ")) soldiers += -10;
+            if (Traits_List.Contains(" " + WoundedTraits.Brutally_Mauled().ToString() + " ")) soldiers += -15;
+            if (Traits_List.Contains(" " + WoundedTraits.Maimed().ToString() + " ")) soldiers += -10;
+            if (Traits_List.Contains(" " + WoundedTraits.One_Eyed().ToString() + " ")) soldiers += -5;
+            if (Traits_List.Contains(" " + WoundedTraits.One_Legged().ToString() + " ")) soldiers += -10;
+            if (Traits_List.Contains(" " + WoundedTraits.Disfigured().ToString() + " ")) soldiers += -5;
+            
 
             //Minimum of 1 soldier
             if (soldiers < 1) soldiers = 1;
@@ -298,41 +299,30 @@ namespace Crusader_Wars
 
         }
 
-        /*
-        public void HasGeneralFallen(string path_attila_log, ICharacter Side)
+        
+        public void HasGeneralFallen(string path_attila_log)
         {
             using (FileStream logFile = File.Open(path_attila_log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(logFile))
             {
                 string str = reader.ReadToEnd();
 
-                if (Side is Player)
+                if (str.Contains($"Commander{ID} from Army"))
                 {
-                    if (str.Contains("Player general has fallen"))
-                    {
-                        hasFallen = true;
-                        reader.Close();
-                        logFile.Close();
-                        return;
-                    }
-                }
-                else
-                {
-                    if (str.Contains("Enemy general has fallen"))
-                    {
-                        hasFallen = true;
-                        reader.Close();
-                        logFile.Close();
-                        return;
-                    }
+                    hasFallen = true;
+                    Console.WriteLine($"Commander {ID} has fallen!");
+
+                    reader.Close();
+                    logFile.Close();
+                    return;
                 }
 
                 hasFallen = false;
             }
         }
-        */
+        
 
-        public void Health()
+        public string Health(string traits_line)
         {
             //50% Chance Light Wounds
             const int WoundedChance = 50; // 50%
@@ -350,58 +340,49 @@ namespace Crusader_Wars
             var Chance = new Random();
             var RandomNumber = Chance.Next(101);
 
-            string id = ID;
             if (hasFallen)
             {
 
                 // Determine which option to set based on its percentage chance
                 if (RandomNumber >= 0 && RandomNumber <= WoundedChance)
                 {
-                    //SaveFile.SetTraits(id, Traits.Wounded().ToString());
-                    Console.Write("Wounded ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got "+"Wounded ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Wounded().ToString()); 
                 }
                 else if (RandomNumber > WoundedChance && RandomNumber <= Severely_InjuredChance)
                 {
-                    //SaveFile.SetTraits(id, Traits.Severely_Injured().ToString());
-                    Console.Write("Severely_Injured ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got " + "Severely_Injured ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Severely_Injured().ToString());
                 }
                 else if (RandomNumber > Severely_InjuredChance && RandomNumber <= Brutally_MauledChance)
                 {
-                    //SaveFile.SetTraits(id, Traits.Brutally_Mauled().ToString());
-                    Console.Write("Brutally Mauled ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got " + "Brutally Mauled ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Brutally_Mauled().ToString());
                 }
                 else if (RandomNumber > Brutally_MauledChance && RandomNumber <= MaimedChance)
                 {
-                    //SaveFile.SetTraits(id, Traits.Maimed().ToString());
-                    Console.Write("Maimed ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got " + "Maimed ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Maimed().ToString());
                 }
                 else if (RandomNumber > MaimedChance && RandomNumber <= One_LeggedChance)
                 {
-                    //SaveFile.SetTraits(id, Traits.One_Legged().ToString());
-                    Console.Write("One Legged ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got " + "One Legged ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.One_Legged().ToString());
                 }
                 else if (RandomNumber > One_LeggedChance && RandomNumber <= One_EyedChance)
                 {
-                    //SaveFile.SetTraits(id, Traits.One_Eyed().ToString());
-                    Console.Write("One Eyed ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got " + "One Eyed ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.One_Eyed().ToString());
                 }
                 else if (RandomNumber > One_EyedChance && RandomNumber <= Disfigured)
                 {
-                    //SaveFile.SetTraits(id, Traits.Disfigured().ToString());
-                    Console.Write("Disfigured ");
-                    return;
+                    Console.WriteLine($"Commander {ID} got " + "Disfigured ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Disfigured().ToString());
                 }
 
             }
 
-
-
+            return traits_line;
         }
     }
 }

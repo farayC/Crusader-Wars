@@ -53,6 +53,7 @@ namespace Crusader_Wars
 
     public class UnitsResults
     {
+
         //SOLDIERS ALIVE
         public List<(string Script, string Type, string CultureID, string Remaining)> Alive_MainPhase { get; private  set; }
         public List<(string Script, string Type, string CultureID, string Remaining)> Alive_PursuitPhase { get; private set; }

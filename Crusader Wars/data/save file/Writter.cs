@@ -108,10 +108,9 @@ namespace Crusader_Wars.data.save_file
                     }
                     else if (line == "living={" && !NeedSkiping)
                     {
-                        //streamWriter.WriteLine(Data.String_Living);
-                        //Console.WriteLine("EDITED LIVING SENT!");
-                        //NeedSkiping = true;
-                        streamWriter.WriteLine(line);
+                        WriteDataToSaveFile(streamWriter, DataTEMPFilesPaths.Living_Path(), FileType.Living);
+                        Console.WriteLine("EDITED LIVING SENT!");
+                        NeedSkiping = true;
                     }
                     else if (!NeedSkiping && !CombatResults_NeedsSkiping && !Combats_NeedsSkiping)
                     {
