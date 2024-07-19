@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Crusader_Wars.data.save_file
 {
@@ -57,7 +58,19 @@ namespace Crusader_Wars.data.save_file
                             {
                                 if (armies[i].Commander.GetCultureObj() == null)
                                 {
-                                    armies[i].Commander.ChangeCulture(armies[i].OwnerCulture);
+                                    if (armies[i].IsPlayer())
+                                    {
+                                        armies[i].Commander.ChangeCulture(new Culture(CK3LogData.LeftSide.GetCommander().culture_id));
+                                    }
+                                    else if (armies[i].IsEnemy())
+                                    {
+                                        armies[i].Commander.ChangeCulture(new Culture(CK3LogData.RightSide.GetCommander().culture_id));
+                                    }
+                                    else
+                                    {
+                                        armies[i].Commander.ChangeCulture(armies[i].OwnerCulture);
+                                    }
+                                    
                                     continue;
                                 }
                                 if (armies[i].Commander.GetCultureObj().ID == culture_id)
@@ -75,17 +88,19 @@ namespace Crusader_Wars.data.save_file
                                     string knight_culture_id = "";
                                     if (knight.GetCultureObj() == null)
                                     {
-                                        Culture new_culture;
-                                        try
+                                        Culture mainParticipantCulture;
+                                        if (armies[i].IsPlayer())
                                         {
-                                            new_culture = armies[i].Knights.GetKnightsList().Find(x => x.GetCultureObj() != null).GetCultureObj();
+                                            string id = CK3LogData.LeftSide.GetMainParticipant().culture_id;
+                                            mainParticipantCulture = new Culture(id);
                                         }
-                                        catch (NullReferenceException)
+                                        else
                                         {
-                                            new_culture = armies[i].OwnerCulture;
+                                            string id = CK3LogData.RightSide.GetMainParticipant().culture_id;
+                                            mainParticipantCulture = new Culture(id);
                                         }
-
-
+                                            
+                                        Culture new_culture = armies[i].Knights.GetKnightsList().Find(x => x.GetCultureObj() != null).GetCultureObj() ?? mainParticipantCulture;
                                         knight.ChangeCulture(new_culture);
                                         knight_culture_id = knight.GetCultureObj().ID;
                                     }
@@ -224,6 +239,44 @@ namespace Crusader_Wars.data.save_file
                     }
                 }
             }
+        }
+
+        /*##############################################
+         *####              CHARACTERS              #### 
+         *####--------------------------------------####
+         *####      Reader for the living file      ####
+         *##############################################
+         */
+
+        public static (bool searchStarted, Army searchingArmy, bool isCommander, CommanderSystem commander, bool isKnight, Knight knight) SearchCharacters(string id, List<Army> armies)
+        {
+            foreach (Army army in armies)
+            {
+                //COMMANDERS
+                if (army.Commander != null && id == army.Commander.ID)
+                {
+                    return (true, army, true, army.Commander, false, null);
+                }
+
+                // KNIGHTS
+                else if (army.Knights.GetKnightsList() != null)
+                {
+                    foreach (var knight in army.Knights.GetKnightsList())
+                    {
+                        if (id == knight.GetID())
+                        {
+                            return (true, army, false, null, true, knight);
+                        }
+                    }
+                }
+                //ARMY OWNER
+                else if (id == army.Owner)
+                {
+                    return (true, army, false, null, false, null);
+                }
+            }
+
+            return (false, null, false, null, false, null);
         }
 
         /*##############################################

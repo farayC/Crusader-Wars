@@ -431,9 +431,11 @@ namespace Crusader_Wars
                 //Create Battle
                 BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
 
-
                 //Close Script
                 BattleScript.CloseScript();
+
+                //Set Commanders Script
+                BattleScript.SetCommandersLocals();
 
                 //Set Units Kills Script
                 BattleScript.SetLocalsKills(Data.units_scripts);
@@ -508,8 +510,8 @@ namespace Crusader_Wars
 
                     continue;
                 }
-                
-                //Games.CloseCrusaderKingsProcess(); <---DONT FORGET TO UNCOMMENT THIS
+
+                //Games.CloseCrusaderKingsProcess();
 
                 Console.WriteLine("Battle created successfully");
 
@@ -542,29 +544,41 @@ namespace Crusader_Wars
                     
                     string path_log_attila = Properties.Settings.Default.VAR_log_attila;
 
+
                     //  SET CASUALITIES
                     foreach(var army in attacker_armies)
                     {
-                        BattleResult.GetUnitsData(army, path_log_attila);
-                        if(army.MergedArmies != null)
+                        BattleResult.ReadAttilaResults(army, path_log_attila);
+                        BattleResult.CheckForDeathCommanders(army, path_log_attila);
+                        BattleResult.CheckForDeathKnights(army);
+                        if (army.MergedArmies != null)
                         {
                             foreach(var merged_army in army.MergedArmies)
                             {
-                                BattleResult.GetUnitsData(merged_army, path_log_attila);
+                                BattleResult.ReadAttilaResults(merged_army, path_log_attila);
+                                BattleResult.CheckForDeathCommanders(merged_army, path_log_attila);
+                                BattleResult.CheckForDeathKnights(merged_army);
                             }
                         }
                     }
                     foreach(var army in defender_armies)
                     {
-                        BattleResult.GetUnitsData(army, path_log_attila);
+                        BattleResult.ReadAttilaResults(army, path_log_attila);
+                        BattleResult.CheckForDeathCommanders(army, path_log_attila);
+                        BattleResult.CheckForDeathKnights(army);
                         if (army.MergedArmies != null)
                         {
                             foreach (var merged_army in army.MergedArmies)
                             {
-                                BattleResult.GetUnitsData(merged_army, path_log_attila);
+                                BattleResult.ReadAttilaResults(merged_army, path_log_attila);
+                                BattleResult.CheckForDeathCommanders(merged_army, path_log_attila);
+                                BattleResult.CheckForDeathKnights(merged_army);
                             }
                         }
                     }
+
+                    //  EDIT LIVING FILE
+                    BattleResult.EditLivingFile(attacker_armies, defender_armies);
 
                     //  EDIT COMBATS FILE
                     BattleResult.EditCombatFile(attacker_armies, defender_armies,left_side[0].CombatSide, right_side[0].CombatSide, path_log_attila);
@@ -581,172 +595,11 @@ namespace Crusader_Wars
 
                     //  WRITE TO SAVE FILE
                     BattleResult.SendToSaveFile(path_editedSave);
+
+                    //  OPEN CK3 WITH BATTLE RESULTS
+                    Games.LoadBattleResults();
                 }
 
-                /*
-                if (battleEnded)
-                {
-                    ModOptions.CloseAttila();
-                    RequiredModsMessage.CloseAllWindows();
-
-                    infoLabel.Text = "Battle has ended!";
-                    string path_log_attila = Properties.Settings.Default.VAR_log_attila;
-
-                    List<(string Name, string Remaining)> Player_Remaining;
-                    List<(string Name, string Remaining)> Enemy_Remaining;
-
-                    string remaining_player_knights = "";
-                    string remaining_enemy_knights = "";
-
-                    string winner = "";
-
-                    try
-                    {
-                        //Attila Remaining Soldiers
-
-                        //Remaining_Soldiers_List = BattleResult.GetRemainingSoldiersData(path_log_attila);
-                        BattleResult.GetUnitsData(Player, path_log_attila);
-                        BattleResult.GetUnitsData(Enemy, path_log_attila);
-
-
-                        Player_Remaining = new List<(string Name, string Remaining)>();
-                        Enemy_Remaining = new List<(string Name, string Remaining)>();
-
-                        if(Player.UnitsResults.Alive_PursuitPhase != null )
-                        {
-                            Player_Remaining = Player.UnitsResults.Alive_PursuitPhase;
-                        }
-                        else
-                        {
-                            Player_Remaining = Player.UnitsResults.Alive_MainPhase;
-                        }
-                        if (Enemy.UnitsResults.Alive_PursuitPhase != null)
-                        {
-                            Enemy_Remaining = Enemy.UnitsResults.Alive_PursuitPhase;
-                        }
-                        else
-                        {
-                            Enemy_Remaining = Enemy.UnitsResults.Alive_MainPhase;
-                        }
-
-                        //Army Ratio
-                        for (int i = 0; i < Player_Remaining.Count; i++)
-                        {
-                            int number;
-                            if (Int32.TryParse(Player_Remaining[i].Remaining, out number))
-                            {
-                                if (!Player_Remaining[i].Name.Contains("general"))
-                                    number = ArmyProportions.SetResultsRatio(number);
-
-                                Player_Remaining[i] = (Player_Remaining[i].Name, number.ToString());
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                        for (int i = 0; i < Enemy_Remaining.Count; i++)
-                        {
-                            int number;
-                            if (Int32.TryParse(Enemy_Remaining[i].Remaining, out number))
-                            {
-                                if (!Enemy_Remaining[i].Name.Contains("general"))
-                                    number = ArmyProportions.SetResultsRatio(number);
-
-                                Enemy_Remaining[i] = (Enemy_Remaining[i].Name, number.ToString());
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-
-
-                        remaining_player_knights = Player_Remaining.Where(x => x.Name.Contains("player_general_knights"))
-                                           .Select(p => p.Remaining)
-                                           .FirstOrDefault();
-
-                        remaining_enemy_knights = Enemy_Remaining.Where(x => x.Name.Contains("enemy_general_knights"))
-                                                                     .Select(p => p.Remaining)
-                                                                     .FirstOrDefault();
-
-
-
-                        Player.Commander.HasGeneralFallen(path_log_attila, Player);
-                        Enemy.Commander.HasGeneralFallen(path_log_attila, Enemy);
-
-
-                        if (remaining_player_knights != null) Player.Knights.GetKilled(Int32.Parse(remaining_player_knights));
-
-                        if (remaining_enemy_knights != null) Enemy.Knights.GetKilled(Int32.Parse(remaining_enemy_knights));
-
-                        
-                        //Commanders Health System
-                        //Player.Commander.Health();
-                        //Enemy.Commander.Health();
-
-                        //Knights Health System
-                        //Player.Knights.Health();
-                        //Enemy.Knights.Health();
-
-                        winner = BattleResult.GetAttilaWinner(attilaLogPath, Player.CombatSide, Enemy.CombatSide);
-
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Error reading the battle results", "Battle Results Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                        Games.CloseTotalWarAttilaProcess();
-                        Games.StartCrusaderKingsProcess();
-                        infoLabel.Text = "Waiting for battle...";
-                        this.Text = "Crusader Wars (Waiting for battle...)";
-
-                        //Data Clear
-                        Data.Reset();
-                        Player = new Player();
-                        Enemy = new Enemy();
-
-                        continue;
-                    }
-
-
-
-
-                    try
-                    {
-                        bool side = false; ;
-                        if (Player.CombatSide == "attacker") side = false;//Attacker Player and Defender Enemy
-                        else side = true; //Defender Player and Attacker Enemy
-                        BattleResult.EditCombatResults(Player, Enemy, side);
-
-                        BattleResult.SetWinner(winner);
-
-                        BattleResult.SendToSaveFile(path_editedSave);
-                        Games.LoadBattleResults();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Corrupted save.", "Battle Results Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                        Games.CloseTotalWarAttilaProcess();
-                        Games.StartCrusaderKingsProcess();
-                        infoLabel.Text = "Waiting for battle...";
-                        this.Text = "Crusader Wars (Waiting for battle...)";
-
-                        //Data Clear
-                        Data.Reset();
-                        Player = new Player();
-                        Enemy = new Enemy();
-
-                        continue;
-                    }
-
-
-                    ProcessCommands.ResumeProcess();
-                    infoLabel.Text = "Battle results sent!";
-
-                }
-                */
 
                 await Task.Delay(10);
 

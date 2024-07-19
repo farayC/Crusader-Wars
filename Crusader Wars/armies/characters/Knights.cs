@@ -17,6 +17,7 @@ namespace Crusader_Wars
         List<string> Traits { get; set; }
         BaseSkills BaseSkill { get; set; }
         bool isAccolade { get; set; }
+        bool hasFallen { get; set; }    
 
         public string GetName() {  return Name; }
         public string GetID() { return ID; }
@@ -26,7 +27,11 @@ namespace Crusader_Wars
         public int GetSoldiers() { return Soldiers; }
         public int GetProwess() { return Prowess; }
         public bool IsAccolade() { return isAccolade; }
+        public bool HasFallen() { return hasFallen; }
+
+        public void HasFallen(bool yn) { hasFallen = yn; }
         public void ChangeCulture(Culture cul) { CultureObj = cul; }
+        public void SetTraits(List<string> list_trait) { Traits = list_trait; }
 
 
         internal Knight(string name, string id, Culture culture, int prowess, int soldiers) { 
@@ -46,6 +51,8 @@ namespace Crusader_Wars
             Soldiers = SetStrengh(soldiers);
             isAccolade = accolade;
         }
+
+
 
         int SetStrengh(int soldiers)
         {
@@ -74,6 +81,70 @@ namespace Crusader_Wars
             return soldiers + value;
         }
 
+        public string Health(string traits_line)
+        {
+            if (hasFallen)
+            {
+                //50% Chance Light Wounds
+                const int WoundedChance = 50; // 50%
+
+                //40% Chance Harsh Wounds
+                const int Severely_InjuredChance = 70; // 20%
+                const int Brutally_MauledChance = 90; // 20%
+
+                //10% Chance Extreme Wounds
+                const int MaimedChance = 93; // 3%
+                const int One_LeggedChance = 96;// 3%
+                const int One_EyedChance = 99;// 3%
+                const int Disfigured = 100; //1%
+
+                var Chance = new Random();
+                int RandomNumber;
+
+                RandomNumber = Chance.Next(101);
+
+                // Determine which option to set based on its percentage chance
+                if (RandomNumber >= 0 && RandomNumber <= WoundedChance)
+                {
+                    Console.WriteLine("Wounded ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Wounded().ToString());
+                }
+                else if (RandomNumber > WoundedChance && RandomNumber <= Severely_InjuredChance)
+                {
+                    Console.WriteLine("Severely_Injured ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Severely_Injured().ToString());
+                }
+                else if (RandomNumber > Severely_InjuredChance && RandomNumber <= Brutally_MauledChance)
+                {
+                    Console.WriteLine("Brutally Mauled ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Brutally_Mauled().ToString());
+                }
+                else if (RandomNumber > Brutally_MauledChance && RandomNumber <= MaimedChance)
+                {
+                    Console.WriteLine("Maimed ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Maimed().ToString());
+                }
+                else if (RandomNumber > MaimedChance && RandomNumber <= One_LeggedChance)
+                {
+                    Console.WriteLine("One Legged ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.One_Legged().ToString());
+                }
+                else if (RandomNumber > One_LeggedChance && RandomNumber <= One_EyedChance)
+                {
+                    Console.WriteLine("One Eyed ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.One_Eyed().ToString());
+                }
+                else if (RandomNumber > One_EyedChance && RandomNumber <= Disfigured)
+                {
+                    Console.WriteLine("Disfigured ");
+                    return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Disfigured().ToString());
+                }
+            }
+
+            return traits_line;
+
+        }
+
     }
     public class KnightSystem
     {
@@ -84,8 +155,8 @@ namespace Crusader_Wars
 
         private int Effectiveness { get; set; }
 
-        private List<string> KilledKnights { get; set; }
-        private bool HasKnights { get; set; }
+        //private List<Knight> KilledKnights { get; set; }
+        private bool hasKnights { get; set; }
 
 
         public KnightSystem(List<Knight> data, int effectiveness)
@@ -94,28 +165,18 @@ namespace Crusader_Wars
             {
                 Knights = data;
                 Effectiveness = effectiveness;
-                HasKnights = true;
+                hasKnights = true;
                 SetKnightsCount();
             }
             else
             {
-                HasKnights = false;
+                hasKnights = false;
             }
 
         }
 
+        public bool HasKnights() { return hasKnights; }
         public Culture GetMajorCulture() { return MajorCulture; }
-
-        public void SetMajorCulture()
-        {
-              MajorCulture = Knights.GroupBy(knight => knight.GetCultureObj())
-                          .OrderByDescending(group => group.Count())
-                          .Select(group => group.Key)
-                          .FirstOrDefault();
-              if(MajorCulture == null)
-                MajorCulture = Knights.FirstOrDefault(x => x.GetCultureObj() != null).GetCultureObj();
-        }
-
         public List<Knight> GetKnightsList()
         {
             return Knights;
@@ -125,6 +186,19 @@ namespace Crusader_Wars
         {
             return Accolades;
         }
+
+        public void SetMajorCulture()
+        {
+              MajorCulture = Knights.GroupBy(knight => knight.GetCultureObj())
+                                    .OrderByDescending(group => group.Count())
+                                    .Select(group => group.Key)
+                                    .FirstOrDefault();
+
+              if(MajorCulture == null)
+                MajorCulture = Knights.FirstOrDefault(x => x.GetCultureObj() != null).GetCultureObj();
+        }
+
+
         public void SetAccolades(List<(string, string, string)> accolades_list)
         {
             Accolades = accolades_list;
@@ -148,92 +222,12 @@ namespace Crusader_Wars
         }
 
 
-        public void Health()
-        {
-            if (HasKnights)
-            {
-                //50% Chance Light Wounds
-                const int WoundedChance = 50; // 50%
-
-                //40% Chance Harsh Wounds
-                const int Severely_InjuredChance = 70; // 20%
-                const int Brutally_MauledChance = 90; // 20%
-
-                //10% Chance Extreme Wounds
-                const int MaimedChance = 93; // 3%
-                const int One_LeggedChance = 96;// 3%
-                const int One_EyedChance = 99;// 3%
-                const int Disfigured = 100; //1%
-
-                var Chance = new Random();
-                int RandomNumber;
-
-                Console.WriteLine("----------------------------------");
-                Console.WriteLine($"KNIGHTS FALLEN - {KilledKnights}\n");
-
-                for (int i = 0; i < KilledKnights.Count; i++)
-                {
-                    //Random Knight
-                    string id = KilledKnights[i];
-                    RandomNumber = Chance.Next(101);
-
-                    // Determine which option to set based on its percentage chance
-                    if (RandomNumber >= 0 && RandomNumber <= WoundedChance)
-                    {
-                        //SaveFile.SetTraits(id, Traits.Wounded().ToString());
-                        Console.Write("Wounded ");
-                        continue;
-                    }
-                    else if (RandomNumber > WoundedChance && RandomNumber <= Severely_InjuredChance)
-                    {
-                        //SaveFile.SetTraits(id, Traits.Severely_Injured().ToString());
-                        Console.Write("Severely_Injured ");
-                        continue;
-                    }
-                    else if (RandomNumber > Severely_InjuredChance && RandomNumber <= Brutally_MauledChance)
-                    {
-                        //SaveFile.SetTraits(id, Traits.Brutally_Mauled().ToString());
-                        Console.Write("Brutally Mauled ");
-                        continue;
-                    }
-                    else if (RandomNumber > Brutally_MauledChance && RandomNumber <= MaimedChance)
-                    {
-                        //SaveFile.SetTraits(id, Traits.Maimed().ToString());
-                        Console.Write("Maimed ");
-                        continue;
-                    }
-                    else if (RandomNumber > MaimedChance && RandomNumber <= One_LeggedChance)
-                    {
-                        //SaveFile.SetTraits(id, Traits.One_Legged().ToString());
-                        Console.Write("One Legged ");
-                        continue;
-                    }
-                    else if (RandomNumber > One_LeggedChance && RandomNumber <= One_EyedChance)
-                    {
-                        //SaveFile.SetTraits(id, Traits.One_Eyed().ToString());
-                        Console.Write("One Eyed ");
-                        continue;
-                    }
-                    else if (RandomNumber > One_EyedChance && RandomNumber <= Disfigured)
-                    {
-                        //SaveFile.SetTraits(id, Traits.Disfigured().ToString());
-                        Console.Write("Disfigured ");
-                        continue;
-                    }
-
-                    Console.WriteLine("No Trait Set! - ERROR");
-                }
-
-            }
-
-        }
-
 
         public void GetKilled(int remaining)
         {
-            if (HasKnights)
+            if (hasKnights)
             {
-                KilledKnights = new List<string>();
+                //KilledKnights = new List<Knight>();
 
                 int totalSoldiers = UnitSoldiers;
                 int remainingSoldiers = remaining;
@@ -253,9 +247,9 @@ namespace Crusader_Wars
 
                     if (soldiers_lost <= 0) break;
 
-                    KilledKnights.Add(knight.GetID());
+                    //KilledKnights.Add(knight);
 
-                    Knights.Remove(knight);
+                    Knights[random_index].HasFallen(true);
                 }
 
 
@@ -282,7 +276,7 @@ namespace Crusader_Wars
 
         private double ProwessExperience()
         {
-            if (HasKnights)
+            if (hasKnights)
             {
                 double value = 0;
 
@@ -334,7 +328,7 @@ namespace Crusader_Wars
         {
             UnitSoldiers = 0;
 
-            if (HasKnights)
+            if (hasKnights)
             {
                 for (int i = 0; i < Knights.Count; i++)
                 {
@@ -372,24 +366,6 @@ namespace Crusader_Wars
 
 
         }
-
-        public void SetTraits(string id, List<string> traits)
-        {
-            /*
-            var knight = Knights.FirstOrDefault(x => x.ID == id);
-            Knights[Knights.IndexOf(knight)] = (knight.ID, knight.Soldiers, knight.Prowess, traits, knight.BaseSkill, knight.isAccolade, knight.Name);
-            */
-        }
-        public void SetSkills(string id, BaseSkills skills)
-        {
-            /*
-            var knight = Knights.FirstOrDefault(x => x.ID == id);
-            Knights[Knights.IndexOf(knight)] = (knight.ID, knight.Soldiers, knight.Prowess, knight.Traits, skills, knight.isAccolade, knight.Name);
-            */
-        }
-
-
-
 
 
     }

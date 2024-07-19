@@ -28,7 +28,7 @@ namespace Crusader_Wars
         public static double Excellent() { return 0.4; }
     }
 
-    struct WoundedTraits
+    internal struct WoundedTraits
     {
         public static int Wounded() { return ArmiesReader.GetTraitIndex("wounded_1"); }
         public static int Severely_Injured() { return ArmiesReader.GetTraitIndex("wounded_2"); }
@@ -39,19 +39,15 @@ namespace Crusader_Wars
         public static int Disfigured() { return ArmiesReader.GetTraitIndex("disfigured"); }
     }
 
-    static class Wounds
+
+    internal static  class CharacterWounds
     {
-
-    }
-
-    public static  class SaveFile
-    {
-
-        private static string VerifyTraits(string str, string trait)
-        {
-            string[] ids = { WoundedTraits.Wounded().ToString(), WoundedTraits.Severely_Injured().ToString(), WoundedTraits.Brutally_Mauled().ToString(),
+        static string[] ids = { WoundedTraits.Wounded().ToString(), WoundedTraits.Severely_Injured().ToString(), WoundedTraits.Brutally_Mauled().ToString(),
                              WoundedTraits.Maimed().ToString(), WoundedTraits.One_Eyed().ToString(),
                              WoundedTraits.One_Legged().ToString(), WoundedTraits.Disfigured().ToString() };
+        internal static string VerifyTraits(string str, string trait)
+        {
+            str = Regex.Replace(str, " }", "");
 
             //check if it is already wounded
             string already_wounded_trait="";
@@ -75,7 +71,7 @@ namespace Crusader_Wars
                 //Add trait if doesn't have one
                 str += $" {trait}";
 
-                return str;
+                return str + " }";
             }
             else //if its already wounded, increase wound
             {
@@ -83,7 +79,7 @@ namespace Crusader_Wars
                 if(match_1.Success)
                 {
                     string edited_str = Regex.Replace(str, $" {already_wounded_trait} ", $" {WoundedTraits.Brutally_Mauled()} ");
-                    return edited_str;
+                    return edited_str + " }";
                 }
 
 
@@ -91,10 +87,10 @@ namespace Crusader_Wars
                 if (match_2.Success)
                 {
                     string edited_str = Regex.Replace(str, $" {already_wounded_trait}", $" {WoundedTraits.Brutally_Mauled()} ");
-                    return edited_str;
+                    return edited_str + " }";
                 }
 
-                return str;
+                return str + " }";
 
             }
         }

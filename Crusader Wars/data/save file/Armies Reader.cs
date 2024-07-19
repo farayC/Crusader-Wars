@@ -25,13 +25,15 @@ namespace Crusader_Wars.data.save_file
         // V1.0 Beta
         static List<Army> attacker_armies;
         static List<Army> defender_armies;
-        static List<(string name, int index)> save_file_traits;
+        public static List<(string name, int index)> save_file_traits { get; set; }
         public static void ReadCombats(string g)
         {
             ReadCombatArmies(g);
         }
         public static (List<Army> attacker, List<Army> defender) ReadBattleArmies()
         {
+            ReadSaveFileTraits();
+
             ReadArmiesData();
             ReadArmiesUnits();
             ReadArmyRegiments();
@@ -42,7 +44,7 @@ namespace Crusader_Wars.data.save_file
             ReadCountiesManager();
             ReadMercenaries();
             BattleFile.SetArmiesSides(attacker_armies, defender_armies);
-            ReadSaveFileTraits();
+
             CreateKnights();
             CreateCommanders();
             ReadCharacters();
@@ -88,7 +90,7 @@ namespace Crusader_Wars.data.save_file
         static void ReadSaveFileTraits()
         {
             MatchCollection allTraits = Regex.Matches(File.ReadAllText(Writter.DataFilesPaths.Traits_Path()), @" (\w+)");
-            var save_file_traits = new List<(string name, int index)>();
+            save_file_traits = new List<(string name, int index)>();
 
             for (int i = 0; i < allTraits.Count; i++)
             {
@@ -96,7 +98,7 @@ namespace Crusader_Wars.data.save_file
                 save_file_traits.Add((allTraits[i].Groups[1].Value, i));
             }
         }
-
+         
         public static int GetTraitIndex(string trait_name)
         {
             int index;
@@ -117,168 +119,91 @@ namespace Crusader_Wars.data.save_file
         static void ReadCharacters()
         {
             bool searchStarted = false;
-            bool isAttacker = false, isDefender = false;
             bool isKnight = false, isCommander = false;
-            Army attacker_army = null;
-            Army defender_army = null;
-            Knight attacker_knight = null;
-            Knight defender_knight = null;
+            Army searchingArmy = null;
+            Knight searchingKnight = null;
+
+
             using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.Living_Path()))
             {
-                while(!sr.EndOfStream)
+                string line;
+                while((line = sr.ReadLine()) != null && !sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
-                    if (line == null) break;
-                    
-
                     if(Regex.IsMatch(line, @"\d+={") && !searchStarted)
                     {
-                        string line_id = Regex.Match(line, @"(\d)+={").Groups[1].Value;
+                        string line_id = Regex.Match(line, @"(\d+)={").Groups[1].Value;
 
-                        foreach (var army in attacker_armies)
+                        var searchingData = Armies_Functions.SearchCharacters(line_id, attacker_armies);
+                        if(searchingData.searchStarted )
                         {
-                            //ARMY OWNER
-                            if(line == army.Owner + "={")
-                            {
-                                searchStarted = true;
-                                attacker_army = army;
-                                isAttacker = true;
-                                break;
-                            }
+                            searchStarted = true;
+                            isKnight = searchingData.isKnight;
+                            isCommander = searchingData.isCommander;
+                            searchingArmy = searchingData.searchingArmy;
+                            searchingKnight = searchingData.knight;
 
-                            //COMMANDERS
-                            else if (army.Commander != null && line == army.Commander.ID + "={")
-                            {
-                                searchStarted = true;
-                                attacker_army = army;
-                                isAttacker = true;
-                                isCommander = true;
-                                break;
-                            }
-
-                            // KNIGHTS
-                            else if (army.Knights.GetKnightsList() != null)
-                            {
-                                foreach (var knight in army.Knights.GetKnightsList())
-                                {
-                                    if (line == knight.GetID() + "={")
-                                    {
-                                        searchStarted = true;
-                                        attacker_knight = knight;
-                                        attacker_army = army;
-                                        isAttacker = true;
-                                        isKnight = true;
-                                        break;
-                                    }
-                                }
-                                if (searchStarted) break;
-                            }
-
-                            
                         }
-
-                        if (searchStarted) continue;
-                        
-                        foreach (var army in defender_armies)
+                        else
                         {
-                            //ARMY OWNER
-                            if (line == army.Owner + "={")
+                            searchingData = Armies_Functions.SearchCharacters(line_id, defender_armies);
+                            if(searchingData.searchStarted )
                             {
                                 searchStarted = true;
-                                defender_army = army;
-                                isDefender = true;
-                                break;
-                            }
-
-                            //COMMANDERS
-                            if (army.Commander != null && line == army.Commander.ID + "={")
-                            {
-                                searchStarted = true;
-                                defender_army = army;
-                                isDefender = true;
-                                isCommander = true;
-                                break;
-                            }
-
-                            // KNIGHTS
-                            else if (army.Knights.GetKnightsList() != null)
-                            {
-                                foreach (var knight in army.Knights.GetKnightsList())
-                                {
-                                    if (line == knight.GetID() + "={")
-                                    {
-                                        searchStarted = true;
-                                        defender_knight = knight;
-                                        defender_army = army;
-                                        isDefender = true;
-                                        isKnight = true;
-                                        break;
-                                    }
-                                }
-                                if (searchStarted) break;
+                                isKnight = searchingData.isKnight;
+                                isCommander = searchingData.isCommander;
+                                searchingArmy = searchingData.searchingArmy;
+                                searchingKnight = searchingData.knight;
                             }
                         }
                     }
-                    else if (searchStarted && isCommander && line.Contains("\ttraits={")) //# TRAITS
+                    else if (searchStarted && line.StartsWith("\ttraits={")) //# TRAITS
                     {
                         MatchCollection found_traits = Regex.Matches(line, @"\d+");
-                        foreach(var trait in found_traits)
+                        List<string> traits_list = new List<string>();
+                        foreach (Match found_trait in found_traits)
                         {
+                            traits_list.Add(found_trait.Value);
+                        }
 
+                        if (isCommander)
+                        {
+                            searchingArmy.Commander.SetTraits(traits_list);
+                        }
+                        else if(isKnight)
+                        {
+                            searchingArmy.Knights.GetKnightsList().FirstOrDefault(x => x == searchingKnight).SetTraits(traits_list);
                         }
                     }
                     else if(searchStarted && line.Contains("\tculture=")) //# CULTURE
                     {
                         string culture_id = Regex.Match(line,@"\d+").Value;
-                        if(isAttacker && isKnight)
+                        if(isKnight)
                         {
-                            attacker_army.Knights.GetKnightsList().Find(x => x == attacker_knight).ChangeCulture(new Culture(culture_id));
-                            attacker_army.Knights.SetMajorCulture();
+                            searchingArmy.Knights.GetKnightsList().Find(x => x == searchingKnight).ChangeCulture(new Culture(culture_id));
+                            searchingArmy.Knights.SetMajorCulture();
                         }
-                        else if (isDefender && isKnight)
+
+                        else if (isCommander)
                         {
-                            defender_army.Knights.GetKnightsList().Find(x => x == defender_knight).ChangeCulture(new Culture(culture_id));
-                            defender_army.Knights.SetMajorCulture();
+                            searchingArmy.Commander.ChangeCulture(new Culture(culture_id));
                         }
-                        else if (isAttacker && isCommander)
+
+                        else
                         {
-                            attacker_army.Commander.ChangeCulture(new Culture(culture_id));
+                            searchingArmy.OwnerCulture = new Culture(culture_id);
                         }
-                        else if (isDefender && isCommander)
-                        {
-                            defender_army.Commander.ChangeCulture(new Culture(culture_id));
-                        }
-                        else if(isAttacker)
-                        {
-                            foreach(var army in attacker_armies)
-                            {
-                                army.OwnerCulture = new Culture(culture_id);
-                            }
-                        }
-                        else if (isDefender)
-                        {
-                            foreach (var army in defender_armies)
-                            {
-                                army.OwnerCulture = new Culture(culture_id);
-                            }
-                        }
+
 
                     }
                     else if(searchStarted && line == "}")
                     {
                         searchStarted = false;
-                        isAttacker = false;
-                        isDefender = false;
-                        attacker_knight = null;
-                        defender_knight = null;
-                        attacker_army = null;
-                        defender_army = null;
                         isCommander = false;
                         isKnight = false;
+                        searchingKnight = null;
+                        searchingArmy = null;
                     }
                 }
-
-
             }
         }
 

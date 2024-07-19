@@ -480,11 +480,11 @@ namespace Crusader_Wars
                     }
                     else if(isPlayerKnight)
                     {
-                        Player.Knights.SetTraits(char_id, traits_collection);
+                        //Player.Knights.SetTraits(char_id, traits_collection);
                     }
                     else if(isEnemyKnight)
                     {
-                        Enemy.Knights.SetTraits(char_id, traits_collection);
+                        //Enemy.Knights.SetTraits(char_id, traits_collection);
                     }
 
                 }
@@ -504,12 +504,12 @@ namespace Crusader_Wars
                     if (isPlayerKnight)
                     {
                         BaseSkills skills = new BaseSkills(skills_collection);
-                        Player.Knights.SetSkills(char_id, skills);
+                        //Player.Knights.SetSkills(char_id, skills);
                     }
                     else if (isEnemyKnight)
                     {
                         BaseSkills skills = new BaseSkills(skills_collection);
-                        Enemy.Knights.SetSkills(char_id, skills);
+                        //Enemy.Knights.SetSkills(char_id, skills);
                     }
                 }
 

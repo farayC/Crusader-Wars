@@ -14,6 +14,7 @@ using System.CodeDom;
 using Crusader_Wars.data.save_file;
 using static Crusader_Wars.data.save_file.Writter;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.ComponentModel.Design;
 
 namespace Crusader_Wars
 {
@@ -186,7 +187,7 @@ namespace Crusader_Wars
 
 
         // Get attila remaining soldiers
-        public static void GetUnitsData(Army army, string path_attila_log)
+        public static void ReadAttilaResults(Army army, string path_attila_log)
         {
 
             try
@@ -386,6 +387,156 @@ namespace Crusader_Wars
             }
 
             army.SetCasualitiesReport(reportsList);
+        }
+
+        public static void CheckForDeathCommanders(Army army, string path_attila_log)
+        {
+            if (army.Commander != null)
+                army.Commander.HasGeneralFallen(path_attila_log);
+        }
+
+        public static void CheckForDeathKnights(Army army)
+        {
+            if(army.Knights != null && army.Knights.HasKnights())
+            {
+                int remaining = 0;
+                if (army.UnitsResults.Alive_PursuitPhase != null)
+                {
+                    remaining = Int32.Parse(army.UnitsResults.Alive_PursuitPhase.FirstOrDefault(x => x.Type == "knights").Remaining);
+                }
+                else
+                {
+                    remaining = Int32.Parse(army.UnitsResults.Alive_MainPhase.FirstOrDefault(x => x.Type == "knights").Remaining);
+                }
+                army.Knights.GetKilled(remaining);
+            }
+        }
+
+        static (bool searchStarted, bool isCommander, CommanderSystem commander, bool isKnight, Knight knight) SearchCharacters(string char_id, List<Army> armies)
+        {
+
+            foreach (Army army in armies)
+            {
+                if (army.Commander != null && army.Commander.ID == char_id)
+                {
+                    return (true, true, army.Commander, false, null);
+                }
+                else if (army.Knights.GetKnightsList() != null)
+                {
+                    foreach(Knight knight_u in army.Knights.GetKnightsList())
+                    {
+                        if(knight_u.GetID() == char_id)
+                        {
+                            return (true, false, null, true, knight_u);
+                        }
+                    }
+                }
+
+                if (army.MergedArmies != null)
+                {
+                    foreach (Army mergedArmy in army.MergedArmies)
+                    {
+                        if (mergedArmy.Commander != null && mergedArmy.Commander.ID == char_id)
+                        {
+                            return (true, true, army.Commander, false, null);
+                        }
+                        else if (mergedArmy.Knights.GetKnightsList() != null)
+                        {
+                            foreach (Knight knight_u in army.Knights.GetKnightsList())
+                            {
+                                if (knight_u.GetID() == char_id)
+                                {
+                                    return (true, false, null, true, knight_u);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (false, false, null, false, null);
+        }
+
+        public static void EditLivingFile(List<Army> attacker_armies, List<Army> defender_armies)
+        {
+            using (StreamReader streamReader = new StreamReader(DataFilesPaths.Living_Path()))
+            using (StreamWriter streamWriter = new StreamWriter(DataTEMPFilesPaths.Living_Path()))
+            {
+                streamWriter.NewLine = "\n";
+
+                bool searchStarted = false;
+                bool isCommander = false;
+                bool isKnight = false;
+
+                CommanderSystem commander = null;
+                Knight knight = null;
+
+
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    if(!searchStarted && Regex.IsMatch(line, @"\d+={"))
+                    {
+                        string char_id = Regex.Match(line, @"\d+").Value;
+
+                        var searchData = SearchCharacters(char_id, attacker_armies);
+                        if(searchData.searchStarted)
+                        {
+                            searchStarted = true;
+                            if(searchData.isCommander)
+                            {
+                                isCommander = true;
+                                commander = searchData.commander;
+                            }
+                            else if(searchData.isKnight)
+                            {
+                                isKnight = true;
+                                knight = searchData.knight;
+                            }
+                        }
+                        else
+                        {
+                            searchData = SearchCharacters(char_id, defender_armies);
+                            if(searchData.searchStarted)
+                            {
+                                if (searchData.isCommander)
+                                {
+                                    isCommander = true;
+                                    commander = searchData.commander;
+                                }
+                                else if (searchData.isKnight)
+                                {
+                                    isKnight = true;
+                                    knight = searchData.knight;
+                                }
+                            }
+                        }
+                    }
+
+                    else if(searchStarted && line.StartsWith("\ttraits={"))
+                    {
+                        string edited_line = line;
+                        if (isCommander && commander.hasFallen)
+                        {
+                            edited_line = commander.Health(edited_line);
+                        }
+                        else if(isKnight)
+                        {
+                            edited_line = knight.Health(edited_line);
+                        }
+
+                        streamWriter.WriteLine(edited_line);
+                        continue;
+                    }
+
+                    else if(searchStarted && line == "}")
+                    {
+                        searchStarted = false;
+                    }
+
+                    streamWriter.WriteLine(line);
+                }
+            }
         }
 
         public static void EditCombatResultsFile(List<Army> attacker_armies, List<Army> defender_armies)

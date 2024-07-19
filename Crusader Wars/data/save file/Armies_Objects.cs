@@ -80,21 +80,6 @@ namespace Crusader_Wars.data.save_file
         string AttilaFaction { get; set; }
         int Max { get; set; }
 
-        public void PrintData()
-        {
-            Console.WriteLine("Name:" + Name);
-            Console.WriteLine("Type:" +  Type.ToString());
-            Console.WriteLine("Culture:" + UnitCulture.GetCultureName());
-            Console.WriteLine("Merc:" + IsMercenaryBool);
-            Console.WriteLine("Soldiers:" + Soldiers);
-            Console.WriteLine("Key:" + AttilaKey);
-            Console.WriteLine("Faction:" + AttilaFaction);
-            Console.WriteLine("Max:" + Max);
-            Console.WriteLine();
-            Console.WriteLine();
-
-        }
-
         public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type)
         {
             Name = regiment_name;

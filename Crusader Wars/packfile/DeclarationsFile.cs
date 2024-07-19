@@ -16,6 +16,9 @@ namespace Crusader_Wars
         static List<Army> stark_armies { get; set; } = new List<Army>();
         static List<Army> bolton_armies { get; set; } = new List<Army>();
 
+        public static List<Army> GetLeftSideArmies() { return stark_armies; }
+        public static List<Army> GetRightSideArmies() { return bolton_armies; }
+
         static void SetArmies(List<Army> attacker, List<Army> defender)
         {
             stark_armies.Clear();
