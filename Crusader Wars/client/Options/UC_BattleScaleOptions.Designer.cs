@@ -65,6 +65,7 @@
             this.OptionSelection_BattleSizeScale.BackColor = System.Drawing.Color.White;
             this.OptionSelection_BattleSizeScale.Dock = System.Windows.Forms.DockStyle.Top;
             this.OptionSelection_BattleSizeScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.OptionSelection_BattleSizeScale.Enabled = false;
             this.OptionSelection_BattleSizeScale.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptionSelection_BattleSizeScale.FormattingEnabled = true;
             this.OptionSelection_BattleSizeScale.Items.AddRange(new object[] {

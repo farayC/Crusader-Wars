@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using System.Windows.Forms;
-using System.Numerics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Collections;
 using Crusader_Wars.client;
 using Crusader_Wars.unit_mapper;
 using Crusader_Wars.data.save_file;
 using Crusader_Wars.terrain;
 using System.Windows;
+using Crusader_Wars.armies.commander_traits;
+using System.Runtime.CompilerServices;
+using Crusader_Wars.armies;
 
 namespace Crusader_Wars
 {
@@ -23,6 +18,9 @@ namespace Crusader_Wars
         public static int MAX_CAVALRY_UNIT_NUMBER = ModOptions.GetCavalryMax();
         public static int MAX_INFANTRY_UNIT_NUMBER = ModOptions.GetInfantryMax();
         public static int MAX_RANGED_UNIT_NUMBER = ModOptions.GetRangedMax();
+
+        public static CommanderTraits PlayerCommanderTraits;
+        public static CommanderTraits EnemyCommanderTraits;
 
         public static (int UnitSoldiers, int UnitNum, int SoldiersRest) RetriveCalculatedUnits(int soldiers, int unit_limit)
         {
@@ -54,6 +52,7 @@ namespace Crusader_Wars
         static int i;
         public static void BETA_ConvertandAddArmyUnits(Army army)
         {
+
             BETA_AddArmyUnits(army);
             if(army.MergedArmies != null)
             {
@@ -64,12 +63,27 @@ namespace Crusader_Wars
             }
         }
 
+        static int GetTraitsXP(bool isPlayer,string combatSide, string terrainType, bool isRiverCrossing, bool isHostileFaith, bool isWinter)
+        {
+            if(isPlayer && PlayerCommanderTraits != null)
+            {
+                return PlayerCommanderTraits.GetBenefits(combatSide, terrainType, isRiverCrossing, isHostileFaith, isWinter);
+            }
+            else if(!isPlayer && EnemyCommanderTraits != null)
+            {
+                return EnemyCommanderTraits.GetBenefits(combatSide, terrainType, isRiverCrossing, isHostileFaith, isWinter);
+            }
+            return 0;
+        }
+
+
         static void BETA_AddArmyUnits(Army army)
         {
             army.RemoveNullUnits();
 
             i = 0;
             int modifiers_xp = 0;
+            int traits_xp = 0;
             int army_xp = 0;
 
             if (TerrainGenerator.isStrait || TerrainGenerator.isRiver && army.CombatSide == "attacker") { modifiers_xp -= 2; }
@@ -124,8 +138,18 @@ namespace Crusader_Wars
             //##################
             //     ARMY XP     #
             //##################
+            if (army.IsPlayer()) { 
+                traits_xp = GetTraitsXP(true, army.CombatSide, TerrainGenerator.TerrainType, TerrainGenerator.isRiver, false, Weather.HasWinter);
+                modifiers_xp = CK3LogData.LeftSide.GetModifiers().GetXP();
+            }
+            else { 
+                traits_xp = GetTraitsXP(false, army.CombatSide, TerrainGenerator.TerrainType, TerrainGenerator.isRiver, false, Weather.HasWinter);
+                modifiers_xp = CK3LogData.RightSide.GetModifiers().GetXP();
+            }
+
             army_xp += commander_army_xp;
             army_xp += modifiers_xp;
+            army_xp += traits_xp;
             if (army_xp < 0) { army_xp = 0; }
             if (army_xp > 9) { army_xp = 9; }
 

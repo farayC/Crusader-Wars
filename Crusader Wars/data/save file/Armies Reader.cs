@@ -159,10 +159,12 @@ namespace Crusader_Wars.data.save_file
                     else if (searchStarted && line.StartsWith("\ttraits={")) //# TRAITS
                     {
                         MatchCollection found_traits = Regex.Matches(line, @"\d+");
-                        List<string> traits_list = new List<string>();
+                        var traits_list = new List<(int index, string key)>();
                         foreach (Match found_trait in found_traits)
                         {
-                            traits_list.Add(found_trait.Value);
+                            int index = Int32.Parse(found_trait.Value);
+                            string key = GetTraitKey(index);
+                            traits_list.Add((index, key));
                         }
 
                         if (isCommander)
@@ -172,6 +174,7 @@ namespace Crusader_Wars.data.save_file
                         else if(isKnight)
                         {
                             searchingArmy.Knights.GetKnightsList().FirstOrDefault(x => x == searchingKnight).SetTraits(traits_list);
+                            searchingArmy.Knights.GetKnightsList().FirstOrDefault(x => x == searchingKnight).SetWoundedDebuffs();
                         }
                     }
                     else if(searchStarted && line.Contains("\tculture=")) //# CULTURE
@@ -299,7 +302,7 @@ namespace Crusader_Wars.data.save_file
         }
         static void CreateKnights()
         {
-            RemoveCommandersAsKnights();
+            //RemoveCommandersAsKnights();
 
             var left_side_armies = GetSideArmies("left");
             var right_side_armies = GetSideArmies("right");

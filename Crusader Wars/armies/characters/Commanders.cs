@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.data.save_file;
+﻿using Crusader_Wars.armies.commander_traits;
+using Crusader_Wars.data.save_file;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,8 +32,9 @@ namespace Crusader_Wars
         public int Martial { get; private set; }
         public int Prowess { get; private set; }
         private Culture CultureObj { get; set; }
-        public List<string> Traits_List { get; private set; }
+        public List<(int Index, string Key)> Traits_List { get; private set; }
 
+        public CommanderTraits CommanderTraits { get; private set; }
         private List<CourtPosition> Employees { get; set; }
         private (string PrimaryAttribute, string SecundaryAttribute, string Honor) Accolade { get; set; }
         public bool hasFallen { get; private set; }
@@ -90,9 +92,14 @@ namespace Crusader_Wars
             return StarExperience();
         }
 
-        public void SetTraits(List<string> traits)
+        public void SetTraits(List<(int, string)> traits)
         {
             Traits_List = traits;
+
+            if(MainCommander)
+            {
+                CommanderTraits = new CommanderTraits(Traits_List);
+            }
         }
 
         int UnitSoldiers()
@@ -154,14 +161,17 @@ namespace Crusader_Wars
             }
 
             //Health soldiers debuff
-            
-            if (Traits_List.Contains(" " + WoundedTraits.Wounded().ToString() + " ")) soldiers += -5;
-            if (Traits_List.Contains(" " + WoundedTraits.Severely_Injured().ToString() + " ")) soldiers += -10;
-            if (Traits_List.Contains(" " + WoundedTraits.Brutally_Mauled().ToString() + " ")) soldiers += -15;
-            if (Traits_List.Contains(" " + WoundedTraits.Maimed().ToString() + " ")) soldiers += -10;
-            if (Traits_List.Contains(" " + WoundedTraits.One_Eyed().ToString() + " ")) soldiers += -5;
-            if (Traits_List.Contains(" " + WoundedTraits.One_Legged().ToString() + " ")) soldiers += -10;
-            if (Traits_List.Contains(" " + WoundedTraits.Disfigured().ToString() + " ")) soldiers += -5;
+            foreach(var trait in Traits_List)
+            {
+                if (trait.Index == WoundedTraits.Wounded()) soldiers += -5;
+                if (trait.Index == WoundedTraits.Severely_Injured()) soldiers += -10;
+                if (trait.Index == WoundedTraits.Brutally_Mauled()) soldiers += -15;
+                if (trait.Index == WoundedTraits.Maimed()) soldiers += -10;
+                if (trait.Index == WoundedTraits.One_Eyed()) soldiers += -5;
+                if (trait.Index == WoundedTraits.One_Legged()) soldiers += -10;
+                if (trait.Index == WoundedTraits.Disfigured()) soldiers += -5;
+            }
+
             
 
             //Minimum of 1 soldier

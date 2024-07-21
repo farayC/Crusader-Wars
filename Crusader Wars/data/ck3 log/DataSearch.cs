@@ -196,6 +196,13 @@ namespace Crusader_Wars
             BattleNameSearch(log);
 
             /*---------------------------------------------
+             * :::::::::::::::::Modifiers::::::::::::::::::
+             ---------------------------------------------*/
+
+            CK3LogData.LeftSide.SetModifiers(new Modifiers(log, true));
+            CK3LogData.RightSide.SetModifiers(new Modifiers(log, false));
+
+            /*---------------------------------------------
              * ::::::::::::::Main Participants::::::::::::::
              ---------------------------------------------*/
             string left_side_mainparticipant_id = Regex.Match(log, @"LeftSide_Owner_ID:(.+)\n").Groups[1].Value;
@@ -401,7 +408,6 @@ namespace Crusader_Wars
                 CK3LogData.LeftSide.SetRealmName(player_army);
                 CK3LogData.RightSide.SetRealmName(enemy_army);
             }
-
         }
 
 
@@ -452,12 +458,6 @@ namespace Crusader_Wars
 
         }
 
-        static void ArmyModifiersSearch(string log)
-        {
-            Modifiers army_modifiers = new Modifiers();
-            //army_modifiers.ReadModifiers(log, Side);
-            //Side.Modifiers = army_modifiers;
-        }
 
         static void UniqueMapsSearch(string log)
         {

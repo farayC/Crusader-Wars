@@ -1,4 +1,5 @@
 ﻿using Crusader_Wars.data.save_file;
+using Crusader_Wars.terrain;
 using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
@@ -11,33 +12,226 @@ using System.Xml;
 
 namespace Crusader_Wars.armies.commander_traits
 {
-
-    internal class Trait
+    public enum AffectEnum
     {
+        Friendlies,
+        Enemies,
+        None
+    }
+    public class Trait
+    {
+        //  VARIABLES
         string Key { get; set; }
         int Index { get; set; }
+
+        //  MAJOR SETUP
+        int XPBoost {  get; set; }
+        AffectEnum Affect { get; set; }
+        bool DeploymentRotation {  get; set; }
+
+        //  CONDITIONS
+        string CombatSide { get; set; }
+        List<string> Terrains {  get; set; }
+        bool NeedsRiverCrossing { get; set; }
+        bool NeedsHostileFaith {  get; set; }
+        bool NeedsWinter { get;set; }
 
         public Trait(string key, int index) { 
             Key = key;
             Index = index;
         }
+
+        public string GetKey() { return Key; }
+        public int GetIndex() { return Index; }
+
+        public int GetXPBoost() {  return XPBoost; }
+        public AffectEnum GetWhoAffects() { return Affect; }
+        public bool GetDeploymentRotation() {  return DeploymentRotation; }
+        public string GetRequiredCombatSide() {  return CombatSide; }
+        public List<string> GetRequiredTerrains() { return Terrains; }
+        public bool GetRequiredRiverCrossing() {  return NeedsRiverCrossing; }
+        public bool GetRequiredHostileFaith() { return NeedsHostileFaith; }
+        public bool GetRequiredWinter() { return NeedsWinter; }
+
+        public void SetupTrait(int XPboost, AffectEnum affectsWho, bool rotatesDeployment, 
+                               string requiredCombatSide, List<string> requiredTerrains, bool requiresRiverCrossing, bool requiresHostileFaith, bool requiresWinter)
+        {
+            XPBoost = XPboost;
+            Affect = affectsWho;
+            DeploymentRotation = rotatesDeployment;
+            CombatSide = requiredCombatSide;
+            Terrains = requiredTerrains;
+            NeedsRiverCrossing = requiresRiverCrossing;
+            NeedsHostileFaith = requiresHostileFaith;
+            NeedsWinter = requiresWinter;
+        }
+
     }
     public class CommanderTraits
     {
-        List<Trait> Traits { get; set; }
-
+        public static List<Trait> Traits { get; private set; }
 
         static string traits_folder_path = @".\data\traits\";
-        public CommanderTraits() 
+
+
+        public CommanderTraits(List<(int, string)> main_commander_traits) 
         {
-            foreach(var file_path in  Directory.GetFiles(traits_folder_path))
+            SearchTraitsFiles(main_commander_traits);
+        }
+
+        public int GetBenefits(string combatSide, string terrainType, bool isRiverCrossing, bool isHostileFaith, bool isWinter)
+        {
+            int xp_boost = 0;
+            foreach(Trait trait in Traits)
             {
-                if(Path.GetExtension(file_path) == ".xml")
+                if(trait.GetRequiredCombatSide() == "no")
+                {
+                    //ok
+                }
+                else if(combatSide != trait.GetRequiredCombatSide())
+                {
+                    continue;
+                }
+
+
+                if(trait.GetRequiredTerrains() != null)
+                {
+                    if(!trait.GetRequiredTerrains().Exists(x => x == terrainType))
+                    {
+                        continue;
+                    }
+                }
+
+                if(trait.GetRequiredRiverCrossing() != isRiverCrossing) // <--- might need rethinking
+                {
+                    continue;
+                }
+
+                if(trait.GetRequiredWinter() != isWinter)
+                {
+                    continue;
+                }
+
+                xp_boost += trait.GetXPBoost();
+            }
+
+            return xp_boost;
+        }
+
+        void SearchTraitsFiles(List<(int Index, string Key)> main_commander_traits)
+        {
+            foreach (var file_path in Directory.GetFiles(traits_folder_path))
+            {
+                if (Path.GetExtension(file_path) == ".xml")
                 {
                     XmlDocument xmlDocument = new XmlDocument();
                     xmlDocument.Load(file_path);
 
+                    foreach (XmlNode traitElement in xmlDocument.DocumentElement.ChildNodes)
+                    {
+                        if (traitElement is XmlComment) continue;
+                        string trait_key = traitElement.Attributes["name"].Value;
 
+                        if(main_commander_traits.Exists(x => x.Key == trait_key))
+                        {
+                            Trait commanderTrait = new Trait(trait_key, main_commander_traits.Find(x => x.Key == trait_key).Index);
+
+                            int xp_boost = 0;
+                            AffectEnum whoAffects = AffectEnum.None;
+                            bool rotatesDeployment = false;
+
+                            string combatSide = "no";
+                            List<string> Terrains = null;
+                            bool riverCrossing = false;
+                            bool hostileFaith = false;
+                            bool winter = false;
+
+                            foreach (XmlNode traitNode in traitElement.ChildNodes)
+                            {
+                                if (traitNode is XmlComment) continue;
+
+                                switch(traitNode.Name)
+                                {
+                                    case "XpBoost":
+                                        bool parsed = Int32.TryParse(traitNode.InnerText, out xp_boost);
+                                        if(!parsed) xp_boost = 0;
+                                        break;
+
+                                    case "Affects":
+                                        if (traitNode.InnerText == "friendlies")
+                                            whoAffects = AffectEnum.Friendlies;
+                                        else if (traitNode.InnerText == "enemies")
+                                            whoAffects = AffectEnum.Enemies;
+                                        else { 
+                                            Console.WriteLine("WRONG VALUE IN AFFECT XML NODE");
+                                            whoAffects = AffectEnum.Friendlies;
+                                        }
+                                        break;
+
+                                    case "DeploymentRotation":
+                                        if (traitNode.InnerText == "yes")
+                                            rotatesDeployment = true;
+                                        else
+                                            rotatesDeployment = false;
+                                        break;
+
+                                    case "CombatSide":
+                                        if (traitNode.InnerText == "attacker")
+                                            combatSide = "attacker";
+                                        else if (traitNode.InnerText == "defender")
+                                            combatSide = "defender";
+                                        else {
+                                            Console.WriteLine("WRONG VALUE IN COMBAT SIDE XML NODE");
+                                            combatSide = "attacker";
+                                        }
+                                        break;
+
+                                    case "Terrain":
+                                        if (Terrains == null) {
+                                            Terrains = new List<string>(); Terrains.Add(traitNode.InnerText);
+                                        }
+                                        else
+                                            Terrains.Add(traitNode.InnerText);
+                                        break;
+
+                                    case "RiverCrossing":
+                                        if (traitNode.InnerText == "yes")
+                                            riverCrossing = true;
+                                        else
+                                            riverCrossing = false;
+                                        break;
+
+                                    case "HostileFaith":
+                                        if (traitNode.InnerText == "yes")
+                                            hostileFaith = true;
+                                        else
+                                            hostileFaith = false;
+                                        break;
+
+                                    case "Winter":
+                                        if (traitNode.InnerText == "yes")
+                                            winter = true;
+                                        else
+                                            winter = false;
+                                        break;
+                                }
+                            }
+
+                            commanderTrait.SetupTrait(xp_boost, whoAffects, rotatesDeployment, combatSide, Terrains, riverCrossing, hostileFaith, winter);
+                            if(Traits == null)
+                            {
+                                Traits = new List<Trait>
+                                {
+                                    commanderTrait
+                                };
+                            }
+                            else
+                            {
+                                Traits.Add(commanderTrait);
+                            }
+                            
+                        }
+                    }
                 }
             }
         }
