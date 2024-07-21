@@ -472,11 +472,11 @@ namespace Crusader_Wars
                     
                     if (isPlayerCommander)
                     {
-                        Player.Commander.SetTraits(traits_collection);
+                        //Player.Commander.SetTraits(traits_collection);
                     }
                     else if(isEnemyCommander)
                     {
-                        Enemy.Commander.SetTraits(traits_collection);
+                        //Enemy.Commander.SetTraits(traits_collection);
                     }
                     else if(isPlayerKnight)
                     {
@@ -1201,7 +1201,7 @@ namespace Crusader_Wars
                         }
                         Data.SB_Mercenaries = null;
                         GC.Collect();
-                        HasMercenariesExtracted = true;
+                        End_MercenariesFound = true;
                         return;
                     }
                     else { HasMercenariesExtracted = false; }

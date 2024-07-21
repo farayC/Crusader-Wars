@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace Crusader_Wars
 {
@@ -14,7 +15,7 @@ namespace Crusader_Wars
         Culture CultureObj { get; set; }
         int Prowess { get; set; }
         int Soldiers { get; set; }
-        List<string> Traits { get; set; }
+        List<(int Index, string Key)> Traits { get; set; }
         BaseSkills BaseSkill { get; set; }
         bool isAccolade { get; set; }
         bool hasFallen { get; set; }    
@@ -31,7 +32,7 @@ namespace Crusader_Wars
 
         public void HasFallen(bool yn) { hasFallen = yn; }
         public void ChangeCulture(Culture cul) { CultureObj = cul; }
-        public void SetTraits(List<string> list_trait) { Traits = list_trait; }
+        public void SetTraits(List<(int, string)> list_trait) { Traits = list_trait; }
 
 
         internal Knight(string name, string id, Culture culture, int prowess, int soldiers) { 
@@ -52,7 +53,25 @@ namespace Crusader_Wars
             isAccolade = accolade;
         }
 
+        public void SetWoundedDebuffs()
+        {
+            int debuff = 0;
 
+            //Health soldiers debuff
+            foreach(var trait in Traits)
+            {
+                if (trait.Index == WoundedTraits.Wounded()) debuff += -1;
+                if (trait.Index == WoundedTraits.Severely_Injured()) debuff += -2;
+                if (trait.Index == WoundedTraits.Brutally_Mauled()) debuff += -3;
+                if (trait.Index == WoundedTraits.Maimed()) debuff += -2;
+                if (trait.Index == WoundedTraits.One_Eyed()) debuff += -1;
+                if (trait.Index == WoundedTraits.One_Legged()) debuff += -2;
+                if (trait.Index == WoundedTraits.Disfigured()) debuff += -1;
+            }
+
+
+            Soldiers += debuff;
+        }
 
         int SetStrengh(int soldiers)
         {
@@ -336,35 +355,6 @@ namespace Crusader_Wars
                 }
 
             }
-        }
-
-        public void WoundedDebuffs()
-        {
-            /*
-            if (HasKnights)
-            {
-                int debuff = 0;
-                for (int i = 0; i < Knights.Count; i++)
-                {
-                    var knight = Knights[i];
-                    var traits = knight.Traits;
-
-                    //Health soldiers debuff
-                    if (traits.Contains(Traits.Wounded().ToString())) debuff += -1;
-                    if (traits.Contains(Traits.Severely_Injured().ToString())) debuff += -2;
-                    if (traits.Contains(Traits.Brutally_Mauled().ToString())) debuff += -3;
-                    if (traits.Contains(Traits.Maimed().ToString())) debuff += -2;
-                    if (traits.Contains(Traits.One_Eyed().ToString())) debuff += -1;
-                    if (traits.Contains(Traits.One_Legged().ToString())) debuff += -2;
-                    if (traits.Contains(Traits.Disfigured().ToString())) debuff += -1;
-
-                    Knights[i] = (knight.ID, knight.Soldiers - debuff, knight.Prowess, knight.Traits, knight.BaseSkill, knight.isAccolade, knight.Name);
-                }
-
-            }
-            */
-
-
         }
 
 

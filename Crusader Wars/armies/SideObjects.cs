@@ -46,7 +46,6 @@ namespace Crusader_Wars
         public List<Unit> Units { get; private set; }
         public KnightSystem Knights { get; private set; }
         public CommanderSystem Commander { get; private set; }
-        public CommanderTraits Traits { get; private set; }
         public DefensiveSystem Defences { get; private set; }
 
         public string CommanderID { get; set; }
@@ -83,7 +82,6 @@ namespace Crusader_Wars
         public void IsEnemy(bool u) { IsMainEnemy = u; }
         public void SetUnits(List<Unit> l) { Units = l; }
         public void SetCommander(CommanderSystem l) { Commander = l; }
-        public void SetCommanderTraits(CommanderTraits l) { Traits = l; }
         public void SetDefences(DefensiveSystem l) { Defences = l; }
 
         public void SetArmyRegiments(List<ArmyRegiment> list) { ArmyRegiments = list; }

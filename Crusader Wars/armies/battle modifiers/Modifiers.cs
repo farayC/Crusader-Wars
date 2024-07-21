@@ -18,6 +18,11 @@ namespace Crusader_Wars.armies
         bool isArmyOutOfSupplies { get; set; }
         bool isArmyAttackingAcrossSea { get; set; }
 
+        public Modifiers(string log, bool isPlayer)
+        {
+            ReadModifiers(log, isPlayer);
+        }
+
         public int GetXP()
         {
             int xp = 0;
@@ -34,10 +39,10 @@ namespace Crusader_Wars.armies
         /*
          * COMPLETLY REWORK THIS
          */
-        /*
-        public void ReadModifiers(string log, ICharacter Side)
+        
+        void ReadModifiers(string log, bool isPlayer)
         {
-            if(Side is Player)
+            if(isPlayer)
             {
                 string modifiers_text = Regex.Match(log, @"(Our Advantage[\s\S]*)\n\n").Groups[1].Value;
 
@@ -67,6 +72,6 @@ namespace Crusader_Wars.armies
 
 
         }
-        */
+        
     }
 }

@@ -415,9 +415,6 @@ namespace Crusader_Wars
                 Games.CloseTotalWarAttilaProcess();
                 UpdateLoadingScreenMessage("Creating battle in Total War: Attila...");
 
-                //Create Declarations
-                //DeclarationsFile.CreateAlliances(attacker_armies, defender_armies);
-
                 //Create Remaining Soldiers Script
                 BattleScript.CreateScript();
 
@@ -469,8 +466,6 @@ namespace Crusader_Wars
                 {
                     //Open Total War Attila
                     Games.StartTotalWArAttilaProcess();
-
-                    UpdateLoadingScreenMessage("Done!");
                     CloseLoadingScreen();
                     this.Show();
                 }
