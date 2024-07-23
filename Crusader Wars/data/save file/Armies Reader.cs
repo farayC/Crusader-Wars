@@ -14,6 +14,7 @@ using System.Windows;
 using System.Diagnostics;
 using Crusader_Wars.sieges;
 using static Crusader_Wars.CK3LogData;
+using System.Security.Permissions;
 
 namespace Crusader_Wars.data.save_file
 {
@@ -46,7 +47,7 @@ namespace Crusader_Wars.data.save_file
             BattleFile.SetArmiesSides(attacker_armies, defender_armies);
 
             CreateKnights();
-            CreateCommanders();
+            CreateMainCommanders();
             ReadCharacters();
             ReadCultureManager();
 
@@ -119,9 +120,18 @@ namespace Crusader_Wars.data.save_file
         static void ReadCharacters()
         {
             bool searchStarted = false;
-            bool isKnight = false, isCommander = false;
+            bool isKnight = false, isCommander = false, isMainCommander = false;
             Army searchingArmy = null;
             Knight searchingKnight = null;
+
+            int nonMainCommander_Rank = 1;
+            string nonMainCommander_Name="";
+            BaseSkills nonMainCommander_BaseSkills = null;
+            Culture nonMainCommander_Culture = null;
+            Accolade nonMainCommander_Accolade = null;
+            int nonMainCommander_Prowess = 0;
+            List<(int index, string key)> nonMainCommander_Traits = null;
+
 
 
             using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.Living_Path()))
@@ -129,15 +139,16 @@ namespace Crusader_Wars.data.save_file
                 string line;
                 while((line = sr.ReadLine()) != null && !sr.EndOfStream)
                 {
-                    if(Regex.IsMatch(line, @"\d+={") && !searchStarted)
+                    if (Regex.IsMatch(line, @"\d+={") && !searchStarted)
                     {
                         string line_id = Regex.Match(line, @"(\d+)={").Groups[1].Value;
 
                         var searchingData = Armies_Functions.SearchCharacters(line_id, attacker_armies);
-                        if(searchingData.searchStarted )
+                        if (searchingData.searchStarted)
                         {
                             searchStarted = true;
                             isKnight = searchingData.isKnight;
+                            isMainCommander = searchingData.isMainCommander;
                             isCommander = searchingData.isCommander;
                             searchingArmy = searchingData.searchingArmy;
                             searchingKnight = searchingData.knight;
@@ -146,14 +157,53 @@ namespace Crusader_Wars.data.save_file
                         else
                         {
                             searchingData = Armies_Functions.SearchCharacters(line_id, defender_armies);
-                            if(searchingData.searchStarted )
+                            if (searchingData.searchStarted)
                             {
                                 searchStarted = true;
                                 isKnight = searchingData.isKnight;
+                                isMainCommander = searchingData.isMainCommander;
                                 isCommander = searchingData.isCommander;
                                 searchingArmy = searchingData.searchingArmy;
                                 searchingKnight = searchingData.knight;
                             }
+                        }
+                    }
+                    else if (searchStarted && line.StartsWith("\tfirst_name=")) //# FIRST NAME
+                    {
+                        if(isCommander)
+                        {
+                            nonMainCommander_Name = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                        }
+                    }
+                    else if (searchStarted && line.StartsWith("\tskill={")) //# BASE SKILLS
+                    {
+                        MatchCollection found_skills = Regex.Matches(line, @"\d+");
+                        var baseSkills_list = new List<string>();
+                        baseSkills_list = found_skills.Cast<Match>().Select(m => m.Value).ToList();
+
+                        if (isMainCommander)
+                        {
+                            searchingArmy.Commander.SetBaseSkills(new BaseSkills(baseSkills_list));
+                        }
+                        else if (isCommander)
+                        {
+                            nonMainCommander_BaseSkills = new BaseSkills(baseSkills_list);
+                        }
+                    }
+                    else if(searchStarted && line.StartsWith("\t\taccolade=")) // # ACCOLADE
+                    {
+                        string accoladeID = Regex.Match(line, @"\d+").Value;
+                        if(isKnight)
+                        {
+                            searchingKnight.IsAccolade(true, GetAccolade(accoladeID));
+                        }
+                        else if(isMainCommander)
+                        {
+                            searchingArmy.Commander.SetAccolade(GetAccolade(accoladeID));
+                        }
+                        else if(isCommander)
+                        {
+                            nonMainCommander_Accolade = GetAccolade(accoladeID);
                         }
                     }
                     else if (searchStarted && line.StartsWith("\ttraits={")) //# TRAITS
@@ -167,26 +217,30 @@ namespace Crusader_Wars.data.save_file
                             traits_list.Add((index, key));
                         }
 
-                        if (isCommander)
+                        if (isMainCommander)
                         {
                             searchingArmy.Commander.SetTraits(traits_list);
                         }
-                        else if(isKnight)
+                        else if (isCommander)
+                        {
+                            nonMainCommander_Traits = traits_list;
+                        }
+                        else if (isKnight)
                         {
                             searchingArmy.Knights.GetKnightsList().FirstOrDefault(x => x == searchingKnight).SetTraits(traits_list);
                             searchingArmy.Knights.GetKnightsList().FirstOrDefault(x => x == searchingKnight).SetWoundedDebuffs();
                         }
                     }
-                    else if(searchStarted && line.Contains("\tculture=")) //# CULTURE
+                    else if (searchStarted && line.Contains("\tculture=")) //# CULTURE
                     {
-                        string culture_id = Regex.Match(line,@"\d+").Value;
-                        if(isKnight)
+                        string culture_id = Regex.Match(line, @"\d+").Value;
+                        if (isKnight)
                         {
                             searchingArmy.Knights.GetKnightsList().Find(x => x == searchingKnight).ChangeCulture(new Culture(culture_id));
                             searchingArmy.Knights.SetMajorCulture();
                         }
 
-                        else if (isCommander)
+                        else if (isMainCommander)
                         {
                             searchingArmy.Commander.ChangeCulture(new Culture(culture_id));
                         }
@@ -198,44 +252,181 @@ namespace Crusader_Wars.data.save_file
 
 
                     }
-                    else if(searchStarted && line == "}")
+                    else if (searchStarted && line.Contains("\t\tdomain={")) //# TITLES
                     {
+                        string firstTitleID = Regex.Match(line, @"\d+").Value;
+                        if (isCommander)
+                        {
+                            var landedTitlesData = GetCommanderNobleRankAndTitleName(firstTitleID);
+                            nonMainCommander_Rank = landedTitlesData.rank;
+                            if (searchingArmy.IsPlayer())
+                            {
+                                if (CK3LogData.LeftSide.GetKnights().Exists(x => x.id == searchingArmy.CommanderID))
+                                {
+                                    var commanderKnight = CK3LogData.LeftSide.GetKnights().FirstOrDefault(x => x.id == searchingArmy.CommanderID);
+                                    nonMainCommander_Prowess = Int32.Parse(commanderKnight.prowess);
+                                    if (nonMainCommander_Rank == 1)
+                                        nonMainCommander_Name = commanderKnight.name;
+                                    else
+                                        nonMainCommander_Name = $"{commanderKnight.name} of {landedTitlesData.titleName}";
+                                }
+                                else
+                                {
+                                    nonMainCommander_Prowess = nonMainCommander_BaseSkills.prowess;
+                                    if (nonMainCommander_Rank > 1)
+                                        nonMainCommander_Name += $" of {landedTitlesData.titleName}";
+                                }
+
+                            }
+                            else
+                            {
+                                if (CK3LogData.RightSide.GetKnights().Exists(x => x.id == searchingArmy.CommanderID))
+                                {
+                                    var commanderKnight = CK3LogData.RightSide.GetKnights().FirstOrDefault(x => x.id == searchingArmy.CommanderID);
+                                    nonMainCommander_Prowess = Int32.Parse(commanderKnight.prowess);
+                                    if (nonMainCommander_Rank == 1)
+                                        nonMainCommander_Name = commanderKnight.name;
+                                    else
+                                        nonMainCommander_Name = $"{commanderKnight.name} of {landedTitlesData.titleName}";
+                                }
+                                else
+                                {
+                                    nonMainCommander_Prowess = nonMainCommander_BaseSkills.prowess;
+                                    if (nonMainCommander_Rank > 1)
+                                        nonMainCommander_Name += $" of {landedTitlesData.titleName}";
+                                }
+
+                            }
+                        }
+                    }
+                    else if (searchStarted && line == "}")
+                    {
+                        if (isCommander)
+                        {
+                            searchingArmy.SetCommander(new CommanderSystem(nonMainCommander_Name, searchingArmy.CommanderID, nonMainCommander_Prowess, nonMainCommander_Rank, nonMainCommander_BaseSkills, nonMainCommander_Culture));
+                            searchingArmy.Commander.SetTraits(nonMainCommander_Traits);
+                            if (nonMainCommander_Accolade != null) searchingArmy.Commander.SetAccolade(nonMainCommander_Accolade);
+                        }
+
                         searchStarted = false;
                         isCommander = false;
+                        isMainCommander = false;
                         isKnight = false;
                         searchingKnight = null;
                         searchingArmy = null;
+
+                        nonMainCommander_Rank = 0;
+                        nonMainCommander_Name = "";
+                        nonMainCommander_BaseSkills = null;
+                        nonMainCommander_Culture = null;
+                        nonMainCommander_Traits = null;
+                        nonMainCommander_Prowess = 0;
                     }
                 }
             }
         }
 
-        //----- FIX THIS FUNCTION BELOW
-        static void RemoveCommandersAsKnights()
+        static Accolade GetAccolade(string accoladeID)
         {
-            for (int i = 0; i < attacker_armies.Count; i++)
+            bool searchStarted = false;
+            string primaryAttribute = "";
+            string secundaryAttribute = "";
+            string glory = "";
+            using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.Accolades()))
             {
-                var army = attacker_armies[i];
-                for (int j = 0; j < attacker_armies[i].ArmyRegiments.Count; j++)
+                string line;
+                while ((line = sr.ReadLine()) != null && !sr.EndOfStream)
                 {
-                    var regiment = attacker_armies[i].ArmyRegiments[j];
-                    if (regiment.Type == RegimentType.Knight && regiment.ID == army.CommanderID)
+                    if (!searchStarted && line == $"\t\t{accoladeID}={{")
                     {
-                        attacker_armies[i].ArmyRegiments.Remove(regiment);
+                        searchStarted = false;
+                    }
+                    else if (searchStarted && line.StartsWith("\t\t\tprimary="))
+                    {
+                        primaryAttribute = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                    }
+                    else if (searchStarted && line.StartsWith("\t\t\tsecundary="))
+                    {
+                        secundaryAttribute = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                    }
+                    else if (searchStarted && line.StartsWith("\t\t\tglory="))
+                    {
+                        glory = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                    }
+                    else if (searchStarted && line == "\t\t}")
+                    {
+                        searchStarted = false;
+                        return new Accolade(accoladeID, primaryAttribute, secundaryAttribute, glory);
                     }
                 }
             }
-            for (int i = 0; i < defender_armies.Count; i++)
+
+            return null;
+        }
+
+        static (int rank, string titleName) GetCommanderNobleRankAndTitleName(string commanderTitleID)
+        {
+            bool searchStarted = false;
+            int rankInt = 0; string titleName = "";
+            using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.LandedTitles()))
             {
-                var army = defender_armies[i];
-                for (int j = 0; j < defender_armies[i].ArmyRegiments.Count; j++)
+                string line;
+                while ((line = sr.ReadLine()) != null && !sr.EndOfStream)
                 {
-                    var regiment = defender_armies[i].ArmyRegiments[j];
-                    if (regiment.Type == RegimentType.Knight && regiment.ID == army.CommanderID)
+                    if(line == $"{commanderTitleID}={{")
                     {
-                        defender_armies[i].ArmyRegiments.Remove(regiment);
+                        searchStarted = true;
+                    }
+                    else if(searchStarted && line.StartsWith("\tkey=")) //# KEY
+                    {
+                        string title_key = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                        
+                        if(title_key.StartsWith("b_"))
+                        {
+                            rankInt = 2;
+                        }
+                        else if (title_key.StartsWith("c_"))
+                        {
+                            rankInt = 3;
+                        }
+                        else if (title_key.StartsWith("d_"))
+                        {
+                            rankInt = 4;
+                        }
+                        else if (title_key.StartsWith("k_"))
+                        {
+                            rankInt = 5;
+                        }
+                        else if (title_key.StartsWith("e_"))
+                        {
+                            rankInt = 6;
+                        }
+                    }
+                    else if(searchStarted && line.StartsWith("\tname="))
+                    {
+                        string name = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                        titleName = name;
+
+                        return (rankInt, titleName);
                     }
                 }
+                return (1, string.Empty);
+            }
+        }
+
+        static void RemoveCommandersAsKnights()
+        {
+            foreach(Army army in attacker_armies)
+            {
+                ArmyRegiment commanderRegiment = army.ArmyRegiments.FirstOrDefault(x => x.MAA_Name == army.CommanderID) ?? null;
+                if(commanderRegiment != null)
+                    army.ArmyRegiments.Remove(commanderRegiment);
+            }
+            foreach (Army army in defender_armies)
+            {
+                ArmyRegiment commanderRegiment = army.ArmyRegiments.FirstOrDefault(x => x.MAA_Name == army.CommanderID) ?? null;
+                if (commanderRegiment != null)
+                    army.ArmyRegiments.Remove(commanderRegiment);
             }
         }
         
@@ -275,34 +466,20 @@ namespace Crusader_Wars.data.save_file
                 return right_side;
         }
 
-        static void CreateCommanders()
+        static void CreateMainCommanders()
         {
             var left_side_armies = GetSideArmies("left");
             var right_side_armies = GetSideArmies("right");
-            for (int x = 0; x < left_side_armies.Count; x++)
-            {
-                var army = left_side_armies[x];
-                if(army.isMainArmy)
-                {
-                    var main_commander_data = CK3LogData.LeftSide.GetCommander();
-                    army.SetCommander(new CommanderSystem(main_commander_data.name, main_commander_data.id, main_commander_data.prowess, main_commander_data.martial, main_commander_data.rank, true));
-                }
-            }
 
-            for (int x = 0; x < right_side_armies.Count; x++)
-            {
-                var army = right_side_armies[x];
-                if (army.isMainArmy)
-                {
-                    var main_commander_data = CK3LogData.RightSide.GetCommander();
-                    army.SetCommander(new CommanderSystem(main_commander_data.name, main_commander_data.id, main_commander_data.prowess, main_commander_data.martial, main_commander_data.rank, true));
-                }
-            }
+            var left_main_commander_data = CK3LogData.LeftSide.GetCommander();
+            left_side_armies.First(x => x.isMainArmy).SetCommander(new CommanderSystem(left_main_commander_data.name, left_main_commander_data.id, left_main_commander_data.prowess, left_main_commander_data.martial, left_main_commander_data.rank, true));
 
+            var right_main_commander_data = CK3LogData.RightSide.GetCommander();
+            right_side_armies.First(x => x.isMainArmy).SetCommander(new CommanderSystem(right_main_commander_data.name, right_main_commander_data.id, right_main_commander_data.prowess, right_main_commander_data.martial, right_main_commander_data.rank, true));
         }
         static void CreateKnights()
         {
-            //RemoveCommandersAsKnights();
+            RemoveCommandersAsKnights();
 
             var left_side_armies = GetSideArmies("left");
             var right_side_armies = GetSideArmies("right");
@@ -322,6 +499,7 @@ namespace Crusader_Wars.data.save_file
                         for (int i = 0; i < CK3LogData.LeftSide.GetKnights().Count; i++)
                         {
                             string id = CK3LogData.LeftSide.GetKnights()[i].id;
+                            if (id == army.CommanderID) continue;
                             if (id == regiment.MAA_Name)
                             {
                                 int prowess = Int32.Parse(CK3LogData.LeftSide.GetKnights()[i].prowess);
@@ -370,6 +548,7 @@ namespace Crusader_Wars.data.save_file
                         for (int i = 0; i < CK3LogData.RightSide.GetKnights().Count; i++)
                         {
                             string id = CK3LogData.RightSide.GetKnights()[i].id;
+                            if (id == army.CommanderID) continue;
                             if (id == regiment.MAA_Name)
                             {
                                 int prowess = Int32.Parse(CK3LogData.RightSide.GetKnights()[i].prowess);

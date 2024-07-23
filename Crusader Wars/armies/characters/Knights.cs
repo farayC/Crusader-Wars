@@ -8,6 +8,23 @@ using System.Windows.Media.Media3D;
 
 namespace Crusader_Wars
 {
+    public class Accolade
+    {
+        string ID {  get; set; }
+        string PrimaryAttribute { get; set;}
+        string SecundaryAttribute { get; set; }
+        int Glory { get; set; }
+        public Accolade(string id, string primaryAtt, string secundaryAtt, string glory) { 
+            ID = id;
+            PrimaryAttribute = primaryAtt;
+            SecundaryAttribute = secundaryAtt;
+            Glory = Int32.Parse(glory);
+        }
+
+        public string GetPrimaryAttribute() { return PrimaryAttribute;}
+        public string GetSecundaryAttribute() { return SecundaryAttribute; }
+        public int GetGlory() { return Glory; }
+    }
     public class Knight
     {
         string Name { get; set; }
@@ -17,8 +34,10 @@ namespace Crusader_Wars
         int Soldiers { get; set; }
         List<(int Index, string Key)> Traits { get; set; }
         BaseSkills BaseSkill { get; set; }
-        bool isAccolade { get; set; }
-        bool hasFallen { get; set; }    
+        bool hasFallen { get; set; }
+
+        bool isAccoladeKnight { get; set; }
+        Accolade Accolade { get; set; }
 
         public string GetName() {  return Name; }
         public string GetID() { return ID; }
@@ -27,12 +46,13 @@ namespace Crusader_Wars
         public Culture GetCultureObj() { return CultureObj; }
         public int GetSoldiers() { return Soldiers; }
         public int GetProwess() { return Prowess; }
-        public bool IsAccolade() { return isAccolade; }
+        public bool IsAccolade() { return isAccoladeKnight; }
         public bool HasFallen() { return hasFallen; }
 
-        public void HasFallen(bool yn) { hasFallen = yn; }
+        internal void HasFallen(bool yn) { hasFallen = yn; }
         public void ChangeCulture(Culture cul) { CultureObj = cul; }
         public void SetTraits(List<(int, string)> list_trait) { Traits = list_trait; }
+        public void IsAccolade(bool yn, Accolade accolade) { isAccoladeKnight = yn; Accolade = accolade; Soldiers += 3; }
 
 
         internal Knight(string name, string id, Culture culture, int prowess, int soldiers) { 
@@ -42,16 +62,7 @@ namespace Crusader_Wars
             Prowess = prowess;
             Soldiers = SetStrengh(soldiers);
         }
-
-        internal Knight(string name, string id, Culture culture, int prowess, int soldiers, bool accolade)
-        {
-            Name = name;
-            ID = id;
-            CultureObj = culture;
-            Prowess = prowess;
-            Soldiers = SetStrengh(soldiers);
-            isAccolade = accolade;
-        }
+        
 
         public void SetWoundedDebuffs()
         {
@@ -169,7 +180,7 @@ namespace Crusader_Wars
     {
         private List<Knight> Knights { get; set; }
         private Culture MajorCulture { get; set; }
-        private List<(string PrimaryAttribute, string SecundaryAttribute, string Honor)> Accolades { get; set; }
+        private List<Accolade> Accolades { get; set; }
         private int UnitSoldiers { get; set; }
 
         private int Effectiveness { get; set; }
@@ -201,7 +212,7 @@ namespace Crusader_Wars
             return Knights;
         }
 
-        public List<(string PrimaryAttribute, string SecundaryAttribute, string Honor)> GetAccolades()
+        public List<Accolade> GetAccolades()
         {
             return Accolades;
         }
@@ -218,9 +229,12 @@ namespace Crusader_Wars
         }
 
 
-        public void SetAccolades(List<(string, string, string)> accolades_list)
+        public void SetAccolades()
         {
-            Accolades = accolades_list;
+            if(Accolades != null)
+                Accolades = Knights.Select(x => x.IsAccolade()).Cast<Accolade>().ToList();
+            else
+                Accolades = null;
         }
 
 

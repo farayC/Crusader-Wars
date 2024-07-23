@@ -31,8 +31,6 @@ namespace Crusader_Wars.unit_mapper
             LoadedUnitMapper_FolderPath = "";
             LoadUnitMapper();
             
-            
-
         }
 
         static void LoadUnitMapper ()

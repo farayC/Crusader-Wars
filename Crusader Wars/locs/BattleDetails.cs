@@ -19,12 +19,12 @@ namespace Crusader_Wars.locs
             Name = a;
         }
 
-        public static void ChangeBattleDetails(int left_total, int right_total)
+        public static void ChangeBattleDetails(int left_total, int right_total, string playerCombatSide, string enemyCombatSide)
         {
 
             EditButtonVersion();
             EditBattleTextDetails(left_total, right_total);
-            EditCombatSidesDetails();
+            EditCombatSidesDetails(playerCombatSide, enemyCombatSide);
             EditTerrainImage();
 
         }
@@ -123,7 +123,7 @@ namespace Crusader_Wars.locs
             File.Move(copy_path, original_battle_details_path);
         }
 
-        private static void EditCombatSidesDetails()
+        private static void EditCombatSidesDetails(string playerCombatSide, string enemyCombatSide)
         {
             string original_attila_file_path = @".\data\battle files\text\db\tutorial_historical_battles_factions.loc.tsv";
             string copy_path = @".\data\tutorial_historical_battles_factions.loc.tsv";
@@ -142,13 +142,13 @@ namespace Crusader_Wars.locs
                     //Enemy Side
                     if (line.Contains("factions_screen_name_historical_house_bolton"))
                     {
-                        line = Regex.Replace(line, @"\t(?<CombatSide>.+)\t", $"\t{CK3LogData.RightSide.GetRealmName()}\t");
+                        line = Regex.Replace(line, @"\t()\t", $"\t{enemyCombatSide}\t");
                     }
 
                     //Player Side
                     if(line.Contains("factions_screen_name_historical_house_stark"))
                     {
-                        line = Regex.Replace(line, @"\t(?<CombatSide>.+)\t", $"\t{CK3LogData.LeftSide.GetRealmName()}\t");
+                        line = Regex.Replace(line, @"\t()\t", $"\t{playerCombatSide}\t");
                     }
 
                     new_data += line + "\n";

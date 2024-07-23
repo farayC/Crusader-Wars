@@ -138,14 +138,6 @@ namespace Crusader_Wars.data.save_file
         }
 
 
-        enum FileType
-        {
-            Living,
-            CombatResults,
-            Combats,
-            ArmyRegiments,
-            Regiments            
-        }
         static void WriteDataToSaveFile(StreamWriter streamWriter, string data_file_path, FileType fileType)
         {
             StringBuilder sb = new StringBuilder();
@@ -170,6 +162,15 @@ namespace Crusader_Wars.data.save_file
             streamWriter.WriteLine(sb.ToString());
         }
 
+        enum FileType
+        {
+            Living,
+            CombatResults,
+            Combats,
+            ArmyRegiments,
+            Regiments
+        }
+
         public struct DataFilesPaths
         {
             public static string CombatResults_Path() { return @".\data\save_file_data\BattleResults.txt"; }
@@ -183,6 +184,9 @@ namespace Crusader_Wars.data.save_file
             public static string Counties_Path() { return @".\data\save_file_data\Counties.txt"; }
             public static string Traits_Path() { return @".\data\save_file_data\Traits.txt"; }
             public static string Units_Path() { return @".\data\save_file_data\Units.txt"; }
+            public static string CourtPositions_Path() { return @".\data\save_file_data\CourtPositions.txt"; }
+            public static string LandedTitles() { return @".\data\save_file_data\LandedTitles.txt"; }
+            public static string Accolades() { return @".\data\save_file_data\Accolades.txt"; }
 
         }
 
@@ -193,12 +197,6 @@ namespace Crusader_Wars.data.save_file
             public static string Regiments_Path() { return @".\data\save_file_data\temp\Regiments.txt"; }
             public static string ArmyRegiments_Path() { return @".\data\save_file_data\temp\ArmyRegiments.txt"; }
             public static string Living_Path() { return @".\data\save_file_data\temp\Living.txt"; }
-            public static string Cultures_Path() { return @".\data\save_file_data\temp\Cultures.txt"; }
-            public static string Mercenaries_Path() { return @".\data\save_file_data\temp\Mercenaries.txt"; }
-            public static string Armies_Path() { return @".\data\save_file_data\temp\Armies.txt"; }
-            public static string Counties_Path() { return @".\data\save_file_data\temp\Counties.txt"; }
-            public static string Traits_Path() { return @".\data\save_file_data\temp\Traits.txt"; }
-            public static string Units_Path() { return @".\data\save_file_data\temp\Units.txt"; }
 
         }
 
