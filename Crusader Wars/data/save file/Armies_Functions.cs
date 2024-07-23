@@ -88,21 +88,22 @@ namespace Crusader_Wars.data.save_file
                                     string knight_culture_id = "";
                                     if (knight.GetCultureObj() == null)
                                     {
-                                        Culture mainParticipantCulture;
+                                        Culture mainParticipantCulture = null;
                                         if (armies[i].IsPlayer())
                                         {
                                             string id = CK3LogData.LeftSide.GetMainParticipant().culture_id;
                                             mainParticipantCulture = new Culture(id);
                                         }
-                                        else
+                                        else if(armies[i].IsEnemy())
                                         {
                                             string id = CK3LogData.RightSide.GetMainParticipant().culture_id;
                                             mainParticipantCulture = new Culture(id);
                                         }
                                             
-                                        Culture new_culture = armies[i].Knights.GetKnightsList().Find(x => x.GetCultureObj() != null).GetCultureObj() ?? mainParticipantCulture;
+                                        Culture new_culture = armies[i].Knights.GetKnightsList()?.Find(x => x.GetCultureObj() != null)?.GetCultureObj() ?? mainParticipantCulture;
                                         knight.ChangeCulture(new_culture);
                                         knight_culture_id = knight.GetCultureObj().ID;
+                                        armies[i].Knights.SetMajorCulture();
                                     }
                                     else
                                     {
@@ -248,14 +249,20 @@ namespace Crusader_Wars.data.save_file
          *##############################################
          */
 
-        public static (bool searchStarted, Army searchingArmy, bool isCommander, CommanderSystem commander, bool isKnight, Knight knight) SearchCharacters(string id, List<Army> armies)
+        public static (bool searchStarted, Army searchingArmy, bool isCommander, bool isMainCommander, bool isKnight, Knight knight) SearchCharacters(string id, List<Army> armies)
         {
             foreach (Army army in armies)
             {
-                //COMMANDERS
+                //Main Commanders
                 if (army.Commander != null && id == army.Commander.ID)
                 {
-                    return (true, army, true, army.Commander, false, null);
+                    return (true, army, false, true,false, null);
+                }
+
+                //Commanders
+                if (id == army.CommanderID)
+                {
+                    return (true, army, true, false, false, null);
                 }
 
                 // KNIGHTS
@@ -265,18 +272,18 @@ namespace Crusader_Wars.data.save_file
                     {
                         if (id == knight.GetID())
                         {
-                            return (true, army, false, null, true, knight);
+                            return (true, army, false, false,true, knight);
                         }
                     }
                 }
                 //ARMY OWNER
                 else if (id == army.Owner)
                 {
-                    return (true, army, false, null, false, null);
+                    return (true, army, false, false,false, null);
                 }
             }
 
-            return (false, null, false, null, false, null);
+            return (false, null, false, false,false, null);
         }
 
         /*##############################################

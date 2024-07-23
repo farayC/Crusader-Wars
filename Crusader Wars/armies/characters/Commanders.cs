@@ -34,12 +34,18 @@ namespace Crusader_Wars
         private Culture CultureObj { get; set; }
         public List<(int Index, string Key)> Traits_List { get; private set; }
 
+        public BaseSkills BaseSkills { get; private set; }
         public CommanderTraits CommanderTraits { get; private set; }
         private List<CourtPosition> Employees { get; set; }
-        private (string PrimaryAttribute, string SecundaryAttribute, string Honor) Accolade { get; set; }
+
         public bool hasFallen { get; private set; }
         private bool MainCommander {  get; set; }
+        private Accolade Accolade { get; set; }
+        private bool IsAccoladeCommander { get; set; }
 
+        /// <summary>
+        /// New object for MAIN COMMANDERS only.
+        /// </summary>
         public CommanderSystem(string name, string id, int prowess, int martial, int rank, bool mainCommander)
         {
             Name = name;
@@ -49,20 +55,35 @@ namespace Crusader_Wars
             Rank = rank;
             MainCommander = mainCommander;
         }
+
+        /// <summary>
+        /// New object for NON-MAIN COMMANDERS.
+        /// </summary>
+        public CommanderSystem(string name, string id, int prowess, int rank, BaseSkills baseSkills, Culture culture)
+        {
+            Name = name;
+            ID = id;
+            Prowess = prowess;
+            Martial = baseSkills.martial;
+            Rank = rank;
+            BaseSkills = baseSkills;
+            CultureObj = culture;
+            MainCommander = false;
+        }
         public void ChangeCulture(Culture obj) {CultureObj = obj;}
+        public void SetBaseSkills(BaseSkills t) { BaseSkills = t; }
+        public void SetAccolade(Accolade accolade) { Accolade = accolade; IsAccoladeCommander = true; }
+
         public string GetCultureName() { return CultureObj.GetCultureName(); }
         public string GetHeritageName() { return CultureObj.GetHeritageName(); }
         public Culture GetCultureObj () { return CultureObj; }
         public bool IsMainCommander() { return MainCommander; }
-        public void SetAccolade((string PrimaryAttribute, string SecundaryAttribute, string Honor) accolade)
-        {
-            Accolade = accolade;
-        }
+        public Accolade GetAccolade() { return Accolade; }
+        public bool IsAccolade() { return IsAccoladeCommander; }
 
-        public (string,string, string) GetAccolade()
-        {
-            return Accolade;
-        }
+
+
+
 
 
         public void AddCourtPosition(string profession, string id)

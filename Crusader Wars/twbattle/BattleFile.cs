@@ -689,9 +689,9 @@ namespace Crusader_Wars
                      "<special_ability></special_ability>\n";
 
 
-                    if(!string.IsNullOrEmpty(accolade.Item1))
+                    if(accolade != null)
                     {
-                        var special_ability = Accolades.ReturnAbilitiesKeys(accolade);
+                        var special_ability = AccoladesAbilities.ReturnAbilitiesKeys(accolade);
                         if (special_ability.primaryKey != "null")
                         {
                             PR_General += $"<special_ability>{special_ability.primaryKey}</special_ability>\n";
@@ -737,7 +737,8 @@ namespace Crusader_Wars
         public static void AddKnightUnit(KnightSystem Knights, string troopType, string unitScript, int experience, string direction)
         {
             int numberOfSoldiers = Knights.GetKnightsSoldiers();
-            
+
+            Knights.SetAccolades();
             var accoladesList = Knights.GetAccolades();
 
 
@@ -766,7 +767,7 @@ namespace Crusader_Wars
                 {
                     foreach (var accolade in accoladesList)
                     {
-                        var accoladeAbilites = Accolades.ReturnAbilitiesKeys(accolade);
+                        var accoladeAbilites = AccoladesAbilities.ReturnAbilitiesKeys(accolade);
                         if (accoladeAbilites.primaryKey != "null")
                         {
                             PR_Unit += $"<special_ability>{accoladeAbilites.primaryKey}</special_ability>\n";

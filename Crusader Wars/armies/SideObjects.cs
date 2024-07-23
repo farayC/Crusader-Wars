@@ -51,7 +51,8 @@ namespace Crusader_Wars
         public string CommanderID { get; set; }
         public bool isMainArmy { get; private set; }
         bool IsHumanPlayer { get; set; }
-        bool IsMainEnemy { get; set; }
+        bool IsPlayerArmy { get; set; }
+        bool IsEnemyArmy { get; set; }
 
         public string RealmName { get; set; }
         public string CombatSide { get; set; }
@@ -69,8 +70,8 @@ namespace Crusader_Wars
         }
 
         //Getters
-        public bool IsEnemy() { return IsMainEnemy; }
-        public bool IsPlayer() { return IsHumanPlayer; }
+        public bool IsEnemy() { return IsEnemyArmy; }
+        public bool IsPlayer() { return IsPlayerArmy; }
 
 
         //Setters
@@ -78,8 +79,8 @@ namespace Crusader_Wars
             if (MergedArmies == null) { MergedArmies = new List<Army>(); }
             MergedArmies.Add(army); 
         }
-        public void IsPlayer(bool u) { IsHumanPlayer = u; }
-        public void IsEnemy(bool u) { IsMainEnemy = u; }
+        public void IsPlayer(bool u) { IsPlayerArmy = u; }
+        public void IsEnemy(bool u) { IsEnemyArmy = u; }
         public void SetUnits(List<Unit> l) { Units = l; }
         public void SetCommander(CommanderSystem l) { Commander = l; }
         public void SetDefences(DefensiveSystem l) { Defences = l; }

@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.twbattle;
+﻿using Crusader_Wars.data.save_file;
+using Crusader_Wars.twbattle;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,63 +26,56 @@ namespace Crusader_Wars
         static void ClearFilesData()
         {
             //Clear Battle Results File
-            File.WriteAllText(@".\data\save_file_data\BattleResults.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.CombatResults_Path(), "");
             //Clear Battle Results TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\BattleResults.txt", "");
+            File.WriteAllText(Writter.DataTEMPFilesPaths.CombatResults_Path(), "");
 
             //Clear Combats File
-            File.WriteAllText(@".\data\save_file_data\Combats.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Combats_Path(), "");
             //Clear Combats TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Combats.txt", "");
+            File.WriteAllText(Writter.DataTEMPFilesPaths.Combats_Path(), "");
 
             //Clear Regiments File
-            File.WriteAllText(@".\data\save_file_data\Regiments.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Regiments_Path(), "");
             //Clear Regiments TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Regiments.txt", "");
+            File.WriteAllText(Writter.DataTEMPFilesPaths.Regiments_Path(), "");
 
             //Clear Army Regiments File
-            File.WriteAllText(@".\data\save_file_data\ArmyRegiments.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.ArmyRegiments_Path(), "");
             //Clear Army Regiments TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\ArmyRegiments.txt", "");
+            File.WriteAllText(Writter.DataTEMPFilesPaths.ArmyRegiments_Path(), "");
 
             //Clear Living Regiments File
-            File.WriteAllText(@".\data\save_file_data\Living.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Living_Path(), "");
             //Clear Living Regiments TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Living.txt", "");
+            File.WriteAllText(Writter.DataTEMPFilesPaths.Living_Path(), "");
 
             //Clear Armies File
-            File.WriteAllText(@".\data\save_file_data\Armies.txt", "");
-            //Clear Armies TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Armies.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Armies_Path(), "");
 
             //Clear Counties File
-            File.WriteAllText(@".\data\save_file_data\Counties.txt", "");
-            //Clear Counties TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Counties.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Counties_Path(), "");
 
             //Clear Cultures File
-            File.WriteAllText(@".\data\save_file_data\Cultures.txt", "");
-            //Clear Cultures TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Cultures.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Cultures_Path(), "");
 
             //Clear Mercenaries File
-            File.WriteAllText(@".\data\save_file_data\Mercenaries.txt", "");
-            //Clear Mercenaries TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Mercenaries.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Mercenaries_Path(), "");
 
             //Clear Traits File
-            File.WriteAllText(@".\data\save_file_data\Traits.txt", "");
-            //Clear Traits TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Traits.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Traits_Path(), "");
+
             //Clear Units File
-            File.WriteAllText(@".\data\save_file_data\Units.txt", "");
-            //Clear Units TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\Units.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.Units_Path(), "");
 
             //Clear Court Positions File
-            File.WriteAllText(@".\data\save_file_data\CourtPositions.txt", "");
-            //Clear Court Positions TEMP File
-            File.WriteAllText(@".\data\save_file_data\temp\CourtPositions.txt", "");
+            File.WriteAllText(Writter.DataFilesPaths.CourtPositions_Path(), "");
+
+            //Clear Landed Titles File
+            File.WriteAllText(Writter.DataFilesPaths.LandedTitles(), "");
+
+            //Clear Accolades File
+            File.WriteAllText(Writter.DataFilesPaths.Accolades(), "");
         }
 
         /// <summary>  
@@ -102,12 +96,6 @@ namespace Crusader_Wars
                     line = reader.ReadLine();
                     //GetterKeys.ReadProvinceBuildings(line, "5984");
 
-                    /*TO DO:
-                     * REWORK THIS LATER*/
-
-                    //GetterKeys.ReadAccolades(line, Player, Enemy);
-                    //GetterKeys.ReadCourtPositions(line, Player, Enemy);
-                    //GetterKeys.ReadLivingCharacters(line, Player, Enemy);
 
                     SearchKeys.TraitsList(line);
                     
@@ -124,6 +112,8 @@ namespace Crusader_Wars
                     SearchKeys.Mercenaries(line);
                     SearchKeys.Units(line);
                     SearchKeys.CourtPositions(line);
+                    SearchKeys.LandedTitles(line);
+                    SearchKeys.Accolades(line);
                     
                 }
                
@@ -166,6 +156,8 @@ namespace Crusader_Wars
         public static StringBuilder SB_Mercenaries = new StringBuilder();
         public static StringBuilder SB_Units = new StringBuilder();
         public static StringBuilder SB_CourtPositions = new StringBuilder();
+        public static StringBuilder SB_LandedTitles = new StringBuilder();
+        public static StringBuilder SB_Accolades = new StringBuilder();
 
 
 
@@ -199,6 +191,8 @@ namespace Crusader_Wars
             SearchKeys.HasMercenariesExtracted = false;
             SearchKeys.HasUnitsExtracted = false;
             SearchKeys.HasCourtPositionsExtracted = false;
+            SearchKeys.HasLandedTitlesExtracted = false;
+            SearchKeys.HasAccoladesExtracted = false;
         }
     }
 
@@ -259,355 +253,7 @@ namespace Crusader_Wars
                 return;
 
             }
-        }
-
-
-
-        static bool isSearchPermittedAccolades = false;
-        static bool StartAccoladeSearchAllowed = false;
-        static string found_accolade_id;
-        static string primary_attribute;
-        static string secundary_attribute;
-        static string glory;
-        static bool isAccoladePlayer = false;
-        static bool isAccoladeEnemy = false;
-        static bool isAccoladePlayerCommander = false;
-        static bool isAccoladeEnemyCommander = false;
-        public static void ReadAccolades(string line, ICharacter player, ICharacter enemy)
-        {
-            //if there is a accolade id found
-            if (Data.PlayerIDsAccolades.Count > 0 || Data.EnemyIDsAccolades.Count > 0)
-            {
-                if (line == "accolades={")
-                {
-                    isSearchPermittedAccolades = true;
-                }
-
-                //find accolade on the battle
-                if (isSearchPermittedAccolades && !StartAccoladeSearchAllowed)
-                {
-                    foreach (var id in Data.PlayerIDsAccolades)
-                    {
-                        if (line == $"\t\t{id}={{")
-                        {
-                            isAccoladePlayer = true;
-                            found_accolade_id = id;
-                            StartAccoladeSearchAllowed = true;
-                            break;
-                        }
-                    }
-
-                    foreach (var id in Data.EnemyIDsAccolades)
-                    {
-                        if (line == $"\t\t{id}={{")
-                        {
-                            isAccoladeEnemy = true;
-                            found_accolade_id = id;
-                            StartAccoladeSearchAllowed = true;
-                            break;
-                        }
-                    }
-
-                    if (line == $"\t\t{Data.PlayerCommanderAccoladeID}={{")
-                    {
-                        isAccoladePlayerCommander = true;
-                        found_accolade_id = Data.PlayerCommanderAccoladeID;
-                        StartAccoladeSearchAllowed = true;
-                    }
-                    else if (line == $"\t\t{Data.EnemyCommanderAccoladeID}={{")
-                    {
-                        isAccoladeEnemyCommander = true;
-                        found_accolade_id = Data.EnemyCommanderAccoladeID;
-                        StartAccoladeSearchAllowed = true;
-                    }
-
-                }
-                    //search for attributes and glory
-                    if (StartAccoladeSearchAllowed && line.Contains("\t\t\tprimary="))
-                    {
-                        primary_attribute = Regex.Match(line, @"\w+", RegexOptions.RightToLeft).Value;
-                    }
-                    if (StartAccoladeSearchAllowed && line.Contains("\t\t\tsecondary="))
-                    {
-                        secundary_attribute = Regex.Match(line, @"\w+", RegexOptions.RightToLeft).Value;
-                    }
-                    if (StartAccoladeSearchAllowed && line.Contains("\t\t\tglory="))
-                    {
-                        glory = Regex.Match(line, @"\d+").Value;
-                    }
-
-
-                    //add data to list
-                    if (primary_attribute != String.Empty && secundary_attribute != String.Empty && glory != String.Empty)
-                    {
-                        if (isAccoladePlayer)
-                        {
-                            Data.PlayerAccolades.Add((primary_attribute, secundary_attribute, glory));
-                            Console.WriteLine($"Player Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
-                        }
-                        else if(isAccoladeEnemy)
-                        {
-                            Data.EnemysAccolades.Add((primary_attribute, secundary_attribute, glory));
-                            Console.WriteLine($"Enemy Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
-                        }
-                        else if(isAccoladePlayerCommander)
-                        {
-                            player.Commander.SetAccolade((primary_attribute, secundary_attribute, glory));
-                            Console.WriteLine($"Player Commander Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
-                        }
-                        else if(isAccoladeEnemyCommander)
-                        {
-                            enemy.Commander.SetAccolade((primary_attribute, secundary_attribute, glory));
-                            Console.WriteLine($"Enemmy Commander Accolade: ID- {found_accolade_id}\tPrimary- {primary_attribute}\tSecundary-{secundary_attribute}\tHonor-{glory}");
-                        }
-
-
-                        primary_attribute = "";
-                        secundary_attribute = "";
-                        glory = "";
-                        isAccoladeEnemy = false;
-                        isAccoladePlayer = false;
-                        isAccoladePlayerCommander = false;
-                        isAccoladeEnemyCommander = false;
-                    }
-
-                    //accolade data end line
-                    if (StartAccoladeSearchAllowed && line == "\t\t}")
-                    {
-                        StartAccoladeSearchAllowed = false;
-                        found_accolade_id = "";
-                    }
-
-                    //accolades data group end line
-                    if (isSearchPermittedAccolades && line == "tax_slot_manager={")
-                    {
-                        //clear empty items
-                        Data.PlayerAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
-                        Data.EnemysAccolades.RemoveAll(t => string.IsNullOrEmpty(t.Item1) || string.IsNullOrEmpty(t.Item2) || string.IsNullOrEmpty(t.Item3));
-
-                        player.Knights.SetAccolades(Data.PlayerAccolades);
-                        enemy.Knights.SetAccolades(Data.EnemysAccolades);
-
-                        StartAccoladeSearchAllowed = false;
-                        isSearchPermittedAccolades = false;
-
-
-                    }
-
-                
-            }
-        }
-
-        static bool isSearchPermittedLiving = false;
-        static bool StartCharacterSearchAllowed = false;
-        static List<Knight> player_knights_list;
-        static List<Knight> enemy_knights_list;
-        static bool isPlayerCommander = false;
-        static bool isEnemyCommander = false;
-        static bool isPlayerKnight = false;
-        static bool isEnemyKnight = false;
-        static string char_id = "";
-        public static void ReadLivingCharacters(string line, ICharacter Player, ICharacter Enemy)
-        {
-
-
-            if (line == "living={")
-            {
-                isSearchPermittedLiving = true;
-
-                player_knights_list = Player.Knights.GetKnightsList();
-                enemy_knights_list = Enemy.Knights.GetKnightsList();
-            }
-
-            if (isSearchPermittedLiving && !StartCharacterSearchAllowed)
-            {
-                if(line == ($"\t{Player.Commander.ID}={{") || line == $"{Player.Commander.ID}={{")
-                {
-                    StartCharacterSearchAllowed = true;
-                    isPlayerCommander=true;
-                    char_id = Player.Commander.ID;
-                }
-                else if (line == $"\t{Enemy.Commander.ID}={{" || line == $"{Enemy.Commander.ID}={{")
-                {
-                    StartCharacterSearchAllowed = true;
-                    isEnemyCommander=true;
-                    char_id = Enemy.Commander.ID;
-                }
-                
-                if(player_knights_list != null)
-                {
-                    foreach (var knight in player_knights_list)
-                    {
-                        if (line == $"\t{knight.GetID()}={{" || line == $"{knight.GetID()}={{")
-                        {
-                            StartCharacterSearchAllowed = true;
-                            isPlayerKnight = true;
-                            char_id = knight.GetID();
-                        }
-                    }
-                }
-
-                if( enemy_knights_list != null )
-                {
-                    foreach (var knight in enemy_knights_list)
-                    {
-                        if (line == $"\t{knight.GetID()}={{" || line == $"{knight.GetID()}={{")
-                        {
-                            StartCharacterSearchAllowed = true;
-                            isEnemyKnight = true;
-                            char_id = knight.GetID();
-                        }
-                    }
-                }
-
-            }
-
-            if(StartCharacterSearchAllowed)
-            {
-                if(line.Contains("\ttraits={"))
-                {
-                    var traits_collection = Regex.Matches(line, @"\d+").Cast<Match>()
-                                                                        .Select(m => m.Value)
-                                                                        .ToList<string>();
-                    
-                    if (isPlayerCommander)
-                    {
-                        //Player.Commander.SetTraits(traits_collection);
-                    }
-                    else if(isEnemyCommander)
-                    {
-                        //Enemy.Commander.SetTraits(traits_collection);
-                    }
-                    else if(isPlayerKnight)
-                    {
-                        //Player.Knights.SetTraits(char_id, traits_collection);
-                    }
-                    else if(isEnemyKnight)
-                    {
-                        //Enemy.Knights.SetTraits(char_id, traits_collection);
-                    }
-
-                }
-                if(line.Contains("\tculture="))
-                {
-                    string culture = Regex.Match(line, @"\d+").Value;
-
-                }
-
-
-                if(line.Contains("\tskill={"))
-                {
-                    var skills_collection = Regex.Matches(line, @"\d+").Cast<Match>()
-                                                .Select(m => m.Value)
-                                                .ToList<string>();
-
-                    if (isPlayerKnight)
-                    {
-                        BaseSkills skills = new BaseSkills(skills_collection);
-                        //Player.Knights.SetSkills(char_id, skills);
-                    }
-                    else if (isEnemyKnight)
-                    {
-                        BaseSkills skills = new BaseSkills(skills_collection);
-                        //Enemy.Knights.SetSkills(char_id, skills);
-                    }
-                }
-
-                //set the knight as accolade if true and add id to a list
-                if (line.Contains("\t\taccolade="))
-                {
-                   
-                    Knight accolade_knight;
-
-                    if (isPlayerKnight)
-                    {
-                        try
-                        {
-                            var player_knights = Player.Knights.GetKnightsList();
-                            accolade_knight = player_knights.First(x => x.GetID() == char_id);
-
-                            int index = player_knights.IndexOf(accolade_knight);
-                            accolade_knight = new Knight(accolade_knight.GetName(), accolade_knight.GetID(), null, accolade_knight.GetProwess(), 5, true);
-                            player_knights[index] = accolade_knight;
-
-                            string accolade_id = Regex.Match(line, @"\d+").Value;
-                            Data.PlayerIDsAccolades.Add(accolade_id);
-                            Console.WriteLine("Player accolade found with an id of - " + char_id);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("");
-                        }
-
-                    }
-                    else if (isEnemyKnight)
-                    {
-                        try
-                        {
-                            var enemy_knights = Enemy.Knights.GetKnightsList();
-                            accolade_knight = enemy_knights_list.First(x => x.GetID() == char_id);
-
-                            int index = enemy_knights.IndexOf(accolade_knight);
-                            accolade_knight = new Knight(accolade_knight.GetName(), accolade_knight.GetID(), null, accolade_knight.GetProwess(), 5, true);
-                            enemy_knights[index] = accolade_knight;
-
-                            string accolade_id = Regex.Match(line, @"\d+").Value;
-                            Data.EnemyIDsAccolades.Add(accolade_id);
-                            Console.WriteLine("Enemy accolade found with an id of - " + char_id);
-                        }
-                        catch 
-                        {
-                            Console.WriteLine("");
-                        }
-
-                    }
-                    else if(isPlayerCommander) 
-                    {
-                        string accolade_id = Regex.Match(line, @"\d+").Value;
-                        Data.PlayerCommanderAccoladeID = accolade_id;
-                        Console.WriteLine("Player Accolade Commander found with an id of - "+ char_id);
-                    }
-                    else if (isEnemyCommander)
-                    {
-                        string accolade_id = Regex.Match(line, @"\d+").Value;
-                        Data.EnemyCommanderAccoladeID = accolade_id;
-                        Console.WriteLine("Enemy Accolade Commander found with an id of - " + char_id);
-                    }
-
-                }
-
-
-            }
-
-            //end line to specific court position data
-            if (StartCharacterSearchAllowed && line == "}")
-            {
-                isEnemyCommander = false;
-                isPlayerCommander = false;
-                isEnemyKnight = false;
-                isPlayerKnight = false;
-
-                char_id = "";
-                StartCharacterSearchAllowed = false;
-            }
-
-            //end line to all court positions data
-            if (isSearchPermittedLiving && line == "dead_unprunable={")
-            {
-                player_knights_list = null;
-                enemy_knights_list = null;
-
-                isEnemyCommander = false;
-                isPlayerCommander = false;
-                isEnemyKnight = false;
-                isPlayerKnight = false;
-
-                char_id = "";
-                StartCharacterSearchAllowed = false;
-                isSearchPermittedLiving = false;
-
-            }
-        }
+        } 
 
         static bool isSearchPermittedCourtPositions = false;
         static bool StartCourtPositionsSearchAllowed = false;
@@ -1215,6 +861,101 @@ namespace Crusader_Wars
                     HasMercenariesExtracted = true;
                     Start_MercenariesFound = false;
                     End_MercenariesFound = false;
+                }
+            }
+        }
+
+        private static bool Start_LandedTitlesFound { get; set; }
+        private static bool End_LandedTitlesFound { get; set; }
+        public static bool HasLandedTitlesExtracted { get; set; }
+        public static void LandedTitles(string line)
+        {
+
+            if (!HasLandedTitlesExtracted)
+            {
+                if (!Start_LandedTitlesFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "\tlanded_titles={")
+                    { Start_LandedTitlesFound = true; }
+                    else { Start_LandedTitlesFound = false; }
+                }
+
+                if (Start_LandedTitlesFound && !End_LandedTitlesFound)
+                {
+
+                    if (line.StartsWith("\tindex="))
+                    {
+                        //Write Landed Titles Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\LandedTitles.txt"))
+                        {
+                            sw.Write(Data.SB_LandedTitles);
+                            sw.Close();
+                        }
+                        Data.SB_LandedTitles = null;
+                        GC.Collect();
+                        End_LandedTitlesFound = true;
+                        return;
+                    }
+                    else { HasLandedTitlesExtracted = false; }
+
+                    Data.SB_LandedTitles.AppendLine(line);
+
+                }
+
+                if (End_LandedTitlesFound)
+                {
+                    HasLandedTitlesExtracted = true;
+                    Start_LandedTitlesFound = false;
+                    End_LandedTitlesFound = false;
+                }
+            }
+        }
+
+
+        private static bool Start_AccoladesFound { get; set; }
+        private static bool End_AccoladesFound { get; set; }
+        public static bool HasAccoladesExtracted { get; set; }
+        public static void Accolades(string line)
+        {
+
+            if (!HasAccoladesExtracted)
+            {
+                if (!Start_AccoladesFound)
+                {
+                    //Match start = Regex.Match(line, @"living={");
+                    if (line == "accolades={")
+                    { Start_AccoladesFound = true; }
+                    else { Start_AccoladesFound = false; }
+                }
+
+                if (Start_AccoladesFound && !End_AccoladesFound)
+                {
+
+                    if (line.StartsWith("tax_slot_manager={"))
+                    {
+                        //Write Accolades Data to txt file
+                        using (StreamWriter sw = File.AppendText(@".\data\save_file_data\Accolades.txt"))
+                        {
+                            sw.Write(Data.SB_Accolades);
+                            sw.Close();
+                        }
+                        Data.SB_Accolades = null;
+                        GC.Collect();
+                        End_AccoladesFound = true;
+                        return;
+                    }
+                    else { HasAccoladesExtracted = false; }
+
+                    Data.SB_Accolades.AppendLine(line);
+
+                }
+
+                if (End_AccoladesFound)
+                {
+                    HasAccoladesExtracted = true;
+                    Start_AccoladesFound = false;
+                    End_AccoladesFound = false;
                 }
             }
         }

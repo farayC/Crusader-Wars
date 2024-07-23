@@ -388,9 +388,13 @@ namespace Crusader_Wars
 
                 var left_side = ArmiesReader.GetSideArmies("left");
                 var right_side = ArmiesReader.GetSideArmies("right");
+
+
                 int left_side_total = left_side.Sum(army => army.GetTotalSoldiers());
                 int right_side_total = right_side.Sum(army => army.GetTotalSoldiers());
-                BattleDetails.ChangeBattleDetails(left_side_total, right_side_total);
+                string left_side_combat_side = left_side[0].CombatSide;
+                string right_side_combat_side = right_side[0].CombatSide;
+                BattleDetails.ChangeBattleDetails(left_side_total, right_side_total, left_side_combat_side, right_side_combat_side);
 
                 try
                 {

@@ -8,14 +8,14 @@ using System.Windows.Media.Converters;
 
 namespace Crusader_Wars.armies
 {
-    public static class Accolades
+    public static class AccoladesAbilities
     {
-        public static (string primaryKey, string secundaryKey) ReturnAbilitiesKeys((string primaryAttribute, string secundaryAttribute, string Honor) Accolade)
+        public static (string primaryKey, string secundaryKey) ReturnAbilitiesKeys(Accolade Accolade)
         {
-            int Rank = GetRank(Int32.Parse(Accolade.Honor));
+            int Rank = GetRank(Accolade.GetGlory());
 
-            string PrimaryAttribute_Name = GetAttribute(Accolade.primaryAttribute);
-            string SecundaryAttribute_Name = GetAttribute(Accolade.secundaryAttribute);
+            string PrimaryAttribute_Name = GetAttribute(Accolade.GetPrimaryAttribute());
+            string SecundaryAttribute_Name = GetAttribute(Accolade.GetSecundaryAttribute());
 
             int PrimaryAttribute_Level = DetermineAbilityLevel(Rank, true);
             int SecondaryAttribute_Level = DetermineAbilityLevel(Rank, false);

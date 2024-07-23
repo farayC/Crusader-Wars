@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Reflection;
 using System.Text;
-using System.IO.Pipes;
-using Crusader_Wars.data;
-using System.Diagnostics.Eventing.Reader;
-using System.CodeDom;
 using Crusader_Wars.data.save_file;
 using static Crusader_Wars.data.save_file.Writter;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using System.ComponentModel.Design;
+
 
 namespace Crusader_Wars
 {
@@ -845,7 +838,7 @@ namespace Crusader_Wars
                         }
                         else if (line.Contains("\t\t\t\t\t\tcurrent="))
                         {
-                            string edited_line = "\t\t\t\t\t\tcurrent=" + SearchArmyRegiment(attacker_armies, army_regiment_id).CurrentNum;
+                            string edited_line = "\t\t\t\t\t\tcurrent=" + SearchArmyRegiment(attacker_armies, army_regiment_id)?.CurrentNum ?? "0";
                             streamWriter.WriteLine(edited_line);
                             continue;
                         }
@@ -877,7 +870,7 @@ namespace Crusader_Wars
                         }
                         else if (line.Contains("\t\t\t\t\t\tcurrent="))
                         {
-                            string edited_line = "\t\t\t\t\t\tcurrent=" + SearchArmyRegiment(defender_armies, army_regiment_id).CurrentNum;
+                            string edited_line = "\t\t\t\t\t\tcurrent=" + SearchArmyRegiment(defender_armies, army_regiment_id)?.CurrentNum ?? "0";
                             streamWriter.WriteLine(edited_line);
                             continue;
                         }
@@ -950,6 +943,7 @@ namespace Crusader_Wars
             {
                 foreach (ArmyRegiment armyRegiment in army.ArmyRegiments)
                 {
+                    if (armyRegiment.Type == RegimentType.Knight) continue;
                     if (armyRegiment.ID == army_regiment_id)
                     {
                         return armyRegiment;
@@ -962,6 +956,7 @@ namespace Crusader_Wars
                     {
                         foreach (ArmyRegiment armyRegiment in merged_army.ArmyRegiments)
                         {
+                            if (armyRegiment.Type == RegimentType.Knight) continue;
                             if (armyRegiment.ID == army_regiment_id)
                             {
                                 return armyRegiment;
