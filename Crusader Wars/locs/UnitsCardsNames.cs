@@ -210,13 +210,13 @@ namespace Crusader_Wars.locs
         }
 
 
-
+        /*
         private static string ReturnGeneralName(ICharacter Side)
         {
 
             string name="Commander's Retinue";
 
-            /*
+            
             switch(Side.Commander.Rank)
             {
                 case 1:
@@ -237,11 +237,12 @@ namespace Crusader_Wars.locs
                 case 6:
                     name = "Imperial Retinue";
                     break;
-            }*/
+            }
 
 
             return name;
         }
+        */
 
 
         static string RemoveDiacritics(string input)

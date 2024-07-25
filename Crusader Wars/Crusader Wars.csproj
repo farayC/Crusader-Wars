@@ -207,7 +207,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="terrain\TerrainGenerator.cs" />
     <Compile Include="data\Updater.cs" />
-    <Compile Include="unit mapper\UnitMappers.cs" />
     <Compile Include="unit mapper\UnitMappers_BETA.cs" />
     <EmbeddedResource Include="client\MainFile.resx">
       <DependentUpon>MainFile.cs</DependentUpon>

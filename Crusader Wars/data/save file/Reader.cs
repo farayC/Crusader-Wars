@@ -84,8 +84,10 @@ namespace Crusader_Wars
         /// <param name="savePath">Path to the ck3 save file</param>  
         public static void ReadFile(string savePath)
         {
+
             //Clean all data in save file data files
             ClearFilesData();
+            long startMemoryt = GC.GetTotalMemory(false);
 
             using (FileStream saveFile = File.Open(savePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(saveFile))
@@ -116,10 +118,13 @@ namespace Crusader_Wars
                     SearchKeys.Accolades(line);
                     
                 }
-               
+                long endMemoryt = GC.GetTotalMemory(false);
+                long memoryUsaget = endMemoryt - startMemoryt;
+                Console.WriteLine($"----\nGetting data from save file\nMemory Usage: {memoryUsaget / 1048576} megabytes");
                 reader.Close();
                 saveFile.Close();
             }
+
 
             GC.Collect();
 
@@ -254,75 +259,6 @@ namespace Crusader_Wars
 
             }
         } 
-
-        static bool isSearchPermittedCourtPositions = false;
-        static bool StartCourtPositionsSearchAllowed = false;
-        static string employee;
-        static string profession;
-        public static void ReadCourtPositions(string line, ICharacter Player, ICharacter Enemy)
-        {
-            if (line == "court_positions={")
-            {
-                isSearchPermittedCourtPositions = true;
-            }
-
-            if (isSearchPermittedCourtPositions && !StartCourtPositionsSearchAllowed)
-            {
-                if (line == "\t\t\tcourt_position=\"bodyguard_court_position\"")
-                {
-                    profession = "bodyguard";
-                    StartCourtPositionsSearchAllowed = true;
-                }
-                else if (line == "\t\t\tcourt_position=\"champion_court_position\"")
-                {
-                    profession = "personal_champion";
-                    StartCourtPositionsSearchAllowed = true;
-                }
-                else if (line == "\t\t\tcourt_position=\"garuva_warrior_court_position\"")
-                {
-                    profession = "garuva_warrior";
-                    StartCourtPositionsSearchAllowed = true;
-                }
-
-            }
-
-            if (StartCourtPositionsSearchAllowed)
-            {
-                if (line.Contains("\t\t\temployee="))
-                {
-                    employee = Regex.Match(line, @"=(.+)").Groups[1].Value;
-                }
-
-
-                if (line == $"\t\t\temployer={Player.ID}")
-                {
-                    Player.Commander.AddCourtPosition(profession, employee);
-                }
-
-                if (line == $"\t\t\temployer={Enemy.ID}")
-                {
-                    Enemy.Commander.AddCourtPosition(profession, employee);
-                }
-            }
-
-            //end line to specific court position data
-            if (StartCourtPositionsSearchAllowed && line == "\t\t}")
-            {
-                employee = "";
-                profession = "";
-                StartCourtPositionsSearchAllowed = false;
-            }
-
-            //end line to all court positions data
-            if (isSearchPermittedCourtPositions && line == "}")
-            {
-                employee = "";
-                profession = "";
-                StartCourtPositionsSearchAllowed = false;
-                isSearchPermittedCourtPositions = false;
-            }
-        }
-
     };
 
     struct SearchKeys
@@ -397,7 +333,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Combats);
                             sw.Close();
                         }
-                        Data.SB_Combats = null;
+                        Data.SB_Combats = new StringBuilder();
                         GC.Collect();
 
                         End_CombatsFound = true; 
@@ -447,7 +383,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_CombatResults);
                             sw.Close();
                         }
-                        Data.SB_CombatResults = null;
+                        Data.SB_CombatResults = new StringBuilder();
                         GC.Collect();
 
                         End_BattleResultsFound = true;
@@ -492,7 +428,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Regiments);
                             sw.Close();
                         }
-                        Data.SB_Regiments = null;
+                        Data.SB_Regiments = new StringBuilder();
                         GC.Collect();
                         End_RegimentsFound = true; 
                         return;
@@ -535,7 +471,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_ArmyRegiments);
                             sw.Close();
                         }
-                        Data.SB_ArmyRegiments = null;
+                        Data.SB_ArmyRegiments = new StringBuilder();
                         GC.Collect();
                         End_ArmyRegimentsFound = true; 
                         return;
@@ -578,7 +514,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Armies);
                             sw.Close();
                         }
-                        Data.SB_Armies = null;
+                        Data.SB_Armies = new StringBuilder();
                         GC.Collect();
                         End_ArmiesFound = true;
                         return;
@@ -621,7 +557,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Living);
                             sw.Close();
                         }
-                        Data.SB_Living = null;
+                        Data.SB_Living = new StringBuilder();
                         GC.Collect();
                         End_LivingFound = true;
                         return;
@@ -666,7 +602,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Counties);
                             sw.Close();
                         }
-                        Data.SB_Counties = null;
+                        Data.SB_Counties = new StringBuilder();
                         GC.Collect();
                         End_CountiesFound = true;
                         return;
@@ -710,7 +646,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Units);
                             sw.Close();
                         }
-                        Data.SB_Units = null;
+                        Data.SB_Units = new StringBuilder();
                         GC.Collect();
                         End_UnitsFound = true;
                         return;
@@ -754,7 +690,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_CourtPositions);
                             sw.Close();
                         }
-                        Data.SB_CourtPositions = null;
+                        Data.SB_CourtPositions = new StringBuilder();
                         GC.Collect();
                         End_CourtPositionsFound = true;
                         return;
@@ -798,7 +734,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Cultures);
                             sw.Close();
                         }
-                        Data.SB_Cultures = null;
+                        Data.SB_Cultures = new StringBuilder();
                         GC.Collect();
                         End_CulturesFound = true;
                         return;
@@ -845,7 +781,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Mercenaries);
                             sw.Close();
                         }
-                        Data.SB_Mercenaries = null;
+                        Data.SB_Mercenaries = new StringBuilder();
                         GC.Collect();
                         End_MercenariesFound = true;
                         return;
@@ -892,7 +828,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_LandedTitles);
                             sw.Close();
                         }
-                        Data.SB_LandedTitles = null;
+                        Data.SB_LandedTitles = new StringBuilder();
                         GC.Collect();
                         End_LandedTitlesFound = true;
                         return;
@@ -940,7 +876,7 @@ namespace Crusader_Wars
                             sw.Write(Data.SB_Accolades);
                             sw.Close();
                         }
-                        Data.SB_Accolades = null;
+                        Data.SB_Accolades = new StringBuilder();
                         GC.Collect();
                         End_AccoladesFound = true;
                         return;

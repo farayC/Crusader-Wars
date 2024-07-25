@@ -57,7 +57,7 @@ namespace Crusader_Wars
             Units_Tab = new UC_UnitsOptions();
             BattleScale_Tab = new UC_BattleScaleOptions();
 
-            ReadTimePeriods();
+            //ReadTimePeriods();
             ReadOptionsFile();
             SetOptionsUIData();
             RetrieveCheckedStates();
@@ -235,6 +235,7 @@ namespace Crusader_Wars
 
         //This is for unit mapper tooltip
         List<(string mapper, string start_year, string end_year)> timePeriodCollecion;
+        /*
         void ReadTimePeriods()
         {
             timePeriodCollecion = new List<(string mapper, string start_year, string end_year)>();
@@ -265,6 +266,7 @@ namespace Crusader_Wars
 
             }
         }
+        */
 
 
 

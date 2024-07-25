@@ -34,6 +34,7 @@ namespace Crusader_Wars.terrain
             string x, y;
 
             //Search for added historical maps by unit mappers
+            /*
             if (UnitMapper.Historic_Maps != null)
             {
                 foreach (var map in UnitMapper.Historic_Maps)
@@ -50,7 +51,7 @@ namespace Crusader_Wars.terrain
                     }
                 }
             }
-
+            */
             switch (building) 
             {
                 case "the_pyramids_01":

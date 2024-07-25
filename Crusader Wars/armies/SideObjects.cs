@@ -13,32 +13,10 @@ using System.Windows.Media.Media3D;
 
 namespace Crusader_Wars
 {
-    public interface ICharacter
-    {
-        int ID { get; set; }
-        string RealmName { get; set; }
-        int TotalNumber { get; set; }
-        string Heritage { get; set; }
-        string Culture { get; set; }
-        string AttilaFaction { get; set; }
-        List<(string Type, string Key, int Max, string Script, int SoldiersNum)> Army { get; set; }
-        string CombatSide { get; set; }
-        CommanderSystem Commander { get; set; }
-        KnightSystem Knights { get; set; }
-        DefensiveSystem Defences { get; set; }
-        Modifiers Modifiers { get; set; }
-        UnitsResults UnitsResults {  get; set; }
-
-
-    }
-
-
-
     public class Army
     {
         public string ID { get; set; }
-        public string Owner { get; set; }
-        public Culture OwnerCulture { get; set; }
+        public Owner Owner { get; private set; }
         public string ArmyUnitID { get; set; }
 
         public List<Army> MergedArmies { get; private set; }
@@ -85,6 +63,7 @@ namespace Crusader_Wars
         public void SetCommander(CommanderSystem l) { Commander = l; }
         public void SetDefences(DefensiveSystem l) { Defences = l; }
 
+        public void SetOwner(Owner t) {  Owner = t; }
         public void SetArmyRegiments(List<ArmyRegiment> list) { ArmyRegiments = list; }
         public void SetKnights(KnightSystem knights){ Knights = knights; }
         public void SetCasualitiesReport(List<UnitCasualitiesReport> reports) { CasualitiesReports = reports; } 
