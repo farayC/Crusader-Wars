@@ -11,9 +11,9 @@ namespace Crusader_Wars.data.save_file
 {
     public static class Print
     {
-        public static void PrintArmiesData(List<Army> attacker_armies, List<Army> defender_armies)
+        public static void PrintArmiesData(List<Army> armies)
         {
-            foreach (var i in attacker_armies)
+            foreach (var i in armies)
             {
                 Console.WriteLine($"#Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID}");
                 Console.WriteLine("------------------------------------------------------------");
@@ -44,29 +44,6 @@ namespace Crusader_Wars.data.save_file
             Console.WriteLine("\n");
             Console.WriteLine("\n");
 
-            foreach (var i in defender_armies)
-            {
-                Console.WriteLine($"#Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID}");
-                Console.WriteLine("------------------------------------------------------------");
-                foreach (var x in i.ArmyRegiments)
-                {
-                    if (x.Type == RegimentType.Knight)
-                        Console.WriteLine($"##Army Regiment - {x.ID} |{x.Type} | Character ID {x.MAA_Name}");
-                    else
-                        Console.WriteLine($"##Army Regiment - {x.ID} |{x.Type} | {x.MAA_Name}");
-                    foreach (var t in x.Regiments)
-                    {
-                        if (!t.isMercenary())
-                            if (t.Culture is null)
-                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture ID: null");
-                            else
-                                Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
-                        else
-                            Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
-                    }
-                }
-                Console.WriteLine("\n");
-            }
         }
     }
     public class Unit
@@ -74,6 +51,7 @@ namespace Crusader_Wars.data.save_file
         string Name { get; set; }
         RegimentType Type { get; set; }
         Culture UnitCulture { get; set; }
+        Owner Owner {  get; set; }
         bool IsMercenaryBool { get; set; }
         int Soldiers { get; set; }
         string AttilaKey { get; set; }
@@ -87,6 +65,7 @@ namespace Crusader_Wars.data.save_file
             Soldiers = soldiers;
             Type = type;
         }
+
         public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type, bool is_merc)
         {
             Name = regiment_name;
@@ -95,25 +74,14 @@ namespace Crusader_Wars.data.save_file
             Type = type;
             IsMercenaryBool = is_merc;
         }
-        public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type, bool is_merc, string attilaFaction)
+        public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type, bool is_merc, Owner owner)
         {
             Name = regiment_name;
             UnitCulture = culture_obj;
             Soldiers = soldiers;
             Type = type;
             IsMercenaryBool = is_merc;
-            AttilaFaction = attilaFaction;
-        }
-
-        public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type, bool is_merc, string attilaFaction, int max)
-        {
-            Name = regiment_name;
-            UnitCulture = culture_obj;
-            Soldiers = soldiers;
-            Type = type;
-            IsMercenaryBool = is_merc;
-            AttilaFaction = attilaFaction;
-            Max = max;
+            Owner = owner;
         }
 
 
@@ -127,6 +95,7 @@ namespace Crusader_Wars.data.save_file
         public int GetMax() { return Max; }
         public string GetAttilaFaction() { return AttilaFaction; }
         public string GetAttilaUnitKey() { return AttilaKey; }
+        public Owner GetOwner() { return Owner; }
         public string GetName() { return Name; }
         public Culture GetObjCulture() { return UnitCulture; }
         public string GetCulture() { if (UnitCulture is null) return "NOT FOUND"; return UnitCulture.GetCultureName(); }
@@ -257,5 +226,23 @@ namespace Crusader_Wars.data.save_file
         public void SetName(string t) { CultureName = t; }
         public void SetHeritage(string t) { HeritageName = t; }
 
+    }
+
+    public class Owner
+    {
+        string ID { get; set; }
+        Culture Culture { get; set; }
+        string PrimaryTitleKey { get; set; }
+        public Owner(string iD)
+        {
+            ID = iD;
+        }
+
+        public void SetCulture(Culture culture) { Culture = culture; }
+        public void SetPrimaryTitle(string t) { PrimaryTitleKey = t; }
+
+        public string GetID() { return ID; }
+        public Culture GetCulture() { return Culture; }
+        public string GetPrimaryTitleKey() {  return PrimaryTitleKey; }
     }
 }

@@ -345,13 +345,12 @@ namespace Crusader_Wars
                 try
                 {
 
-                    UpdateLoadingScreenMessage("Reading save file data...");
+                    UpdateLoadingScreenMessage("Getting data from save file...");
                     await Task.Delay(2000); //Old was 3000ms
                     ProcessCommands.SuspendProcess();
 
                     path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
 
-                    
                     Reader.ReadFile(path_editedSave);
                     BattleResult.GetPlayerCombatResult();
                     BattleResult.ReadPlayerCombat(CK3LogData.LeftSide.GetCommander().id);
@@ -373,18 +372,17 @@ namespace Crusader_Wars
                 }
 
                 //1.0 Beta Debug
+                long startMemory = GC.GetTotalMemory(false);
+
+                UpdateLoadingScreenMessage("Reading save file data...");
                 var armies = ArmiesReader.ReadBattleArmies();
                 attacker_armies = armies.attacker;
                 defender_armies = armies.defender;
 
                 if (ModOptions.UnitCards())
                 {
-                    UpdateLoadingScreenMessage("Changing unit cards names...");
                     //UnitsCardsNames.ChangeUnitsCardsNames(UnitMapper.LoadedMapper, Player, Enemy); <---- REWORK THIS
                 }
-
-                UpdateLoadingScreenMessage("Adding battle details...");
-
 
                 var left_side = ArmiesReader.GetSideArmies("left");
                 var right_side = ArmiesReader.GetSideArmies("right");
@@ -415,6 +413,10 @@ namespace Crusader_Wars
 
                     continue;
                 }
+
+                long endMemory = GC.GetTotalMemory(false);
+                long memoryUsage = endMemory - startMemory;
+                Console.WriteLine($"----\nReading save file\nMemory Usage: {memoryUsage / 1048576} megabytes");
 
                 Games.CloseTotalWarAttilaProcess();
                 UpdateLoadingScreenMessage("Creating battle in Total War: Attila...");
@@ -492,7 +494,7 @@ namespace Crusader_Wars
                     DeclarationsFile.Erase();
                     BattleScript.EraseScript();
                     BattleResult.ClearAttilaLog();
-                    UnitMapper.ShowRequiredMods(); //<-- button ok
+                    //UnitMapper.ShowRequiredMods(); //<-- button ok
                 }
                 catch
                 {
@@ -602,8 +604,6 @@ namespace Crusader_Wars
 
                 await Task.Delay(10);
 
-                //Clear data
-                UnitMapper.ClearData();
                 ArmyProportions.ResetUnitSizes();
                 GC.Collect();
 

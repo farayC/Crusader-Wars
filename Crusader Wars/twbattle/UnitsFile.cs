@@ -99,7 +99,7 @@ namespace Crusader_Wars
                 commander_army_xp = army.Commander.GetUnitsExperience();
                 int commander_xp = army.Commander.GetCommanderExperience();
                 int commander_soldiers = army.Commander.GetUnitSoldiers();
-                Unit commander_unit = new Unit("General", commander_soldiers, army.Commander.GetCultureObj(), RegimentType.Commander);
+                Unit commander_unit = new Unit("General", commander_soldiers, army.Commander.GetCultureObj(), RegimentType.Commander, false, army.Owner);
                 commander_unit.SetAttilaFaction(UnitMappers_BETA.GetAttilaFaction(army.Commander.GetCultureName(), army.Commander.GetHeritageName()));
 
                 string general_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEcommander{army.Commander.ID}_CULTURE{army.Commander.GetCultureName()}{army.Commander.GetCultureObj().ID}_";
@@ -117,9 +117,9 @@ namespace Crusader_Wars
             {
                 Unit knights_unit;
                 if (army.Knights.GetMajorCulture() != null)
-                    knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.Knights.GetMajorCulture(), RegimentType.Knight);
+                    knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.Knights.GetMajorCulture(), RegimentType.Knight,false, army.Owner);
                 else
-                    knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.OwnerCulture, RegimentType.Knight);
+                    knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.Owner.GetCulture(), RegimentType.Knight, false, army.Owner);
 
                 knights_unit.SetAttilaFaction(UnitMappers_BETA.GetAttilaFaction(knights_unit.GetCulture(), knights_unit.GetHeritage()));
 
@@ -127,7 +127,7 @@ namespace Crusader_Wars
                 if (army.Knights.GetMajorCulture() != null)
                     knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEknights_CULTURE{army.Knights.GetMajorCulture().GetCultureName()}{army.Knights.GetMajorCulture().ID}_";
                 else
-                    knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEknights_CULTURE{army.OwnerCulture.GetCultureName()}{army.OwnerCulture.ID}_";
+                    knights_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPEknights_CULTURE{army.Owner.GetCulture().GetCultureName()}{army.Owner.GetCulture().ID}_";
 
 
                 BattleFile.AddKnightUnit(army.Knights, UnitMappers_BETA.GetUnitKey(knights_unit), knights_script_name, army.Knights.SetExperience(), Deployments.beta_GeDirection(army.CombatSide));

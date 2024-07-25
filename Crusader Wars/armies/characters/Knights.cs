@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
@@ -47,6 +48,7 @@ namespace Crusader_Wars
         public int GetSoldiers() { return Soldiers; }
         public int GetProwess() { return Prowess; }
         public bool IsAccolade() { return isAccoladeKnight; }
+        public Accolade GetAccolade() { return Accolade; } 
         public bool HasFallen() { return hasFallen; }
 
         internal void HasFallen(bool yn) { hasFallen = yn; }
@@ -231,10 +233,21 @@ namespace Crusader_Wars
 
         public void SetAccolades()
         {
-            if(Accolades != null)
-                Accolades = Knights.Select(x => x.IsAccolade()).Cast<Accolade>().ToList();
+            if(Knights.Exists(x=> x.IsAccolade()))
+            {
+                Accolades = new List<Accolade>();
+                foreach (var knight in Knights)
+                {
+                    if(knight.IsAccolade())
+                    {
+                        Accolades.Add(knight.GetAccolade());
+                    }
+                }
+            }
             else
+            {
                 Accolades = null;
+            }
         }
 
 

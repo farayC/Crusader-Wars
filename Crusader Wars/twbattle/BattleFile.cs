@@ -113,12 +113,12 @@ namespace Crusader_Wars
 
         static Army MergeFriendlies(List<Army> armies, Army main_army)
         {
-            string main_owner = main_army.Owner;
+            string main_owner = main_army.Owner.GetID();
             armies.Remove(main_army);
             
             for (int i = 0; i < armies.Count; i++)
             {
-                if (armies[i].Owner == main_owner)
+                if (armies[i].Owner.GetID() == main_owner)
                 {
                     main_army.AddMergedArmy(armies[i]);
                     //main_army.Units.AddRange(armies[i].Units);
@@ -479,8 +479,11 @@ namespace Crusader_Wars
         private static string GetAttilaMap()
         {
             string default_attila_map = "Terrain/battles/main_attila_map/";
+            return default_attila_map;
+            /*
             if (UnitMapper.Attila_Map == null) return default_attila_map;
             else return UnitMapper.Attila_Map;
+            */
         }
 
         private static void OpenBattle()

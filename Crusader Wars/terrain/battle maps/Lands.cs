@@ -633,6 +633,7 @@ namespace Crusader_Wars.terrain
 
 
             //Get battle maps from unit mappers
+            /*
             if (UnitMapper.Normal_Maps != null)
             {
                 var terrainItems = UnitMapper.Normal_Maps.Where(item => item.terrain == terrain).ToList();
@@ -650,6 +651,7 @@ namespace Crusader_Wars.terrain
                 }
 
             }
+            */
 
             switch (terrain)
             {

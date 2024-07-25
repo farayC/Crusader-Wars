@@ -5,10 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Crusader_Wars.unit_mapper
 {
@@ -226,10 +229,54 @@ namespace Crusader_Wars.unit_mapper
 
 
 
-        public static string GetUnitKey(Unit unit)
+        static string SearchInTitlesFile(Unit unit)
+        {
+            string titles_folder_path = LoadedUnitMapper_FolderPath + @"\Titles";
+            var files_paths = Directory.GetFiles(titles_folder_path);
+
+            if(unit.GetOwner() == null || unit.GetOwner().GetPrimaryTitleKey() == string.Empty)
+                return string.Empty;
+            
+            //LEVIES skip
+            if (unit.GetRegimentType() == RegimentType.Levy) return "";
+
+            string unit_key = "";
+            foreach (var xml_file in files_paths)
+            {
+                if (Path.GetExtension(xml_file) == ".xml")
+                {
+                    XmlDocument TitlesFile = new XmlDocument();
+                    TitlesFile.Load(xml_file);
+
+                    //MAA|COMMANDER|KNIGHT
+                    foreach (XmlNode element in TitlesFile.DocumentElement.ChildNodes)
+                    {
+                        if (element as XmlNode is XmlComment) continue;
+                        string titleKey = element.Attributes["title_key"].Value;
+
+                        //Then stores culture specific unit key
+                        if (titleKey == unit.GetOwner().GetPrimaryTitleKey())
+                        {
+                            foreach (XmlNode node in element.ChildNodes)
+                            {
+                                unit_key = FindUnitKeyInFaction(element, unit);
+                                return unit_key;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return unit_key;
+        }
+
+        static string SearchInFactionFiles(Unit unit)
         {
             string factions_folder_path = LoadedUnitMapper_FolderPath + @"\Factions";
             var files_paths = Directory.GetFiles(factions_folder_path);
+
+            //LEVIES skip
+            if (unit.GetRegimentType() == RegimentType.Levy) return "" ;
 
             string unit_key = "";
             foreach (var xml_file in files_paths)
@@ -239,83 +286,88 @@ namespace Crusader_Wars.unit_mapper
                     XmlDocument FactionsFile = new XmlDocument();
                     FactionsFile.Load(xml_file);
 
-                    //LEVIES
-                    if (unit.GetRegimentType() == RegimentType.Levy) continue;
-
-
-
                     //MAA|COMMANDER|KNIGHT
                     foreach (XmlNode element in FactionsFile.DocumentElement.ChildNodes)
                     {
                         if (element is XmlComment) continue;
-                        string faction = element.Attributes["name"].Value;
-
-                        //Store Default unit key first
-                        if(faction == "Default" || faction == "DEFAULT")
+                        if(element is XmlElement)
                         {
-                            foreach (XmlNode node in element.ChildNodes)
+                            string faction = element.Attributes["name"].Value;
+
+                            //Store Default unit key first
+                            if (faction == "Default" || faction == "DEFAULT")
                             {
-                                if (node is XmlComment) continue;
-                                if (node.Name == "Levies") continue;
-
-                                //General
-                                if (node.Name == "General" && unit.GetRegimentType() == RegimentType.Commander)
-                                {
-                                    unit_key = node.Attributes["key"].Value;
-                                }
-
-                                //Knights
-                                if (node.Name == "Knights" && unit.GetRegimentType() == RegimentType.Knight)
-                                {
-                                    unit_key = node.Attributes["key"].Value;
-                                }
-
-                                if(node.Name == "MenAtArm")
-                                {
-                                    if (node.Attributes["type"].Value == unit.GetName() && unit.GetRegimentType() == RegimentType.MenAtArms)
-                                    {
-                                        unit_key = node.Attributes["key"].Value;
-                                    }
-                                }
-
+                                unit_key = FindUnitKeyInFaction(element, unit);
+                            }
+                            //Then stores culture specific unit key
+                            else if (faction == unit.GetAttilaFaction())
+                            {
+                                string foundKey = FindUnitKeyInFaction(element, unit);
+                                if (!string.IsNullOrEmpty(foundKey))
+                                    return foundKey;
                             }
                         }
-                        //Then stores culture specific unit key
-                        else if (faction == unit.GetAttilaFaction())
-                        {
-                            foreach (XmlNode node in element.ChildNodes)
-                            {
-                                if (node is XmlComment) continue;
-                                if (node.Name == "Levies") continue;
+                    }
 
-                                //General
-                                if (node.Name == "General" && unit.GetRegimentType() == RegimentType.Commander)
-                                {
-                                    unit_key = node.Attributes["key"].Value;
-                                }
+                    if (unit_key == string.Empty)
+                        continue;
+                    else
+                        return unit_key;
+                }
+            }
 
-                                //Knights
-                                if (node.Name == "Knights"  && unit.GetRegimentType() == RegimentType.Knight)
-                                {
-                                    unit_key = node.Attributes["key"].Value;
-                                }
+            return unit_key;
+        }
 
-                                //MAA
-                                if (node.Name == "MenAtArm")
-                                {
-                                    if (node.Attributes["type"].Value == unit.GetName() && unit.GetRegimentType() == RegimentType.MenAtArms)
-                                    {
-                                        unit_key = node.Attributes["key"].Value;
-                                    }
-                                }
+        static string FindUnitKeyInFaction(XmlNode factionElement, Unit unit)
+        {
+            string unit_key = "";
+            foreach (XmlNode node in factionElement.ChildNodes)
+            {
+                if (node is XmlComment) continue;
+                if (node.Name == "Levies") continue;
 
-                            }
-                        }    
+                //General
+                if (node.Name == "General" && unit.GetRegimentType() == RegimentType.Commander)
+                {
+                    unit_key = node.Attributes["key"].Value;
+                    return unit_key;
+                }
+                //Knights
+                else if (node.Name == "Knights" && unit.GetRegimentType() == RegimentType.Knight)
+                {
+                    unit_key = node.Attributes["key"].Value;
+                    return unit_key;
+                }
+                //MenAtArms
+                else if (node.Name == "MenAtArm" && unit.GetRegimentType() == RegimentType.MenAtArms)
+                {
+                    if (node.Attributes["type"].Value == unit.GetName())
+                    {
+                        unit_key = node.Attributes["key"].Value;
+                        return unit_key;
                     }
                 }
             }
 
             return unit_key;
+        }
+
+
+        public static string GetUnitKey(Unit unit)
+        {
+            string unit_key = SearchInTitlesFile(unit);
+            if (!string.IsNullOrEmpty(unit_key))
+            {
+                return unit_key;
+            }
+            else
+            {
+                unit_key = SearchInFactionFiles(unit);
+                return unit_key;
+            }
+                
+
         }
 
         public static string GetAttilaFaction(string CultureName, string HeritageName)
