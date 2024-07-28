@@ -215,8 +215,8 @@ namespace Crusader_Wars
             /*---------------------------------------------
              * ::::::::::::::Player Character::::::::::::::
              ---------------------------------------------*/
-            string player_culture_id = Regex.Match(log, @"PlayerCharacterCulture:(.+)\n").Groups[1].Value;
-            string playerID = Regex.Match(log, @"PlayerCharacterID:(.+)\n").Groups[1].Value;
+            string player_culture_id = Regex.Match(log, @"PlayerCharacter_Culture:(.+)\n").Groups[1].Value;
+            string playerID = Regex.Match(log, @"PlayerCharacter_ID:(.+)\n").Groups[1].Value;
             Player_Character = new PlayerChar(playerID, player_culture_id);
 
             /*---------------------------------------------

@@ -512,7 +512,7 @@ namespace Crusader_Wars
                     continue;
                 }
 
-                //Games.CloseCrusaderKingsProcess();
+                Games.CloseCrusaderKingsProcess();
 
                 Console.WriteLine("Battle created successfully");
 

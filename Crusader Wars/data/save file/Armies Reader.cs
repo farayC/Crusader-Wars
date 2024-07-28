@@ -149,9 +149,13 @@ namespace Crusader_Wars.data.save_file
                         string employerID = Regex.Match(line, @"\d+").Value;
 
                         var army = attacker_armies.Find(x => x.CommanderID == employerID)
-                                   ?? defender_armies.Find(x => x.CommanderID == employerID);
+                                   ?? defender_armies.Find(x => x.CommanderID == employerID) ?? null;
 
-                        army?.Commander.AddCourtPosition(profession, employeeID);
+                        if (army != null)
+                        {
+                            army?.Commander.AddCourtPosition(profession, employeeID);
+                        }
+
                     }
                 }
             }
@@ -372,7 +376,7 @@ namespace Crusader_Wars.data.save_file
                         searchingKnight = null;
                         searchingArmy = null;
 
-                        nonMainCommander_Rank = 0;
+                        nonMainCommander_Rank = 1;
                         nonMainCommander_Name = "";
                         nonMainCommander_BaseSkills = null;
                         nonMainCommander_Culture = null;

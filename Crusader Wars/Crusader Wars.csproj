@@ -169,6 +169,7 @@
     <Compile Include="terrain\battle maps\Rivers&amp;Straits.cs" />
     <Compile Include="terrain\battle maps\UniqueMaps.cs" />
     <Compile Include="terrain\weather\WeatherSystem.cs" />
+    <Compile Include="twbattle\ArmiesControl.cs" />
     <Compile Include="twbattle\BattleFile.cs" />
     <Compile Include="data\battle results\BattleResult.cs" />
     <Compile Include="packfile\BattleScript.cs" />

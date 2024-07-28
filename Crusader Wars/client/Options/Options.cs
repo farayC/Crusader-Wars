@@ -414,12 +414,13 @@ namespace Crusader_Wars
                 {
                     enabled++;
 
-
+                    /*
                     var timePeriod_Item = timePeriodCollecion.FirstOrDefault(x => item.Key.Contains(x.mapper));
                     if (timePeriod_Item.mapper != null) {
                         try { YearCollection.Add(item.Key, (Int32.Parse(timePeriod_Item.start_year), Int32.Parse(timePeriod_Item.end_year))); } 
                         catch { }
                     } 
+                    */
                     
 
                 }
@@ -434,7 +435,8 @@ namespace Crusader_Wars
             }
             if (enabled == 1)
             {
-                string loaded_mapper = YearCollection.First().Key;
+                //string loaded_mapper = YearCollection.First().Key;
+                string loaded_mapper = "OfficialCW";
                 if (loaded_mapper.Contains("OfficialCW"))
                 {
                     Label_MapperStatus.Text = $"Single Mapper loaded!";
