@@ -123,7 +123,7 @@ namespace Crusader_Wars.terrain
                 return "";
             }
         }
-
+ 
         static string attacker_direction = "", defender_direction = "";
         static string attacker_deployment="", defender_deployment = "";
         public static void beta_SetSidesDirections(int total_soldiers, (string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
@@ -178,68 +178,6 @@ namespace Crusader_Wars.terrain
 
             return attacker_direction;
         }
-
-        /*
-        static bool isFirstDirectionSet;
-        static string OppositeDirection;
-        public static string SetDirection(int total_soldiers, string combat_side,(string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
-        {
-            Random random = new Random();
-
-
-            if (!isFirstDirectionSet)
-            {   
-
-                //All directions battle maps
-                if (battle_map.attacker_dir[0] == "All")
-                {
-                    string[] coords = { "N", "S", "E", "W" };
-                    int index = random.Next(0, 4);
-                    Direction = coords[index];
-                    string data_all = Directions.SetDirection(coords[index], total_soldiers);
-                    isFirstDirectionSet = true;
-                    OppositeDirection = Directions.SetOppositeDirection(coords[index], total_soldiers);
-                    return data_all;
-                    
-                }
-                //Defined directions battle maps
-                else
-                {
-                    switch (combat_side)
-                    {
-
-                        case "attacker":
-                            int index = random.Next(0, 2);
-                            string direction = battle_map.attacker_dir[index];
-                            Direction = direction;
-                            string data = Directions.SetDirection(direction, total_soldiers);
-                            isFirstDirectionSet = true;
-                            OppositeDirection = Directions.SetOppositeDirection(direction, total_soldiers);
-                            return data;
-
-                        case "defender":
-                            int i = random.Next(0, 2);
-                            string dir = battle_map.defender_dir[i];
-                            Direction = dir;
-                            string text = Directions.SetDirection(dir, total_soldiers);
-                            isFirstDirectionSet = true;
-                            OppositeDirection = Directions.SetOppositeDirection(dir, total_soldiers);
-                            return text;
-                    }
-                }
-            }
-            else
-            {
-                string t = OppositeDirection;
-                OppositeDirection = "";
-                isFirstDirectionSet= false;
-                return t;
-            }
-
-            return "";
-        }
-        */
-
 
     }
 
@@ -447,7 +385,7 @@ namespace Crusader_Wars.terrain
 
         public void AddUnitXSpacing(string direction)
         {
-            int xSpacing = 30;
+            int xSpacing = 15; //old 30
             if (direction is "N" || direction is "S")
             {
                 X = X - xSpacing;
@@ -455,20 +393,20 @@ namespace Crusader_Wars.terrain
             }
             else if (direction is "E")
             {
-                xSpacing = 15;
+                xSpacing = 10; //old 15
                 X = X + xSpacing;
                 Y = Y;
             }
             else if (direction is "W")
             {
-                xSpacing = 15;
+                xSpacing = 10; //old 15
                 X = X - xSpacing;
                 Y = Y;
             }
         }
         public void AddUnitYSpacing(string direction)
         {
-            int ySpacing = 15;
+            int ySpacing = 10; //old 15
             if (direction is "N")
             {
                 X = X;
@@ -481,7 +419,7 @@ namespace Crusader_Wars.terrain
             }
             else if (direction is "E" || direction is "W")
             {
-                ySpacing = 30;
+                ySpacing = 15; //old 30
                 X = X;
                 Y = Y + ySpacing;
             }

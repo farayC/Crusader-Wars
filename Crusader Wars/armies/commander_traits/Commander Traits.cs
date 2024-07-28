@@ -12,11 +12,18 @@ using System.Xml;
 
 namespace Crusader_Wars.armies.commander_traits
 {
-    public enum AffectEnum
+    public enum TraitsAffectEnum
     {
         Friendlies,
         Enemies,
         None
+    }
+
+    public enum TraitsBoolCondition
+    {
+        None,
+        Yes,
+        No
     }
     public class Trait
     {
@@ -26,15 +33,15 @@ namespace Crusader_Wars.armies.commander_traits
 
         //  MAJOR SETUP
         int XPBoost {  get; set; }
-        AffectEnum Affect { get; set; }
+        TraitsAffectEnum Affect { get; set; }
         bool DeploymentRotation {  get; set; }
 
         //  CONDITIONS
         string CombatSide { get; set; }
         List<string> Terrains {  get; set; }
-        bool NeedsRiverCrossing { get; set; }
-        bool NeedsHostileFaith {  get; set; }
-        bool NeedsWinter { get;set; }
+        TraitsBoolCondition NeedsRiverCrossing { get; set; }
+        TraitsBoolCondition NeedsHostileFaith {  get; set; }
+        TraitsBoolCondition NeedsWinter { get;set; }
 
         public Trait(string key, int index) { 
             Key = key;
@@ -45,16 +52,16 @@ namespace Crusader_Wars.armies.commander_traits
         public int GetIndex() { return Index; }
 
         public int GetXPBoost() {  return XPBoost; }
-        public AffectEnum GetWhoAffects() { return Affect; }
-        public bool GetDeploymentRotation() {  return DeploymentRotation; }
-        public string GetRequiredCombatSide() {  return CombatSide; }
-        public List<string> GetRequiredTerrains() { return Terrains; }
-        public bool GetRequiredRiverCrossing() {  return NeedsRiverCrossing; }
-        public bool GetRequiredHostileFaith() { return NeedsHostileFaith; }
-        public bool GetRequiredWinter() { return NeedsWinter; }
+        public TraitsAffectEnum GetWhoAffects() { return Affect; }
+        public bool IsDeploymentRotation() {  return DeploymentRotation; }
+        public string IsRequiredCombatSide() {  return CombatSide; }
+        public List<string> IsRequiredTerrains() { return Terrains; }
+        public TraitsBoolCondition IsRequiredRiverCrossing() {  return NeedsRiverCrossing; }
+        public TraitsBoolCondition IsRequiredHostileFaith() { return NeedsHostileFaith; }
+        public TraitsBoolCondition IsRequiredWinter() { return NeedsWinter; }
 
-        public void SetupTrait(int XPboost, AffectEnum affectsWho, bool rotatesDeployment, 
-                               string requiredCombatSide, List<string> requiredTerrains, bool requiresRiverCrossing, bool requiresHostileFaith, bool requiresWinter)
+        public void SetupTrait(int XPboost, TraitsAffectEnum affectsWho, bool rotatesDeployment, 
+                               string requiredCombatSide, List<string> requiredTerrains, TraitsBoolCondition requiresRiverCrossing, TraitsBoolCondition requiresHostileFaith, TraitsBoolCondition requiresWinter)
         {
             XPBoost = XPboost;
             Affect = affectsWho;
@@ -84,35 +91,63 @@ namespace Crusader_Wars.armies.commander_traits
             int xp_boost = 0;
             foreach(Trait trait in Traits)
             {
-                if(trait.GetRequiredCombatSide() == "no")
+
+                //  COMBAT SIDE
+                if (trait.IsRequiredCombatSide() == "no")
                 {
                     //ok
                 }
-                else if(combatSide != trait.GetRequiredCombatSide())
+                else if(combatSide != trait.IsRequiredCombatSide())
                 {
                     continue;
                 }
 
-
-                if(trait.GetRequiredTerrains() != null)
+                //  TERRAINS
+                if(trait.IsRequiredTerrains() != null)
                 {
-                    if(!trait.GetRequiredTerrains().Exists(x => x == terrainType))
+                    if(!trait.IsRequiredTerrains().Exists(x => x == terrainType))
                     {
                         continue;
                     }
                 }
 
-                if(trait.GetRequiredRiverCrossing() != isRiverCrossing) // <--- might need rethinking
+                //  RIVER CROSSING
+                switch (trait.IsRequiredRiverCrossing())
                 {
-                    continue;
+                    case TraitsBoolCondition.None: 
+                        break;
+                    case TraitsBoolCondition.No:
+                        if (isRiverCrossing)
+                            continue;
+                        break;
+                    case TraitsBoolCondition.Yes: 
+                        if(!isRiverCrossing)
+                        {
+                            continue;
+                        }
+                        break;
                 }
 
-                if(trait.GetRequiredWinter() != isWinter)
+                //  WINTER
+                switch (trait.IsRequiredWinter())
                 {
-                    continue;
+                    case TraitsBoolCondition.None:
+                        break;
+                    case TraitsBoolCondition.No:
+                        if (isRiverCrossing)
+                            continue;
+                        break;
+                    case TraitsBoolCondition.Yes:
+                        if (!isRiverCrossing)
+                        {
+                            continue;
+                        }
+                        break;
                 }
+
 
                 xp_boost += trait.GetXPBoost();
+                Console.WriteLine($"TRAIT {trait.GetKey()} increased +{xp_boost}XP");
             }
 
             return xp_boost;
@@ -137,14 +172,14 @@ namespace Crusader_Wars.armies.commander_traits
                             Trait commanderTrait = new Trait(trait_key, main_commander_traits.Find(x => x.Key == trait_key).Index);
 
                             int xp_boost = 0;
-                            AffectEnum whoAffects = AffectEnum.None;
+                            TraitsAffectEnum whoAffects = TraitsAffectEnum.None;
                             bool rotatesDeployment = false;
 
                             string combatSide = "no";
                             List<string> Terrains = null;
-                            bool riverCrossing = false;
-                            bool hostileFaith = false;
-                            bool winter = false;
+                            var riverCrossing = TraitsBoolCondition.None;
+                            var hostileFaith = TraitsBoolCondition.None; 
+                            var winter = TraitsBoolCondition.None;
 
                             foreach (XmlNode traitNode in traitElement.ChildNodes)
                             {
@@ -159,12 +194,12 @@ namespace Crusader_Wars.armies.commander_traits
 
                                     case "Affects":
                                         if (traitNode.InnerText == "friendlies")
-                                            whoAffects = AffectEnum.Friendlies;
+                                            whoAffects = TraitsAffectEnum.Friendlies;
                                         else if (traitNode.InnerText == "enemies")
-                                            whoAffects = AffectEnum.Enemies;
+                                            whoAffects = TraitsAffectEnum.Enemies;
                                         else { 
                                             Console.WriteLine("WRONG VALUE IN AFFECT XML NODE");
-                                            whoAffects = AffectEnum.Friendlies;
+                                            whoAffects = TraitsAffectEnum.Friendlies;
                                         }
                                         break;
 
@@ -188,31 +223,35 @@ namespace Crusader_Wars.armies.commander_traits
 
                                     case "Terrain":
                                         if (Terrains == null) {
-                                            Terrains = new List<string>(); Terrains.Add(traitNode.InnerText);
+                                            Terrains = new List<string>
+                                            {
+                                                traitNode.InnerText
+                                            };                                         
                                         }
-                                        else
+                                        else { 
                                             Terrains.Add(traitNode.InnerText);
+                                        }
                                         break;
 
                                     case "RiverCrossing":
                                         if (traitNode.InnerText == "yes")
-                                            riverCrossing = true;
+                                            riverCrossing = TraitsBoolCondition.Yes;
                                         else
-                                            riverCrossing = false;
+                                            riverCrossing = TraitsBoolCondition.No;
                                         break;
 
                                     case "HostileFaith":
                                         if (traitNode.InnerText == "yes")
-                                            hostileFaith = true;
+                                            riverCrossing = TraitsBoolCondition.Yes;
                                         else
-                                            hostileFaith = false;
+                                            riverCrossing = TraitsBoolCondition.No;
                                         break;
 
                                     case "Winter":
                                         if (traitNode.InnerText == "yes")
-                                            winter = true;
+                                            riverCrossing = TraitsBoolCondition.Yes;
                                         else
-                                            winter = false;
+                                            riverCrossing = TraitsBoolCondition.No;
                                         break;
                                 }
                             }

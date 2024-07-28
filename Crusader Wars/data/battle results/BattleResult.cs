@@ -241,6 +241,8 @@ namespace Crusader_Wars
                 }
 
                 army.UnitsResults = units;
+                army.UnitsResults.ScaleTo100Porcent();
+
                 CreateUnitsReports(army);
                 ChangeRegimentsSoldiers(army);
             }
@@ -349,15 +351,16 @@ namespace Crusader_Wars
 
             // Group by Type and CultureID
             var grouped = army.UnitsResults.Alive_MainPhase.GroupBy(item => new { item.Type, item.CultureID });
+            var pursuit_grouped = army.UnitsResults.Alive_PursuitPhase?.GroupBy(item => new { item.Type, item.CultureID });
 
             Console.WriteLine("#############################");
             Console.WriteLine($"REPORT FROM {army.CombatSide.ToUpper()} ARMY {army.ID}");
             foreach(var group in grouped)
             {
-                data.save_file.RegimentType unitType;
-                if (group.Key.Type.Contains("Levy")) { unitType = data.save_file.RegimentType.Levy; }
+                RegimentType unitType;
+                if (group.Key.Type.Contains("Levy")) { unitType = RegimentType.Levy; }
                 else if (group.Key.Type.Contains("commander") || group.Key.Type == "knights") { continue; }
-                else { unitType = data.save_file.RegimentType.MenAtArms; }
+                else { unitType = RegimentType.MenAtArms; }
 
                 string type = Regex.Match(group.Key.Type, @"\D+").Value;
                 Culture culture = army.Units.FirstOrDefault(x => x.GetObjCulture().ID == group.Key.CultureID).GetObjCulture();
@@ -365,18 +368,22 @@ namespace Crusader_Wars
                 int starting = army.Units.First(x => x.GetRegimentType() == unitType && x.GetObjCulture().ID == culture.ID && x.GetName() == type).GetSoldiers();
                 int remaining = group.Sum(x => Int32.Parse(x.Remaining));
 
-                var unitReport = new UnitCasualitiesReport(unitType, type, culture, starting, remaining);
+                UnitCasualitiesReport unitReport;
+                if (pursuit_grouped != null)
+                {
+                    var pursuitGroup = pursuit_grouped.FirstOrDefault(x => x.Key.Type == group.Key.Type && x.Key.CultureID == group.Key.CultureID);
+                    int pursuitRemaining = pursuitGroup.Sum(x => Int32.Parse(x.Remaining));
+                    unitReport = new UnitCasualitiesReport(unitType, type, culture, starting, remaining, pursuitRemaining);
+                }
+                else
+                {
+                    unitReport = new UnitCasualitiesReport(unitType, type, culture, starting, remaining);
+                }
+
+                
                 unitReport.PrintReport();
 
                 reportsList.Add(unitReport);
-            }
-
-            if (army.UnitsResults.Alive_PursuitPhase != null)
-            {
-                // TODO: Alive_PursuitPhase
-                /*
-                 * 
-                 */
             }
 
             army.SetCasualitiesReport(reportsList);

@@ -1,4 +1,5 @@
-﻿using Crusader_Wars.data.save_file;
+﻿using Crusader_Wars.client;
+using Crusader_Wars.data.save_file;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace Crusader_Wars
         string Type {  get; set; }
         Culture Culture { get; set; }
         int StartingSoldiers {  get; set; }
-        int RemainingSoldiers { get; set; }
+        int RemainingSoldiersBeforePursuit { get; set; }
+        int RemainingSoldiersAfterPursuit { get; set; } = -1;
         int Killed { get; set; }
         
         public UnitCasualitiesReport(RegimentType unit_type, string type,Culture culture, int startingSoldiers,int remaingSoldiers)
@@ -22,16 +24,32 @@ namespace Crusader_Wars
             Type = type;
             Culture = culture;
             StartingSoldiers = startingSoldiers;
-            RemainingSoldiers = remaingSoldiers;
-            Killed = StartingSoldiers - RemainingSoldiers;
+            RemainingSoldiersBeforePursuit = remaingSoldiers;
+            RemainingSoldiersAfterPursuit = -1;
+            Killed = StartingSoldiers - RemainingSoldiersBeforePursuit; 
+        }
+        public UnitCasualitiesReport(RegimentType unit_type, string type, Culture culture, int startingSoldiers, int remaingSoldiersMain, int remaingSoldiersPursuit)
+        {
+            UnitType = unit_type;
+            Type = type;
+            Culture = culture;
+            StartingSoldiers = startingSoldiers;
+            RemainingSoldiersBeforePursuit = remaingSoldiersMain;
+            RemainingSoldiersAfterPursuit = remaingSoldiersPursuit;
+            Killed = StartingSoldiers - RemainingSoldiersAfterPursuit;
         }
 
         public void PrintReport()
         {
+            int remaining = 0;
+            if (RemainingSoldiersAfterPursuit == -1)
+                remaining = RemainingSoldiersBeforePursuit;
+            else
+                remaining = RemainingSoldiersAfterPursuit;
             Console.WriteLine("CASUALITIES REPORT: " + $"{Type}\n" + 
                              $"Culture: {Culture.GetCultureName()}\n" + 
                              $"Starting: {StartingSoldiers}\n" + 
-                             $"Alive: {RemainingSoldiers}");
+                             $"Alive: {remaining}");
             Console.Write("\n\n");
         }
 
@@ -41,7 +59,8 @@ namespace Crusader_Wars
         }
         
         public int GetStarting() {  return StartingSoldiers; }
-        public int GetAlive() {  return RemainingSoldiers; }
+        public int GetAliveBeforePursuit() {  return RemainingSoldiersBeforePursuit; }
+        public int GetAliveAfterPursuit() { return RemainingSoldiersAfterPursuit; }
         public RegimentType GetUnitType() { return UnitType; }
         public string GetTypeName() { return Type; }
         public Culture GetCulture() { return Culture; }
@@ -63,6 +82,30 @@ namespace Crusader_Wars
         public List<(string Script, string Type, string CultureID, string Kills)> Kills_MainPhase { get; private set; }
         public List<(string Script, string Type, string CultureID, string Kills)> Kills_PursuitPhase { get; private set; }
 
+        public void ScaleTo100Porcent()
+        {
+            double porcentage = (double)ModOptions.GetBattleScale() / 100;
+            ScaleList(Alive_MainPhase, porcentage);
+            ScaleList(Kills_MainPhase, porcentage);
+
+            if (Alive_PursuitPhase != null && Kills_PursuitPhase != null)
+            {
+                ScaleList(Alive_PursuitPhase, porcentage);
+                ScaleList(Kills_PursuitPhase, porcentage);
+            }
+        }
+
+        void ScaleList(List<(string, string, string, string )> list, double porcentage)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                var unit = list[i];
+                double remainingRatio = Math.Round(Int32.Parse(unit.Item4) / porcentage);
+                unit = (unit.Item1, unit.Item2, unit.Item3, remainingRatio.ToString());
+                list[i] = unit;
+            }
+        }
+
 
         public int GetKillsAmountOfMainPhase(string type)
         {
@@ -77,14 +120,20 @@ namespace Crusader_Wars
             if (Kills_PursuitPhase is null)
                 return 0;
             else
-                kills = Kills_PursuitPhase.Where(y => y.Type == type).Sum(x => Int32.Parse(x.Kills));
+            {
+                int main_kills = Kills_MainPhase.Where(y => y.Type == type).Sum(x => Int32.Parse(x.Kills));
+                kills = main_kills;
+                int pursuit_kills = Kills_PursuitPhase.Where(y => y.Type == type).Sum(x => Int32.Parse(x.Kills));
+                int difference = pursuit_kills - main_kills;
+                kills += difference;
+            }
             return kills;
         }
 
         public int GetDeathAmountOfMainPhase(List<UnitCasualitiesReport> army_reports, string type)
         {
             int deaths = 0;
-            deaths = army_reports.Where(y => y.GetTypeName() == type).Sum(x => x.GetStarting() - x.GetAlive());
+            deaths = army_reports.Where(y => y.GetTypeName() == type).Sum(x => x.GetStarting() - x.GetAliveBeforePursuit());
             return deaths;
         }
         public int GetDeathAmountOfPursuitPhase(List<UnitCasualitiesReport> army_reports, string type)
@@ -93,7 +142,10 @@ namespace Crusader_Wars
             if (Alive_PursuitPhase is null)
                 return 0;
             else
-                deaths = army_reports.Where(y => y.GetTypeName() == type).Sum(x => x.GetStarting() - x.GetAlive());
+            {
+                deaths = army_reports.Where(y => y.GetTypeName() == type).Sum(x => (x.GetStarting() - x.GetAliveAfterPursuit()) - (x.GetStarting() - x.GetAliveBeforePursuit()));
+            }
+                
 
             return deaths;
         }

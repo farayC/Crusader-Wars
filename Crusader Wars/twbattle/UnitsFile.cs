@@ -65,6 +65,7 @@ namespace Crusader_Wars
 
         static int GetTraitsXP(bool isPlayer,string combatSide, string terrainType, bool isRiverCrossing, bool isHostileFaith, bool isWinter)
         {
+
             if(isPlayer && PlayerCommanderTraits != null)
             {
                 return PlayerCommanderTraits.GetBenefits(combatSide, terrainType, isRiverCrossing, isHostileFaith, isWinter);
