@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Media;
 using Control = System.Windows.Forms.Control;
+using Crusader_Wars.mod_manager;
 
 namespace Crusader_Wars
 {
@@ -47,6 +48,10 @@ namespace Crusader_Wars
             SaveValuesToOptionsFile();
             ReadOptionsFile();
             ModOptions.StoreOptionsValues(optionsValuesCollection);
+            
+            AttilaModManager.SaveActiveMods();
+            AttilaModManager.CreateUserModsFile();
+
             this.Close();
         }
 
@@ -67,7 +72,9 @@ namespace Crusader_Wars
             LoadMappersDescritions();
             UpdateStatusLabel();
 
-
+            AttilaModManager.SetControlRefence(ModManager);
+            AttilaModManager.ReadInstalledMods();
+            
         }
 
         //this is to read the options values on the .xml file
@@ -345,6 +352,7 @@ namespace Crusader_Wars
 
         private void CheckBox_MouseHover(object sender, EventArgs e)
         {
+            /*
             var control = (CheckBox)sender;
 
             var period = timePeriodCollecion.FirstOrDefault(x => x.mapper == control.Text);
@@ -352,6 +360,7 @@ namespace Crusader_Wars
 
             ToolTip_UnitMappers.ToolTipTitle = "";
             ToolTip_UnitMappers.SetToolTip(control, $"{description}\n{period.start_year} - {period.end_year}");
+            */
         }
 
 
@@ -816,5 +825,34 @@ namespace Crusader_Wars
             OptionsPanel.Controls.Add(control);
             control.BringToFront();
         }
+
+
+
+        private void ModManager_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == ModManager.Columns[0].Index && e.RowIndex != -1)
+            {
+                int rowIndex = e.RowIndex;
+                AttilaModManager.ChangeEnabledState(ModManager.Rows[rowIndex]);
+            }
+        }
+        private void ModManager_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == ModManager.Columns[0].Index && e.RowIndex != -1)
+            {
+                ModManager.EndEdit();
+            }
+        }
+
+        private void ModManager_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == ModManager.Columns[0].Index && e.RowIndex != -1)
+            {
+                ModManager.EndEdit();
+            }
+        }
+
     }
 }

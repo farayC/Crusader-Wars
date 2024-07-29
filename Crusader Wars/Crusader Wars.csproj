@@ -94,13 +94,16 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Text.Json, Version=7.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -163,6 +166,7 @@
     <Compile Include="data\save file\Writter.cs" />
     <Compile Include="locs\BattleDetails.cs" />
     <Compile Include="locs\UnitsCardsNames.cs" />
+    <Compile Include="mod manager\AttilaModManager.cs" />
     <Compile Include="sieges\Sieges_DataTypes.cs" />
     <Compile Include="terrain\Deployments.cs" />
     <Compile Include="terrain\battle maps\Lands.cs" />
