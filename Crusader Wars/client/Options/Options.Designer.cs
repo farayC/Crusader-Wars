@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Options));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.ck3Btn = new System.Windows.Forms.Button();
             this.Status_Ck3_Icon = new System.Windows.Forms.PictureBox();
             this.CloseBtn = new System.Windows.Forms.Button();
@@ -49,10 +53,19 @@
             this.Btn_GeneralTab = new System.Windows.Forms.Button();
             this.Btn_UnitsTab = new System.Windows.Forms.Button();
             this.Btn_BattleScaleTab = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ModManager = new System.Windows.Forms.DataGridView();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.ActiveBoxes = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.ModName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Ck3_Icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Attila_Icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.infoBox)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ModManager)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ck3Btn
@@ -62,7 +75,7 @@
             this.ck3Btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.ck3Btn.Font = new System.Drawing.Font("Yu Gothic UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ck3Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ck3Btn.Location = new System.Drawing.Point(25, 156);
+            this.ck3Btn.Location = new System.Drawing.Point(49, 182);
             this.ck3Btn.Name = "ck3Btn";
             this.ck3Btn.Size = new System.Drawing.Size(129, 122);
             this.ck3Btn.TabIndex = 0;
@@ -75,7 +88,7 @@
             this.Status_Ck3_Icon.BackColor = System.Drawing.Color.Transparent;
             this.Status_Ck3_Icon.BackgroundImage = global::Crusader_Wars.Properties.Resources.correct;
             this.Status_Ck3_Icon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Status_Ck3_Icon.Location = new System.Drawing.Point(52, 284);
+            this.Status_Ck3_Icon.Location = new System.Drawing.Point(76, 310);
             this.Status_Ck3_Icon.Name = "Status_Ck3_Icon";
             this.Status_Ck3_Icon.Size = new System.Drawing.Size(64, 57);
             this.Status_Ck3_Icon.TabIndex = 4;
@@ -83,12 +96,13 @@
             // 
             // CloseBtn
             // 
+            this.CloseBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CloseBtn.BackColor = System.Drawing.Color.Transparent;
             this.CloseBtn.BackgroundImage = global::Crusader_Wars.Properties.Resources.cancel__1_;
             this.CloseBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.CloseBtn.FlatAppearance.BorderSize = 0;
             this.CloseBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CloseBtn.Location = new System.Drawing.Point(635, 15);
+            this.CloseBtn.Location = new System.Drawing.Point(753, 35);
             this.CloseBtn.Name = "CloseBtn";
             this.CloseBtn.Size = new System.Drawing.Size(53, 54);
             this.CloseBtn.TabIndex = 9;
@@ -100,7 +114,7 @@
             this.Status_Attila_Icon.BackColor = System.Drawing.Color.Transparent;
             this.Status_Attila_Icon.BackgroundImage = global::Crusader_Wars.Properties.Resources.correct;
             this.Status_Attila_Icon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Status_Attila_Icon.Location = new System.Drawing.Point(191, 284);
+            this.Status_Attila_Icon.Location = new System.Drawing.Point(215, 310);
             this.Status_Attila_Icon.Name = "Status_Attila_Icon";
             this.Status_Attila_Icon.Size = new System.Drawing.Size(64, 57);
             this.Status_Attila_Icon.TabIndex = 10;
@@ -114,7 +128,7 @@
             this.AttilaBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.AttilaBtn.Font = new System.Drawing.Font("Yu Gothic UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AttilaBtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.AttilaBtn.Location = new System.Drawing.Point(160, 156);
+            this.AttilaBtn.Location = new System.Drawing.Point(184, 182);
             this.AttilaBtn.Name = "AttilaBtn";
             this.AttilaBtn.Size = new System.Drawing.Size(130, 122);
             this.AttilaBtn.TabIndex = 14;
@@ -131,7 +145,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(438, 118);
+            this.label1.Location = new System.Drawing.Point(16, 391);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 21);
             this.label1.TabIndex = 16;
@@ -141,7 +155,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(24, 119);
+            this.label2.Location = new System.Drawing.Point(16, 142);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 21);
             this.label2.TabIndex = 17;
@@ -153,9 +167,9 @@
             this.MappersControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MappersControl.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.MappersControl.Font = new System.Drawing.Font("Yu Gothic UI Semibold", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MappersControl.Location = new System.Drawing.Point(442, 175);
+            this.MappersControl.Location = new System.Drawing.Point(20, 446);
             this.MappersControl.Name = "MappersControl";
-            this.MappersControl.Size = new System.Drawing.Size(258, 262);
+            this.MappersControl.Size = new System.Drawing.Size(372, 185);
             this.MappersControl.TabIndex = 18;
             this.MappersControl.WrapContents = false;
             // 
@@ -164,7 +178,7 @@
             this.infoBox.BackColor = System.Drawing.Color.Transparent;
             this.infoBox.BackgroundImage = global::Crusader_Wars.Properties.Resources.info_smaller;
             this.infoBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.infoBox.Location = new System.Drawing.Point(555, 108);
+            this.infoBox.Location = new System.Drawing.Point(133, 382);
             this.infoBox.Name = "infoBox";
             this.infoBox.Size = new System.Drawing.Size(30, 42);
             this.infoBox.TabIndex = 21;
@@ -187,7 +201,7 @@
             this.Label_MapperStatus.BackColor = System.Drawing.Color.Transparent;
             this.Label_MapperStatus.Font = new System.Drawing.Font("Yu Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Label_MapperStatus.ForeColor = System.Drawing.Color.White;
-            this.Label_MapperStatus.Location = new System.Drawing.Point(439, 155);
+            this.Label_MapperStatus.Location = new System.Drawing.Point(17, 426);
             this.Label_MapperStatus.Name = "Label_MapperStatus";
             this.Label_MapperStatus.Size = new System.Drawing.Size(50, 17);
             this.Label_MapperStatus.TabIndex = 22;
@@ -198,7 +212,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(24, 355);
+            this.label3.Location = new System.Drawing.Point(397, 142);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(105, 21);
             this.label3.TabIndex = 26;
@@ -215,7 +229,7 @@
             // 
             this.OptionsPanel.BackColor = System.Drawing.Color.Transparent;
             this.OptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.OptionsPanel.Location = new System.Drawing.Point(25, 428);
+            this.OptionsPanel.Location = new System.Drawing.Point(398, 219);
             this.OptionsPanel.Name = "OptionsPanel";
             this.OptionsPanel.Size = new System.Drawing.Size(408, 412);
             this.OptionsPanel.TabIndex = 28;
@@ -226,9 +240,9 @@
             this.flowLayoutPanel1.Controls.Add(this.Btn_GeneralTab);
             this.flowLayoutPanel1.Controls.Add(this.Btn_UnitsTab);
             this.flowLayoutPanel1.Controls.Add(this.Btn_BattleScaleTab);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(25, 388);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(398, 179);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(360, 34);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(408, 34);
             this.flowLayoutPanel1.TabIndex = 28;
             // 
             // Btn_GeneralTab
@@ -285,13 +299,124 @@
             this.Btn_BattleScaleTab.UseVisualStyleBackColor = false;
             this.Btn_BattleScaleTab.Click += new System.EventHandler(this.Btn_BattleScaleTab_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(16, 643);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(114, 21);
+            this.label4.TabIndex = 29;
+            this.label4.Text = "Mod Manager";
+            // 
+            // ModManager
+            // 
+            this.ModManager.AllowUserToAddRows = false;
+            this.ModManager.AllowUserToDeleteRows = false;
+            this.ModManager.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            this.ModManager.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.ModManager.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.ControlLight;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ModManager.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            this.ModManager.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ModManager.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ActiveBoxes,
+            this.ImageColumn,
+            this.ModName,
+            this.StatusColumn});
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.NullValue = "Not Found";
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.ControlLightLight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ModManager.DefaultCellStyle = dataGridViewCellStyle8;
+            this.ModManager.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ModManager.Location = new System.Drawing.Point(20, 0);
+            this.ModManager.MultiSelect = false;
+            this.ModManager.Name = "ModManager";
+            this.ModManager.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.ModManager.RowHeadersVisible = false;
+            this.ModManager.RowTemplate.Height = 50;
+            this.ModManager.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ModManager.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ModManager.Size = new System.Drawing.Size(787, 256);
+            this.ModManager.TabIndex = 30;
+            this.ModManager.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ModManager_CellMouseDoubleClick);
+            this.ModManager.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ModManager_CellMouseUp);
+            this.ModManager.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModManager_CellValueChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
+            this.panel1.Controls.Add(this.ModManager);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 667);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(20, 0, 20, 5);
+            this.panel1.Size = new System.Drawing.Size(827, 261);
+            this.panel1.TabIndex = 31;
+            // 
+            // ActiveBoxes
+            // 
+            this.ActiveBoxes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.ActiveBoxes.FalseValue = "Disabled";
+            this.ActiveBoxes.HeaderText = "Active";
+            this.ActiveBoxes.IndeterminateValue = "Disabled";
+            this.ActiveBoxes.Name = "ActiveBoxes";
+            this.ActiveBoxes.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ActiveBoxes.TrueValue = "Active";
+            this.ActiveBoxes.Width = 75;
+            // 
+            // ImageColumn
+            // 
+            this.ImageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.NullValue = "System.Drawing.Bitmap";
+            this.ImageColumn.DefaultCellStyle = dataGridViewCellStyle6;
+            this.ImageColumn.HeaderText = "Image";
+            this.ImageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
+            this.ImageColumn.Name = "ImageColumn";
+            this.ImageColumn.ReadOnly = true;
+            this.ImageColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ImageColumn.Width = 70;
+            // 
+            // ModName
+            // 
+            this.ModName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ModName.DefaultCellStyle = dataGridViewCellStyle7;
+            this.ModName.HeaderText = "Mod Name";
+            this.ModName.Name = "ModName";
+            this.ModName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // StatusColumn
+            // 
+            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.StatusColumn.HeaderText = "Status";
+            this.StatusColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
+            this.StatusColumn.Name = "StatusColumn";
+            this.StatusColumn.ReadOnly = true;
+            this.StatusColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.StatusColumn.Width = 50;
+            // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::Crusader_Wars.Properties.Resources.options_bk;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(712, 852);
+            this.ClientSize = new System.Drawing.Size(827, 928);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.OptionsPanel);
             this.Controls.Add(this.label3);
@@ -320,6 +445,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.infoBox)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ModManager)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -346,5 +473,12 @@
         private System.Windows.Forms.Button Btn_GeneralTab;
         private System.Windows.Forms.Button Btn_UnitsTab;
         private System.Windows.Forms.Button Btn_BattleScaleTab;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.DataGridView ModManager;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ActiveBoxes;
+        private System.Windows.Forms.DataGridViewImageColumn ImageColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ModName;
+        private System.Windows.Forms.DataGridViewImageColumn StatusColumn;
     }
 }
