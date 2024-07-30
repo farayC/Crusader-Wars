@@ -108,9 +108,9 @@
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(3, 306);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 19);
+            this.label2.Size = new System.Drawing.Size(129, 19);
             this.label2.TabIndex = 12;
-            this.label2.Text = "Separate armies:";
+            this.label2.Text = "Armies Control:";
             // 
             // OptionSelection_SeparateArmies
             // 

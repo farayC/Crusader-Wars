@@ -151,6 +151,12 @@
     <Compile Include="client\BETAUPDATE_Message.Designer.cs">
       <DependentUpon>BETAUPDATE_Message.cs</DependentUpon>
     </Compile>
+    <Compile Include="client\UC_Toggle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="client\UC_Toggle.Designer.cs">
+      <DependentUpon>UC_Toggle.cs</DependentUpon>
+    </Compile>
     <Compile Include="client\WarningMessage\WarningMessage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +173,12 @@
     <Compile Include="locs\BattleDetails.cs" />
     <Compile Include="locs\UnitsCardsNames.cs" />
     <Compile Include="mod manager\AttilaModManager.cs" />
+    <Compile Include="mod manager\UC_UnitMapper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mod manager\UC_UnitMapper.Designer.cs">
+      <DependentUpon>UC_UnitMapper.cs</DependentUpon>
+    </Compile>
     <Compile Include="sieges\Sieges_DataTypes.cs" />
     <Compile Include="terrain\Deployments.cs" />
     <Compile Include="terrain\battle maps\Lands.cs" />
@@ -237,8 +249,14 @@
     <EmbeddedResource Include="client\BETAUPDATE_Message.resx">
       <DependentUpon>BETAUPDATE_Message.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="client\UC_Toggle.resx">
+      <DependentUpon>UC_Toggle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="client\WarningMessage\WarningMessage.resx">
       <DependentUpon>WarningMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mod manager\UC_UnitMapper.resx">
+      <DependentUpon>UC_UnitMapper.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -369,6 +387,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
+    <None Include="Resources\LOTR.png" />
+    <None Include="Resources\tfe1.png" />
+    <None Include="Resources\tfe.png" />
+    <None Include="Resources\toggle_yes.png" />
+    <None Include="Resources\toggle_no.png" />
+    <None Include="Resources\default.png" />
     <None Include="Resources\warfare_loadingscreen_smallerlogo.png" />
     <None Include="Resources\website_btn_new_hover1.png" />
     <None Include="Resources\steam_btn_new_hover1.png" />

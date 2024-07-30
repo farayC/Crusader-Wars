@@ -25,6 +25,10 @@ namespace Crusader_Wars
         UserControl General_Tab;
         UserControl Units_Tab;
         UserControl BattleScale_Tab;
+
+        UC_UnitMapper CrusaderKings_Tab;
+        UC_UnitMapper TheFallenEagle_Tab;
+        UC_UnitMapper RealmsInExile_Tab;
         public Options()
         {
             InitializeComponent();
@@ -43,14 +47,14 @@ namespace Crusader_Wars
 
         private void CloseBtn_Click(object sender, EventArgs e)
         {
-            SaveCheckedStates();
-            WriteLastChecked();
             SaveValuesToOptionsFile();
             ReadOptionsFile();
             ModOptions.StoreOptionsValues(optionsValuesCollection);
+            WriteUnitMappersOptions();
             
             AttilaModManager.SaveActiveMods();
             AttilaModManager.CreateUserModsFile();
+            ChangeTabsStates();
 
             this.Close();
         }
@@ -63,19 +67,18 @@ namespace Crusader_Wars
             BattleScale_Tab = new UC_BattleScaleOptions();
 
             //ReadTimePeriods();
+            ReadUnitMappersOptions();
             ReadOptionsFile();
             SetOptionsUIData();
-            RetrieveCheckedStates();
-            CreateDynamicListControl();
             Status_Refresh();
-            ReadLastChecked();
-            LoadMappersDescritions();
-            UpdateStatusLabel();
+
 
             AttilaModManager.SetControlRefence(ModManager);
             AttilaModManager.ReadInstalledMods();
             
         }
+
+       
 
         //this is to read the options values on the .xml file
         public static List<(string option, string value)> optionsValuesCollection { get; private set; }
@@ -176,6 +179,7 @@ namespace Crusader_Wars
             
 
             ChangeOptionsTab(General_Tab);
+            ChangeUnitMappersTab(CrusaderKings_Tab);
         }
 
 
@@ -274,316 +278,6 @@ namespace Crusader_Wars
             }
         }
         */
-
-
-
-        private static Dictionary<string, bool> folderCheckStates = new Dictionary<string, bool>();
-        private void CreateDynamicListControl()
-        {
-            string directoryPath = Directory.GetCurrentDirectory() + @"\unit mappers";
-            List<string> folderNames = new List<string>();
-            folderNames.AddRange(Directory.GetDirectories(directoryPath));
-
-            foreach (string folderName in folderNames)
-            {
-                CheckBox checkBox = new CheckBox();
-                checkBox.Width = MappersControl.Width;
-                checkBox.Text = Path.GetFileName(folderName);
-
-                // Add event handlers for drag and drop functionality
-                checkBox.MouseDown += CheckBox_MouseDown;
-                checkBox.MouseHover += CheckBox_MouseHover;
-                checkBox.MouseClick += CheckBox_MouseClick;
-
-                // Check if the folder has a stored state
-                if (folderCheckStates.ContainsKey(folderName))
-                {
-                    checkBox.Checked = folderCheckStates[folderName];
-                }
-
-                // Add an event handler to handle checkbox state changes
-                checkBox.CheckedChanged += (sender, e) =>
-                {
-                    folderCheckStates[folderName] = checkBox.Checked;
-                };
-
-                MappersControl.Controls.Add(checkBox);
-            }
-        }
-
-        private void CheckBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            UpdateStatusLabel();
-        }
-
-        List<(string mapper ,string description)> MappersDescriptions  { get; set; }
-
-        private void LoadMappersDescritions()
-        {
-            MappersDescriptions = new List<(string mapper, string description)>();
-
-            var all_mappers_folders = Directory.GetDirectories(@".\unit mappers");
-            foreach(var folder in all_mappers_folders)
-            {
-                string mapper_name = Path.GetFileName(folder);
-                try 
-                {
-                    var txt_files_path = Directory.GetFiles(folder).Where(x => x.EndsWith(".txt"));
-
-
-                    using (FileStream logFile = File.Open(txt_files_path.FirstOrDefault(), FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
-                    using (StreamReader reader = new StreamReader(logFile))
-                    {
-                        string description = reader.ReadToEnd();
-                        MappersDescriptions.Add((mapper_name, description));
-                    }
-
-                }
-                catch 
-                {
-                    continue;
-                }
-
-
-            }
-
-
-        }
-
-        private void CheckBox_MouseHover(object sender, EventArgs e)
-        {
-            /*
-            var control = (CheckBox)sender;
-
-            var period = timePeriodCollecion.FirstOrDefault(x => x.mapper == control.Text);
-            var description = MappersDescriptions.FirstOrDefault(x => x.mapper == control.Text).description;
-
-            ToolTip_UnitMappers.ToolTipTitle = "";
-            ToolTip_UnitMappers.SetToolTip(control, $"{description}\n{period.start_year} - {period.end_year}");
-            */
-        }
-
-
-        // Save the checked states before closing the form
-        private static Dictionary<string, bool> lastFolderCheckStates = new Dictionary<string, bool>();
-        private void SaveCheckedStates()
-        {
-            lastFolderCheckStates = new Dictionary<string, bool>();
-            foreach (KeyValuePair<string, bool> entry in folderCheckStates)
-            {
-                string folderName = entry.Key;
-                bool isChecked = entry.Value;
-                lastFolderCheckStates.Add(folderName, isChecked);
-            }
-        }
-
-        // Retrieve the checked states when opening the form
-        private void RetrieveCheckedStates()
-        {
-            folderCheckStates = lastFolderCheckStates;
-        }
-        private CheckBox selectedCheckBox; // Track the currently selected checkbox
-
-        private void CheckBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            CheckBox checkBox = (CheckBox)sender;
-
-
-            // Unselect the previously selected checkbox, if any
-            if (selectedCheckBox != null && selectedCheckBox != checkBox)
-            {
-                selectedCheckBox.BackColor = SystemColors.Control; // Restore the default background color
-            }
-
-            // Update the selected checkbox and its visual appearance
-            selectedCheckBox = checkBox;
-            selectedCheckBox.BackColor = Color.LightBlue; // Set the background color for the selected item
-
-
-
-
-        }
-
-        Dictionary<string, (int start, int end)> YearCollection = new Dictionary<string, (int start, int end)>();
-        void UpdateStatusLabel()
-        {
-            //Update status text
-            int disabled = 0;
-            int enabled = 0;
-
-
-            YearCollection = new Dictionary<string, (int start, int end)>();
-            foreach (var item in folderCheckStates)
-            {
-                if (item.Value is false)
-                {
-                    disabled++;
-                }
-                else
-                {
-                    enabled++;
-
-                    /*
-                    var timePeriod_Item = timePeriodCollecion.FirstOrDefault(x => item.Key.Contains(x.mapper));
-                    if (timePeriod_Item.mapper != null) {
-                        try { YearCollection.Add(item.Key, (Int32.Parse(timePeriod_Item.start_year), Int32.Parse(timePeriod_Item.end_year))); } 
-                        catch { }
-                    } 
-                    */
-                    
-
-                }
-
-            }
-
-
-            if (disabled == folderCheckStates.Count) 
-            { 
-                Label_MapperStatus.Text = "No Mapper enabled!";
-                Label_MapperStatus.ForeColor = Color.Red;
-            }
-            if (enabled == 1)
-            {
-                //string loaded_mapper = YearCollection.First().Key;
-                string loaded_mapper = "OfficialCW";
-                if (loaded_mapper.Contains("OfficialCW"))
-                {
-                    Label_MapperStatus.Text = $"Single Mapper loaded!";
-                    Label_MapperStatus.ForeColor = Color.White;
-                }
-                else if (loaded_mapper.Contains("xCW_FallenEagle"))
-                {
-                    Label_MapperStatus.Text = $"Single TFE Mapper loaded!";
-                    Label_MapperStatus.ForeColor = Color.White;
-                }
-                else if (loaded_mapper.Contains("xCW_RealmsInExile"))
-                {
-                    Label_MapperStatus.Text = $"Single LOTR Mapper loaded!";
-                    Label_MapperStatus.ForeColor = Color.White;
-                }
-
-            }
-            if (enabled > 1)
-            {
-                //LOTR & TFE mix warning
-                try
-                {
-                    string lotr_one = YearCollection.First(item => item.Key.Contains("xCW_RealmsInExile")).Key;
-                    string tfe_one = YearCollection.First(item => item.Key.Contains("xCW_FallenEagle")).Key;
-
-                    Label_MapperStatus.Text = "Incorrect mix of loaded Mappers!";
-                    Label_MapperStatus.ForeColor = Color.Red;
-
-                    return;
-                }
-                catch { }
-
-
-                //Total Conversion & Offical mix warning
-                try
-                {
-                    string official_one = YearCollection.First(item => item.Key.Contains("OfficialCW")).Key;
-                    string totalConversion_one = YearCollection.First(item => item.Key.Contains("xCW")).Key;
-
-                    Label_MapperStatus.Text = "Incorrect Mappers loaded together!";
-                    Label_MapperStatus.ForeColor = Color.Red;
-
-                    return;
-                }
-                catch { }
-
-
-                //Time Period
-                int minimum_year = 0;
-                int maximum_year = 0;
-
-                foreach (var item in YearCollection) 
-                {
-
-                    int min, max;   
-                    min = Math.Min(item.Value.start, item.Value.end);
-                    max = Math.Max(item.Value.start, item.Value.end);
-                    if(minimum_year == 0) { minimum_year = min; }
-                    if (maximum_year == 0) { maximum_year = max; }
-
-                    if (min < minimum_year) { minimum_year = min; }
-                    if (max > maximum_year) { maximum_year = max; }
-                }
-                
-
-                
-                Label_MapperStatus.Text = $"Loading Mappers from {minimum_year}AD to {maximum_year}AD!";
-                Label_MapperStatus.ForeColor = Color.White;
-            }
-        }
-
-
-        private void WriteLastChecked()
-        {
-            string filePath = @".\Settings\lastchecked.txt";
-
-            try
-            {
-                // Create a new text file or overwrite if it already exists
-                using (StreamWriter writer = new StreamWriter(filePath))
-                {
-                    foreach (var control in MappersControl.Controls)
-                    {
-                        var check_box = (CheckBox)control;
-
-                        if(check_box.Checked) 
-                        {
-                            writer.WriteLine(check_box.Text);
-                        }
-                    }
-
-                    writer.Close();
-                }
-
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("An error occurred while writing to the file:");
-                Console.WriteLine(e.Message);
-            }
-
-        }
-
-        private void ReadLastChecked()
-        {
-            string filePath = @".\Settings\lastchecked.txt";
-
-            try
-            {
-                using (StreamReader reader = new StreamReader(filePath))
-                {
-                    var all = File.ReadAllLines(filePath);
-                    
-                    foreach(var line in all)
-                    {
-                        if (line != null)
-                        {
-                            for (int i = 0; i < MappersControl.Controls.Count; i++)
-                            {
-                                var check_box = (CheckBox)MappersControl.Controls[i];
-                                if (line == check_box.Text)
-                                {
-                                    check_box.Checked = true;
-                                    break;
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("An error occurred while reading to the file:");
-                Console.WriteLine(e.Message);
-            }
-        }
 
 
         private void Status_Refresh()
@@ -741,65 +435,6 @@ namespace Crusader_Wars
             ToolTip_Attila.SetToolTip(ck3Btn, Properties.Settings.Default.VAR_ck3_path);
         }
 
-
-        
-        //Warning Messages
-        private void Options_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
-            if (Label_MapperStatus.Text == "Incorrect Mappers loaded together!")
-            {
-                string message = "Mixing Total Conversion Unit Mappers with Official ones cause crashes! Disable one of them!";
-                WarningMessage.ShowWarningMessage(message);
-            }
-            else if(Label_MapperStatus.Text == "No Mapper enabled!")
-            {
-                string message = "You didn't enable a Unit Mapper, enable one or the mod will not work!";
-                WarningMessage.ShowWarningMessage(message);
-            }
-            else if(Label_MapperStatus.Text == "Incorrect mix of loaded Mappers!")
-            {
-                string message = "You enabled \"Realms in Exile\" Mapper with \"The Fallen Eagle\" Mapper, just enable one of them or the mod will not work!";
-                WarningMessage.ShowWarningMessage(message);
-            }
-
-
-            int start =1066;
-            foreach (var i in YearCollection)
-            {
-                if (i.Value.start < start)
-                { 
-                    start = i.Value.start; 
-                    continue; 
-                }
-                else { 
-                    start = Math.Min(i.Value.start, start); 
-                }
-                
-            }
-            if (start > 1066 && YearCollection.Count > 1)
-            {
-                string message = $"Your selected unit mappers only starts at {YearCollection.ElementAtOrDefault(0).Value.start}AD.\n" +
-                                 "If your CK3 campaign is below this year, the mod won't work!\n";
-                string title = "Empty Time Periods";
-                WarningMessage.ShowWarningMessage(message, title);
-            }
-
-            
-        }
-
-        private void infoBox_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip_UnitMappers.ToolTipTitle = "What are Unit Mappers?";
-
-            ToolTip_UnitMappers.SetToolTip(infoBox, "This is how the mod assigns ck3 cultures and men-at-arms to Attila units.\n" +
-                                                    "Think of them like little unit mod packs. You choose the desired one for how you want your units to look\n" +
-                                                    "You can have multiple enabled and the mod will load the one that the time period is more close to your campaign year.\n\n" +
-                                                    "Select only one mapper if you only want that one to load.\n" +
-                                                    "Select multiple if they have a continuation of time periods.\n\n" +
-                                                    "The officials unit mappers are meant to all of them being enabled, so you can see your units evolve.");
-        }
-
         private void Btn_GeneralTab_Click(object sender, EventArgs e)
         {
             if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != General_Tab)
@@ -827,6 +462,12 @@ namespace Crusader_Wars
         }
 
 
+        /*##############################################
+         *####              MOD MANAGER             #### 
+         *####--------------------------------------####
+         *####         Mod Manager Section          ####
+         *##############################################
+         */
 
         private void ModManager_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
@@ -854,5 +495,101 @@ namespace Crusader_Wars
             }
         }
 
+
+        /*##############################################
+         *####             UNIT MAPPERS             #### 
+         *####--------------------------------------####
+         *####         Unit Mappers Section         ####
+         *##############################################
+         */
+        private void Btn_CK3Tab_Click(object sender, EventArgs e)
+        {
+            if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != CrusaderKings_Tab)
+                ChangeUnitMappersTab(CrusaderKings_Tab);
+            ChangeTabsStates();
+        }
+
+        private void Btn_TFETab_Click(object sender, EventArgs e)
+        {
+            if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != TheFallenEagle_Tab)
+                ChangeUnitMappersTab(TheFallenEagle_Tab);
+            ChangeTabsStates();
+        }
+
+        private void Btn_LOTRTab_Click(object sender, EventArgs e)
+        {
+            if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != RealmsInExile_Tab)
+                ChangeUnitMappersTab(RealmsInExile_Tab);
+            ChangeTabsStates();
+        }
+
+        void ChangeTabsStates() // <--- fix this!
+        {
+            switch(CrusaderKings_Tab.GetState())
+            {
+                case true:
+                    TheFallenEagle_Tab.SetState(false);
+                    RealmsInExile_Tab.SetState(false);
+                    break;
+            }
+            switch (TheFallenEagle_Tab.GetState())
+            {
+                case true:
+                    CrusaderKings_Tab.SetState(false);
+                    RealmsInExile_Tab.SetState(false);
+                    break;
+            }
+            switch (RealmsInExile_Tab.GetState())
+            {
+                case true:
+                    TheFallenEagle_Tab.SetState(false);
+                    CrusaderKings_Tab.SetState(false);
+                    break;
+            }
+        }
+
+        void ChangeUnitMappersTab(Control control)
+        {
+            control.Dock = DockStyle.Fill;
+            UMpanel.Controls.Clear();
+            UMpanel.Controls.Add(control);
+            control.BringToFront();
+        }
+
+        void ReadUnitMappersOptions()
+        {
+            string file = @".\Settings\UnitMappers.xml";
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(file);
+
+            var ck3ToggleStateStr = xmlDoc.SelectSingleNode("//UnitMappers [@name='DefaultCK3']").InnerText;
+            var tfeToggleStateStr = xmlDoc.SelectSingleNode("//UnitMappers [@name='TheFallenEagle']").InnerText;
+            var lotrToggleStateStr = xmlDoc.SelectSingleNode("//UnitMappers [@name='RealmsInExile']").InnerText;
+
+            bool ck3ToggleState = false; bool tfeToggleState = false; bool lotrToggleState = false;
+            if (ck3ToggleStateStr == "True") ck3ToggleState = true; else ck3ToggleState = false;
+            if (tfeToggleStateStr == "True") tfeToggleState = true; else tfeToggleState = false;
+            if (lotrToggleStateStr == "True") lotrToggleState = true; else lotrToggleState = false;
+
+            CrusaderKings_Tab = new UC_UnitMapper(Properties.Resources._default, "", ck3ToggleState);
+            TheFallenEagle_Tab = new UC_UnitMapper(Properties.Resources.tfe, "", tfeToggleState);
+            RealmsInExile_Tab = new UC_UnitMapper(Properties.Resources.LOTR, "https://steamcommunity.com/sharedfiles/filedetails/?id=3211765434", lotrToggleState);
+
+        }
+
+        void WriteUnitMappersOptions()
+        {
+            string file = @".\Settings\UnitMappers.xml";
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(file);
+
+            var CrusaderKings_Node = xmlDoc.SelectSingleNode("//UnitMappers [@name='DefaultCK3']");
+            CrusaderKings_Node.InnerText = CrusaderKings_Tab.GetState().ToString();
+            var TheFallenEagle_Node = xmlDoc.SelectSingleNode("//UnitMappers [@name='TheFallenEagle']");
+            TheFallenEagle_Node.InnerText = TheFallenEagle_Tab.GetState().ToString();
+            var RealmsInExile_Node = xmlDoc.SelectSingleNode("//UnitMappers [@name='RealmsInExile']");
+            RealmsInExile_Node.InnerText = RealmsInExile_Tab.GetState().ToString();
+            xmlDoc.Save(file);
+        }
     }
 }
