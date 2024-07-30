@@ -30,10 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Options));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.ck3Btn = new System.Windows.Forms.Button();
             this.Status_Ck3_Icon = new System.Windows.Forms.PictureBox();
             this.CloseBtn = new System.Windows.Forms.Button();
@@ -42,10 +43,7 @@
             this.ToolTip_Attila = new System.Windows.Forms.ToolTip(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.MappersControl = new System.Windows.Forms.FlowLayoutPanel();
-            this.infoBox = new System.Windows.Forms.PictureBox();
             this.ToolTip_UnitMappers = new System.Windows.Forms.ToolTip(this.components);
-            this.Label_MapperStatus = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.ToolTip_Options = new System.Windows.Forms.ToolTip(this.components);
             this.OptionsPanel = new System.Windows.Forms.Panel();
@@ -56,16 +54,21 @@
             this.label4 = new System.Windows.Forms.Label();
             this.ModManager = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.UMpanel = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.Btn_CK3Tab = new System.Windows.Forms.Button();
+            this.Btn_TFETab = new System.Windows.Forms.Button();
+            this.Btn_LOTRTab = new System.Windows.Forms.Button();
             this.ActiveBoxes = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.ModName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Ck3_Icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Attila_Icon)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.infoBox)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ModManager)).BeginInit();
             this.panel1.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // ck3Btn
@@ -145,7 +148,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(16, 391);
+            this.label1.Location = new System.Drawing.Point(19, 382);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 21);
             this.label1.TabIndex = 16;
@@ -161,52 +164,12 @@
             this.label2.TabIndex = 17;
             this.label2.Text = "Games Paths";
             // 
-            // MappersControl
-            // 
-            this.MappersControl.AutoScroll = true;
-            this.MappersControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.MappersControl.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.MappersControl.Font = new System.Drawing.Font("Yu Gothic UI Semibold", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MappersControl.Location = new System.Drawing.Point(20, 446);
-            this.MappersControl.Name = "MappersControl";
-            this.MappersControl.Size = new System.Drawing.Size(372, 185);
-            this.MappersControl.TabIndex = 18;
-            this.MappersControl.WrapContents = false;
-            // 
-            // infoBox
-            // 
-            this.infoBox.BackColor = System.Drawing.Color.Transparent;
-            this.infoBox.BackgroundImage = global::Crusader_Wars.Properties.Resources.info_smaller;
-            this.infoBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.infoBox.Location = new System.Drawing.Point(133, 382);
-            this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(30, 42);
-            this.infoBox.TabIndex = 21;
-            this.infoBox.TabStop = false;
-            this.infoBox.MouseHover += new System.EventHandler(this.infoBox_MouseHover);
-            // 
             // ToolTip_UnitMappers
             // 
             this.ToolTip_UnitMappers.AutomaticDelay = 0;
             this.ToolTip_UnitMappers.AutoPopDelay = 20000;
             this.ToolTip_UnitMappers.InitialDelay = 100;
             this.ToolTip_UnitMappers.ReshowDelay = 0;
-            // 
-            // Label_MapperStatus
-            // 
-            this.Label_MapperStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Label_MapperStatus.AutoSize = true;
-            this.Label_MapperStatus.BackColor = System.Drawing.Color.Transparent;
-            this.Label_MapperStatus.Font = new System.Drawing.Font("Yu Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label_MapperStatus.ForeColor = System.Drawing.Color.White;
-            this.Label_MapperStatus.Location = new System.Drawing.Point(17, 426);
-            this.Label_MapperStatus.Name = "Label_MapperStatus";
-            this.Label_MapperStatus.Size = new System.Drawing.Size(50, 17);
-            this.Label_MapperStatus.TabIndex = 22;
-            this.Label_MapperStatus.Text = "Status";
-            this.Label_MapperStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3
             // 
@@ -305,9 +268,9 @@
             this.label4.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(16, 643);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(114, 21);
+            this.label4.Size = new System.Drawing.Size(361, 21);
             this.label4.TabIndex = 29;
-            this.label4.Text = "Mod Manager";
+            this.label4.Text = "Mod Manager - This only shows optional mods.";
             // 
             // ModManager
             // 
@@ -315,30 +278,30 @@
             this.ModManager.AllowUserToDeleteRows = false;
             this.ModManager.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
             this.ModManager.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-            this.ModManager.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.ControlLight;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ModManager.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            this.ModManager.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ModManager.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.ModManager.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ModManager.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ActiveBoxes,
             this.ImageColumn,
             this.ModName,
             this.StatusColumn});
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.NullValue = "Not Found";
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.ControlLightLight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ModManager.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.NullValue = "Not Found";
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.ControlLightLight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ModManager.DefaultCellStyle = dataGridViewCellStyle5;
             this.ModManager.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ModManager.Location = new System.Drawing.Point(20, 0);
             this.ModManager.MultiSelect = false;
@@ -365,9 +328,89 @@
             this.panel1.Size = new System.Drawing.Size(827, 261);
             this.panel1.TabIndex = 31;
             // 
+            // UMpanel
+            // 
+            this.UMpanel.BackColor = System.Drawing.Color.Transparent;
+            this.UMpanel.Location = new System.Drawing.Point(20, 445);
+            this.UMpanel.Name = "UMpanel";
+            this.UMpanel.Size = new System.Drawing.Size(372, 185);
+            this.UMpanel.TabIndex = 32;
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanel2.Controls.Add(this.Btn_CK3Tab);
+            this.flowLayoutPanel2.Controls.Add(this.Btn_TFETab);
+            this.flowLayoutPanel2.Controls.Add(this.Btn_LOTRTab);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(20, 406);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(372, 34);
+            this.flowLayoutPanel2.TabIndex = 33;
+            // 
+            // Btn_CK3Tab
+            // 
+            this.Btn_CK3Tab.AutoSize = true;
+            this.Btn_CK3Tab.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_CK3Tab.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Btn_CK3Tab.BackgroundImage")));
+            this.Btn_CK3Tab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Btn_CK3Tab.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Btn_CK3Tab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_CK3Tab.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_CK3Tab.ForeColor = System.Drawing.Color.White;
+            this.Btn_CK3Tab.Location = new System.Drawing.Point(3, 3);
+            this.Btn_CK3Tab.Name = "Btn_CK3Tab";
+            this.Btn_CK3Tab.Size = new System.Drawing.Size(113, 28);
+            this.Btn_CK3Tab.TabIndex = 0;
+            this.Btn_CK3Tab.Text = "Crusader Kings";
+            this.Btn_CK3Tab.UseVisualStyleBackColor = false;
+            this.Btn_CK3Tab.Click += new System.EventHandler(this.Btn_CK3Tab_Click);
+            // 
+            // Btn_TFETab
+            // 
+            this.Btn_TFETab.AutoSize = true;
+            this.Btn_TFETab.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_TFETab.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Btn_TFETab.BackgroundImage")));
+            this.Btn_TFETab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Btn_TFETab.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Btn_TFETab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_TFETab.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_TFETab.ForeColor = System.Drawing.Color.White;
+            this.Btn_TFETab.Location = new System.Drawing.Point(122, 3);
+            this.Btn_TFETab.Name = "Btn_TFETab";
+            this.Btn_TFETab.Size = new System.Drawing.Size(123, 28);
+            this.Btn_TFETab.TabIndex = 1;
+            this.Btn_TFETab.Text = "The Fallen Eagle";
+            this.Btn_TFETab.UseVisualStyleBackColor = false;
+            this.Btn_TFETab.Click += new System.EventHandler(this.Btn_TFETab_Click);
+            // 
+            // Btn_LOTRTab
+            // 
+            this.Btn_LOTRTab.AutoSize = true;
+            this.Btn_LOTRTab.BackColor = System.Drawing.Color.LightGray;
+            this.Btn_LOTRTab.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Btn_LOTRTab.BackgroundImage")));
+            this.Btn_LOTRTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Btn_LOTRTab.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Btn_LOTRTab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_LOTRTab.Font = new System.Drawing.Font("Paradox King Script", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_LOTRTab.ForeColor = System.Drawing.Color.White;
+            this.Btn_LOTRTab.Location = new System.Drawing.Point(251, 3);
+            this.Btn_LOTRTab.Name = "Btn_LOTRTab";
+            this.Btn_LOTRTab.Size = new System.Drawing.Size(114, 28);
+            this.Btn_LOTRTab.TabIndex = 2;
+            this.Btn_LOTRTab.Text = "Realms in Exile";
+            this.Btn_LOTRTab.UseVisualStyleBackColor = false;
+            this.Btn_LOTRTab.Click += new System.EventHandler(this.Btn_LOTRTab_Click);
+            // 
             // ActiveBoxes
             // 
             this.ActiveBoxes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.NullValue = false;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            this.ActiveBoxes.DefaultCellStyle = dataGridViewCellStyle2;
             this.ActiveBoxes.FalseValue = "Disabled";
             this.ActiveBoxes.HeaderText = "Active";
             this.ActiveBoxes.IndeterminateValue = "Disabled";
@@ -379,9 +422,9 @@
             // ImageColumn
             // 
             this.ImageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.NullValue = "System.Drawing.Bitmap";
-            this.ImageColumn.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.NullValue = "System.Drawing.Bitmap";
+            this.ImageColumn.DefaultCellStyle = dataGridViewCellStyle3;
             this.ImageColumn.HeaderText = "Image";
             this.ImageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
             this.ImageColumn.Name = "ImageColumn";
@@ -392,8 +435,12 @@
             // ModName
             // 
             this.ModName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ModName.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            this.ModName.DefaultCellStyle = dataGridViewCellStyle4;
             this.ModName.HeaderText = "Mod Name";
             this.ModName.Name = "ModName";
             this.ModName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -415,14 +462,13 @@
             this.BackgroundImage = global::Crusader_Wars.Properties.Resources.options_bk;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(827, 928);
+            this.Controls.Add(this.flowLayoutPanel2);
+            this.Controls.Add(this.UMpanel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.OptionsPanel);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.Label_MapperStatus);
-            this.Controls.Add(this.infoBox);
-            this.Controls.Add(this.MappersControl);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.AttilaBtn);
@@ -436,17 +482,17 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Options_FormClosing);
             this.Load += new System.EventHandler(this.Options_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Options_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Options_MouseMove);
             ((System.ComponentModel.ISupportInitialize)(this.Status_Ck3_Icon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Attila_Icon)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.infoBox)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ModManager)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -462,10 +508,7 @@
         private System.Windows.Forms.ToolTip ToolTip_Attila;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.FlowLayoutPanel MappersControl;
-        private System.Windows.Forms.PictureBox infoBox;
         private System.Windows.Forms.ToolTip ToolTip_UnitMappers;
-        private System.Windows.Forms.Label Label_MapperStatus;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolTip ToolTip_Options;
         private System.Windows.Forms.Panel OptionsPanel;
@@ -476,6 +519,11 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView ModManager;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel UMpanel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Button Btn_CK3Tab;
+        private System.Windows.Forms.Button Btn_TFETab;
+        private System.Windows.Forms.Button Btn_LOTRTab;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ActiveBoxes;
         private System.Windows.Forms.DataGridViewImageColumn ImageColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn ModName;

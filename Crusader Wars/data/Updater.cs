@@ -112,7 +112,7 @@ namespace Crusader_Wars
                               "For this you need to uninstall this Launcher by just deleting the folder." +
                               "Then you need to download the new setup from our website!"
                               ;
-                BETAUPDATE_Message.ShowWarningMessage(text);
+               // BETAUPDATE_Message.ShowWarningMessage(text);
             }
 
 

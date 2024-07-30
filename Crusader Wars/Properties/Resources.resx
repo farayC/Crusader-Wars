@@ -118,259 +118,166 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="loadingscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loadingscreen1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="start_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start_btn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="moving" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\moving.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="option1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\option.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="archers1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\archers1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="discord2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\discord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\steam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="discord1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\discord1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Node_martial" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Node_martial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="heavy_cavalry" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\heavy_cavalry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="loadingscreen1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loadingscreen2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="options1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="120px-Icon_CK3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\120px-Icon_CK3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="options2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="website_btn_new_hover1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\website_btn_new_hover1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="info_smaller" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\info_smaller.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="website1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\website1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="patreon_btn_clickpng" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patreon_btn_clickpng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="imageedit_2_3450978699" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\imageedit_2_3450978699.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="steam_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\steam_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Declare_war_interaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Declare_war_interaction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="steam_btn_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\steam_btn_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="features" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\features.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="paper" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\paper.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="options_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="modcon_loadingscreen2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\modcon_loadingscreen2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="discord" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\discord.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="start_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="heavy_infantry" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\heavy_infantry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ui" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ui.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="modcon_loadingscreen1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\modcon_loadingscreen1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="main_beta1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\main_beta1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="start_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="rotating_loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rotating_loading.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cha_evpic_charlemagne_prepares_for_war" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cha_evpic_charlemagne_prepares_for_war.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fortress-gd06cefbea_1280" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fortress-gd06cefbea_1280.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="options_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options_btn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="option (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\option (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="patch" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="loading_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loading_screen.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="options_bk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options_bk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="playbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\playbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Vassal_stance_minority" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Vassal_stance_minority.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="start_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="options1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="rotating_logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rotating_logo1.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="option" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\option.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="start" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="main_beta" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\main_beta.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="patreon1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patreon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Sem nome" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Sem nome.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="options_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="website_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\website_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background.jpg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background.jpg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="modcon_loadingscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\modcon_loadingscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="rotating_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rotating_logo.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c05-9d6d-fb5342c957e3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="start_new_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start_new_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cross (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cross (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="website_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\website_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="correct" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\correct.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="progress_orange" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\progress_orange.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="resume" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\resume.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="patreon_btn_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patreon_btn_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="steam_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\steam_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="website" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\website.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btnbk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btnbk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="patreon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patreon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="warning (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\warning (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="toggle_no" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\toggle_no.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cancel (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cancel (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="attilaicon (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\attilaicon (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="levies" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\levies.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="wider original" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wider original.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="archers1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\archers1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="website_btn_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\website_btn_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="correct" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\correct.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="options_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\options_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="patreon_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patreon_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="start_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\start_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="warfare_loadingscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\warfare_loadingscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ck3 (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ck3 (1).jpeg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bookpage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bookpage.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="steam_btn_new_hover1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\steam_btn_new_hover1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="warning (1)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\warning (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="tfe" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tfe.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="options_btn_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\options_btn_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="levies" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\levies.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="heavy_infantry" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\heavy_infantry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="options2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\options1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="website_btn_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\website_btn_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sem nome" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Sem nome.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\steam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Node_martial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Node_martial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tfe1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tfe1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="options_bk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\options_bk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logo.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="loading_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loading_screen.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="imageedit_2_3450978699" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\imageedit_2_3450978699.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="archers" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\archers.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cross (2) (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cross (2) (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="patreon_btn_clickpng" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\patreon_btn_clickpng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="main_beta" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\main_beta.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="start_new_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\start_new_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="patreon_btn_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\patreon_btn_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="default" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\default.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="attilaicon (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\attilaicon (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btnbk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btnbk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wider original" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wider original.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="website_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\website_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="warfare_loadingscreen_smallerlogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warfare_loadingscreen_smallerlogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="warning (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\warning (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="patreon_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\patreon_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="main_beta1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\main_beta1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="start_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\start_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="steam_btn_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\steam_btn_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="steam_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\steam_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="steam_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\steam_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="website_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\website_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="website_btn_new_hover1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\website_btn_new_hover1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="start_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\start_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="warfare_loadingscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\warfare_loadingscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="toggle_yes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\toggle_yes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fortress-gd06cefbea_1280" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fortress-gd06cefbea_1280.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="progress_orange" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\progress_orange.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="rotating_loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rotating_loading.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="website1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\website1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="options_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\options_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="steam_btn_new_hover1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\steam_btn_new_hover1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cha_evpic_charlemagne_prepares_for_war" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cha_evpic_charlemagne_prepares_for_war.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="heavy_cavalry" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\heavy_cavalry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LOTR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LOTR.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
