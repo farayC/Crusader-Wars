@@ -9,9 +9,6 @@ using System.Text;
 using System.Media;
 using System.Linq;
 using System.Drawing;
-using System.Xml.Linq;
-using System.Windows;
-using System.Text.RegularExpressions;
 using Crusader_Wars.client;
 using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.locs;
@@ -20,6 +17,9 @@ using Crusader_Wars.data.save_file;
 using Crusader_Wars.unit_mapper;
 using Crusader_Wars.terrain;
 using System.Threading;
+using Crusader_Wars.mod_manager;
+using System.Xml;
+using IWshRuntimeLibrary;
 
 namespace Crusader_Wars
 {
@@ -67,23 +67,50 @@ namespace Crusader_Wars
 
 
         Color Original_Color;
+
+        bool VerifyGamePaths()
+        {
+            if (Properties.Settings.Default.VAR_ck3_path.Contains("ck3.exe") && Properties.Settings.Default.VAR_attila_path.Contains("Attila.exe"))
+                return true;
+            else
+                return false;
+        }
+
+        bool VerifyEnabledUnitMappers()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(@".\settings\UnitMappers.xml");
+            foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
+            {
+                if (node is XmlComment) continue;
+                if (node.InnerText == "True")
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         private void Timer_Tick(object sender, EventArgs e)
         {
-
             if (_myVariable == 0)
             {
-                if (Properties.Settings.Default.VAR_ck3_path.Contains("ck3.exe") && Properties.Settings.Default.VAR_attila_path.Contains("Attila.exe"))
+                bool gamePaths = VerifyGamePaths();
+                bool unitMappers = VerifyEnabledUnitMappers();
+
+
+                if(!gamePaths || !unitMappers)
+                {
+                    if(!gamePaths) infoLabel.Text = "Games Paths Missing!";
+                    else infoLabel.Text = "No Unit Mappers Enabled!";
+                    ExecuteButton.Enabled = false;
+                    infoLabel.ForeColor = Color.FromArgb(74, 0, 0);
+                }
+                else if(gamePaths && unitMappers)
                 {
                     ExecuteButton.Enabled = true;
                     infoLabel.Text = "Ready to Start!";
                     infoLabel.ForeColor = Original_Color;
-
-                }
-                else
-                {
-                    ExecuteButton.Enabled = false;
-                    infoLabel.Text = "Games Paths Missing!";
-                    infoLabel.ForeColor = Color.Red;
                 }
             }
 
@@ -126,7 +153,22 @@ namespace Crusader_Wars
         private void btt_debug_Click(object sender, EventArgs e)
         {
         }
-        
+
+        private void CreateAttilaShortcut()
+        {
+            if(!System.IO.File.Exists(@".\CW.lnk")) {
+                object shDesktop = (object)"Desktop";
+                WshShell shell = new WshShell();
+                string shortcutAddress = @".\CW.lnk";
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+                shortcut.Description = "Shortcut with all user enabled mods and required unit mappers mods for Total War: Attila";
+                shortcut.WorkingDirectory = Properties.Settings.Default.VAR_attila_path.Replace(@"\Attila.exe", "");
+                shortcut.Arguments = "used_mods_cw.txt";
+                shortcut.TargetPath = Properties.Settings.Default.VAR_attila_path;
+                shortcut.Save();
+            }
+        }
+
 
 
         List<Army> attacker_armies;
@@ -145,38 +187,6 @@ namespace Crusader_Wars
 
         }
 
-        private void CheckForMappers()
-        {
-            string filePath = @".\Settings\lastchecked.txt"; ;
-            List<string> CheckedMappers;
-            //Read checked unit mappers file
-            using (StreamReader reader = new StreamReader(filePath))
-            {
-                var all = File.ReadAllLines(filePath);
-                CheckedMappers = new List<string>();
-
-                //For each checked unit mapper on the file
-                foreach (var line in all)
-                {
-                    if (line != null)
-                    {
-                        //Add to list
-                        CheckedMappers.Add(line);
-                    }
-                }
-                reader.Close();
-            }
-
-            if(CheckedMappers.Count < 1)
-            {
-                throw new Exception();
-            }
-            else
-            {
-                return;
-            }
-        }
-
 
         string log;
         Thread loadingThread;
@@ -190,20 +200,23 @@ namespace Crusader_Wars
 
             ExecuteButton.Enabled = false;
             ExecuteButton.BackgroundImage = Properties.Resources.start_new_disabled;
-            this.Text = "Crusader Wars (Waiting for battle...)";
+            
 
             ProcessCommands.ResumeProcess();
 
             while (true)
             {
 
+                infoLabel.Text = "Ready to start!";
+                this.Text = "Crusader Wars (Waiting for battle...)";
+
                 try
                 {
-                    CheckForMappers();
+                    CreateAttilaShortcut();
                 }
                 catch
                 {
-                    MessageBox.Show("No Unit Mapper is enabled!", "Data Error",
+                    MessageBox.Show("Error creating Attila shortcut!", "File Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Ready to start!";
                     ExecuteButton.Enabled = true;
@@ -211,14 +224,14 @@ namespace Crusader_Wars
                     break;
                 }
 
-                DataSearch.ClearLogFile();
-                DeclarationsFile.Erase();
-                BattleScript.EraseScript();
-                BattleResult.ClearAttilaLog();
+
 
                 try
                 {
-
+                    DataSearch.ClearLogFile();
+                    DeclarationsFile.Erase();
+                    BattleScript.EraseScript();
+                    BattleResult.ClearAttilaLog();
                 }
                 catch
                 {
@@ -250,7 +263,7 @@ namespace Crusader_Wars
                 bool battleHasStarted = false;
 
                 //Read log file and get all data from CK3
-                using (FileStream logFile = File.Open(debugLog_Path, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
+                using (FileStream logFile = System.IO.File.Open(debugLog_Path, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
                 {
 
                     using (StreamReader reader = new StreamReader(logFile))
@@ -293,27 +306,30 @@ namespace Crusader_Wars
                             break;
                         }
 
+                        UpdateLoadingScreenMessage("Getting data from save file...");
+                        StartLoadingScreen();
+                        
+                        infoLabel.Text = "Reading battle data...";
+                        this.Text = "Crusader Wars (Reading battle data...)";
+                        this.Hide();
 
+                        logFile.Position = 0;
+                        reader.DiscardBufferedData();
+                        log = reader.ReadToEnd();
+                        log = RemoveASCII(log);
+
+                        if (battleHasStarted)
+                        {
+
+                            DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
+                            DataSearch.Search(log);
+                            AttilaModManager.ReadInstalledMods();
+                            SetPlaythrough();
+                            AttilaModManager.CreateUserModsFile();
+                        }
                         try
                         {
-                            StartLoadingScreen();
-                            UpdateLoadingScreenMessage("Reading battle data...");
-                            infoLabel.Text = "Reading battle data...";
-                            this.Text = "Crusader Wars (Reading battle data...)";
-                            this.Hide();
 
-                            logFile.Position = 0;
-                            reader.DiscardBufferedData();
-                            log = reader.ReadToEnd();
-                            log = RemoveASCII(log);
-
-                            if (battleHasStarted)
-                            {
-
-                                DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
-                                DataSearch.Search(log);
-
-                            }
                         }
                         catch
                         {
@@ -378,11 +394,6 @@ namespace Crusader_Wars
                 var armies = ArmiesReader.ReadBattleArmies();
                 attacker_armies = armies.attacker;
                 defender_armies = armies.defender;
-
-                if (ModOptions.UnitCards())
-                {
-                    //UnitsCardsNames.ChangeUnitsCardsNames(UnitMapper.LoadedMapper, Player, Enemy); <---- REWORK THIS
-                }
 
                 var left_side = ArmiesReader.GetSideArmies("left");
                 var right_side = ArmiesReader.GetSideArmies("right");
@@ -608,9 +619,6 @@ namespace Crusader_Wars
                 GC.Collect();
 
             }
-
-          
-            
         }
         
 
@@ -654,7 +662,26 @@ namespace Crusader_Wars
 
         }
 
-        
+        /*---------------------------------------------
+         * :::::::::::::: PLAYTHROUGHS ::::::::::::::::
+         ---------------------------------------------*/
+        void SetPlaythrough()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(@".\settings\UnitMappers.xml");
+            string tagName = "";
+            foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
+            {
+                if (node is XmlComment) continue;
+                if (node.InnerText == "True")
+                {
+                    tagName = node.Attributes["name"].Value;
+                    break;
+                }
+            }
+            AttilaModManager.SetLoadingRequiredMods(UnitMappers_BETA.GetUnitMapperModFromTagAndTimePeriod(tagName));
+        }
+
 
 
         /*---------------------------------------------
@@ -693,20 +720,9 @@ namespace Crusader_Wars
                 Process.Start(ck3_path, "--continuelastsave");
             }
 
-            public static async void StartTotalWArAttilaProcess()
+            public static void StartTotalWArAttilaProcess()
             {
-                Process.Start("steam://rungameid/325610");
-                await Task.Delay(2000);
-                Process[] process_launcher = Process.GetProcessesByName("launcher");
-                if (process_launcher.Length == 0)
-                {
-                    Process[] process_attila = Process.GetProcessesByName("Total War: Attila");
-                    if (process_attila.Length == 0)
-                    {
-                        Process.Start(Properties.Settings.Default.VAR_attila_path);
-
-                    }
-                }
+                Process.Start(@".\CW.lnk");
             }
 
             public async static void CloseTotalWarAttilaProcess()

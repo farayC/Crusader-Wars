@@ -302,7 +302,6 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OptionSelection_UnitCards.BackColor = System.Drawing.Color.White;
             this.OptionSelection_UnitCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OptionSelection_UnitCards.Enabled = false;
             this.OptionSelection_UnitCards.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptionSelection_UnitCards.FormattingEnabled = true;
             this.OptionSelection_UnitCards.Items.AddRange(new object[] {

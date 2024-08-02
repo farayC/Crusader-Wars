@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Web.UI;
 using System.Windows;
 
 namespace Crusader_Wars.data.save_file
@@ -13,6 +14,8 @@ namespace Crusader_Wars.data.save_file
     public static class LandedTitles
     {
         static List<string> EnabledMods;
+
+        public static List<string> GetEnabledModsPaths() { return EnabledMods_Folders_Paths; }
 
         public static void ReadProvinces(List<Army> attacker_armies, List<Army> defender_armies)
         {

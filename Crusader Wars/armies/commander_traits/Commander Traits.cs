@@ -88,6 +88,8 @@ namespace Crusader_Wars.armies.commander_traits
 
         public int GetBenefits(string combatSide, string terrainType, bool isRiverCrossing, bool isHostileFaith, bool isWinter)
         {
+            if (Traits == null) return 0;
+
             int xp_boost = 0;
             foreach(Trait trait in Traits)
             {

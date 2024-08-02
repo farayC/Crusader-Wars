@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
@@ -19,61 +20,112 @@ namespace Crusader_Wars.unit_mapper
     {
         /*----------------------------------------------------------------
          * TO DO:
-         * Enable by year;
          * Terrains files reader ;
-         * Titles files reader
          * House files reader
          ----------------------------------------------------------------*/
 
 
         static List<string> UnitMappers_FolderPaths { get; set; }
         static string LoadedUnitMapper_FolderPath { get; set; }
-        public static void ReadUnitMappers()
+
+        public static string GetLoadedUnitMapperName() { return Path.GetFileName(LoadedUnitMapper_FolderPath); }
+
+        public static List<string> GetUnitMapperModFromTagAndTimePeriod(string tag)
         {
-            UnitMappers_FolderPaths = new List<string>();
-            LoadedUnitMapper_FolderPath = "";
-            LoadUnitMapper();
-            
-        }
+            var unit_mappers_folder = Directory.GetDirectories(@".\unit mappers");
+            List<string> requiredMods = new List<string>();
 
-        static void LoadUnitMapper ()
-        {
-            ReadEnabledMappersFile();
-
-            //One Unit Mapper enabled
-            if (UnitMappers_FolderPaths.Count == 1)
+            foreach (var mapper in unit_mappers_folder)
             {
-                LoadedUnitMapper_FolderPath = UnitMappers_FolderPaths[0];
-            }
-            //Multiple Unit Mappers enabled
-            else if (UnitMappers_FolderPaths.Count > 1)
-            {
-                LoadedUnitMapper_FolderPath = UnitMappers_FolderPaths[0];
-            }
-            //No Unit Mapper enabled
-            else
-            {
-                LoadedUnitMapper_FolderPath = UnitMappers_FolderPaths[0];
-            }
-
-            SetMapperImage(LoadedUnitMapper_FolderPath);
-        }
-
-        /*
-         * Read all activated unit mappers
-         */
-        static void ReadEnabledMappersFile()
-        {
-
-            using (StreamReader sr = new StreamReader(@".\settings\lastchecked.txt"))
-            {
-                while (!sr.EndOfStream)
+                string mapperName = Path.GetDirectoryName(mapper);
+                var files = Directory.GetFiles(mapper);
+                foreach (var file in files)
                 {
-                    string line = sr.ReadLine();
-                    if (line == null) break;
-                    UnitMappers_FolderPaths.Add(@".\unit mappers\" + line);
+                    string fileName = Path.GetFileName(file);
+                    if (fileName == "tag.txt")
+                    {
+                        string fileTag = File.ReadAllText(file);
+                        if (tag == fileTag)
+                        {
+                            // TIME PERIOD
+                            int startYear = -1, endYear = -1;
+                            bool isDefault = false;
+                            string timePeriodPath = mapper + @"\Time Period.xml";
+                            if (File.Exists(timePeriodPath))
+                            {
+                                XmlDocument xmlDocument = new XmlDocument();
+                                xmlDocument.Load(timePeriodPath);
+                                string startYearStr = xmlDocument.SelectSingleNode("//StartDate").InnerText;
+                                string endYearStr = xmlDocument.SelectSingleNode("//EndDate").InnerText;
+                                
+                                if(startYearStr == "Default" || startYearStr == "DEFAULT")
+                                {
+                                    isDefault = true;
+                                    startYear = 0;
+                                    endYear = 0;
+                                }
+
+                                if(!int.TryParse(startYearStr, out startYear))
+                                {
+                                    isDefault = true;
+                                    startYear = 0;
+                                    endYear = 0;
+                                }
+
+                                if (!int.TryParse(endYearStr, out endYear))
+                                {
+                                    isDefault = true;
+                                    startYear = 0;
+                                    endYear = 0;
+                                }
+
+                                if(startYear != -1 && endYear != -1)
+                                {
+
+                                    if((Date.Year >= startYear && Date.Year <= endYear) || isDefault)
+                                    {
+                                        //  MODS
+                                        string modsPath = mapper + @"\Mods.xml";
+                                        if (File.Exists(modsPath))
+                                        {
+                                            XmlDocument xmlMods = new XmlDocument();
+                                            xmlMods.Load(modsPath);
+                                            foreach (XmlNode node in xmlMods.DocumentElement.ChildNodes)
+                                            {
+                                                if (node is XmlComment) continue;
+                                                if (node.Name == "Mod")
+                                                {
+                                                    requiredMods.Add(node.InnerText);
+                                                }
+                                            }
+
+                                            LoadedUnitMapper_FolderPath = mapper;
+                                            return requiredMods;
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show($"Mods.xml was not found in {mapper}", "Unit Mappers Error",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Time Period.xml was not found in {mapper}", "Unit Mappers Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                            }
+                            break;
+                        }
+                    }
                 }
             }
+
+            return requiredMods;
         }
 
         struct MaxType
@@ -232,6 +284,7 @@ namespace Crusader_Wars.unit_mapper
         static string SearchInTitlesFile(Unit unit)
         {
             string titles_folder_path = LoadedUnitMapper_FolderPath + @"\Titles";
+            if (!Directory.Exists(titles_folder_path)) return "";
             var files_paths = Directory.GetFiles(titles_folder_path);
 
             if(unit.GetOwner() == null || unit.GetOwner().GetPrimaryTitleKey() == string.Empty)

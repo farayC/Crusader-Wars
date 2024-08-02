@@ -23,6 +23,8 @@ namespace Crusader_Wars.mod_manager
         string Name { get; set; }
         ModLocalization Localization { get; set; }
         string FullPath {  get; set; }
+        bool RequiredMod {  get; set; }
+        bool LoadingMod {  get; set; }
         public Mod(bool isEnabled, Bitmap pngImg, string name, ModLocalization local) { 
             Enabled = isEnabled;
             Image = pngImg;
@@ -39,20 +41,29 @@ namespace Crusader_Wars.mod_manager
         }
         public void StoreFullPath(string path) { FullPath =  path; }
         public void ChangeEnabledState(bool yn) {  Enabled = yn; }
+        public void IsRequiredMod(bool yn) { RequiredMod = yn; }
+        public void IsLoadingRequiredMod(bool yn) { LoadingMod = yn; }
 
         public bool IsEnabled() { return Enabled; }
+        public bool IsRequiredMod() { return RequiredMod; }
+        public bool IsLoadingModRequiredMod() { return LoadingMod; }
         public Bitmap GetThumbnail() { return Image; }
         public string GetName() { return Name; }
         public ModLocalization GetLocalization() { return Localization; }
         public string GetFullPath() { return FullPath; }
+
+        public void DisposeThumbnail() {  Image.Dispose();Image = null; }
     }
 
     public static class AttilaModManager
     {
         static DataGridView ModManagerControl { get; set; }
-        public static void SetControlRefence(DataGridView t) { ModManagerControl = t; }
-
         static List<Mod> ModsPaths { get; set; }
+        
+        public static void SetControlReference(DataGridView dataGrid)
+        {
+            ModManagerControl = dataGrid;
+        }
 
         static void RemoveRequiredMods()
         {
@@ -71,8 +82,27 @@ namespace Crusader_Wars.mod_manager
                         ModsFile.Load(file);
                         foreach(XmlNode modNode in ModsFile.DocumentElement.ChildNodes)
                         {
-                            ModsPaths.RemoveAll(x => x.GetName() == modNode.InnerText);
+                            ModsPaths.FirstOrDefault(x => x.GetName() == modNode.InnerText)?.IsRequiredMod(true);
+                            //ModsPaths.RemoveAll(x => x.GetName() == modNode.InnerText);
                         }                        
+                    }
+                }
+            }
+        }
+
+        public static void SetLoadingRequiredMods(List<string> requiredMods)
+        {
+            foreach(var mod in ModsPaths)
+            {
+                if(mod.IsRequiredMod())
+                {
+                    foreach(var requiredMod in requiredMods)
+                    {
+                        if(mod.GetName() == requiredMod)
+                        {
+                            mod.IsLoadingRequiredMod(true);
+                            break;
+                        }
                     }
                 }
             }
@@ -80,12 +110,18 @@ namespace Crusader_Wars.mod_manager
 
         public static void CreateUserModsFile()
         {
-            // Create essential file to open Attila.exe automatically
+            // CREATE ESSENTIAL FILE TO OPEN ATTILA AUTOMATICALLY
             string steam_app_id_path = Properties.Settings.Default.VAR_attila_path.Replace("Attila.exe", "steam_appid.txt");
             if (!File.Exists(steam_app_id_path))
             {
                 File.WriteAllText(steam_app_id_path, "325610");
             }
+
+            /*
+             *  ....................  
+             *      OPTIONAL MODS  
+             *  ....................
+             */
 
             string userMods_path = Properties.Settings.Default.VAR_attila_path.Replace("Attila.exe", "used_mods_cw.txt");
             string[] workingDirectories = null;
@@ -106,12 +142,43 @@ namespace Crusader_Wars.mod_manager
             {
                 dataModNames = dataMods.Select(x => x.GetName()).ToArray();
             }
-                       
-            if(!File.Exists(userMods_path)) { File.Create(userMods_path); }
+
+            /*
+             *  ....................  
+             *      REQUIRED MODS  
+             *  ....................
+             */
+
+            string[] workingDirectoriesRequiredMods = null;
+            string[] steamModNamesRequiredMods = null;
+            string[] dataModNamesRequiredMods = null;
+
+            //Working Directories
+            var steamModsRequiredMods = ModsPaths.Where(x => x.GetLocalization() == ModLocalization.Steam && x.IsRequiredMod() && x.IsLoadingModRequiredMod()).ToList();
+            if (steamModsRequiredMods != null)
+            {
+                workingDirectoriesRequiredMods = steamModsRequiredMods.Select(x => x.GetFullPath()).ToArray();
+                steamModNamesRequiredMods = steamModsRequiredMods.Select(x => x.GetName()).ToArray();
+            }
+
+            //Data Mods
+            var dataModsRequiredMods = ModsPaths.Where(x => x.GetLocalization() == ModLocalization.Data && x.IsRequiredMod() && x.IsLoadingModRequiredMod()).ToList();
+            if (dataModsRequiredMods != null)
+            {
+                dataModNamesRequiredMods = dataModsRequiredMods.Select(x => x.GetName()).ToArray();
+            }
+
+            if (!File.Exists(userMods_path)) { File.Create(userMods_path); }
             using(StreamWriter sw = new StreamWriter(userMods_path))
             {
                 sw.NewLine = "\n";
                 foreach(string wD  in workingDirectories)
+                {
+                    string t = wD.Replace(@"\", @"/");
+                    sw.WriteLine($"add_working_directory \"{t}\";");
+                }
+
+                foreach (string wD in workingDirectoriesRequiredMods)
                 {
                     string t = wD.Replace(@"\", @"/");
                     sw.WriteLine($"add_working_directory \"{t}\";");
@@ -128,9 +195,18 @@ namespace Crusader_Wars.mod_manager
                     sw.WriteLine($"mod \"{mod}\";");
                 }
 
+                foreach (string mod in dataModNamesRequiredMods)
+                {
+                    sw.WriteLine($"mod \"{mod}\";");
+                }
+                foreach (string mod in steamModNamesRequiredMods)
+                {
+                    sw.WriteLine($"mod \"{mod}\";");
+                }
+
+                sw.Dispose();
                 sw.Close();
             };
-
         }
 
         public static void ReadInstalledMods()
@@ -139,9 +215,6 @@ namespace Crusader_Wars.mod_manager
             string workshop_folder_path = Properties.Settings.Default.VAR_attila_path.Replace(@"common\Total War Attila\Attila.exe", @"workshop\content\325610\");
 
             ModsPaths = new List<Mod>();
-            Bitmap null_img = new Bitmap(@".\data\mod manager\noimage.png");
-            Bitmap img1 = null;
-
             //Read data folder
             var dataModsPaths = Directory.GetFiles(data_folder_path);
             foreach(var file in dataModsPaths)
@@ -177,7 +250,7 @@ namespace Crusader_Wars.mod_manager
                     }
                     else
                     {
-                        ModsPaths.Add(new Mod(false, null_img, fileName, ModLocalization.Data));
+                        ModsPaths.Add(new Mod(false, LoadBitmapWithReducedSize(@".\data\mod manager\noimage.png"), fileName, ModLocalization.Data, file));
                     }
                 }
             }
@@ -190,7 +263,7 @@ namespace Crusader_Wars.mod_manager
                 {
                     var files = Directory.GetFiles(folder);
                     string name = "";
-                    Bitmap bmp = null;
+                    string image_path = "";
                     string fullPath = "";
                     foreach (var file in files)
                     {
@@ -203,13 +276,13 @@ namespace Crusader_Wars.mod_manager
                         }
                         else if (Path.GetExtension(fileName) == ".png")
                         {
-                            bmp = new Bitmap(file);
+                            image_path = file;
                         }
                     }
                     if(name != string.Empty)
-                        ModsPaths.Add(new Mod(false, bmp, name, ModLocalization.Steam, fullPath)); 
-                            
-
+                    {
+                        ModsPaths.Add(new Mod(false, LoadBitmapWithReducedSize(image_path), name, ModLocalization.Steam, fullPath));
+                    }
                 }
             }
 
@@ -221,24 +294,65 @@ namespace Crusader_Wars.mod_manager
             //SET ACTIVE MODS
             SetActiveMods();
 
+        }
+
+        public static void ReadInstalledModsAndPopulateModManager()
+        {
+            ReadInstalledMods();
 
             //  SET AT MOD MANAGER
+            Bitmap steamImg = LoadBitmapWithReducedSize(@".\data\mod manager\steamlogo.png");
+            Bitmap dataImg = LoadBitmapWithReducedSize(@".\data\mod manager\folder.png");
             foreach (var mod in ModsPaths)
             {
-                if(mod.GetLocalization() == ModLocalization.Steam)
-                    img1 = new Bitmap(@".\data\mod manager\steamlogo.png");
-                else
-                    img1 = new Bitmap(@".\data\mod manager\folder.png");
+                if (mod.IsRequiredMod()) continue;
 
-                ModManagerControl.Rows.Add(mod.IsEnabled(), mod.GetThumbnail(), mod.GetName(), img1);
+                if (mod.GetLocalization() == ModLocalization.Steam)
+                    ModManagerControl.Rows.Add(mod.IsEnabled(), mod.GetThumbnail(), mod.GetName(), steamImg);
+                else
+                    ModManagerControl.Rows.Add(mod.IsEnabled(), mod.GetThumbnail(), mod.GetName(), dataImg);
+            }
+        }
+
+        static Bitmap LoadBitmapWithReducedSize(string path)
+        {
+            try
+            {
+                using (var originalImage = new Bitmap(path))
+                {
+                    // Create a smaller version of the image (thumbnail)
+                    int thumbnailWidth = originalImage.Width / 2; // Adjust as needed
+                    int thumbnailHeight = originalImage.Height / 2; // Adjust as needed
+                    var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight);
+
+                    using (var graphics = Graphics.FromImage(thumbnail))
+                    {
+                        graphics.DrawImage(originalImage, 0, 0, thumbnailWidth, thumbnailHeight);
+                    }
+
+                    return thumbnail;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading image: {ex.Message}");
+                return null;
             }
         }
 
 
+        static void DisposeImages()
+        {
+            foreach(var mod in ModsPaths)
+            {
+                mod.DisposeThumbnail();
+            }
+        }
         public static void SaveActiveMods()
         {
             var activeMods = ModsPaths.Where(mod => mod.IsEnabled()).Select(x => x.GetName()).ToArray();
             File.WriteAllLines(@".\data\mod manager\active_mods.txt", activeMods);
+            DisposeImages();
         }
 
         public static void ChangeEnabledState(DataGridViewRow row)
