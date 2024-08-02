@@ -372,42 +372,6 @@
   <data name="&gt;&gt;MainPanelLayout.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="&gt;&gt;EA_Label.Name" xml:space="preserve">
-    <value>EA_Label</value>
-  </data>
-  <data name="&gt;&gt;EA_Label.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;EA_Label.Parent" xml:space="preserve">
-    <value>BottomPanelLayout</value>
-  </data>
-  <data name="&gt;&gt;EA_Label.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="BottomPanelLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
-  </data>
-  <data name="BottomPanelLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 511</value>
-  </data>
-  <data name="BottomPanelLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>914, 28</value>
-  </data>
-  <data name="BottomPanelLayout.TabIndex" type="System.Int32, mscorlib">
-    <value>32</value>
-  </data>
-  <data name="&gt;&gt;BottomPanelLayout.Name" xml:space="preserve">
-    <value>BottomPanelLayout</value>
-  </data>
-  <data name="&gt;&gt;BottomPanelLayout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;BottomPanelLayout.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;BottomPanelLayout.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="EA_Label.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -449,6 +413,30 @@
   </data>
   <data name="&gt;&gt;EA_Label.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="BottomPanelLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
+  <data name="BottomPanelLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 511</value>
+  </data>
+  <data name="BottomPanelLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>914, 28</value>
+  </data>
+  <data name="BottomPanelLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="&gt;&gt;BottomPanelLayout.Name" xml:space="preserve">
+    <value>BottomPanelLayout</value>
+  </data>
+  <data name="&gt;&gt;BottomPanelLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;BottomPanelLayout.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;BottomPanelLayout.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="patreonBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>

@@ -153,7 +153,7 @@ namespace Crusader_Wars.data.save_file
 
                         if (army != null)
                         {
-                            army?.Commander.AddCourtPosition(profession, employeeID);
+                            army.Commander?.AddCourtPosition(profession, employeeID);
                         }
 
                     }
@@ -453,7 +453,7 @@ namespace Crusader_Wars.data.save_file
         static (int rank, string titleName) GetCommanderNobleRankAndTitleName(string commanderTitleID)
         {
             bool searchStarted = false;
-            int rankInt = 0; string titleName = "";
+            int rankInt = 1; string titleName = "";
             using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.LandedTitles()))
             {
                 string line;

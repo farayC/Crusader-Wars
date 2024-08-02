@@ -231,13 +231,6 @@ namespace Crusader_Wars
             string right_side_commander_id = Regex.Match(log, @"EnemyID:(\d+)").Groups[1].Value;
             string right_side_commander_culture_id = Regex.Match(log, @"RightSide_Commander_Culture:(\d+)").Groups[1].Value;
 
-
-            /*---------------------------------------------
-             * :::::::::::::::Unit Mapper::::::::::::::::::
-             ---------------------------------------------*/
-
-            UnitMappers_BETA.ReadUnitMappers();
-
             /*---------------------------------------------
              * :::::::::::::::::Terrain::::::::::::::::::::
              ---------------------------------------------*/

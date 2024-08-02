@@ -57,6 +57,7 @@ namespace Crusader_Wars.data.save_file
         string AttilaKey { get; set; }
         string AttilaFaction { get; set; }
         int Max { get; set; }
+        string LocName { get; set; }
 
         public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type)
         {
@@ -90,6 +91,7 @@ namespace Crusader_Wars.data.save_file
         public void ChangeName(string y) { Name = y; }
         public void ChangeSoldiers(int y) { Soldiers = y; }
         public void SetMax(int i) { Max = i; }
+        public void SetLocName(string t) { LocName = t; }
 
 
         public int GetMax() { return Max; }
@@ -103,8 +105,7 @@ namespace Crusader_Wars.data.save_file
         public int GetSoldiers() { return Soldiers; }
         public bool IsMerc() { return IsMercenaryBool; }
         public RegimentType GetRegimentType() { return Type; }
-
-
+        public string GetLocName() { return LocName; }
     }
     public enum RegimentType
     {

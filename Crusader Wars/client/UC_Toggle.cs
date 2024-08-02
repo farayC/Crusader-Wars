@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,22 +19,17 @@ namespace Crusader_Wars.client
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ChangeState();
-        }
-
         void ChangeState()
         {
             if (State == true)
             {
                 State = false;
-                button1.BackgroundImage = Properties.Resources.toggle_no;
+                this.BackgroundImage = Properties.Resources.toggle_no;
             }
             else
             {
                 State = true;
-                button1.BackgroundImage = Properties.Resources.toggle_yes;
+                this.BackgroundImage = Properties.Resources.toggle_yes;
             }
         }
 
@@ -42,12 +38,19 @@ namespace Crusader_Wars.client
             State = state;
             if (State == true)
             {
-                button1.BackgroundImage = Properties.Resources.toggle_yes;
+                this.BackgroundImage = Properties.Resources.toggle_yes;
             }
             else
             {
-                button1.BackgroundImage = Properties.Resources.toggle_no;
+                this.BackgroundImage = Properties.Resources.toggle_no;
             }
+        }
+
+        private void UC_Toggle_Click(object sender, EventArgs e)
+        {
+            ChangeState();
+            SoundPlayer sounds = new SoundPlayer(@".\data\sounds\metal-dagger-hit-185444.wav");
+            sounds.Play();
         }
     }
 }

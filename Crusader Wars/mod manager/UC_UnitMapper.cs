@@ -13,7 +13,7 @@ namespace Crusader_Wars.mod_manager
         string SteamCollectionLink {  get; set; }
         List<string> RequiredModsList { get; set; }
         
-        public UC_UnitMapper(Bitmap image, string steamCollectionLink, bool state)
+        public UC_UnitMapper(Bitmap image, string steamCollectionLink, List<string> requiredMods,bool state)
         {
             InitializeComponent();
 
@@ -21,13 +21,7 @@ namespace Crusader_Wars.mod_manager
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
             SteamCollectionLink = steamCollectionLink;
             uC_Toggle1.SetState(state);
-
-            RequiredModsList = new List<string>
-            {
-                "1051_0.pack",
-                "1051_1.pack",
-                "ad_1051.pack"
-            };
+            RequiredModsList = requiredMods;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -103,6 +97,7 @@ namespace Crusader_Wars.mod_manager
 
                     MessageBox.Show($"You are missing these mods:\n{missingMods}", "Missing Mods!",
                     MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    uC_Toggle1.SetState(false);
                 }
                 else if (notFoundMods.Count == 0) // all installed
                 {

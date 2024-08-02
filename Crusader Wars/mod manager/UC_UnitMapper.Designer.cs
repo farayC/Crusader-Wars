@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UC_UnitMapper));
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.uC_Toggle1 = new Crusader_Wars.client.UC_Toggle();
@@ -65,9 +66,12 @@
             // uC_Toggle1
             // 
             this.uC_Toggle1.BackColor = System.Drawing.Color.Transparent;
-            this.uC_Toggle1.Location = new System.Drawing.Point(210, 79);
+            this.uC_Toggle1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("uC_Toggle1.BackgroundImage")));
+            this.uC_Toggle1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.uC_Toggle1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uC_Toggle1.Location = new System.Drawing.Point(222, 92);
             this.uC_Toggle1.Name = "uC_Toggle1";
-            this.uC_Toggle1.Size = new System.Drawing.Size(105, 72);
+            this.uC_Toggle1.Size = new System.Drawing.Size(79, 67);
             this.uC_Toggle1.State = true;
             this.uC_Toggle1.TabIndex = 1;
             // 

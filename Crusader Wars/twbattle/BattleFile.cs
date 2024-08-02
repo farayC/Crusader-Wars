@@ -1,8 +1,10 @@
 ﻿using Crusader_Wars.armies;
 using Crusader_Wars.client;
 using Crusader_Wars.data.save_file;
+using Crusader_Wars.locs;
 using Crusader_Wars.terrain;
 using Crusader_Wars.twbattle;
+using Crusader_Wars.unit_mapper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -435,7 +437,12 @@ namespace Crusader_Wars
             {
                 AllSeparateArmies(temp_attacker_armies, temp_defender_armies, player_main_army, enemy_main_army, total_soldiers, battleMap);
             }
- 
+
+            if (ModOptions.UnitCards())
+            {
+                UnitsCardsNames.ChangeUnitsCardsNames(UnitMappers_BETA.GetLoadedUnitMapperName(), attacker_armies, defender_armies);
+            }
+
         }
 
         private static void WriteArmy(Army army, int total_soldiers, bool isReinforcement, string x)

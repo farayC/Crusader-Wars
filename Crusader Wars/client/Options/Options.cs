@@ -20,29 +20,11 @@ namespace Crusader_Wars
         private string CK3_Path { get; set; }
         private string Attila_Path { get; set; }
 
-
-
-        UserControl General_Tab;
-        UserControl Units_Tab;
-        UserControl BattleScale_Tab;
-
-        UC_UnitMapper CrusaderKings_Tab;
-        UC_UnitMapper TheFallenEagle_Tab;
-        UC_UnitMapper RealmsInExile_Tab;
         public Options()
         {
             InitializeComponent();
             this.Icon = Properties.Resources.logo;
-        }
 
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;
-                return cp;
-            }
         }
 
         private void CloseBtn_Click(object sender, EventArgs e)
@@ -53,9 +35,9 @@ namespace Crusader_Wars
             WriteUnitMappersOptions();
             
             AttilaModManager.SaveActiveMods();
-            AttilaModManager.CreateUserModsFile();
             ChangeTabsStates();
 
+            this.Dispose();
             this.Close();
         }
 
@@ -66,19 +48,49 @@ namespace Crusader_Wars
             Units_Tab = new UC_UnitsOptions();
             BattleScale_Tab = new UC_BattleScaleOptions();
 
-            //ReadTimePeriods();
             ReadUnitMappersOptions();
             ReadOptionsFile();
             SetOptionsUIData();
             Status_Refresh();
 
-
-            AttilaModManager.SetControlRefence(ModManager);
-            AttilaModManager.ReadInstalledMods();
-            
+            AttilaModManager.SetControlReference(ModManager);
+            AttilaModManager.ReadInstalledModsAndPopulateModManager();
         }
 
-       
+        /*##############################################
+         *####              MOD OPTIONS             #### 
+         *####--------------------------------------####
+         *####          Mod options section         ####
+         *##############################################
+         */
+        UserControl General_Tab;
+        UserControl Units_Tab;
+        UserControl BattleScale_Tab;
+        private void Btn_GeneralTab_Click(object sender, EventArgs e)
+        {
+            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != General_Tab)
+                ChangeOptionsTab(General_Tab);
+        }
+
+        private void Btn_UnitsTab_Click(object sender, EventArgs e)
+        {
+            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != Units_Tab)
+                ChangeOptionsTab(Units_Tab);
+        }
+
+        private void Btn_BattleScaleTab_Click(object sender, EventArgs e)
+        {
+            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != BattleScale_Tab)
+                ChangeOptionsTab(BattleScale_Tab);
+        }
+
+        void ChangeOptionsTab(Control control)
+        {
+            control.Dock = DockStyle.Fill;
+            OptionsPanel.Controls.Clear();
+            OptionsPanel.Controls.Add(control);
+            control.BringToFront();
+        }
 
         //this is to read the options values on the .xml file
         public static List<(string option, string value)> optionsValuesCollection { get; private set; }
@@ -179,7 +191,6 @@ namespace Crusader_Wars
             
 
             ChangeOptionsTab(General_Tab);
-            ChangeUnitMappersTab(CrusaderKings_Tab);
         }
 
 
@@ -244,41 +255,24 @@ namespace Crusader_Wars
             xmlDoc.Save(file);
         }
 
-        //This is for unit mapper tooltip
-        List<(string mapper, string start_year, string end_year)> timePeriodCollecion;
-        /*
-        void ReadTimePeriods()
+        /*##############################################
+         *####              GAMES PATHS             #### 
+         *####--------------------------------------####
+         *####          Game paths section          ####
+         *##############################################
+         */
+
+        private void AttilaBtn_MouseHover(object sender, EventArgs e)
         {
-            timePeriodCollecion = new List<(string mapper, string start_year, string end_year)>();
-
-            string mappers_folder = Directory.GetCurrentDirectory() + @"\unit mappers";
-            var folderNames = Directory.GetDirectories(mappers_folder).Select(Path.GetFileName).ToArray();
-            foreach (string folder in folderNames)
-            {
-                string time_period_path = UnitMapper.GetXmlFilePath(folder, "TimePeriod")[0];
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(time_period_path);
-
-                string startDateNode = xmlDoc.SelectSingleNode("/TimePeriod/StartDate").InnerText;
-                string endDateNode = xmlDoc.SelectSingleNode("/TimePeriod/EndDate").InnerText;
-
-                if((startDateNode == "DEFAULT" || startDateNode == "default") || (endDateNode == "DEFAULT" || endDateNode == "default"))
-                {
-
-                    string text = "Anytime";
-                    timePeriodCollecion.Add((folder, text, text));
-                }
-                else
-                {
-                    timePeriodCollecion.Add((folder, startDateNode,  endDateNode));
-
-                }
-
-
-            }
+            ToolTip_Attila.ToolTipTitle = "Attila Path";
+            ToolTip_Attila.SetToolTip(AttilaBtn, Properties.Settings.Default.VAR_attila_path);
         }
-        */
 
+        private void ck3Btn_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip_Attila.ToolTipTitle = "Crusader Kings 3 Path";
+            ToolTip_Attila.SetToolTip(ck3Btn, Properties.Settings.Default.VAR_ck3_path);
+        }
 
         private void Status_Refresh()
         {
@@ -403,9 +397,14 @@ namespace Crusader_Wars
 
         }
 
+        /*##############################################
+         *####         OPTIONS FORM MOVEMENT        #### 
+         *####--------------------------------------####
+         *####--------------------------------------####
+         *##############################################
+         */
 
 
-        
         Point mouseOffset;
         private void Options_MouseDown(object sender, MouseEventArgs e)
         {
@@ -423,43 +422,18 @@ namespace Crusader_Wars
             }
         }
 
-        private void AttilaBtn_MouseHover(object sender, EventArgs e)
+        protected override CreateParams CreateParams
         {
-            ToolTip_Attila.ToolTipTitle = "Attila Path";
-            ToolTip_Attila.SetToolTip(AttilaBtn, Properties.Settings.Default.VAR_attila_path);
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
+            }
         }
 
-        private void ck3Btn_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip_Attila.ToolTipTitle = "Crusader Kings 3 Path";
-            ToolTip_Attila.SetToolTip(ck3Btn, Properties.Settings.Default.VAR_ck3_path);
-        }
 
-        private void Btn_GeneralTab_Click(object sender, EventArgs e)
-        {
-            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != General_Tab)
-                ChangeOptionsTab(General_Tab);
-        }
 
-        private void Btn_UnitsTab_Click(object sender, EventArgs e)
-        {
-            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != Units_Tab)
-                ChangeOptionsTab(Units_Tab);
-        }
-
-        private void Btn_BattleScaleTab_Click(object sender, EventArgs e)
-        {
-            if (OptionsPanel.Controls.Count > 0 && OptionsPanel.Controls[0] != BattleScale_Tab)
-                ChangeOptionsTab(BattleScale_Tab);
-        }
-
-        void ChangeOptionsTab(Control control)
-        {
-            control.Dock = DockStyle.Fill;
-            OptionsPanel.Controls.Clear();
-            OptionsPanel.Controls.Add(control);
-            control.BringToFront();
-        }
 
 
         /*##############################################
@@ -502,6 +476,10 @@ namespace Crusader_Wars
          *####         Unit Mappers Section         ####
          *##############################################
          */
+
+        UC_UnitMapper CrusaderKings_Tab;
+        UC_UnitMapper TheFallenEagle_Tab;
+        UC_UnitMapper RealmsInExile_Tab;
         private void Btn_CK3Tab_Click(object sender, EventArgs e)
         {
             if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != CrusaderKings_Tab)
@@ -525,6 +503,7 @@ namespace Crusader_Wars
 
         void ChangeTabsStates() // <--- fix this!
         {
+
             switch(CrusaderKings_Tab.GetState())
             {
                 case true:
@@ -556,6 +535,51 @@ namespace Crusader_Wars
             control.BringToFront();
         }
 
+        List<string> GetUnitMappersModsCollectionFromTag(string tag)
+        {
+            var unit_mappers_folder = Directory.GetDirectories(@".\unit mappers");
+            List<string> requiredMods = new List<string>();
+
+            foreach(var mapper in unit_mappers_folder)
+            {
+                string mapperName = Path.GetDirectoryName(mapper);
+                var files = Directory.GetFiles(mapper);
+                foreach(var file in files)
+                {
+                    string fileName = Path.GetFileName(file);
+                    if(fileName == "tag.txt")
+                    {
+                        string fileTag = File.ReadAllText(file);
+                        if(tag == fileTag)
+                        {
+                            string modsPath = mapper + @"\Mods.xml";
+                            if(File.Exists(modsPath))
+                            {
+                                XmlDocument xmlDocument = new XmlDocument();
+                                xmlDocument.Load(modsPath);
+                                foreach (XmlNode node in xmlDocument.DocumentElement.ChildNodes)
+                                {
+                                    if (node is XmlComment) continue;
+                                    if (node.Name == "Mod")
+                                    {
+                                        requiredMods.Add(node.InnerText);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Mods.xml was not found in {mapper}", "Unit Mappers Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return requiredMods;
+        }
+
         void ReadUnitMappersOptions()
         {
             string file = @".\Settings\UnitMappers.xml";
@@ -571,10 +595,10 @@ namespace Crusader_Wars
             if (tfeToggleStateStr == "True") tfeToggleState = true; else tfeToggleState = false;
             if (lotrToggleStateStr == "True") lotrToggleState = true; else lotrToggleState = false;
 
-            CrusaderKings_Tab = new UC_UnitMapper(Properties.Resources._default, "", ck3ToggleState);
-            TheFallenEagle_Tab = new UC_UnitMapper(Properties.Resources.tfe, "", tfeToggleState);
-            RealmsInExile_Tab = new UC_UnitMapper(Properties.Resources.LOTR, "https://steamcommunity.com/sharedfiles/filedetails/?id=3211765434", lotrToggleState);
-
+            CrusaderKings_Tab = new UC_UnitMapper(Properties.Resources._default, "", GetUnitMappersModsCollectionFromTag("DefaultCK3"),ck3ToggleState);
+            TheFallenEagle_Tab = new UC_UnitMapper(Properties.Resources.tfe, "", GetUnitMappersModsCollectionFromTag("TheFallenEagle"), tfeToggleState);
+            RealmsInExile_Tab = new UC_UnitMapper(Properties.Resources.LOTR, "https://steamcommunity.com/sharedfiles/filedetails/?id=3211765434", GetUnitMappersModsCollectionFromTag("RealmsInExile"), lotrToggleState);
+            ChangeUnitMappersTab(CrusaderKings_Tab);
         }
 
         void WriteUnitMappersOptions()
