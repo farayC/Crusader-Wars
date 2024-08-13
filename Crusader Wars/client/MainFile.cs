@@ -20,6 +20,8 @@ using System.Threading;
 using Crusader_Wars.mod_manager;
 using System.Xml;
 using IWshRuntimeLibrary;
+using System.IO.Compression;
+
 
 namespace Crusader_Wars
 {
@@ -34,8 +36,7 @@ namespace Crusader_Wars
         {
             InitializeComponent();
             
-            System.Threading.Thread.Sleep(1000);
-
+            Thread.Sleep(1000);
 
             documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             debugLog_Path = documentsPath + "\\Paradox Interactive\\Crusader Kings III\\console_history.txt";
@@ -91,6 +92,7 @@ namespace Crusader_Wars
 
             return false;
         }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (_myVariable == 0)
@@ -125,7 +127,7 @@ namespace Crusader_Wars
         {
 
             //Load Game Paths
-            Options.ReadGamePaths();
+            Options.ReadGamePaths();    
 
             //Hide debug button
             btt_debug.Visible = false;
@@ -177,7 +179,7 @@ namespace Crusader_Wars
         {
             infoLabel.Text = "Loading DLLs...";
             ExecuteButton.Enabled= false;
-            LoadDLLs();
+            //LoadDLLs();
             ExecuteButton.Enabled= true;
             infoLabel.Text = "Ready to Start!";
 
@@ -360,13 +362,13 @@ namespace Crusader_Wars
 
                 try
                 {
-
                     UpdateLoadingScreenMessage("Getting data from save file...");
                     await Task.Delay(2000); //Old was 3000ms
                     ProcessCommands.SuspendProcess();
 
-                    path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
-
+                    //path_editedSave = Properties.Settings.Default.VAR_dir_save + @"\CrusaderWars_Battle.ck3";
+                    path_editedSave = @".\data\save_file_data\gamestate_file\gamestate";
+                    SaveFile.Uncompress();
                     Reader.ReadFile(path_editedSave);
                     BattleResult.GetPlayerCombatResult();
                     BattleResult.ReadPlayerCombat(CK3LogData.LeftSide.GetCommander().id);
@@ -483,8 +485,6 @@ namespace Crusader_Wars
                 {
                     //Open Total War Attila
                     Games.StartTotalWArAttilaProcess();
-                    CloseLoadingScreen();
-                    this.Show();
                 }
                 catch
                 {
@@ -505,7 +505,10 @@ namespace Crusader_Wars
                     DeclarationsFile.Erase();
                     BattleScript.EraseScript();
                     BattleResult.ClearAttilaLog();
-                    //UnitMapper.ShowRequiredMods(); //<-- button ok
+                    
+                    CloseLoadingScreen();
+                    this.Show();
+
                 }
                 catch
                 {
@@ -607,6 +610,10 @@ namespace Crusader_Wars
 
                     //  WRITE TO SAVE FILE
                     BattleResult.SendToSaveFile(path_editedSave);
+
+                    //  COMPRESS SAVE FILE AND SEND TO SAVE FILE FOLDER
+                    SaveFile.Compress();
+                    SaveFile.Finish();
 
                     //  OPEN CK3 WITH BATTLE RESULTS
                     Games.LoadBattleResults();
@@ -743,11 +750,45 @@ namespace Crusader_Wars
         /*---------------------------------------------
          * :::::::::::LOADING SCREEN FUNCS:::::::::::::
          ---------------------------------------------*/
+
+        void ChangeLoadingScreenImage()
+        {
+            string file = @".\Settings\UnitMappers.xml";
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(file);
+
+            var ck3ToggleStateStr = xmlDoc.SelectSingleNode("//UnitMappers [@name='DefaultCK3']").InnerText;
+            var tfeToggleStateStr = xmlDoc.SelectSingleNode("//UnitMappers [@name='TheFallenEagle']").InnerText;
+            var lotrToggleStateStr = xmlDoc.SelectSingleNode("//UnitMappers [@name='RealmsInExile']").InnerText;
+
+            string playthrough = "";
+            if (ck3ToggleStateStr == "True") playthrough = "Medieval";
+            if (tfeToggleStateStr == "True") playthrough = "LateAntiquity";
+            if (lotrToggleStateStr == "True") playthrough = "Lotr";
+
+            switch (playthrough)
+            {
+                case "Medieval":
+                    loadingScreen.BackgroundImage = Properties.Resources.LS_medieval;
+                    break;
+                case "LateAntiquity":
+                    loadingScreen.BackgroundImage = Properties.Resources.LS_late_antiquity;
+                    break;
+                case "Lotr":
+                    loadingScreen.BackgroundImage = Properties.Resources.LS_lotr;
+                    break;
+                default:
+                    loadingScreen.BackgroundImage = Properties.Resources.LS_medieval;
+                    break;
+            }
+        }
         public void StartLoadingScreen()
         {
+
             loadingThread = new Thread(new ThreadStart(() =>
             {
                 loadingScreen = new LoadingScreen();
+                ChangeLoadingScreenImage();
                 Application.Run(loadingScreen);
             }));
 
@@ -760,8 +801,6 @@ namespace Crusader_Wars
             {
                 Thread.Sleep(50);
             }
-
-
         }
 
         public void UpdateLoadingScreenMessage(string message)
@@ -794,7 +833,7 @@ namespace Crusader_Wars
         /*---------------------------------------------
          * :::::::::::LOW-LEVEL FUNCTIONS  :::::::::::::
          ---------------------------------------------*/
-        private string RemoveASCII(string inputString)
+        public static string RemoveASCII(string inputString)
         {
             StringBuilder sb = new StringBuilder();
             string apostrophe = "'";

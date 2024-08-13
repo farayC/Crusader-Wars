@@ -443,6 +443,8 @@ namespace Crusader_Wars
                 UnitsCardsNames.ChangeUnitsCardsNames(UnitMappers_BETA.GetLoadedUnitMapperName(), attacker_armies, defender_armies);
             }
 
+            UnitMappers_BETA.SetMapperImage();
+
         }
 
         private static void WriteArmy(Army army, int total_soldiers, bool isReinforcement, string x)
@@ -455,10 +457,12 @@ namespace Crusader_Wars
                 OpenArmy();
 
             //Write army faction name
-            if(army.IsPlayer())
+            if(army.IsPlayer() && army.isMainArmy)
                 AddArmyName(CK3LogData.LeftSide.GetRealmName());
-            else
+            else if(army.IsEnemy() && army.isMainArmy)
                 AddArmyName(CK3LogData.RightSide.GetRealmName());     
+            else
+                AddArmyName("Allied Army");
 
 
             //Write essential data
@@ -680,7 +684,7 @@ namespace Crusader_Wars
 
                     string PR_General = $"<unit num_soldiers= \"{numberOfSoldiers}\" script_name= \"{Unit_Script_Name}\">\n" +
                      $"<unit_type type=\"{troopType}\"/>\n" +
-                     $"<position x=\"{Position.Y}\" y=\"{Position.X}\"/>\n" +
+                     $"<position x=\"{Position.X}\" y=\"{Position.Y}\"/>\n" +
                      $"<orientation radians=\"{Rotation}\"/>\n" +
                      "<width metres=\"21.70\"/>\n" +
                      $"<unit_experience level=\"{experience}\"/>\n" +

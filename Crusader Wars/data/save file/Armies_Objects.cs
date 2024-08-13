@@ -99,9 +99,23 @@ namespace Crusader_Wars.data.save_file
         public string GetAttilaUnitKey() { return AttilaKey; }
         public Owner GetOwner() { return Owner; }
         public string GetName() { return Name; }
-        public Culture GetObjCulture() { return UnitCulture; }
-        public string GetCulture() { if (UnitCulture is null) return "NOT FOUND"; return UnitCulture.GetCultureName(); }
-        public string GetHeritage() { if (UnitCulture is null) return "NOT FOUND"; return UnitCulture.GetHeritageName(); }
+        public Culture GetObjCulture() { 
+
+            return UnitCulture; 
+        }
+        public string GetCulture() {
+            if (UnitCulture == null)
+            { 
+                return "not_found";
+            }
+                
+            return UnitCulture.GetCultureName(); 
+        }
+        public string GetHeritage() { 
+            if (UnitCulture == null) 
+                return "not_found"; 
+            return UnitCulture.GetHeritageName(); 
+        }
         public int GetSoldiers() { return Soldiers; }
         public bool IsMerc() { return IsMercenaryBool; }
         public RegimentType GetRegimentType() { return Type; }
@@ -237,6 +251,12 @@ namespace Crusader_Wars.data.save_file
         public Owner(string iD)
         {
             ID = iD;
+        }
+
+        public Owner(string iD, Culture culture)
+        {
+            ID = iD;
+            Culture = culture;
         }
 
         public void SetCulture(Culture culture) { Culture = culture; }

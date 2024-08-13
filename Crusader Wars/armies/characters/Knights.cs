@@ -34,7 +34,7 @@ namespace Crusader_Wars
         int Prowess { get; set; }
         int Soldiers { get; set; }
         List<(int Index, string Key)> Traits { get; set; }
-        BaseSkills BaseSkill { get; set; }
+        BaseSkills BaseSkills { get; set; }
         bool hasFallen { get; set; }
 
         bool isAccoladeKnight { get; set; }
@@ -54,7 +54,8 @@ namespace Crusader_Wars
         internal void HasFallen(bool yn) { hasFallen = yn; }
         public void ChangeCulture(Culture cul) { CultureObj = cul; }
         public void SetTraits(List<(int, string)> list_trait) { Traits = list_trait; }
-        public void IsAccolade(bool yn, Accolade accolade) { isAccoladeKnight = yn; Accolade = accolade; Soldiers += 3; }
+        public void IsAccolade(bool yn, Accolade accolade) { isAccoladeKnight = yn; Accolade = accolade; Soldiers += 4; }
+        public void SetBaseSkills(BaseSkills t) { BaseSkills =  t; }
 
 
         internal Knight(string name, string id, Culture culture, int prowess, int soldiers) { 
@@ -85,6 +86,7 @@ namespace Crusader_Wars
 
             Soldiers += debuff;
         }
+
 
         int SetStrengh(int soldiers)
         {
@@ -138,37 +140,37 @@ namespace Crusader_Wars
                 // Determine which option to set based on its percentage chance
                 if (RandomNumber >= 0 && RandomNumber <= WoundedChance)
                 {
-                    Console.WriteLine("Wounded ");
+                    Console.WriteLine("A Knight was Wounded ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Wounded().ToString());
                 }
                 else if (RandomNumber > WoundedChance && RandomNumber <= Severely_InjuredChance)
                 {
-                    Console.WriteLine("Severely_Injured ");
+                    Console.WriteLine("A Knight was Severely_Injured ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Severely_Injured().ToString());
                 }
                 else if (RandomNumber > Severely_InjuredChance && RandomNumber <= Brutally_MauledChance)
                 {
-                    Console.WriteLine("Brutally Mauled ");
+                    Console.WriteLine("A Knight was Brutally Mauled ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Brutally_Mauled().ToString());
                 }
                 else if (RandomNumber > Brutally_MauledChance && RandomNumber <= MaimedChance)
                 {
-                    Console.WriteLine("Maimed ");
+                    Console.WriteLine("A Knight was Maimed ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Maimed().ToString());
                 }
                 else if (RandomNumber > MaimedChance && RandomNumber <= One_LeggedChance)
                 {
-                    Console.WriteLine("One Legged ");
+                    Console.WriteLine("A Knight got One Legged ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.One_Legged().ToString());
                 }
                 else if (RandomNumber > One_LeggedChance && RandomNumber <= One_EyedChance)
                 {
-                    Console.WriteLine("One Eyed ");
+                    Console.WriteLine("A Knight got One Eyed ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.One_Eyed().ToString());
                 }
                 else if (RandomNumber > One_EyedChance && RandomNumber <= Disfigured)
                 {
-                    Console.WriteLine("Disfigured ");
+                    Console.WriteLine("A Knight got Disfigured ");
                     return CharacterWounds.VerifyTraits(traits_line, WoundedTraits.Disfigured().ToString());
                 }
             }
@@ -281,21 +283,24 @@ namespace Crusader_Wars
 
                 //random knight
                 int soldiers_lost = totalSoldiers - remainingSoldiers;
-                while (soldiers_lost > 0)
+
+                List<Knight> tempKnightsList = new List<Knight>();
+                tempKnightsList.AddRange(Knights);
+                while (soldiers_lost >= 0)
                 {
-                    if (Knights.Count == 0) break;
+                    if (tempKnightsList.Count == 0) break;
 
                     Random random = new Random();
-                    int random_index = random.Next(Knights.Count);
-                    var knight = Knights[random_index];
+                    int random_index = random.Next(tempKnightsList.Count);
+                    var knight = tempKnightsList[random_index];
 
                     soldiers_lost -= knight.GetSoldiers();
 
-                    if (soldiers_lost <= 0) break;
+                    //if (soldiers_lost <= 0) break;
+                    
+                    knight.HasFallen(true);
+                    tempKnightsList.Remove(knight);
 
-                    //KilledKnights.Add(knight);
-
-                    Knights[random_index].HasFallen(true);
                 }
 
 

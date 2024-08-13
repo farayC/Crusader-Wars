@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crusader_Wars.unit_mapper;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -633,10 +634,9 @@ namespace Crusader_Wars.terrain
 
 
             //Get battle maps from unit mappers
-            /*
-            if (UnitMapper.Normal_Maps != null)
+            if (UnitMappers_BETA.Terrains != null)
             {
-                var terrainItems = UnitMapper.Normal_Maps.Where(item => item.terrain == terrain).ToList();
+                var terrainItems = UnitMappers_BETA.Terrains.GetNormalMaps().Where(item => item.terrain == terrain).ToList();
 
                 if (terrainItems.Count > 0)
                 {
@@ -649,30 +649,17 @@ namespace Crusader_Wars.terrain
                     Coordinates.Y = randomTerrainItem.y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
                 }
-
             }
-            */
+
 
             switch (terrain)
             {
-                case "Desert":
-                case "Desierto":
-                case "Désert":
-                case "Wüste":
-                case "Пустыня":
-                case "사막":
-                case "沙漠":
+                case "desert":
                     random = rnd.Next(0, BattleMaps.Desert_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Desert_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Desert_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Desert Mountains":
-                case "Montaña desértica":
-                case "Montagnes désertiques":
-                case "Bergwüste":
-                case "Пустынные горы":
-                case "사막 산악":
-                case "沙漠山地":
+                case "desert_mountains":
                     random = rnd.Next(0, BattleMaps.DesertMountains_Tiles.Length - 1);
                     defPositions = BattleMaps.DesertMountains_Tiles[random].defPositions;
                     attPositions = BattleMaps.DesertMountains_Tiles[random].attPositions;
@@ -680,141 +667,69 @@ namespace Crusader_Wars.terrain
                     Coordinates.Y = BattleMaps.DesertMountains_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, attPositions, defPositions);
 
-                case "Drylands":
-                case "Tierras áridas":
-                case "Terres arides":
-                case "Trockengebiet":
-                case "Засушливые земли":
-                case "건조지":
-                case "旱地":
+                case "drylands":
                     random = rnd.Next(0, BattleMaps.Dryland_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Dryland_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Dryland_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
 
-                case "Farmlands":
-                case "Tierra de cultivo":
-                case "Terres arables":
-                case "Ackerland":
-                case "Пахотные земли":
-                case "농지":
-                case "农田":
+                case "farmlands":
                     random = rnd.Next(0, BattleMaps.Farmlands_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Farmlands_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Farmlands_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Forest":
-                case "Bosque":
-                case "Forêt":
-                case "Wald":
-                case "Лес":
-                case "삼림":
-                case "森林":
+                case "forest":
                     random = rnd.Next(0, BattleMaps.Forest_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Forest_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Forest_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Hills":
-                case "Colina":
-                case "Collines":
-                case "Hügel":
-                case "Холмы":
-                case "구릉지":
-                case "丘陵":
+                case "hills":
                     random = rnd.Next(0, BattleMaps.Hills_Tiles.Length - 1);
                     defPositions = BattleMaps.Hills_Tiles[random].defPositions;
                     attPositions = BattleMaps.Hills_Tiles[random].attPositions;
                     Coordinates.X = BattleMaps.Hills_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Hills_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, attPositions, defPositions);
-                case "Mountains":
-                case "Montaña":
-                case "Montagnes":
-                case "Berge":
-                case "Горы":
-                case "산악":
-                case "山地":
+                case "mountains":
                     random = rnd.Next(0, BattleMaps.Mountains_Tiles.Length - 1);
                     defPositions = BattleMaps.Mountains_Tiles[random].defPositions;
                     attPositions = BattleMaps.Mountains_Tiles[random].attPositions;
                     Coordinates.X = BattleMaps.Mountains_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Mountains_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, attPositions, defPositions);
-                case "Plains":
-                case "Llanura":
-                case "Plaines":
-                case "Ebenen":
-                case "Равнины":
-                case "평야":
-                case "平原":
+                case "plains":
                     random = rnd.Next(0, BattleMaps.Plains_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Plains_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Plains_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Steppe":
-                case "Estepa":
-                //case "Steppe":
-                //case "Steppe":
-                case "Степь":
-                case "초원":
-                case "草原":
+                case "steppe":
                     random = rnd.Next(0, BattleMaps.Steppe_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Steppe_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Steppe_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Taiga":
-                //case "Taiga":
-                case "Taïga":
-                //case "Taiga":
-                case "Тайга":
-                case "침엽수림":
-                case "针叶林":
+                case "taiga":
                     random = rnd.Next(0, BattleMaps.Taiga_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Taiga_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Taiga_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Wetlands":
-                case "Pantano":
-                case "Marécages":
-                case "Feuchtgebiet":
-                case "Болота":
-                case "습지대":
-                case "湿地":
+                case "wetlands":
                     random = rnd.Next(0, BattleMaps.Wetlands_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Wetlands_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Wetlands_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Oasis":
-                //case "Oasis": spanish
-                //case "Oasis": french
-                case "Oase":
-                case "Оазис":
-                case "오아시스":
-                case "绿洲":
+                case "oasis":
                     // Desert Copy
                     random = rnd.Next(0, BattleMaps.Desert_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Desert_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Desert_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Jungle":
-                case "Selva":
-                // case "Jungle": french
-                case "Dschungel":
-                case "Джунгли":
-                case "밀림":
-                case "丛林":
+                case "jungle":
                     // Dryland Copy 
                     random = rnd.Next(0, BattleMaps.Dryland_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Dryland_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Dryland_Tiles[random].Y;
                     return (Coordinates.X, Coordinates.Y, ALL, ALL);
-                case "Floodplains":
-                case "Llanura aluvial":
-                case "Plaine inondable":
-                case "Auen":
-                case "Поймы рек":
-                case "범람원":
-                case "洪泛平原":
+                case "floodplains":
                     random = rnd.Next(0, BattleMaps.Floodplains_Tiles.Length - 1);
                     Coordinates.X = BattleMaps.Floodplains_Tiles[random].X;
                     Coordinates.Y = BattleMaps.Floodplains_Tiles[random].Y;

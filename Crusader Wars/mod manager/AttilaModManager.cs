@@ -168,8 +168,10 @@ namespace Crusader_Wars.mod_manager
                 dataModNamesRequiredMods = dataModsRequiredMods.Select(x => x.GetName()).ToArray();
             }
 
-            if (!File.Exists(userMods_path)) { File.Create(userMods_path); }
-            using(StreamWriter sw = new StreamWriter(userMods_path))
+            if (!File.Exists(userMods_path)) { File.Create(userMods_path).Close(); }
+
+            using (FileStream modsFile = File.Open(userMods_path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+            using (StreamWriter sw = new StreamWriter(modsFile))
             {
                 sw.NewLine = "\n";
                 foreach(string wD  in workingDirectories)

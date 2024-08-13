@@ -118,9 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="options1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="120px-Icon_CK3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\120px-Icon_CK3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -132,9 +129,6 @@
   </data>
   <data name="levies" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\levies.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="archers1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\archers1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="correct" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\correct.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,6 +181,9 @@
   <data name="archers" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\archers.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="searchModsIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\searchModsIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="patreon_btn_clickpng" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\patreon_btn_clickpng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -196,20 +193,23 @@
   <data name="start_new_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\start_new_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="patreon_btn_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patreon_btn_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="LOTR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LOTR.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="default" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\default.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="attilaicon (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\attilaicon (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="patreon_btn_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\patreon_btn_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btnbk" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btnbk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="wider original" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wider original.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="start_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\start_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="website_btn_new_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\website_btn_new_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -222,6 +222,9 @@
   </data>
   <data name="patreon_btn_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\patreon_btn_new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fortress-gd06cefbea_1280" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fortress-gd06cefbea_1280.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="main_beta1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\main_beta1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -244,8 +247,8 @@
   <data name="website_btn_new_hover1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\website_btn_new_hover1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="start_new_hover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\start_new_hover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="options1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="warfare_loadingscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warfare_loadingscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -253,14 +256,17 @@
   <data name="toggle_yes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\toggle_yes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="fortress-gd06cefbea_1280" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fortress-gd06cefbea_1280.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="archers1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\archers1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="progress_orange" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\progress_orange.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="rotating_loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\rotating_loading.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="attilaicon (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\attilaicon (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="website1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\website1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -277,7 +283,13 @@
   <data name="heavy_cavalry" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\heavy_cavalry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LOTR" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LOTR.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="LS_late_antiquity" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LS_late_antiquity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LS_lotr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LS_lotr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LS_medieval" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LS_medieval.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

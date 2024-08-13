@@ -16,19 +16,95 @@ using System.Xml.Linq;
 
 namespace Crusader_Wars.unit_mapper
 {
+    class TerrainsUM
+    {
+        string AttilaMap { get; set; }
+        List<(string building, string x, string y)> HistoricalMaps { get; set; }
+        List<(string terrain, string x, string y)> NormalMaps { get; set; }
+
+        internal TerrainsUM(string attilaMap, List<(string building, string x, string y)> historicalMaps, List<(string terrain, string x, string y)> normalMaps)
+        {
+            AttilaMap = attilaMap;
+            HistoricalMaps = historicalMaps;
+            NormalMaps = normalMaps;
+        }
+
+        public string GetAttilaMap() { return AttilaMap; }
+        public List<(string building, string x, string y)> GetHistoricalMaps() { return HistoricalMaps; }
+        public List<(string terrain, string x, string y)> GetNormalMaps() { return HistoricalMaps; }
+
+    }
     internal static class UnitMappers_BETA
     {
         /*----------------------------------------------------------------
          * TO DO:
          * Terrains files reader ;
-         * House files reader
+         * House files reader for AGOT
          ----------------------------------------------------------------*/
 
-
-        static List<string> UnitMappers_FolderPaths { get; set; }
+        public static TerrainsUM Terrains { get;private set; }
         static string LoadedUnitMapper_FolderPath { get; set; }
 
         public static string GetLoadedUnitMapperName() { return Path.GetFileName(LoadedUnitMapper_FolderPath); }
+
+        private static void ReadTerrainsFile()
+        {
+            if(!Directory.Exists($@"{LoadedUnitMapper_FolderPath}\terrains")) { Terrains = null; return; }
+
+            var terrainFiles = Directory.GetFiles($@"{LoadedUnitMapper_FolderPath}\terrains");
+
+            try
+            {
+                string attilaMap = "";
+                var historicMaps = new List<(string building, string x, string y)>();
+                var normalMaps = new List<(string terrain, string x, string y)>();
+
+                foreach (var file in terrainFiles)
+                {
+                    XmlDocument TerrainsFile = new XmlDocument();
+                    TerrainsFile.Load(file);
+                    foreach (XmlElement Element in TerrainsFile.DocumentElement.ChildNodes)
+                    {
+                        if (Element.Name == "Attila_Map")
+                        {
+                            attilaMap = Element.InnerText;
+                        }
+                        else if (Element.Name == "Historic_Maps")
+                        {
+                            foreach (XmlElement historic_map in Element.ChildNodes)
+                            {
+                                string building = historic_map.Attributes["ck3_building_key"].Value;
+                                string x = historic_map.Attributes["x"].Value;
+                                string y = historic_map.Attributes["y"].Value;
+                                historicMaps.Add((building, x, y));
+                            }
+                        }
+                        else if (Element.Name == "Normal_Maps")
+                        {
+                            foreach (XmlElement terrain_type in Element.ChildNodes)
+                            {
+                                string terrain = terrain_type.Attributes["ck3_name"].Value;
+                                foreach (XmlElement map in terrain_type.ChildNodes)
+                                {
+                                    string x = map.Attributes["x"].Value;
+                                    string y = map.Attributes["y"].Value;
+                                    normalMaps.Add((terrain, x, y));
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Terrains = new TerrainsUM(attilaMap, historicMaps, normalMaps);
+            }
+            catch
+            {
+                MessageBox.Show($"Error reading {GetLoadedUnitMapperName()} terrains file!", "Unit Mapper Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            }
+
+        }
 
         public static List<string> GetUnitMapperModFromTagAndTimePeriod(string tag)
         {
@@ -100,6 +176,7 @@ namespace Crusader_Wars.unit_mapper
                                             }
 
                                             LoadedUnitMapper_FolderPath = mapper;
+                                            ReadTerrainsFile();
                                             return requiredMods;
                                         }
                                         else
@@ -464,13 +541,13 @@ namespace Crusader_Wars.unit_mapper
             return faction;
         }
 
-        static void SetMapperImage(string loadedUnitMapperPath)
+        public static void SetMapperImage()
         {
 
             try
             {
                 //Copy mapper image to files
-                var image_path = Directory.GetFiles(loadedUnitMapperPath).Where(x => x.EndsWith(".png")).FirstOrDefault();
+                var image_path = Directory.GetFiles(LoadedUnitMapper_FolderPath).Where(x => x.EndsWith(".png")).FirstOrDefault();
                 string destination_path = Directory.GetCurrentDirectory() + @"\data\battle Files\campaign_maps\main_attila_map\main_attila_map.png";
                 File.Copy(image_path, destination_path, true);
                 return;

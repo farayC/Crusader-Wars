@@ -10,6 +10,8 @@ namespace Crusader_Wars.mod_manager
 {
     public partial class UC_UnitMapper : UserControl
     {
+        List<UC_UnitMapper> AllControlsReferences { get; set; }
+
         string SteamCollectionLink {  get; set; }
         List<string> RequiredModsList { get; set; }
         
@@ -24,6 +26,12 @@ namespace Crusader_Wars.mod_manager
             RequiredModsList = requiredMods;
         }
 
+        internal void SetOtherControlsReferences(UC_UnitMapper[] references)
+        {
+            AllControlsReferences = new List<UC_UnitMapper>();
+            for (int i = 0; i < references.Length; i++) { AllControlsReferences.Add(references[i]); }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             Process.Start(SteamCollectionLink);
@@ -34,9 +42,15 @@ namespace Crusader_Wars.mod_manager
             return uC_Toggle1.State;
         }
 
-        public void SetState(bool state)
+        private void uC_Toggle1_Click(object sender, EventArgs e)
         {
-            uC_Toggle1.SetState(state);
+            if(uC_Toggle1.State == true)
+            {
+                foreach(var controlReference in AllControlsReferences)
+                {
+                    controlReference.uC_Toggle1.SetState(false);
+                }
+            }
         }
 
         private void BtnVerifyMods_Click(object sender, EventArgs e)
@@ -106,5 +120,7 @@ namespace Crusader_Wars.mod_manager
                 }
             }
         }
+
+
     }
 }
