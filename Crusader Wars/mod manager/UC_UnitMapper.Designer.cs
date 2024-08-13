@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UC_UnitMapper));
             this.button1 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.uC_Toggle1 = new Crusader_Wars.client.UC_Toggle();
             this.BtnVerifyMods = new System.Windows.Forms.Button();
+            this.uC_Toggle1 = new Crusader_Wars.client.UC_Toggle();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -44,13 +46,44 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(193, 46);
+            this.button1.Location = new System.Drawing.Point(188, 46);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(143, 40);
             this.button1.TabIndex = 2;
             this.button1.Text = "Required Mods";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // BtnVerifyMods
+            // 
+            this.BtnVerifyMods.BackColor = System.Drawing.Color.Transparent;
+            this.BtnVerifyMods.BackgroundImage = global::Crusader_Wars.Properties.Resources.searchModsIcon;
+            this.BtnVerifyMods.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.BtnVerifyMods.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnVerifyMods.FlatAppearance.BorderSize = 0;
+            this.BtnVerifyMods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnVerifyMods.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnVerifyMods.ForeColor = System.Drawing.Color.White;
+            this.BtnVerifyMods.Location = new System.Drawing.Point(326, -1);
+            this.BtnVerifyMods.Name = "BtnVerifyMods";
+            this.BtnVerifyMods.Size = new System.Drawing.Size(45, 41);
+            this.BtnVerifyMods.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.BtnVerifyMods, "Click to verify if all correct mods are installed.");
+            this.BtnVerifyMods.UseVisualStyleBackColor = false;
+            this.BtnVerifyMods.Click += new System.EventHandler(this.BtnVerifyMods_Click);
+            // 
+            // uC_Toggle1
+            // 
+            this.uC_Toggle1.BackColor = System.Drawing.Color.Transparent;
+            this.uC_Toggle1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("uC_Toggle1.BackgroundImage")));
+            this.uC_Toggle1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.uC_Toggle1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uC_Toggle1.Location = new System.Drawing.Point(217, 92);
+            this.uC_Toggle1.Name = "uC_Toggle1";
+            this.uC_Toggle1.Size = new System.Drawing.Size(79, 67);
+            this.uC_Toggle1.State = true;
+            this.uC_Toggle1.TabIndex = 1;
+            this.uC_Toggle1.Click += new System.EventHandler(this.uC_Toggle1_Click);
             // 
             // pictureBox1
             // 
@@ -62,33 +95,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(133, 122);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            // 
-            // uC_Toggle1
-            // 
-            this.uC_Toggle1.BackColor = System.Drawing.Color.Transparent;
-            this.uC_Toggle1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("uC_Toggle1.BackgroundImage")));
-            this.uC_Toggle1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.uC_Toggle1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uC_Toggle1.Location = new System.Drawing.Point(222, 92);
-            this.uC_Toggle1.Name = "uC_Toggle1";
-            this.uC_Toggle1.Size = new System.Drawing.Size(79, 67);
-            this.uC_Toggle1.State = true;
-            this.uC_Toggle1.TabIndex = 1;
-            // 
-            // BtnVerifyMods
-            // 
-            this.BtnVerifyMods.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.BtnVerifyMods.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.BtnVerifyMods.FlatAppearance.BorderSize = 0;
-            this.BtnVerifyMods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnVerifyMods.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnVerifyMods.ForeColor = System.Drawing.Color.White;
-            this.BtnVerifyMods.Location = new System.Drawing.Point(336, -1);
-            this.BtnVerifyMods.Name = "BtnVerifyMods";
-            this.BtnVerifyMods.Size = new System.Drawing.Size(35, 30);
-            this.BtnVerifyMods.TabIndex = 3;
-            this.BtnVerifyMods.UseVisualStyleBackColor = false;
-            this.BtnVerifyMods.Click += new System.EventHandler(this.BtnVerifyMods_Click);
             // 
             // UC_UnitMapper
             // 
@@ -113,5 +119,6 @@
         private client.UC_Toggle uC_Toggle1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button BtnVerifyMods;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

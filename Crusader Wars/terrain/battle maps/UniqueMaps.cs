@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crusader_Wars.unit_mapper;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -34,10 +35,10 @@ namespace Crusader_Wars.terrain
             string x, y;
 
             //Search for added historical maps by unit mappers
-            /*
-            if (UnitMapper.Historic_Maps != null)
+            
+            if (UnitMappers_BETA.Terrains != null)
             {
-                foreach (var map in UnitMapper.Historic_Maps)
+                foreach (var map in UnitMappers_BETA.Terrains.GetHistoricalMaps())
                 {
                     if (building == map.building)
                     {
@@ -51,7 +52,7 @@ namespace Crusader_Wars.terrain
                     }
                 }
             }
-            */
+            
             switch (building) 
             {
                 case "the_pyramids_01":

@@ -2,21 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using Crusader_Wars.twbattle;
-using System.Xml.Linq;
-using System.Drawing;
-using Crusader_Wars.unit_mapper;
-using Crusader_Wars.client;
-using System.Xml;
-using System.Windows;
-using System.Diagnostics;
-using Crusader_Wars.sieges;
-using static Crusader_Wars.CK3LogData;
-using System.Security.Permissions;
-using System.Numerics;
-using System.Windows.Forms;
 
 namespace Crusader_Wars.data.save_file
 {
@@ -236,6 +222,10 @@ namespace Crusader_Wars.data.save_file
                         else if (isCommander)
                         {
                             nonMainCommander_BaseSkills = new BaseSkills(baseSkills_list);
+                        }
+                        else if(isKnight)
+                        {
+                            searchingKnight.SetBaseSkills(new BaseSkills(baseSkills_list));
                         }
                     }
                     else if(searchStarted && line.StartsWith("\t\taccolade=")) // # ACCOLADE
@@ -1155,7 +1145,7 @@ namespace Crusader_Wars.data.save_file
                     else if(isSearchStarted && line.Contains("\t\towner="))
                     {
                         string id = Regex.Match(line, @"\d+").Value;
-                        army.SetOwner(new Owner(id));
+                        army.SetOwner(id);
 
                     }
                     else if (isSearchStarted && line == "\t}")

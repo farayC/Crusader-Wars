@@ -12,6 +12,7 @@ using System.Xml;
 using System.Media;
 using Control = System.Windows.Forms.Control;
 using Crusader_Wars.mod_manager;
+using Crusader_Wars.unit_mapper;
 
 namespace Crusader_Wars
 {
@@ -33,9 +34,9 @@ namespace Crusader_Wars
             ReadOptionsFile();
             ModOptions.StoreOptionsValues(optionsValuesCollection);
             WriteUnitMappersOptions();
-            
-            AttilaModManager.SaveActiveMods();
-            ChangeTabsStates();
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.VAR_attila_path))
+                AttilaModManager.SaveActiveMods();
 
             this.Dispose();
             this.Close();
@@ -53,8 +54,11 @@ namespace Crusader_Wars
             SetOptionsUIData();
             Status_Refresh();
 
-            AttilaModManager.SetControlReference(ModManager);
-            AttilaModManager.ReadInstalledModsAndPopulateModManager();
+            if(!string.IsNullOrEmpty(Properties.Settings.Default.VAR_attila_path))
+            {
+                AttilaModManager.SetControlReference(ModManager);
+                AttilaModManager.ReadInstalledModsAndPopulateModManager();
+            }
         }
 
         /*##############################################
@@ -339,6 +343,12 @@ namespace Crusader_Wars
                 Properties.Settings.Default.Save();
             }
 
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.VAR_attila_path))
+            {
+                AttilaModManager.SetControlReference(ModManager);
+                AttilaModManager.ReadInstalledModsAndPopulateModManager();
+            }
+
             Status_Refresh();
 
         }
@@ -484,48 +494,21 @@ namespace Crusader_Wars
         {
             if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != CrusaderKings_Tab)
                 ChangeUnitMappersTab(CrusaderKings_Tab);
-            ChangeTabsStates();
         }
 
         private void Btn_TFETab_Click(object sender, EventArgs e)
         {
             if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != TheFallenEagle_Tab)
                 ChangeUnitMappersTab(TheFallenEagle_Tab);
-            ChangeTabsStates();
         }
 
         private void Btn_LOTRTab_Click(object sender, EventArgs e)
         {
             if (UMpanel.Controls.Count > 0 && UMpanel.Controls[0] != RealmsInExile_Tab)
                 ChangeUnitMappersTab(RealmsInExile_Tab);
-            ChangeTabsStates();
         }
 
-        void ChangeTabsStates() // <--- fix this!
-        {
 
-            switch(CrusaderKings_Tab.GetState())
-            {
-                case true:
-                    TheFallenEagle_Tab.SetState(false);
-                    RealmsInExile_Tab.SetState(false);
-                    break;
-            }
-            switch (TheFallenEagle_Tab.GetState())
-            {
-                case true:
-                    CrusaderKings_Tab.SetState(false);
-                    RealmsInExile_Tab.SetState(false);
-                    break;
-            }
-            switch (RealmsInExile_Tab.GetState())
-            {
-                case true:
-                    TheFallenEagle_Tab.SetState(false);
-                    CrusaderKings_Tab.SetState(false);
-                    break;
-            }
-        }
 
         void ChangeUnitMappersTab(Control control)
         {
@@ -595,9 +578,14 @@ namespace Crusader_Wars
             if (tfeToggleStateStr == "True") tfeToggleState = true; else tfeToggleState = false;
             if (lotrToggleStateStr == "True") lotrToggleState = true; else lotrToggleState = false;
 
-            CrusaderKings_Tab = new UC_UnitMapper(Properties.Resources._default, "", GetUnitMappersModsCollectionFromTag("DefaultCK3"),ck3ToggleState);
-            TheFallenEagle_Tab = new UC_UnitMapper(Properties.Resources.tfe, "", GetUnitMappersModsCollectionFromTag("TheFallenEagle"), tfeToggleState);
+            CrusaderKings_Tab = new UC_UnitMapper(Properties.Resources._default, "https://steamcommunity.com/sharedfiles/filedetails/?id=3301634851", GetUnitMappersModsCollectionFromTag("DefaultCK3"),ck3ToggleState);
+            TheFallenEagle_Tab = new UC_UnitMapper(Properties.Resources.tfe, "https://steamcommunity.com/sharedfiles/filedetails/?id=3301639735", GetUnitMappersModsCollectionFromTag("TheFallenEagle"), tfeToggleState);
             RealmsInExile_Tab = new UC_UnitMapper(Properties.Resources.LOTR, "https://steamcommunity.com/sharedfiles/filedetails/?id=3211765434", GetUnitMappersModsCollectionFromTag("RealmsInExile"), lotrToggleState);
+
+            CrusaderKings_Tab.SetOtherControlsReferences(new UC_UnitMapper[] { TheFallenEagle_Tab, RealmsInExile_Tab });
+            TheFallenEagle_Tab.SetOtherControlsReferences(new UC_UnitMapper[] { CrusaderKings_Tab, RealmsInExile_Tab });
+            RealmsInExile_Tab.SetOtherControlsReferences(new UC_UnitMapper[] { CrusaderKings_Tab, TheFallenEagle_Tab });
+
             ChangeUnitMappersTab(CrusaderKings_Tab);
         }
 

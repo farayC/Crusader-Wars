@@ -259,11 +259,6 @@ namespace Crusader_Wars
 
             KnightsSearch(PlayerArmy, DataSearchSides.LeftSide);
 
-            /*---------------------------------------------
-             * :::::::::::::Player Modifiers:::::::::::::::
-             ---------------------------------------------*/
-             
-            //ArmyModifiersSearch(log, Player);
 
             /*---------------------------------------------
              * ::::::::::::::::Enemy Army::::::::::::::::::
@@ -282,12 +277,6 @@ namespace Crusader_Wars
              ---------------------------------------------*/
 
             KnightsSearch(EnemyArmy, DataSearchSides.RightSide);
-
-            /*---------------------------------------------
-             * :::::::::::::Enemy Modifiers:::::::::::::::
-             ---------------------------------------------*/
-
-             //ArmyModifiersSearch(log, Enemy);
 
             /*---------------------------------------------
              * ::::::::::::::::Army Names::::::::::::::::::
@@ -466,23 +455,13 @@ namespace Crusader_Wars
         static string SearchForTerrain(string content)
         {
             string terrain_data = Regex.Match(content, "---------Completed---------([\\s\\S]*?)PlayerID").Groups[1].Value;
-            
+            terrain_data = HomePage.RemoveASCII(terrain_data);
+
             string region_data = Regex.Match(terrain_data, @"Region:(.+)").Groups[1].Value;
             TerrainGenerator.SetRegion(region_data);
 
-            string terrain = Regex.Match(terrain_data, "L (?<Terrain>.+)").Groups["Terrain"].Value;
-
-            //Check if exists
-            for (int i = 0; i < Languages.Terrain.AllTerrains.Length; i++)
-            {
-                if (terrain == Languages.Terrain.AllTerrains[i])
-                {
-                    return terrain;
-                }
-            }
-
+            string terrain = Regex.Match(terrain_data, @"TOOLTIP:TERRAIN(.+) L").Groups[1].Value;
             return terrain;
-
         }
 
         public static void ClearLogFile()

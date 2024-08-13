@@ -233,6 +233,36 @@ namespace Crusader_Wars.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LS_late_antiquity {
+            get {
+                object obj = ResourceManager.GetObject("LS_late_antiquity", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LS_lotr {
+            get {
+                object obj = ResourceManager.GetObject("LS_lotr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LS_medieval {
+            get {
+                object obj = ResourceManager.GetObject("LS_medieval", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap main_beta {
             get {
                 object obj = ResourceManager.GetObject("main_beta", resourceCulture);
@@ -366,6 +396,16 @@ namespace Crusader_Wars.Properties {
         internal static System.Drawing.Bitmap rotating_loading {
             get {
                 object obj = ResourceManager.GetObject("rotating_loading", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap searchModsIcon {
+            get {
+                object obj = ResourceManager.GetObject("searchModsIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

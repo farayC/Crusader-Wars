@@ -23,7 +23,6 @@ namespace Crusader_Wars.locs
             var unitsCollection = new List<Unit>();
             foreach(Army army in attacker_armies) { unitsCollection.AddRange(army.Units); }
             foreach (Army army in defender_armies) { unitsCollection.AddRange(army.Units); }
-            unitsCollection = CutRepeatedUnits(unitsCollection);
 
             switch (Mapper_Name)
             {
@@ -31,9 +30,9 @@ namespace Crusader_Wars.locs
                     string[] loc_files = Directory.GetFiles(@".\data\units_cards_names\anno domini\");
                     EditUnitCardsFiles(loc_files, unitsCollection);
                     break;
-                case "OfficialCW_HighMedieval_MK1212":
-                case "OfficialCW_LateMedieval_MK1212":
-                case "OfficialCW_Renaissance_MK1212":
+                case "OfficialCW_HighMedieval_MK1212Mod":
+                case "OfficialCW_LateMedieval_MK1212Mod":
+                case "OfficialCW_Renaissance_MK1212Mod":
                     string[] mk1212_loc_files = Directory.GetFiles(@".\data\units_cards_names\mk1212\");
                     EditUnitCardsFiles(mk1212_loc_files, unitsCollection);
                     break;
@@ -52,20 +51,6 @@ namespace Crusader_Wars.locs
             }
 
         }
-
-        static List<Unit> CutRepeatedUnits(List<Unit> allUnits)
-        {
-            // Use a HashSet to keep track of seen names
-            HashSet<string> seenNames = new HashSet<string>();
-
-            // Filter out duplicates
-            List<Unit> uniqueList = allUnits
-                .Where(obj => seenNames.Add(obj.GetName()))
-                .ToList();
-            return uniqueList;
-        }
-
-
 
         private static void EditUnitCardsFiles(string[] unit_cards_files, List<Unit> allUnits)
         {
@@ -148,9 +133,6 @@ namespace Crusader_Wars.locs
                 File.Move(file_to_edit_path, battle_files_path);
 
             }
-            
-
-
         }
 
 
@@ -158,6 +140,7 @@ namespace Crusader_Wars.locs
         {
             List<string> enabledCK3ModsPaths = LandedTitles.GetEnabledModsPaths();
             string defaultCK3LocFilePath = Properties.Settings.Default.VAR_ck3_path.Replace(@"binaries\ck3.exe", @"game\localization\english\regiment_l_english.yml");
+            string defaultCK3DLCLocFilePath = Properties.Settings.Default.VAR_ck3_path.Replace(@"binaries\ck3.exe", @"game\localization\english\dlc\fp1\dlc_fp1_regiment_l_english.yml");
 
             var maaList = new List<Unit>();
             foreach(Army army in armies)
@@ -167,7 +150,9 @@ namespace Crusader_Wars.locs
 
             List<string> allRegimentLocFilesPaths = new List<string>
             {
-                defaultCK3LocFilePath
+                defaultCK3LocFilePath,
+                defaultCK3DLCLocFilePath
+
             };
             foreach(string modFolder in enabledCK3ModsPaths)
             {
@@ -200,7 +185,7 @@ namespace Crusader_Wars.locs
                             {
                                 string maaName = Regex.Match(line, @"""(.+)""").Groups[1].Value;
                                 var sameMaaGroup = maaList.Where(x => x.GetName() == maaScriptName);
-                                foreach (var equalMAA in sameMaaGroup) { equalMAA.SetLocName(maaName); }
+                                foreach (var equalMAA in sameMaaGroup) { equalMAA.SetLocName(RemoveDiacritics(maaName)); }
                             }
                         }
                     }

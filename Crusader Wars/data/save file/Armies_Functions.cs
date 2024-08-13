@@ -139,6 +139,7 @@ namespace Crusader_Wars.data.save_file
                                     //If is player character
                                     if (string.IsNullOrEmpty(armies[i].ArmyRegiments[x].Regiments[y].Culture.ID))
                                     {
+                                        Console.WriteLine("WARNING - REGIMENT NULL CULTURE FOUND");
                                         //armies[i].ArmyRegiments[x].Regiments[y].Culture.SetHeritage(DataSearch.Player_Character.GetHeritage());
                                         //armies[i].ArmyRegiments[x].Regiments[y].Culture.SetName(DataSearch.Player_Character.GetCulture());
                                         continue;

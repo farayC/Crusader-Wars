@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Windows.Media.Media3D;
 
 namespace Crusader_Wars
@@ -28,7 +29,6 @@ namespace Crusader_Wars
 
         public string CommanderID { get; set; }
         public bool isMainArmy { get; private set; }
-        bool IsHumanPlayer { get; set; }
         bool IsPlayerArmy { get; set; }
         bool IsEnemyArmy { get; set; }
 
@@ -63,7 +63,15 @@ namespace Crusader_Wars
         public void SetCommander(CommanderSystem l) { Commander = l; }
         public void SetDefences(DefensiveSystem l) { Defences = l; }
 
-        public void SetOwner(Owner t) {  Owner = t; }
+        public void SetOwner(string id) {
+
+            if (id == CK3LogData.LeftSide.GetMainParticipant().id)
+                Owner = new Owner(id, new Culture(CK3LogData.LeftSide.GetMainParticipant().culture_id));
+            else if (id == CK3LogData.RightSide.GetMainParticipant().id)
+                Owner = new Owner(id, new Culture(CK3LogData.RightSide.GetMainParticipant().culture_id));
+            else
+                Owner = new Owner(id);
+        }
         public void SetArmyRegiments(List<ArmyRegiment> list) { ArmyRegiments = list; }
         public void SetKnights(KnightSystem knights){ Knights = knights; }
         public void SetCasualitiesReport(List<UnitCasualitiesReport> reports) { CasualitiesReports = reports; } 
@@ -82,14 +90,8 @@ namespace Crusader_Wars
         {
             for (int i = 0; i < ArmyRegiments.Count; i++)
             {
-                var t = ArmyRegiments[i].Regiments.Where(origin => string.IsNullOrEmpty(origin.CurrentNum));
-                for (int x = 0; x < t.Count(); x++)
-                {
-                    ArmyRegiments[i].Regiments.Remove(t.ElementAt(x));
-                }
+                ArmyRegiments[i].Regiments.RemoveAll(x => string.IsNullOrEmpty(x.CurrentNum));
             }
-
-
         }
 
         public int GetTotalSoldiers()
@@ -145,11 +147,13 @@ namespace Crusader_Wars
         public void PrintUnits()
         {
            
-            Console.WriteLine($"ARMY - {ID} | {CombatSide}");
+            StringBuilder sb = new StringBuilder();
+
+            Console.WriteLine(sb.AppendLine($"ARMY - {ID} | {CombatSide}"));
 
             if(Commander != null)
             {
-                Console.WriteLine($"## GENERAL | Name: {Commander.Name} | Soldiers: {Commander.GetUnitSoldiers()} | NobleRank: {Commander.Rank} | ArmyXP: +{Commander.GetUnitsExperience()} | Culture: {Commander.GetCultureName()} | Heritage: {Commander.GetHeritageName()}");
+                Console.WriteLine(sb.AppendLine($"## GENERAL | Name: {Commander.Name} | Soldiers: {Commander.GetUnitSoldiers()} | NobleRank: {Commander.Rank} | ArmyXP: +{Commander.GetUnitsExperience()} | Culture: {Commander.GetCultureName()} | Heritage: {Commander.GetHeritageName()}"));
             }
             if (Knights.GetKnightsList() != null)
             {
@@ -158,11 +162,11 @@ namespace Crusader_Wars
                     
                     if(knight.IsAccolade())
                     {
-                        Console.WriteLine($"## ACCOLADE | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
+                        Console.WriteLine(sb.AppendLine($"## ACCOLADE | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}"));
                     }
                     else
                     {
-                        Console.WriteLine($"## KNIGHT | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
+                        Console.WriteLine(sb.AppendLine($"## KNIGHT | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}"));
                     }
                 }
             }
@@ -170,14 +174,17 @@ namespace Crusader_Wars
             {
                 if (unit.IsMerc())
                 {
-                    Console.WriteLine($"## Hired {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
+                    Console.WriteLine(sb.AppendLine($"## Hired {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}"));
                 }
                 else
                 {
-                    Console.WriteLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
+                    Console.WriteLine(sb.AppendLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}"));
                 }
             }
             Console.WriteLine();
+            sb.AppendLine();
+
+            File.AppendAllText(@".\data\battle.log", sb.ToString());
         }
 
 

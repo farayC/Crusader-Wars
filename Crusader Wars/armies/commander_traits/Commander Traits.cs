@@ -136,11 +136,11 @@ namespace Crusader_Wars.armies.commander_traits
                     case TraitsBoolCondition.None:
                         break;
                     case TraitsBoolCondition.No:
-                        if (isRiverCrossing)
+                        if (isWinter)
                             continue;
                         break;
                     case TraitsBoolCondition.Yes:
-                        if (!isRiverCrossing)
+                        if (!isWinter)
                         {
                             continue;
                         }

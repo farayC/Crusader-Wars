@@ -17,8 +17,8 @@ namespace Crusader_Wars.data.save_file
             bool resultsFound = false;
             bool combatsFound = false;
 
-            long startMemory = GC.GetTotalMemory(false);
-            string tempFilePath = Directory.GetCurrentDirectory() + "\\CrusaderWars_Battle.ck3";
+            //string tempFilePath = Directory.GetCurrentDirectory() + "\\CrusaderWars_Battle.ck3";
+            string tempFilePath = @".\data\save_file_data\gamestate";
 
             using (var inputFileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var outputFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
@@ -125,16 +125,10 @@ namespace Crusader_Wars.data.save_file
                 inputFileStream.Close();
             }
 
-            string save_games_path = Properties.Settings.Default.VAR_dir_save;
-            string editedSavePath = save_games_path + "\\CrusaderWars_Battle.ck3";
-
-            File.Delete(savePath);
-            File.Move(tempFilePath, editedSavePath);
-
-            long endMemory = GC.GetTotalMemory(false);
-            long memoryUsage = endMemory - startMemory;
-
-            Console.WriteLine($"----\nWritting data to save file\nMemory Usage: {memoryUsage / 1048576} megabytes");
+            //string save_games_path = Properties.Settings.Default.VAR_dir_save;
+            //string editedSavePath = save_games_path + @"\CrusaderWars_Battle.ck3";
+            //File.Delete(savePath);
+            //File.Move(tempFilePath, editedSavePath);
         }
 
 

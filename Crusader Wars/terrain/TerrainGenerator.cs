@@ -91,7 +91,7 @@ namespace Crusader_Wars
             if(isUnique)
             {
                 var battlemap = UniqueMaps.GetBattleMap();
-                ClearData();
+                //ClearData();
                 return battlemap;
             }
 
@@ -99,7 +99,7 @@ namespace Crusader_Wars
             if(isStrait)
             {
                 var battlemap = Straits.GetBattleMap(Region ,TerrainType);
-                ClearData();
+                //ClearData();
                 return battlemap;   
             }
 
@@ -107,7 +107,7 @@ namespace Crusader_Wars
             if(isRiver) 
             {
                 var battlemap = Lands.GetBattleMap(TerrainType);
-                ClearData();
+                //ClearData();
                 return battlemap;
             }
 
@@ -116,7 +116,7 @@ namespace Crusader_Wars
             if (isLand) 
             {
                 var battlemap = Lands.GetBattleMap(TerrainType);
-                ClearData();
+                //ClearData();
                 return battlemap;
             }
 

@@ -84,6 +84,9 @@ namespace Crusader_Wars
 
         public void ScaleTo100Porcent()
         {
+
+            if (ModOptions.GetBattleScale() == 100) return;
+
             double porcentage = (double)ModOptions.GetBattleScale() / 100;
             ScaleList(Alive_MainPhase, porcentage);
             ScaleList(Kills_MainPhase, porcentage);
@@ -97,6 +100,8 @@ namespace Crusader_Wars
 
         void ScaleList(List<(string, string, string, string )> list, double porcentage)
         {
+            if (list == null) return;
+
             for (int i = 0; i < list.Count; i++)
             {
                 var unit = list[i];
