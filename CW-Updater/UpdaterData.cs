@@ -9,10 +9,10 @@ using System.Diagnostics;
 
 namespace CW_Updater
 {
-    internal class UpdaterData
+    internal static class UpdaterData
     {
 
-        private static void ExtractFiles(string zipFilePath, string extractFolderPath)
+        static void ExtractFiles(string zipFilePath, string extractFolderPath)
         {
             try
             {

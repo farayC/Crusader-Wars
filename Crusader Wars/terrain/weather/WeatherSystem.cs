@@ -11,7 +11,7 @@ namespace Crusader_Wars.terrain
     {
         public static string Season { get;private set; }
         public static bool HasWinter { get;private set; }
-        public static string Winter_Severity { get; private set; }
+        public static WinterSeverity Winter_Severity { get; private set; }
 
         struct MildWinter
         {
@@ -136,14 +136,56 @@ namespace Crusader_Wars.terrain
         //[0] = Mild
         //[1] = Normal
         //[2] = Harsh
+
+        public enum WinterSeverity
+        {
+            None,
+            Mild,
+            Normal,
+            Harsh
+        }
         public static void SetWinterSeverity(string winterSeverity)
         {
-            if(winterSeverity != String.Empty) 
+
+            //! - chinese is missing here
+
+            WinterSeverity severity;
+            switch(winterSeverity)
+            {
+                case "Mild":
+                case "suave":
+                case "Hiver doux":
+                case "Milder":
+                case "Мягкие":
+                case "温暖的":
+                    severity = WinterSeverity.Mild;
+                    break;
+                case "Normal":
+                case "normal":
+                case "Hiver normal":
+                case "Normaler":
+                case "Обычные":
+                case "普通的":
+                    severity = WinterSeverity.Normal;
+                    break;
+                case "Harsh":
+                case "duro":
+                case "Hiver rude":
+                case "Rauer":
+                case "Суровые":
+                case "严酷的":
+                    severity = WinterSeverity.Harsh;
+                    break;
+                default: 
+                    severity = WinterSeverity.None; 
+                    break;
+            }
+
+            if (severity != WinterSeverity.None) 
             {
                 HasWinter = true;
-                if (winterSeverity == Languages.Terrain.AllWinter[0]) { Winter_Severity = "MildWinter"; return; }
-                if (winterSeverity == Languages.Terrain.AllWinter[1]) { Winter_Severity = "NormalWinter"; return; }
-                if (winterSeverity == Languages.Terrain.AllWinter[2]) { Winter_Severity = "HarshWinter"; return; }
+                Winter_Severity = severity; 
+                return;
             
             } else { HasWinter = false; }
             
@@ -152,7 +194,7 @@ namespace Crusader_Wars.terrain
         static void Reset()
         {
             HasWinter = false;
-            Winter_Severity = null;
+            Winter_Severity = WinterSeverity.None;
             Season = null;
         }
 
@@ -178,15 +220,15 @@ namespace Crusader_Wars.terrain
             {
                 switch(Winter_Severity)
                 {
-                    case "MildWinter":
+                    case WinterSeverity.Mild:
                         List<string> list_mild_winter = MildWinter.GetWeathers();
                         int l = random.Next(0, list_mild_winter.Count);
                         return list_mild_winter[l];
-                    case "NormalWinter":
+                    case WinterSeverity.Normal:
                         List<string> list_normal_winter = NormalWinter.GetWeathers();
                         int i = random.Next(0, list_normal_winter.Count);
                         return list_normal_winter[i];
-                    case "HarshWinter":
+                    case WinterSeverity.Harsh:
                         List<string> list_harsh_winter = HarshWinter.GetWeathers();
                         int x = random.Next(0, list_harsh_winter.Count);
                         return list_harsh_winter[x];

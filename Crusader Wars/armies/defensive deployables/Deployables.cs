@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -67,12 +68,12 @@ namespace Crusader_Wars.armies
         }
         private  void GetTotalOfDeployments(int army_size)
         {
-            double num = army_size / 1000;
+            double num = army_size / 750;
             double total = Math.Round(num);
             if(total < 1) { total = 1; }
             TotalDeployments = (int)total;
         }
-        public DefensiveSystem(int army_size, int martial_skill)
+        public DefensiveSystem(int army_size, int martial_skill, int deployables_boost)
         {
             int defensive_level = GetDefensiveLevel(martial_skill);
             GetTotalOfDeployments (army_size);
@@ -137,6 +138,8 @@ namespace Crusader_Wars.armies
 
                     break;
             }
+
+            num_spikes += deployables_boost;
 
 
             string text = "<deployables>\n" +

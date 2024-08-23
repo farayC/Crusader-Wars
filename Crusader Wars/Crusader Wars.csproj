@@ -210,7 +210,6 @@
     <Compile Include="twbattle\UnitsFile.cs" />
     <Compile Include="armies\characters\Characters_Data.cs" />
     <Compile Include="armies\battle scale\ArmyProportions.cs" />
-    <Compile Include="data\language support\Languages.cs" />
     <Compile Include="data\save file\Reader.cs" />
     <Compile Include="time\Date.cs" />
     <Compile Include="data\ck3 log\DataSearch.cs" />

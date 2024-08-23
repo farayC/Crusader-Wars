@@ -33,6 +33,7 @@ namespace Crusader_Wars.armies.commander_traits
 
         //  MAJOR SETUP
         int XPBoost {  get; set; }
+        int DeployablesBoost { get; set; }
         TraitsAffectEnum Affect { get; set; }
         bool DeploymentRotation {  get; set; }
 
@@ -52,6 +53,7 @@ namespace Crusader_Wars.armies.commander_traits
         public int GetIndex() { return Index; }
 
         public int GetXPBoost() {  return XPBoost; }
+        public int GetDeployablesBoost() { return DeployablesBoost; }
         public TraitsAffectEnum GetWhoAffects() { return Affect; }
         public bool IsDeploymentRotation() {  return DeploymentRotation; }
         public string IsRequiredCombatSide() {  return CombatSide; }
@@ -60,10 +62,11 @@ namespace Crusader_Wars.armies.commander_traits
         public TraitsBoolCondition IsRequiredHostileFaith() { return NeedsHostileFaith; }
         public TraitsBoolCondition IsRequiredWinter() { return NeedsWinter; }
 
-        public void SetupTrait(int XPboost, TraitsAffectEnum affectsWho, bool rotatesDeployment, 
+        public void SetupTrait(int XPboost, int deployablesBoost,TraitsAffectEnum affectsWho, bool rotatesDeployment, 
                                string requiredCombatSide, List<string> requiredTerrains, TraitsBoolCondition requiresRiverCrossing, TraitsBoolCondition requiresHostileFaith, TraitsBoolCondition requiresWinter)
         {
             XPBoost = XPboost;
+            DeployablesBoost = deployablesBoost;
             Affect = affectsWho;
             DeploymentRotation = rotatesDeployment;
             CombatSide = requiredCombatSide;
@@ -76,7 +79,7 @@ namespace Crusader_Wars.armies.commander_traits
     }
     public class CommanderTraits
     {
-        public static List<Trait> Traits { get; private set; }
+        public List<Trait> Traits { get; private set; }
 
         static string traits_folder_path = @".\data\traits\";
 
@@ -84,6 +87,38 @@ namespace Crusader_Wars.armies.commander_traits
         public CommanderTraits(List<(int, string)> main_commander_traits) 
         {
             SearchTraitsFiles(main_commander_traits);
+        }
+
+        public bool ShouldRotateDeployment(string combat_side, string terrain)
+        {
+            if (Traits == null) return false;
+            foreach(var trait in Traits) 
+            {
+                if(trait.IsDeploymentRotation() && combat_side == trait.IsRequiredCombatSide())
+                {
+                    if (trait.IsRequiredTerrains() != null)
+                    {
+                        if (trait.IsRequiredTerrains().Exists(x => x == terrain))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public int GetDeployablesBoost()
+        {
+            if (Traits == null) return 0;
+
+            int deployables_boost = 0;
+            foreach (Trait trait in Traits)
+            {
+                deployables_boost += trait.GetDeployablesBoost();
+            }
+            return deployables_boost;
         }
 
         public int GetBenefits(string combatSide, string terrainType, bool isRiverCrossing, bool isHostileFaith, bool isWinter)
@@ -169,29 +204,30 @@ namespace Crusader_Wars.armies.commander_traits
                         if (traitElement is XmlComment) continue;
                         string trait_key = traitElement.Attributes["name"].Value;
 
-                        if(main_commander_traits.Exists(x => x.Key == trait_key))
+                        if (main_commander_traits.Exists(x => x.Key == trait_key))
                         {
                             Trait commanderTrait = new Trait(trait_key, main_commander_traits.Find(x => x.Key == trait_key).Index);
 
                             int xp_boost = 0;
+                            int deployables_boost = 0;
                             TraitsAffectEnum whoAffects = TraitsAffectEnum.None;
                             bool rotatesDeployment = false;
 
                             string combatSide = "no";
                             List<string> Terrains = null;
                             var riverCrossing = TraitsBoolCondition.None;
-                            var hostileFaith = TraitsBoolCondition.None; 
+                            var hostileFaith = TraitsBoolCondition.None;
                             var winter = TraitsBoolCondition.None;
 
                             foreach (XmlNode traitNode in traitElement.ChildNodes)
                             {
                                 if (traitNode is XmlComment) continue;
 
-                                switch(traitNode.Name)
+                                switch (traitNode.Name)
                                 {
                                     case "XpBoost":
                                         bool parsed = Int32.TryParse(traitNode.InnerText, out xp_boost);
-                                        if(!parsed) xp_boost = 0;
+                                        if (!parsed) xp_boost = 0;
                                         break;
 
                                     case "Affects":
@@ -199,10 +235,15 @@ namespace Crusader_Wars.armies.commander_traits
                                             whoAffects = TraitsAffectEnum.Friendlies;
                                         else if (traitNode.InnerText == "enemies")
                                             whoAffects = TraitsAffectEnum.Enemies;
-                                        else { 
+                                        else
+                                        {
                                             Console.WriteLine("WRONG VALUE IN AFFECT XML NODE");
                                             whoAffects = TraitsAffectEnum.Friendlies;
                                         }
+                                        break;
+                                    case "DeployablesBoost":
+                                        bool parsedDeployables = Int32.TryParse(traitNode.InnerText, out deployables_boost);
+                                        if (!parsedDeployables) deployables_boost = 0;
                                         break;
 
                                     case "DeploymentRotation":
@@ -217,20 +258,23 @@ namespace Crusader_Wars.armies.commander_traits
                                             combatSide = "attacker";
                                         else if (traitNode.InnerText == "defender")
                                             combatSide = "defender";
-                                        else {
+                                        else
+                                        {
                                             Console.WriteLine("WRONG VALUE IN COMBAT SIDE XML NODE");
                                             combatSide = "attacker";
                                         }
                                         break;
 
                                     case "Terrain":
-                                        if (Terrains == null) {
+                                        if (Terrains == null)
+                                        {
                                             Terrains = new List<string>
                                             {
                                                 traitNode.InnerText
-                                            };                                         
+                                            };
                                         }
-                                        else { 
+                                        else
+                                        {
                                             Terrains.Add(traitNode.InnerText);
                                         }
                                         break;
@@ -258,8 +302,8 @@ namespace Crusader_Wars.armies.commander_traits
                                 }
                             }
 
-                            commanderTrait.SetupTrait(xp_boost, whoAffects, rotatesDeployment, combatSide, Terrains, riverCrossing, hostileFaith, winter);
-                            if(Traits == null)
+                            commanderTrait.SetupTrait(xp_boost, deployables_boost, whoAffects, rotatesDeployment, combatSide, Terrains, riverCrossing, hostileFaith, winter);
+                            if (Traits == null)
                             {
                                 Traits = new List<Trait>
                                 {
@@ -270,7 +314,7 @@ namespace Crusader_Wars.armies.commander_traits
                             {
                                 Traits.Add(commanderTrait);
                             }
-                            
+
                         }
                     }
                 }

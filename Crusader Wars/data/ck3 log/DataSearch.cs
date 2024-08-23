@@ -126,59 +126,6 @@ namespace Crusader_Wars
 
         static string LogPath = Properties.Settings.Default.VAR_log_ck3;
 
-        public static void SearchLanguage()
-        {
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string languages_file_path = documentsPath + "\\Paradox Interactive\\Crusader Kings III\\pdx_settings.txt";
-
-            using (FileStream language_file = File.Open(languages_file_path, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
-            {
-                using (StreamReader reader = new StreamReader(language_file))
-                {
-                    string text = reader.ReadToEnd();
-                    
-                    if(text.Contains("l_english"))
-                    {
-                        Languages.SetLanguage("l_english");
-                        return;
-                    }
-                    else if(text.Contains("l_spanish"))
-                    {
-                        Languages.SetLanguage("l_spanish");
-                        return;
-                    }
-                    else if (text.Contains("l_french"))
-                    {
-                        Languages.SetLanguage("l_french");
-                        return;
-                    }
-                    else if (text.Contains("l_german"))
-                    {
-                        Languages.SetLanguage("l_german");
-                        return;
-                    }
-                    else if (text.Contains("l_russian"))
-                    {
-                        Languages.SetLanguage("l_russian");
-                        return;
-                    }
-                    else if (text.Contains("l_korean"))
-                    {
-                        Languages.SetLanguage("l_korean");
-                        return;
-                    }
-                    else if (text.Contains("l_simp_chinese"))
-                    {
-                        Languages.SetLanguage("l_simp_chinese");
-                        return;
-                    }
-                }
-            }
-
-        }
-
-
-
         public static void Search(string log)
         {
             /*---------------------------------------------
@@ -198,9 +145,9 @@ namespace Crusader_Wars
             /*---------------------------------------------
              * :::::::::::::::::Modifiers::::::::::::::::::
              ---------------------------------------------*/
-
-            CK3LogData.LeftSide.SetModifiers(new Modifiers(log, true));
-            CK3LogData.RightSide.SetModifiers(new Modifiers(log, false));
+            var modifiers_texts = GetModifiersText(log);
+            CK3LogData.LeftSide.SetModifiers(new Modifiers(modifiers_texts.left));
+            CK3LogData.RightSide.SetModifiers(new Modifiers(modifiers_texts.right));
 
             /*---------------------------------------------
              * ::::::::::::::Main Participants::::::::::::::
@@ -298,9 +245,9 @@ namespace Crusader_Wars
             string year;
             try
             {
-                month = Regex.Match(log, Languages.SearchPatterns.date).Groups["Month"].Value;
-                year = Regex.Match(log, Languages.SearchPatterns.date).Groups["Year"].Value;
-                Date.Month = month;
+                month = Regex.Match(log, @"DateMonth:(\d+)").Groups[1].Value;
+                year = Regex.Match(log, @"DateYear:(\d+)").Groups[1].Value;
+                Date.Month = Int32.Parse(month);
                 Date.Year = Int32.Parse(year);
 
                 string season = Date.GetSeason();
@@ -310,13 +257,65 @@ namespace Crusader_Wars
             {
                 month = "January";
                 year = "1300";
-                Date.Month = month;
+                Date.Month = Int32.Parse(month);
                 Date.Year = Int32.Parse(year);
                 Weather.SetSeason("random");
             }
 
         }
 
+
+        public static (string left, string right) GetModifiersText(string log)
+        {
+            string left_side_advantages = "";
+            string right_side_advantages = "";
+
+            using (StringReader stringReader = new StringReader(log))
+            {
+                bool searchStarted = false;
+                bool leftReadStart = false;
+                bool rightReadStart = false;
+
+                string line;
+                while ((line = stringReader.ReadLine()) != null)
+                {
+                    if (!searchStarted && line == "---------Modifiers---------")
+                    {
+                        searchStarted = true;
+                    }
+                    else if (searchStarted)
+                    {
+                        if (line.StartsWith("Keyword:"))
+                        {
+                            break;
+                        }
+
+                        if (!leftReadStart && line == "")
+                        {
+                            leftReadStart = true;
+                        }
+                        else if (leftReadStart && line == "")
+                        {
+                            leftReadStart = false;
+                            rightReadStart = true;
+                            continue;
+                        }
+                        else if (leftReadStart)
+                        {
+                            left_side_advantages += line;
+                        }
+                        else if(rightReadStart)
+                        {
+                            right_side_advantages += line;
+                        }
+
+
+                    }
+                }
+            }
+
+            return (left_side_advantages, right_side_advantages);
+        }
         static void TerrainSearch(string log)
         {
             TerrainGenerator.TerrainType = SearchForTerrain(log);
@@ -330,10 +329,10 @@ namespace Crusader_Wars
             int rank = 0;
 
 
-            Match martial_match = Regex.Match(army_data, Languages.SearchPatterns.martial_skill);
+            Match martial_match = Regex.Match(army_data, @"positive_value (\d+)");
             if (martial_match.Success)
             {
-                string martial_str = martial_match.Groups["Martial"].Value;
+                string martial_str = martial_match.Groups[1].Value;
                 martial = Int32.Parse(martial_str);
             }
             else
@@ -477,13 +476,23 @@ namespace Crusader_Wars
 
         }
 
+
         static string SearchForWinter(string content)
         {
             string terrain_data = Regex.Match(content, "---------Completed---------([\\s\\S]*?)PlayerID").Groups[1].Value;
 
-            for (int i = 0; i < Languages.Terrain.AllWinter.Length; i++)
+            string[] AllWinter = new string[] {"Mild", "Normal", "Harsh" ,
+                                              "suave", "normal", "duro" ,
+                                              "Hiver doux", "Hiver normal", "Hiver rude",
+                                              "Milder", "Normaler", "Rauer",
+                                              "Мягкие", "Обычные", "Суровые",
+                                              "温暖的", "普通的", "严酷的"
+             };
+
+
+            for (int i = 0; i < AllWinter.Length; i++)
             {
-                Match hasFound = Regex.Match(terrain_data, $"{Languages.Terrain.AllWinter[i]}");
+                Match hasFound = Regex.Match(terrain_data, $"{AllWinter[i]}");
 
                 if (hasFound.Success)
                 {

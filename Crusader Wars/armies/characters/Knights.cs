@@ -286,7 +286,7 @@ namespace Crusader_Wars
 
                 List<Knight> tempKnightsList = new List<Knight>();
                 tempKnightsList.AddRange(Knights);
-                while (soldiers_lost >= 0)
+                while (soldiers_lost > 0)
                 {
                     if (tempKnightsList.Count == 0) break;
 
@@ -321,6 +321,12 @@ namespace Crusader_Wars
 
         public int GetKnightsSoldiers()
         {
+            int num = 0;
+            foreach(Knight knight in Knights)
+            {
+                num += knight.GetSoldiers();
+            }
+            UnitSoldiers = num;
             return UnitSoldiers;
         }
 

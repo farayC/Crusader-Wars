@@ -190,7 +190,7 @@ namespace Crusader_Wars.locs
             
             string terrain = TerrainGenerator.TerrainType;
             string weather = Weather.Season;
-            string snow = Weather.Winter_Severity;
+            Weather.WinterSeverity snow = Weather.Winter_Severity;
             bool hasSnow = Weather.HasWinter;
             
 
@@ -265,15 +265,15 @@ namespace Crusader_Wars.locs
             return $"{input[0].ToString().ToLower()}{input.Substring(1)}";
         }
 
-        private static string GetSnow(string snow_severity)
+        private static string GetSnow(Weather.WinterSeverity snow_severity)
         {
             switch(snow_severity)
             {
-                case "MildWinter":
+                case Weather.WinterSeverity.Mild:
                     return "mildsnow";
-                case "NormalWinter":
+                case Weather.WinterSeverity.Normal:
                     return "normalsnow";
-                case "HarshWinter":
+                case Weather.WinterSeverity.Harsh:
                     return "harshsnow";
                 default:
                     return "";
