@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace Crusader_Wars.mod_manager
 {
@@ -25,12 +27,8 @@ namespace Crusader_Wars.mod_manager
         string FullPath {  get; set; }
         bool RequiredMod {  get; set; }
         bool LoadingMod {  get; set; }
-        public Mod(bool isEnabled, Bitmap pngImg, string name, ModLocalization local) { 
-            Enabled = isEnabled;
-            Image = pngImg;
-            Name = name;
-            Localization = local;
-        }
+        int LoadOrder { get; set; }
+
         public Mod(bool isEnabled, Bitmap pngImg, string name, ModLocalization local, string fullPath)
         {
             Enabled = isEnabled;
@@ -39,11 +37,12 @@ namespace Crusader_Wars.mod_manager
             Localization = local;
             FullPath = fullPath;
         }
-        public void StoreFullPath(string path) { FullPath =  path; }
         public void ChangeEnabledState(bool yn) {  Enabled = yn; }
         public void IsRequiredMod(bool yn) { RequiredMod = yn; }
         public void IsLoadingRequiredMod(bool yn) { LoadingMod = yn; }
+        public void SetLoadOrderValue(int orderNum) { LoadOrder = orderNum; }
 
+        public int GetLoadOrderValue() { return LoadOrder; }
         public bool IsEnabled() { return Enabled; }
         public bool IsRequiredMod() { return RequiredMod; }
         public bool IsLoadingModRequiredMod() { return LoadingMod; }
@@ -101,6 +100,7 @@ namespace Crusader_Wars.mod_manager
                         if(mod.GetName() == requiredMod)
                         {
                             mod.IsLoadingRequiredMod(true);
+                            mod.SetLoadOrderValue(requiredMods.IndexOf(requiredMod));
                             break;
                         }
                     }
@@ -148,13 +148,14 @@ namespace Crusader_Wars.mod_manager
              *      REQUIRED MODS  
              *  ....................
              */
-
             string[] workingDirectoriesRequiredMods = null;
             string[] steamModNamesRequiredMods = null;
             string[] dataModNamesRequiredMods = null;
-
             //Working Directories
-            var steamModsRequiredMods = ModsPaths.Where(x => x.GetLocalization() == ModLocalization.Steam && x.IsRequiredMod() && x.IsLoadingModRequiredMod()).ToList();
+            
+            var steamModsRequiredMods = ModsPaths.Where(x => x.GetLocalization() == ModLocalization.Steam && x.IsRequiredMod() && x.IsLoadingModRequiredMod())
+                                       .ToList()
+                                       .OrderBy(x => x.GetLoadOrderValue());
             if (steamModsRequiredMods != null)
             {
                 workingDirectoriesRequiredMods = steamModsRequiredMods.Select(x => x.GetFullPath()).ToArray();
@@ -162,7 +163,9 @@ namespace Crusader_Wars.mod_manager
             }
 
             //Data Mods
-            var dataModsRequiredMods = ModsPaths.Where(x => x.GetLocalization() == ModLocalization.Data && x.IsRequiredMod() && x.IsLoadingModRequiredMod()).ToList();
+            var dataModsRequiredMods = ModsPaths.Where(x => x.GetLocalization() == ModLocalization.Data && x.IsRequiredMod() && x.IsLoadingModRequiredMod())
+                                      .ToList()
+                                      .OrderBy(x => x.GetLoadOrderValue());
             if (dataModsRequiredMods != null)
             {
                 dataModNamesRequiredMods = dataModsRequiredMods.Select(x => x.GetName()).ToArray();
@@ -210,7 +213,6 @@ namespace Crusader_Wars.mod_manager
                 sw.Close();
             };
         }
-
         public static void ReadInstalledMods()
         {
             string data_folder_path = Properties.Settings.Default.VAR_attila_path.Replace("Attila.exe", @"data\");

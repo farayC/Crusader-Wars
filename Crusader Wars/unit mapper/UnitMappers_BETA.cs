@@ -2,17 +2,10 @@
 using Crusader_Wars.data.save_file;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace Crusader_Wars.unit_mapper
 {
@@ -31,14 +24,13 @@ namespace Crusader_Wars.unit_mapper
 
         public string GetAttilaMap() { return AttilaMap; }
         public List<(string building, string x, string y)> GetHistoricalMaps() { return HistoricalMaps; }
-        public List<(string terrain, string x, string y)> GetNormalMaps() { return HistoricalMaps; }
+        public List<(string terrain, string x, string y)> GetNormalMaps() { return NormalMaps; }
 
     }
     internal static class UnitMappers_BETA
     {
         /*----------------------------------------------------------------
          * TO DO:
-         * Terrains files reader ;
          * House files reader for AGOT
          ----------------------------------------------------------------*/
 
@@ -46,6 +38,28 @@ namespace Crusader_Wars.unit_mapper
         static string LoadedUnitMapper_FolderPath { get; set; }
 
         public static string GetLoadedUnitMapperName() { return Path.GetFileName(LoadedUnitMapper_FolderPath); }
+        public static string GetLoadedUnitMapperString() { 
+            switch(GetLoadedUnitMapperName())
+            {
+                case "OfficialCW_EarlyMedieval_919Mod":
+                    return "EARLY MEDIEVAL";
+                case "OfficialCW_HighMedieval_MK1212Mod":
+                    return "HIGH MEDIEVAL";
+                case "OfficialCW_LateMedieval_MK1212Mod":
+                    return "LATE MEDIEVAL";
+                case "OfficialCW_Renaissance_MK1212Mod":
+                    return "RENAISSANCE";
+                case "xCW_FallenEagle_AgeOfJustinian":
+                    return "DARK AGES";
+                case "xCW_FallenEagle_FallofTheEagle":
+                    return "LATE ANTIQUITY";
+                case "xCW_RealmsInExile_TheDawnlessDays":
+                    return "SECOND AGE";
+                default:
+                    return null;
+            }
+            
+        }
 
         private static void ReadTerrainsFile()
         {

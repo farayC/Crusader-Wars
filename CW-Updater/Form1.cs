@@ -18,12 +18,13 @@ namespace CW_Updater
 
             System.Threading.Thread.Sleep(1000);
             GetVersions();
-
+            /*
             if(AppVersion == ModVersion) 
             {
                 Process.Start(@".\Crusader Wars.exe");
                 this.Close();
             }
+            */
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
@@ -67,7 +68,6 @@ namespace CW_Updater
         private void AutoUpdater_MouseDown(object sender, MouseEventArgs e)
         {
             mouseOffset = new Point(-e.X, -e.Y);
-
         }
 
         private void AutoUpdater_MouseMove(object sender, MouseEventArgs e)
@@ -79,11 +79,6 @@ namespace CW_Updater
                 mousePos.Offset(mouseOffset.X, mouseOffset.Y);
                 Location = mousePos;
             }
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            Process.Start("www.crusaderwars.com");
         }
     }
 }

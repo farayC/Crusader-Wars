@@ -126,7 +126,7 @@ namespace Crusader_Wars.terrain
  
         static string attacker_direction = "", defender_direction = "";
         static string attacker_deployment="", defender_deployment = "";
-        public static void beta_SetSidesDirections(int total_soldiers, (string x, string y, string[] attacker_dir, string[] defender_dir) battle_map)
+        public static void beta_SetSidesDirections(int total_soldiers, (string x, string y, string[] attacker_dir, string[] defender_dir) battle_map, bool shouldRotateDeployment)
         {
             Random random = new Random();
             //All directions battle maps
@@ -144,18 +144,29 @@ namespace Crusader_Wars.terrain
             //Defined directions battle maps
             else
             {
-                int defender_index = random.Next(0, 2);
-                defender_direction = battle_map.defender_dir[defender_index];
-                attacker_direction = Directions.GetOppositeDirection(defender_direction);
-                defender_deployment = Directions.SetDirection(defender_direction, total_soldiers);
-                attacker_deployment = Directions.SetOppositeDirection(defender_direction, total_soldiers);
-
+                if(shouldRotateDeployment)
+                {
+                    int defender_index = random.Next(0, 2);
+                    defender_direction = battle_map.attacker_dir[defender_index];
+                    attacker_direction = Directions.GetOppositeDirection(defender_direction);
+                    defender_deployment = Directions.SetDirection(defender_direction, total_soldiers);
+                    attacker_deployment = Directions.SetOppositeDirection(defender_direction, total_soldiers);
+                }
+                else
+                {
+                    int defender_index = random.Next(0, 2);
+                    defender_direction = battle_map.defender_dir[defender_index];
+                    attacker_direction = Directions.GetOppositeDirection(defender_direction);
+                    defender_deployment = Directions.SetDirection(defender_direction, total_soldiers);
+                    attacker_deployment = Directions.SetOppositeDirection(defender_direction, total_soldiers);
+                }
             }
 
         }
 
         public static string beta_GetDeployment(string combat_side)
         {
+
             switch(combat_side)
             {
                 case "attacker":

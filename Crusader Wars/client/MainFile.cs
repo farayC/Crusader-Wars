@@ -20,7 +20,7 @@ using System.Threading;
 using Crusader_Wars.mod_manager;
 using System.Xml;
 using IWshRuntimeLibrary;
-using System.IO.Compression;
+using System.Web;
 
 
 namespace Crusader_Wars
@@ -130,7 +130,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();    
 
             //Hide debug button
-            btt_debug.Visible = false;
+            btt_debug.Visible = true;
 
             //Early Access label visibility
             EA_Label.Visible = false;
@@ -154,6 +154,8 @@ namespace Crusader_Wars
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
+            Culture culture = null;
+            culture.GetCultureName();
         }
 
         private void CreateAttilaShortcut()
@@ -197,14 +199,24 @@ namespace Crusader_Wars
         {
             sounds = new SoundPlayer(@".\data\sounds\sword-slash-with-metal-shield-impact-185433.wav");
             sounds.Play();
-
             _myVariable = 1;
-
             ExecuteButton.Enabled = false;
             ExecuteButton.BackgroundImage = Properties.Resources.start_new_disabled;
-            
-
             ProcessCommands.ResumeProcess();
+
+            /*
+             *  ERASES OLD FILES
+             */
+
+            string gamestateFile = @".\data\save_file_data\gamestate_file\gamestate";
+            string editedGamestateFile = @".\data\save_file_data\gamestate";
+            string savefileZip = @".\data\save_file_data\last_save.zip";
+            if (System.IO.File.Exists(gamestateFile) )
+                System.IO.File.Delete(gamestateFile);
+            if (System.IO.File.Exists(editedGamestateFile))
+                System.IO.File.Delete(editedGamestateFile);
+            if (System.IO.File.Exists(savefileZip))
+                System.IO.File.Delete(savefileZip);
 
             while (true)
             {
@@ -322,11 +334,10 @@ namespace Crusader_Wars
 
                         if (battleHasStarted)
                         {
-
-                            DataSearch.SearchLanguage(); if (Languages.Language != "l_english") Languages.ShowWarningMessage();
                             DataSearch.Search(log);
                             AttilaModManager.ReadInstalledMods();
                             SetPlaythrough();
+                            UpdateLoadingScreenUnitMapperMessage(UnitMappers_BETA.GetLoadedUnitMapperString());
                             AttilaModManager.CreateUserModsFile();
                         }
                         try
@@ -566,6 +577,7 @@ namespace Crusader_Wars
                         BattleResult.ReadAttilaResults(army, path_log_attila);
                         BattleResult.CheckForDeathCommanders(army, path_log_attila);
                         BattleResult.CheckForDeathKnights(army);
+                        /*
                         if (army.MergedArmies != null)
                         {
                             foreach(var merged_army in army.MergedArmies)
@@ -575,12 +587,14 @@ namespace Crusader_Wars
                                 BattleResult.CheckForDeathKnights(merged_army);
                             }
                         }
+                        */
                     }
                     foreach(var army in defender_armies)
                     {
                         BattleResult.ReadAttilaResults(army, path_log_attila);
                         BattleResult.CheckForDeathCommanders(army, path_log_attila);
                         BattleResult.CheckForDeathKnights(army);
+                        /*
                         if (army.MergedArmies != null)
                         {
                             foreach (var merged_army in army.MergedArmies)
@@ -590,6 +604,7 @@ namespace Crusader_Wars
                                 BattleResult.CheckForDeathKnights(merged_army);
                             }
                         }
+                        */
                     }
 
                     //  EDIT LIVING FILE
@@ -808,6 +823,14 @@ namespace Crusader_Wars
             if (loadingScreen != null && loadingScreen.IsHandleCreated)
             {
                 loadingScreen.BeginInvoke(new Action(() => loadingScreen.ChangeMessage(message)));
+            }
+        }
+
+        public void UpdateLoadingScreenUnitMapperMessage(string message)
+        {
+            if (loadingScreen != null && loadingScreen.IsHandleCreated)
+            {
+                loadingScreen.BeginInvoke(new Action(() => loadingScreen.ChangeUnitMapperMessage(message)));
             }
         }
 

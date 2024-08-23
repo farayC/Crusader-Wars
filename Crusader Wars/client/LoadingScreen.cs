@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Crusader_Wars
 {
@@ -16,6 +11,7 @@ namespace Crusader_Wars
 
             //Icon
             this.Icon = Properties.Resources.logo;
+            flowLayoutPanel2.Hide();
         }
 
         public void ChangeMessage(string message)
@@ -27,6 +23,19 @@ namespace Crusader_Wars
             else
             {
                 Label_Message.Text = message;
+            }
+        }
+
+        public void ChangeUnitMapperMessage(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(ChangeUnitMapperMessage), new object[] { message });
+            }
+            else
+            {
+                Label_UnitMapper.Text = message;
+                flowLayoutPanel2.Show();
             }
         }
 

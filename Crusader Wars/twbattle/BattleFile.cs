@@ -48,14 +48,16 @@ namespace Crusader_Wars
             bool isDefenderEnemy = false,
                  isDefenderPlayer = false;
 
+            string left_side_commander_id = CK3LogData.LeftSide.GetCommander().id;
+            string right_side_commander_id = CK3LogData.RightSide.GetCommander().id;
             foreach (var army in attacker_armies)
             {
-                if (army.CommanderID == CK3LogData.LeftSide.GetCommander().id)
+                if (army.CommanderID == left_side_commander_id)
                 {
                     isAttackerPlayer = true;
                     isDefenderEnemy = true;
                 }
-                else if (army.CommanderID == CK3LogData.RightSide.GetCommander().id)
+                else if (army.CommanderID == right_side_commander_id)
                 {
                     isAttackerEnemy = true;
                     isDefenderPlayer = true;
@@ -64,13 +66,17 @@ namespace Crusader_Wars
 
             foreach(var army in attacker_armies)
             {
-                if (isAttackerPlayer) army.IsPlayer(true);
-                else army.IsEnemy(true);
+                if (isAttackerPlayer) 
+                    army.IsPlayer(true);
+                else 
+                    army.IsEnemy(true);
             }
             foreach(var army in defender_armies)
             {
-                if(isDefenderPlayer) army.IsPlayer(true);
-                else army.IsEnemy(true);
+                if(isDefenderPlayer) 
+                    army.IsPlayer(true);
+                else 
+                    army.IsEnemy(true);
             }
 
         }
@@ -416,7 +422,16 @@ namespace Crusader_Wars
 
             //  BATTLE MAP
             var battleMap = TerrainGenerator.GetBattleMap();
-            Deployments.beta_SetSidesDirections(total_soldiers, battleMap);
+            var playerCommanderTraits = UnitsFile.GetCommanderTraitsObj(true);
+            var enemyCommanderTraits = UnitsFile.GetCommanderTraitsObj(true);
+            if(playerCommanderTraits.ShouldRotateDeployment(player_main_army.CombatSide, TerrainGenerator.TerrainType) || enemyCommanderTraits.ShouldRotateDeployment(enemy_main_army.CombatSide, TerrainGenerator.TerrainType))
+            {
+                Deployments.beta_SetSidesDirections(total_soldiers, battleMap, true);
+            }
+            else
+                Deployments.beta_SetSidesDirections(total_soldiers, battleMap, false);
+
+
 
 
             //  ALL CONTROLED ARMIES
@@ -491,11 +506,12 @@ namespace Crusader_Wars
         private static string GetAttilaMap()
         {
             string default_attila_map = "Terrain/battles/main_attila_map/";
-            return default_attila_map;
-            /*
-            if (UnitMapper.Attila_Map == null) return default_attila_map;
-            else return UnitMapper.Attila_Map;
-            */
+            if (UnitMappers_BETA.Terrains == null)
+                return default_attila_map;
+            else if (UnitMappers_BETA.Terrains.GetAttilaMap() != null)
+                return UnitMappers_BETA.Terrains.GetAttilaMap();
+            else
+                return default_attila_map;
         }
 
         private static void OpenBattle()
@@ -518,13 +534,6 @@ namespace Crusader_Wars
         private static void OpenArmy()
         {
             string PR_OpenArmy = "<army>\n\n";
-
-            File.AppendAllText(battlePath, PR_OpenArmy);
-        }
-
-        private static void OpenReinforcementArmy()
-        {
-            string PR_OpenArmy = "<reinforcement_army>\n\n";
 
             File.AppendAllText(battlePath, PR_OpenArmy);
         }
@@ -559,8 +568,9 @@ namespace Crusader_Wars
         {
             if (army.CombatSide == "defender" && ModOptions.DefensiveDeployables() is true && army.Commander != null)
             {
+                int deployables_boost = UnitsFile.GetCommanderTraitsObj(army.IsPlayer()).GetDeployablesBoost();
                 int army_soldiers = army.Units.Sum(unit => unit.GetSoldiers());
-                army.SetDefences(new DefensiveSystem(army_soldiers, army.Commander.Martial));
+                army.SetDefences(new DefensiveSystem(army_soldiers, army.Commander.Martial, deployables_boost));
                 string PR_DefensiveDeployments = army.Defences.GetText();
                 File.AppendAllText(battlePath, PR_DefensiveDeployments);
             }

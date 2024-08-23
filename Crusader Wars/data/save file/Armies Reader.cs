@@ -728,6 +728,13 @@ namespace Crusader_Wars.data.save_file
                                                             .Where(regiment => regiment.isMercenary())
                                                             .ToList();
 
+                        //break loop if all cultures are set
+                        int attackerNumOfNotSetCultures = attacker_mercenaries_regiments.Count(x => x.Culture == null);
+                        int defenderNumOfNotSetCultures = defender_mercenaries_regiments.Count(x => x.Culture == null);
+                        if (attackerNumOfNotSetCultures == 0 && defenderNumOfNotSetCultures == 0)
+                            break;
+
+
                         for (int i = 0; i < attacker_armies.Count; i++)
                         {
                             //Army Regiments
@@ -796,6 +803,28 @@ namespace Crusader_Wars.data.save_file
 
                 }
             }
+
+            //HOLY ORDER REGIMENTS
+            
+            foreach(var army in attacker_armies)
+            {
+                var attacker_holyorder_regiments = army.ArmyRegiments.SelectMany(armyRegiment => armyRegiment.Regiments)
+                                              .Where(regiment => regiment.isMercenary() && regiment.Culture == null);
+                foreach(var holy_regiment in attacker_holyorder_regiments)
+                {
+                    holy_regiment.SetCulture(army.Owner.GetCulture().ID);
+                }
+            }
+
+            foreach (var army in defender_armies)
+            {
+                var defender_holyorder_regiments = army.ArmyRegiments.SelectMany(armyRegiment => armyRegiment.Regiments)
+                                              .Where(regiment => regiment.isMercenary() && regiment.Culture == null);
+                foreach (var holy_regiment in defender_holyorder_regiments)
+                {
+                    holy_regiment.SetCulture(army.Owner.GetCulture().ID);
+                }
+            }
         }
 
         private static void ReadCultureManager()
@@ -825,7 +854,7 @@ namespace Crusader_Wars.data.save_file
 
                         //
                         // ATTACKER REGIMENTS
-
+                        
                         //Armies
                         for (int i = 0; i < attacker_armies.Count; i++)
                         {
@@ -856,14 +885,14 @@ namespace Crusader_Wars.data.save_file
                                         }
                                     }
                                 }
-
                             }
                         }
+                       
                         if (!isSearchStared)
                         {
                             //
                             // DEFENDER REGIMENTS
-
+                            
                             //Armies
                             for (int i = 0; i < defender_armies.Count; i++)
                             {
@@ -895,7 +924,9 @@ namespace Crusader_Wars.data.save_file
                                     }
                                 }
                             }
+                            
                         }
+                        
                     }
 
 
@@ -921,6 +952,7 @@ namespace Crusader_Wars.data.save_file
                 {
                     //
                     //  ATTACKER REGIMENTS
+                                  
 
                     //Armies
                     for (int i = 0; i < attacker_armies.Count; i++)

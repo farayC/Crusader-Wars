@@ -123,6 +123,9 @@ namespace Crusader_Wars
             var ascending_list = Units.OrderBy(x => x.GetSoldiers()).ToList();
             var major_levy_culture = ascending_list[0];
 
+            if (ascending_list == null || ascending_list.Count < 1) 
+                return;
+
             int total_soldiers = 0;
             for(int i = 0; i< Units.Count;i++)
             {
@@ -149,24 +152,27 @@ namespace Crusader_Wars
            
             StringBuilder sb = new StringBuilder();
 
-            Console.WriteLine(sb.AppendLine($"ARMY - {ID} | {CombatSide}"));
+            sb.AppendLine($"ARMY - {ID} | {CombatSide}");
+            Console.WriteLine($"ARMY - {ID} | {CombatSide}");
 
             if(Commander != null)
             {
-                Console.WriteLine(sb.AppendLine($"## GENERAL | Name: {Commander.Name} | Soldiers: {Commander.GetUnitSoldiers()} | NobleRank: {Commander.Rank} | ArmyXP: +{Commander.GetUnitsExperience()} | Culture: {Commander.GetCultureName()} | Heritage: {Commander.GetHeritageName()}"));
+                sb.AppendLine($"## GENERAL | Name: {Commander.Name} | Soldiers: {Commander.GetUnitSoldiers()} | NobleRank: {Commander.Rank} | ArmyXP: +{Commander.GetUnitsExperience()} | Culture: {Commander.GetCultureName()} | Heritage: {Commander.GetHeritageName()}");
+                Console.WriteLine($"## GENERAL | Name: {Commander.Name} | Soldiers: {Commander.GetUnitSoldiers()} | NobleRank: {Commander.Rank} | ArmyXP: +{Commander.GetUnitsExperience()} | Culture: {Commander.GetCultureName()} | Heritage: {Commander.GetHeritageName()}");
             }
             if (Knights.GetKnightsList() != null)
             {
                 foreach (var knight in Knights.GetKnightsList())
                 {
-                    
                     if(knight.IsAccolade())
                     {
-                        Console.WriteLine(sb.AppendLine($"## ACCOLADE | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}"));
+                        sb.AppendLine($"## ACCOLADE | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
+                        Console.WriteLine($"## ACCOLADE | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
                     }
                     else
                     {
-                        Console.WriteLine(sb.AppendLine($"## KNIGHT | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}"));
+                        sb.AppendLine($"## KNIGHT | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
+                        Console.WriteLine($"## KNIGHT | Name: {knight.GetName()} | Soldiers: {knight.GetSoldiers()} | Culture: {knight.GetCultureName()} | Heritage: {knight.GetHeritageName()}");
                     }
                 }
             }
@@ -174,11 +180,13 @@ namespace Crusader_Wars
             {
                 if (unit.IsMerc())
                 {
-                    Console.WriteLine(sb.AppendLine($"## Hired {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}"));
+                    sb.AppendLine($"## Hired {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
+                    Console.WriteLine($"## Hired {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
                 }
                 else
                 {
-                    Console.WriteLine(sb.AppendLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}"));
+                    sb.AppendLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
+                    Console.WriteLine($"## {unit.GetRegimentType()} | Name: {unit.GetName()} |Soldiers: {unit.GetSoldiers()} | Culture: {unit.GetCulture()} | Heritage: {unit.GetHeritage()} | Unit Key: {unit.GetAttilaUnitKey()}");
                 }
             }
             Console.WriteLine();

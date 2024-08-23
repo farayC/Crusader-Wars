@@ -63,17 +63,25 @@ namespace Crusader_Wars
             }
         }
 
+        public static CommanderTraits GetCommanderTraitsObj(bool isPlayer)
+        {
+            if (isPlayer && PlayerCommanderTraits != null)
+            {
+                return PlayerCommanderTraits;
+            }
+            else if (!isPlayer && EnemyCommanderTraits != null)
+            {
+                return EnemyCommanderTraits;
+            }
+            return null;
+        }
+
         static int GetTraitsXP(bool isPlayer,string combatSide, string terrainType, bool isRiverCrossing, bool isHostileFaith, bool isWinter)
         {
+            var commander_traits =  GetCommanderTraitsObj(isPlayer);
+            if (commander_traits != null)
+                return commander_traits.GetBenefits(combatSide, terrainType, isRiverCrossing, isHostileFaith, isWinter);
 
-            if(isPlayer && PlayerCommanderTraits != null)
-            {
-                return PlayerCommanderTraits.GetBenefits(combatSide, terrainType, isRiverCrossing, isHostileFaith, isWinter);
-            }
-            else if(!isPlayer && EnemyCommanderTraits != null)
-            {
-                return EnemyCommanderTraits.GetBenefits(combatSide, terrainType, isRiverCrossing, isHostileFaith, isWinter);
-            }
             return 0;
         }
 

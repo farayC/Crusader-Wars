@@ -31,7 +31,6 @@ namespace Crusader_Wars.data.save_file
             string newSaveFilePath = @".\data\save_file_data\battle_results.zip";
             string metadataPath = @".\data\save_file_data\metadata.txt";
             DEFAULTCompressFileWithMetadata(editedGamestatePath, newSaveFilePath, metadataPath);
-            //CompressFileWithMetadata(editedGamestatePath,newSaveFilePath, metadataPath);
         }
 
         internal static void Finish()
@@ -72,7 +71,7 @@ namespace Crusader_Wars.data.save_file
             using (FileStream finalZipStream = new FileStream(zipFilePath, FileMode.Create, FileAccess.Write))
             {
                 // Write metadata
-                byte[] metadataBytes = Encoding.Default.GetBytes(File.ReadAllText(metadata));
+                byte[] metadataBytes = Encoding.UTF8.GetBytes(File.ReadAllText(metadata));
                 finalZipStream.Write(metadataBytes, 0, metadataBytes.Length);
 
                 // Append the ZIP data
@@ -85,54 +84,6 @@ namespace Crusader_Wars.data.save_file
             // Clean up the temporary file
             File.Delete(tempZipPath);
         }
-
-        static void CompressFileWithMetadata(string fileToZip, string zipFilePath, string metadataPath)
-        {
-            // Temporary file to store the zip data
-            string tempZipPath = zipFilePath; //+ ".temp";
-
-            using (FileStream tempZipStream = new FileStream(tempZipPath, FileMode.Create, FileAccess.Write))
-            using (ZipOutputStream zipStream = new ZipOutputStream(tempZipStream))
-            {
-                // Set the compression level (0-9)
-                zipStream.SetLevel(5);
-
-                // Create a new ZIP entry for the file
-                string fileName = Path.GetFileName(fileToZip);
-                ZipEntry entry = new ZipEntry(fileName)
-                {
-                    DateTime = DateTime.Now  // Set the date/time of the entry
-                };
-
-                zipStream.PutNextEntry(entry);
-
-                // Read the file and write it to the ZIP entry
-                using (FileStream fileStream = new FileStream(fileToZip, FileMode.Open, FileAccess.Read))
-                {
-                    fileStream.CopyTo(zipStream);
-                }
-
-                // Close the current entry
-                zipStream.CloseEntry();
-            }
-
-            // Move the temp ZIP file to final destination and prepend metadata
-            using (FileStream zipFileStream = new FileStream(tempZipPath, FileMode.Open, FileAccess.Read))
-            using (FileStream finalZipStream = new FileStream(zipFilePath, FileMode.Create, FileAccess.Write))
-            {
-                // Write metadata
-                byte[] metadataBytes = Encoding.Default.GetBytes(File.ReadAllText(metadataPath));
-                finalZipStream.Write(metadataBytes, 0, metadataBytes.Length);
-
-                // Write the ZIP data
-                zipFileStream.CopyTo(finalZipStream);
-            }
-
-            // Delete the temporary file
-            File.Delete(tempZipPath);
-        }
-
-
 
         static void EditContinueGameJson()
         {
@@ -192,7 +143,13 @@ namespace Crusader_Wars.data.save_file
 
         static void ExtractGamestate(string zipFilePath, string extractPath)
         {
-            using (FileStream fs = new FileStream(zipFilePath, FileMode.Open, FileAccess.Read))
+            if (File.Exists(@".\data\save_file_data\gamestate_file\gamestate"))
+                File.Delete(@".\data\save_file_data\gamestate_file\gamestate");
+            if (File.Exists(@".\data\save_file_data\gamestate"))
+                File.Delete(@".\data\save_file_data\gamestate");
+
+
+                using (FileStream fs = new FileStream(zipFilePath, FileMode.Open, FileAccess.Read))
             {
                 long zipDataStart = FindStartOfZipData(fs);
 
@@ -250,7 +207,7 @@ namespace Crusader_Wars.data.save_file
         static void ReadMetaData(string myLastSavePath)
         {
             using (StreamReader streamReader = new StreamReader(myLastSavePath))
-            using (StreamWriter streamWriter = new StreamWriter(@".\data\save_file_data\metadata.txt", false, Encoding.Default))
+            using (StreamWriter streamWriter = new StreamWriter(@".\data\save_file_data\metadata.txt", false, Encoding.UTF8))
             {
                 streamWriter.NewLine = "\n";
                 string line;
@@ -261,6 +218,7 @@ namespace Crusader_Wars.data.save_file
                         streamWriter.WriteLine(line);
                         break;
                     }
+
 
                     streamWriter.WriteLine(line);
 

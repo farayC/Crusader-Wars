@@ -63,9 +63,9 @@ namespace CW_Updater.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap bookpage {
+        internal static System.Drawing.Bitmap progress_orange {
             get {
-                object obj = ResourceManager.GetObject("bookpage", resourceCulture);
+                object obj = ResourceManager.GetObject("progress_orange", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,31 +73,9 @@ namespace CW_Updater.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Sem_nome {
+        internal static System.Drawing.Bitmap tooltip_bg {
             get {
-                object obj = ResourceManager.GetObject("Sem nome", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap tapafaray_a_medieval_battlefield_wallpaper___Purple_and_Orange__3b1d5a3f_14bb_49f5_a73c_2965d24ce5c5 {
-            get {
-                object obj = ResourceManager.GetObject("tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__3b1d5a3f-14bb-49f" +
-                        "5-a73c-2965d24ce5c5", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap tapafaray_a_medieval_battlefield_wallpaper___Purple_and_Orange__736b3ecb_9c1a_4c05_9d6d_fb5342c957e3 {
-            get {
-                object obj = ResourceManager.GetObject("tapafaray_a_medieval_battlefield_wallpaper_._Purple_and_Orange__736b3ecb-9c1a-4c0" +
-                        "5-9d6d-fb5342c957e3", resourceCulture);
+                object obj = ResourceManager.GetObject("tooltip_bg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

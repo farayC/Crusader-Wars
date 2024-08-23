@@ -522,6 +522,7 @@ namespace Crusader_Wars
                             searchData = SearchCharacters(char_id, defender_armies);
                             if(searchData.searchStarted)
                             {
+                                searchStarted = true;
                                 if (searchData.isCommander)
                                 {
                                     isCommander = true;
@@ -631,14 +632,7 @@ namespace Crusader_Wars
                             foreach(Army army in attacker_armies)
                             {
                                 main_kills += army.UnitsResults.GetKillsAmountOfMainPhase(regimentType);
-                                if(army.MergedArmies != null)
-                                {
-                                    foreach(Army mergedArmy in army.MergedArmies)
-                                    {
-                                        main_kills += mergedArmy.UnitsResults.GetKillsAmountOfMainPhase(regimentType);
-                                    }
-                                }
-                            }
+                              }
                             string edited_line = "\t\t\t\t\t\tmain_kills=" + main_kills;
                             streamWriter.WriteLine(edited_line);
                             continue;
@@ -649,13 +643,6 @@ namespace Crusader_Wars
                             foreach (Army army in attacker_armies)
                             {
                                 pursuit_kills += army.UnitsResults.GetKillsAmountOfPursuitPhase(regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        pursuit_kills += mergedArmy.UnitsResults.GetKillsAmountOfPursuitPhase(regimentType);
-                                    }
-                                }
                             }
                             string edited_line = "\t\t\t\t\t\tpursuit_kills=" + pursuit_kills;
                             streamWriter.WriteLine(edited_line);
@@ -667,13 +654,6 @@ namespace Crusader_Wars
                             foreach (Army army in attacker_armies)
                             {
                                 main_losses += army.UnitsResults.GetDeathAmountOfMainPhase(army.CasualitiesReports,regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        main_losses += mergedArmy.UnitsResults.GetDeathAmountOfMainPhase(mergedArmy.CasualitiesReports, regimentType);
-                                    }
-                                }
                             }
                             string edited_line = "\t\t\t\t\t\tmain_losses=" + main_losses;
                             streamWriter.WriteLine(edited_line);
@@ -685,14 +665,7 @@ namespace Crusader_Wars
                             foreach (Army army in attacker_armies)
                             {
                                 pursuit_losses += army.UnitsResults.GetDeathAmountOfPursuitPhase(army.CasualitiesReports, regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        pursuit_losses += mergedArmy.UnitsResults.GetDeathAmountOfPursuitPhase(mergedArmy.CasualitiesReports, regimentType);
-                                    }
-                                }
-                            }
+                              }
                             string edited_line = "\t\t\t\t\t\tpursuit_losses_maa=" + pursuit_losses;
                             streamWriter.WriteLine(edited_line);
                             continue;
@@ -745,13 +718,6 @@ namespace Crusader_Wars
                             foreach (Army army in defender_armies)
                             {
                                 main_kills += army.UnitsResults.GetKillsAmountOfMainPhase(regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        main_kills += mergedArmy.UnitsResults.GetKillsAmountOfMainPhase(regimentType);
-                                    }
-                                }
                             }
                             string edited_line = "\t\t\t\t\t\tmain_kills=" + main_kills;
                             streamWriter.WriteLine(edited_line);
@@ -763,14 +729,7 @@ namespace Crusader_Wars
                             foreach (Army army in defender_armies)
                             {
                                 pursuit_kills += army.UnitsResults.GetKillsAmountOfPursuitPhase(regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        pursuit_kills += mergedArmy.UnitsResults.GetKillsAmountOfPursuitPhase(regimentType);
-                                    }
-                                }
-                            }
+                               }
                             string edited_line = "\t\t\t\t\t\tpursuit_kills=" + pursuit_kills;
                             streamWriter.WriteLine(edited_line);
                             continue;
@@ -781,14 +740,7 @@ namespace Crusader_Wars
                             foreach (Army army in defender_armies)
                             {
                                 main_losses += army.UnitsResults.GetDeathAmountOfMainPhase(army.CasualitiesReports, regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        main_losses += mergedArmy.UnitsResults.GetDeathAmountOfMainPhase(mergedArmy.CasualitiesReports, regimentType);
-                                    }
-                                }
-                            }
+                             }
                             string edited_line = "\t\t\t\t\t\tmain_losses=" + main_losses;
                             streamWriter.WriteLine(edited_line);
                             continue;
@@ -799,13 +751,6 @@ namespace Crusader_Wars
                             foreach (Army army in defender_armies)
                             {
                                 pursuit_losses += army.UnitsResults.GetDeathAmountOfPursuitPhase(army.CasualitiesReports, regimentType);
-                                if (army.MergedArmies != null)
-                                {
-                                    foreach (Army mergedArmy in army.MergedArmies)
-                                    {
-                                        pursuit_losses += mergedArmy.UnitsResults.GetDeathAmountOfPursuitPhase(mergedArmy.CasualitiesReports, regimentType);
-                                    }
-                                }
                             }
                             string edited_line = "\t\t\t\t\t\tpursuit_losses_maa=" + pursuit_losses;
                             streamWriter.WriteLine(edited_line);
@@ -828,6 +773,12 @@ namespace Crusader_Wars
                             isMAA = false;
                             regimentType = "";
                         }
+                    }
+
+                    if(line == "\t\t}")
+                    {
+                        streamWriter.WriteLine("\t\t\twiped=no\n"+line);
+                        break;
                     }
 
                     streamWriter.WriteLine(line);
@@ -878,9 +829,13 @@ namespace Crusader_Wars
                         }
                         else if (line.Contains("\t\t\t\t\t\tsoft_casualties="))
                         {
+                            streamWriter.WriteLine(line);
+                            continue;
+                            /*
                             string edited_line = "\t\t\t\t\t\tsoft_casualties=" + 0;
                             streamWriter.WriteLine(edited_line);
                             continue;
+                            */
                         }
                         else if (line.Contains("\t\t\t\ttotal_fighting_men="))
                         {
@@ -910,9 +865,13 @@ namespace Crusader_Wars
                         }
                         else if (line.Contains("\t\t\t\t\t\tsoft_casualties="))
                         {
+                            streamWriter.WriteLine(line);
+                            continue;
+                            /*
                             string edited_line = "\t\t\t\t\t\tsoft_casualties=" + 0;
                             streamWriter.WriteLine(edited_line);
                             continue;
+                            */
                         }
                         else if (line.Contains("\t\t\t\ttotal_fighting_men="))
                         {
