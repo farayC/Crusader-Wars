@@ -1,23 +1,6 @@
 ![MAIN BANNER](https://i.imgur.com/6Z9IfPm.png)
 # What is Crusader Wars?
 Crusader Wars is a complete overhaul of Crusader Kings 3 warfare system making it possible to fight your battles in a 1:1 scale in Total War: Attila.
-# Installation Guide (Steam):
-### Read very carefully!
-* Download CW Launcher at https://crusaderwars.com/
-* Subscribe to CW on the [Steam Workshop Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2977969008).
-* Start CW Launcher and go to Settings
-* Set both games .exe paths
-* Enable the desired Unit Mappers
-* Close settings and run Crusader Wars by clicking on the sword icon
-# Installation Guide (Non-Steam):
-### Read very carefully!
-* Download CW Launcher at https://crusaderwars.com/
-* Go to CW Launcher folder and open a folder callled “CK3 Mod”.
-* Follow the instructions in there.
-* Start CW Launcher and go to Settings
-* Set both games .exe paths
-* Enable the desired Unit Mappers
-* Close settings and run Crusader Wars by clicking on the sword icon
 # Current features:
 ## v0.9.11.3 "Quality Of Life"
 ### Accurate Armies Composition
