@@ -42,20 +42,20 @@ I created a mod for CK3 that consists of a button on the ```window_combat.gui```
 
 ## Crusader Kings 3 Data Reading:
 80% of data Crusader Wars reads from is from the save file directly, the rest on the console_history.txt file.
-On the Save File, it reads data from these sections:
+On the Save File, it reads data from these sections (in order):
+- combats
+- traits_lookup
 - armies
+- units
 - army_regiments
 - regiments
-- combats
-- counties
-- court_positions
-- culture_manager
 - landed_titles
+- counties
+- mercenary_company_manager
 - living
 - accolades
-- mercenary_company_manager
-- units
-- traits_lookup
+- court_positions
+- culture_manager
 
 On the console_history.txt it gets this data, which is: 
 - Year and Month
