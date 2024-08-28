@@ -34,7 +34,7 @@ Enable and disable secondary mods in the Options menu!
 # Roadmap
 Here you can see all our concepts, ideas, and plans for the mod.
 [<img src="https://i.imgur.com/BKru2vr.png">](https://trello.com/b/abR09huC/crusader-wars)
-# How does it work?
+# ----------------------------How does it work?----------------------------
 If you want to code a mod like this, these are the major steps to achieve it:
 ## Crusader Kings 3 Data Output:
 There are two ways Crusader Wars outputs data for it to interpret. One is by Console Commands, the other is by a Save File.
