@@ -2,35 +2,35 @@
 # What is Crusader Wars?
 Crusader Wars is a complete overhaul of Crusader Kings 3 warfare system making it possible to fight your battles in a 1:1 scale in Total War: Attila.
 # Current features:
-## v0.9.11.3 "Quality Of Life"
-### Accurate Armies Composition
-The armies in the Total War battle will be 1:1 scale of the Crusader Kings 3 battle, their unit's culture is based on the commander's culture or heritage.
-### Levies
-Levies are not just simply converted as one type of unit made of pitchfork peasants, each culture has its type of levy composition trying to be the most historically accurate possible.
-### Automatic Battle Results Transfer
-When the Total War battle ends, CK3 opens up automatically with the battle results with a 98% accuracy, counting each regiment's soldiers dead and killed.
-### Commander & Knights
-The army commander will be the Total War general unit with his strength and XP level being based on his noble rank, bodyguards, and prowess.
-His martial skills represent a major role on the battlefield, increasing the whole army's XP level and the amount and quality of defensive deployable when defending.
-Each knight is also present in a unit and each one of their prowess and martial increases the strength of it individually.
-
-If your characters fall in battle can get injured, imprisoned, or even killed!
-Injured characters also get less strength in soldiers when fighting according to the severity of the injury.
-### Terrain & Weather
+## v1.0 "Warfare"
+### Land Battles 
+Fight your Crusader Kings 3 battles in Total War: Attila, covering every aspect of each battle!
+### Accurate Battle Results
+Every casuality of the battle is 100% accurate to their regiment and army their in!
+### Time Period
+We have mapped each CK3 culture, heritage, and Men-At-Arms with a collection of Attila mods to be the most historically accurate possible, covering a range from 8th-Century to 15th-Century.
+### Levies Compositions
+Each culture and heritage also have their unique levies compositions, some can be infantry focused, other's can be cavalry focused.You will feel each one uniqueness!
+### Regiments Cultures
+Every Crusader Kings 3 regiment has their hometown culture, and you will see every cultural difference in battle!
+### Commanders
+The army commander will be the Total War general unit with his strength and XP level being based on his noble rank, bodyguards, and prowess. His martial skills represent a major role on the battlefield, increasing the whole army's XP level and the amount and quality of defensive deployable when defending.
+### Knights
+Each knight is also present in a unit and each one of their prowess and martial increases the strength of it individually. Their lord's knight effectiveness also increases their unit xp. Their cultural unit will be the major culture amongst them or their realm.
+### Acclaimed Knights
+An acclaimed knight is an important factor on the knight's unit, they get more soldiers than a regular knight and based on their accolade attributes and glory rank they give a special ability to the knight's unit.
+### Characters Health
+What happens on the battlefield, doesn't stayt on the battlefield! If your generals or knights fall, they will get injured, captured or even die! And, if your characters are fighting with injures, they will get a soldiers penalty in their unit.
+### Terrain
 The Total War battle map will be based on the CK3 battle terrain and defending armies in mountains, hills, etc... will always get the high ground.
-The month the battle takes place is also accounted to make the battle atmosphere resemble the season they are in!
-Winter severity also increases the amount of winter effects there is on the Total War battle.
-### Unique Battle Maps
-If you're fighting in Gizeh, Stonehenge, or Hadrian's Wall in CK3, you will get a battle map there!
-### Battle Modifiers
-Ruler leading the soldiers will increase the army XP level, and Realm in Debt, Army Gathering, Low Supplies, and No Supplies reduce the army XP.
-### Unit Cards Names
-The Total War unit cards' names will be their CK3 regiment name equivalent.
-### Period Accurate
-We have mapped each CK3 culture, heritage, and Men-At-Arms with a collection of Attila mods to be the most historically accurate possible. We have two unit mappers for Anno Domini and three for Medieval Kingdoms 1212 covering the range from 8th-Century to 15th-Century.
-### CK3 "LOTR: Realms of Exile" & "The Fallen Eagle" Compatible!
-We also have 1 unit mapper for the Attila Dawnless Days and some sub-mods to be used with CK3 "LOTR: Realms of Exile".
-Then we got a unit mapper for Attila's "Fall of the Eagle", one for "Fireforged Empires" and one for "Age of Justinian" to be used with CK3 "The Fallen Eagle".
+### Unique Maps
+You will fight in some unique maps depending on the special building on the province you are fighting in.
+### Weather
+The month the battle takes place is also accounted to make the battle atmosphere resemble the season they are in! Winter severity also increases the amount of winter effects there is on the Total War battle.
+### Seamless as Possible
+With a press of a button, the mod opens up Attila with the correct mods and after the battle, it compresses the edited save file to have totaly fast loading speeds!
+### Integrated Attila Mod Manager
+Enable and disable secondary mods in the Options menu!
 # Roadmap
 Here you can see all our concepts, ideas, and plans for the mod.
 [<img src="https://i.imgur.com/BKru2vr.png">](https://trello.com/b/abR09huC/crusader-wars)
