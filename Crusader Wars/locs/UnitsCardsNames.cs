@@ -14,6 +14,30 @@ namespace Crusader_Wars.locs
 {
     static class UnitsCardsNames
     {
+        static List<string> default_text_files = new List<string>() 
+        {
+            "CW_special_ability_phases.loc",
+            "random_localisation_strings.loc",
+            "tutorial_historical_battles.loc.tsv",
+            "tutorial_historical_battles_factions.loc.tsv",
+            "tutorial_historical_battles_scripted_subtitles.loc",
+            "tutorial_historical_battles_uied_component_texts.loc",
+            "tutorial_historical_battles_uied_component_texts.loc.tsv",
+            "unit_abilities.loc"
+        };
+        public static void RemoveFiles()
+        {
+
+            string path = @".\data\battle files\text\db";
+            foreach(var file in Directory.GetFiles(path))
+            {
+                string fileName = Path.GetFileName(file);
+                if (default_text_files.Exists(x => x == fileName))
+                    continue;
+                else
+                    File.Delete(file);
+            }
+        }
 
         public static void ChangeUnitsCardsNames(string Mapper_Name, List<Army> attacker_armies, List<Army> defender_armies)
         {
@@ -36,15 +60,19 @@ namespace Crusader_Wars.locs
                     string[] mk1212_loc_files = Directory.GetFiles(@".\data\units_cards_names\mk1212\");
                     EditUnitCardsFiles(mk1212_loc_files, unitsCollection);
                     break;
-                case "xCW_FallenEagle_AgeOfJustinian":
+                case "OfficialCW_FallenEagle_AgeOfJustinian":
                     string[] aoj_loc_files = Directory.GetFiles(@".\data\units_cards_names\age of justinian\");
                     EditUnitCardsFiles(aoj_loc_files, unitsCollection);
                     break;
-                case "xCW_FallenEagle_FallofTheEagle":
+                case "OfficialCW_FallenEagle_FallofTheEagle":
                     string[] fte_loc_files = Directory.GetFiles(@".\data\units_cards_names\fall of the eagles\");
                     EditUnitCardsFiles(fte_loc_files, unitsCollection);
                     break;
-                case "xCW_RealmsInExile_TheDawnlessDays":
+                case "OfficialCW_FallenEagle_Fireforged-Empire":
+                    string[] fe_loc_files = Directory.GetFiles(@".\data\units_cards_names\fireforged empires\");
+                    EditUnitCardsFiles(fe_loc_files, unitsCollection);
+                    break;
+                case "OfficialCW_RealmsInExile_TheDawnlessDays":
                     string[] lotr_loc_files = Directory.GetFiles(@".\data\units_cards_names\dawnless days\");
                     EditUnitCardsFiles(lotr_loc_files, unitsCollection);
                     break;

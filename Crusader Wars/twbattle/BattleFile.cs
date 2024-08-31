@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Windows.Forms;
 using static Crusader_Wars.terrain.Lands;
 
@@ -157,7 +158,7 @@ namespace Crusader_Wars
             {
                 try
                 {
-                    userAlliedArmy = temp_attacker_armies.First(x => x.Owner.GetID() == DataSearch.Player_Character.GetID()) ?? temp_defender_armies.First(x => x.Owner.GetID() == DataSearch.Player_Character.GetID());
+                    userAlliedArmy = temp_attacker_armies.Find(x => x.Owner.GetID() == DataSearch.Player_Character.GetID()) ?? temp_defender_armies.Find(x => x.Owner.GetID() == DataSearch.Player_Character.GetID());
                     isUserAlly = true;
                     if (userAlliedArmy.CombatSide == "attacker")
                         userAlliedArmy = ArmiesControl.MergeFriendlies(temp_attacker_armies, userAlliedArmy);
@@ -276,7 +277,7 @@ namespace Crusader_Wars
                 try
                 {
                     isUserAlly = true;
-                    userAlliedArmy = temp_attacker_armies.First(x => x.Owner.GetID() == DataSearch.Player_Character.GetID()) ?? temp_defender_armies.First(x => x.Owner.GetID() == DataSearch.Player_Character.GetID());
+                    userAlliedArmy = temp_attacker_armies.Find(x => x.Owner.GetID() == DataSearch.Player_Character.GetID()) ?? temp_defender_armies.Find(x => x.Owner.GetID() == DataSearch.Player_Character.GetID());
 
                     if (userAlliedArmy.CombatSide == "attacker")
                     {
@@ -482,9 +483,9 @@ namespace Crusader_Wars
 
             //Write essential data
             if (x == "stark")
-                SetPlayerFaction();
+                SetPlayerFaction(army);
             else
-                SetEnemyFaction();
+                SetEnemyFaction(army);
 
             //Write deployment area
             SetDeploymentArea(army.CombatSide);
@@ -549,11 +550,56 @@ namespace Crusader_Wars
             
         }
 
-        private static void SetPlayerFaction()
+        private static void SetPlayerFaction(Army army)
         {
-            string PR_PlayerFaction = "<faction>historical_house_stark</faction>\n\n";
+            string PR_PlayerFaction = $"<faction>{GetAOJFaction(army, true)}</faction>\n\n";
 
             File.AppendAllText(battlePath, PR_PlayerFaction);
+        }
+
+        // TEMPORARY CODE FOR AGE OF JUSTINIAN REPEATED UNIT KEYS
+        static List<(string AttilaFaction, string Faction)> aoj_list = new List<(string AttilaFaction, string Faction)>()
+        {
+                ("Copt", "att_fact_ghassanids"),
+                ("Bedouin", "att_fact_lakhmids"),
+                ("Abbasid", "att_fact_lakhmids"),
+                ("Himyarite", "att_fact_himyar"),
+                ("Sahelian", "att_fact_garamantes"),
+                ("Syriac", "att_fact_ghassanids"),
+                ("Horn African", "att_fact_axum"),
+                ("Coptic", "att_fact_axum"),
+                ("Kurdish", "att_fact_mazun"),
+                ("Burmese", "att_fact_white_huns"),
+                ("Tibetan", "att_fact_white_huns"),
+                ("Turkic", "att_fact_parthia"),
+                ("Eastern Steppe", "att_fact_white_huns"),
+                ("Western Steppe", "att_fact_hunni"),
+                ("Bulgarian", "att_fact_langobardi"),
+                ("Bolghar", "att_fact_hunni"),
+                ("Hephthalite", "att_fact_white_huns"),
+                ("Permian", "att_fact_hunni"),
+                ("Gothic", "att_fact_greuthingi"),
+                ("Roman African", "att_fact_mauri"),
+                ("Wendish", "att_fact_ostrogothi")
+        };
+        static string GetAOJFaction(Army army, bool isPlayer)
+        {
+            string default_faction;
+            if (isPlayer)
+                default_faction = "historical_house_stark";
+            else
+                default_faction = "historical_house_bolton";
+
+            string faction = default_faction;
+            foreach (Unit unit in army.Units)
+            {
+                string culture = unit.GetCulture();
+                string heritage = unit.GetHeritage();
+                string attila_faction = UnitMappers_BETA.GetAttilaFaction(culture, heritage);
+
+                faction = aoj_list.Find(x => x.AttilaFaction == attila_faction).Faction ?? default_faction;
+            }
+            return faction;
         }
 
         private static void SetDeploymentArea(string combat_side)
@@ -568,7 +614,7 @@ namespace Crusader_Wars
         {
             if (army.CombatSide == "defender" && ModOptions.DefensiveDeployables() is true && army.Commander != null)
             {
-                int deployables_boost = UnitsFile.GetCommanderTraitsObj(army.IsPlayer()).GetDeployablesBoost();
+                int deployables_boost = UnitsFile.GetCommanderTraitsObj(army.IsPlayer())?.GetDeployablesBoost() ?? 0;
                 int army_soldiers = army.Units.Sum(unit => unit.GetSoldiers());
                 army.SetDefences(new DefensiveSystem(army_soldiers, army.Commander.Martial, deployables_boost));
                 string PR_DefensiveDeployments = army.Defences.GetText();
@@ -863,9 +909,9 @@ namespace Crusader_Wars
             File.AppendAllText(battlePath, PR_OpenAlliance);
         }
 
-        private static void SetEnemyFaction()
+        private static void SetEnemyFaction(Army army)
         {
-            string PR_EnemyFaction = "<faction>historical_house_bolton</faction>\n\n";
+            string PR_EnemyFaction = $"<faction>{GetAOJFaction(army, false)}</faction>\n\n";
 
             File.AppendAllText(battlePath, PR_EnemyFaction);
         }

@@ -10,7 +10,6 @@ using System.Media;
 using System.Linq;
 using System.Drawing;
 using Crusader_Wars.client;
-using Crusader_Wars.client.RequiredMods;
 using Crusader_Wars.locs;
 using Crusader_Wars.data.attila_settings;
 using Crusader_Wars.data.save_file;
@@ -54,8 +53,9 @@ namespace Crusader_Wars
             Properties.Settings.Default.VAR_log_ck3 = debugLog_Path;
             Properties.Settings.Default.Save();
 
-            Updater.CheckAppVersion(this);       
-
+            Updater Updater = new Updater();
+            Updater.CheckAppVersion();
+            Updater.CheckUnitMappersVersion();
             labelVersion.Text = $"V{Updater.AppVersion}";
 
             var _timer = new System.Windows.Forms.Timer();
@@ -130,7 +130,7 @@ namespace Crusader_Wars
             Options.ReadGamePaths();    
 
             //Hide debug button
-            btt_debug.Visible = true;
+            btt_debug.Visible = false;
 
             //Early Access label visibility
             EA_Label.Visible = false;
@@ -139,7 +139,6 @@ namespace Crusader_Wars
             infoLabel.BackColor = myColor;
             labelVersion.BackColor = myColor;
             EA_Label.BackColor = myColor;
-            EA_Text.BackColor = myColor;
 
             Options.ReadOptionsFile();
             ModOptions.StoreOptionsValues(Options.optionsValuesCollection);
@@ -151,6 +150,8 @@ namespace Crusader_Wars
         //---------------------------------//
         //----------DEBUG BUTTON-----------//
         //---------------------------------//
+
+
 
         private void btt_debug_Click(object sender, EventArgs e)
         {
@@ -217,6 +218,8 @@ namespace Crusader_Wars
                 System.IO.File.Delete(editedGamestateFile);
             if (System.IO.File.Exists(savefileZip))
                 System.IO.File.Delete(savefileZip);
+
+            UnitsCardsNames.RemoveFiles();
 
             while (true)
             {
@@ -344,11 +347,11 @@ namespace Crusader_Wars
                         {
 
                         }
-                        catch
+                        catch(Exception ex)
                         {
                             this.Show();
                             CloseLoadingScreen();
-                            MessageBox.Show("Error reading battle data.", "Data Error",
+                            MessageBox.Show($"Error reading battle data: {ex.Message}", "Data Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                             infoLabel.Text = "Waiting for battle...";
                             this.Text = "Crusader Wars (Waiting for battle...)";
@@ -384,11 +387,11 @@ namespace Crusader_Wars
                     BattleResult.GetPlayerCombatResult();
                     BattleResult.ReadPlayerCombat(CK3LogData.LeftSide.GetCommander().id);
                 }
-                catch
+                catch(Exception ex)
                 {
                     this.Show();
                     CloseLoadingScreen();
-                    MessageBox.Show("Error reading the save file. Disable Ironman or Debug Mode.", "Save File Error",
+                    MessageBox.Show($"Error reading the save file: {ex.Message}", "Save File Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     infoLabel.Text = "Waiting for battle...";
                     ProcessCommands.ResumeProcess();
@@ -400,33 +403,20 @@ namespace Crusader_Wars
 
                 }
 
-                //1.0 Beta Debug
-                long startMemory = GC.GetTotalMemory(false);
-
-                UpdateLoadingScreenMessage("Reading save file data...");
-                var armies = ArmiesReader.ReadBattleArmies();
-                attacker_armies = armies.attacker;
-                defender_armies = armies.defender;
-
-                var left_side = ArmiesReader.GetSideArmies("left");
-                var right_side = ArmiesReader.GetSideArmies("right");
-
-
-                int left_side_total = left_side.Sum(army => army.GetTotalSoldiers());
-                int right_side_total = right_side.Sum(army => army.GetTotalSoldiers());
-                string left_side_combat_side = left_side[0].CombatSide;
-                string right_side_combat_side = right_side[0].CombatSide;
-                BattleDetails.ChangeBattleDetails(left_side_total, right_side_total, left_side_combat_side, right_side_combat_side);
-
+                
                 try
                 {
-
+                    //1.0 Beta Debug
+                    UpdateLoadingScreenMessage("Reading save file data...");
+                    var armies = ArmiesReader.ReadBattleArmies();
+                    attacker_armies = armies.attacker;
+                    defender_armies = armies.defender;
                 }
-                catch
+                catch(Exception ex)
                 {
                     this.Show();
                     CloseLoadingScreen();
-                    MessageBox.Show("Error reading the battle armies.", "Beta Error",
+                    MessageBox.Show($"Error reading the battle armies: {ex.Message}", "Beta Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";
@@ -438,49 +428,52 @@ namespace Crusader_Wars
                     continue;
                 }
 
-                long endMemory = GC.GetTotalMemory(false);
-                long memoryUsage = endMemory - startMemory;
-                Console.WriteLine($"----\nReading save file\nMemory Usage: {memoryUsage / 1048576} megabytes");
+                var left_side = ArmiesReader.GetSideArmies("left");
+                var right_side = ArmiesReader.GetSideArmies("right");
+                int left_side_total = left_side.Sum(army => army.GetTotalSoldiers());
+                int right_side_total = right_side.Sum(army => army.GetTotalSoldiers());
+                string left_side_combat_side = left_side[0].CombatSide;
+                string right_side_combat_side = right_side[0].CombatSide;
+                BattleDetails.ChangeBattleDetails(left_side_total, right_side_total, left_side_combat_side, right_side_combat_side);
 
-                Games.CloseTotalWarAttilaProcess();
-                UpdateLoadingScreenMessage("Creating battle in Total War: Attila...");
-
-                //Create Remaining Soldiers Script
-                BattleScript.CreateScript();
-
-                // Set Battle Scale
-                int total_soldiers = attacker_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers()) +
-                                     defender_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers());
-                ArmyProportions.AutoSizeUnits(total_soldiers);
-                foreach (var army in attacker_armies) army.ScaleUnits(ModOptions.GetBattleScale());
-                foreach (var army in defender_armies) army.ScaleUnits(ModOptions.GetBattleScale());
-
-                //Create Battle
-                BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
-
-                //Close Script
-                BattleScript.CloseScript();
-
-                //Set Commanders Script
-                BattleScript.SetCommandersLocals();
-
-                //Set Units Kills Script
-                BattleScript.SetLocalsKills(Data.units_scripts);
-
-                //Close Script
-                BattleScript.CloseScript();
-
-                //Creates .pack mod file
-                PackFile.PackFileCreator();
                 try
                 {
+                    Games.CloseTotalWarAttilaProcess();
+                    UpdateLoadingScreenMessage("Creating battle in Total War: Attila...");
 
+                    //Create Remaining Soldiers Script
+                    BattleScript.CreateScript();
+
+                    // Set Battle Scale
+                    int total_soldiers = attacker_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers()) +
+                                         defender_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers());
+                    ArmyProportions.AutoSizeUnits(total_soldiers);
+                    foreach (var army in attacker_armies) army.ScaleUnits(ModOptions.GetBattleScale());
+                    foreach (var army in defender_armies) army.ScaleUnits(ModOptions.GetBattleScale());
+
+                    //Create Battle
+                    BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
+
+                    //Close Script
+                    BattleScript.CloseScript();
+
+                    //Set Commanders Script
+                    BattleScript.SetCommandersLocals();
+
+                    //Set Units Kills Script
+                    BattleScript.SetLocalsKills(Data.units_scripts);
+
+                    //Close Script
+                    BattleScript.CloseScript();
+
+                    //Creates .pack mod file
+                    PackFile.PackFileCreator();
                 }
-                catch
+                catch(Exception ex)
                 {
                     this.Show();
                     CloseLoadingScreen();
-                    MessageBox.Show("Error creating the battle", "Data Error",
+                    MessageBox.Show($"Error creating the battle:{ex.Message}", "Data Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";
@@ -521,10 +514,10 @@ namespace Crusader_Wars
                     this.Show();
 
                 }
-                catch
+                catch(Exception ex)
                 {
                     
-                    MessageBox.Show("Error", "Application Error",
+                    MessageBox.Show($"Error: {ex.Message}", "Application Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     Games.CloseTotalWarAttilaProcess();
                     Games.StartCrusaderKingsProcess();
@@ -560,78 +553,76 @@ namespace Crusader_Wars
                     await Task.Delay(10);
                 }
 
-                //  Battle ended
-                if(battleEnded)
+
+                try
                 {
-                    ModOptions.CloseAttila();
-
-                    infoLabel.Text = "Battle has ended!";
-                    this.Text = "Crusader Wars (Battle has ended)";
-                    
-                    string path_log_attila = Properties.Settings.Default.VAR_log_attila;
-
-
-                    //  SET CASUALITIES
-                    foreach(var army in attacker_armies)
+                    if (battleEnded)
                     {
-                        BattleResult.ReadAttilaResults(army, path_log_attila);
-                        BattleResult.CheckForDeathCommanders(army, path_log_attila);
-                        BattleResult.CheckForDeathKnights(army);
-                        /*
-                        if (army.MergedArmies != null)
+                        ModOptions.CloseAttila();
+
+                        infoLabel.Text = "Battle has ended!";
+                        this.Text = "Crusader Wars (Battle has ended)";
+
+                        string path_log_attila = Properties.Settings.Default.VAR_log_attila;
+
+
+                        //  SET CASUALITIES
+                        foreach (var army in attacker_armies)
                         {
-                            foreach(var merged_army in army.MergedArmies)
-                            {
-                                BattleResult.ReadAttilaResults(merged_army, path_log_attila);
-                                BattleResult.CheckForDeathCommanders(merged_army, path_log_attila);
-                                BattleResult.CheckForDeathKnights(merged_army);
-                            }
+                            BattleResult.ReadAttilaResults(army, path_log_attila);
+                            BattleResult.CheckForDeathCommanders(army, path_log_attila);
+                            BattleResult.CheckKnightsKills(army);
+                            BattleResult.CheckForDeathKnights(army);
+
                         }
-                        */
-                    }
-                    foreach(var army in defender_armies)
-                    {
-                        BattleResult.ReadAttilaResults(army, path_log_attila);
-                        BattleResult.CheckForDeathCommanders(army, path_log_attila);
-                        BattleResult.CheckForDeathKnights(army);
-                        /*
-                        if (army.MergedArmies != null)
+                        foreach (var army in defender_armies)
                         {
-                            foreach (var merged_army in army.MergedArmies)
-                            {
-                                BattleResult.ReadAttilaResults(merged_army, path_log_attila);
-                                BattleResult.CheckForDeathCommanders(merged_army, path_log_attila);
-                                BattleResult.CheckForDeathKnights(merged_army);
-                            }
+                            BattleResult.ReadAttilaResults(army, path_log_attila);
+                            BattleResult.CheckForDeathCommanders(army, path_log_attila);
+                            BattleResult.CheckKnightsKills(army);
+                            BattleResult.CheckForDeathKnights(army);
+
                         }
-                        */
+
+                        //  EDIT LIVING FILE
+                        BattleResult.EditLivingFile(attacker_armies, defender_armies);
+
+                        //  EDIT COMBATS FILE
+                        BattleResult.EditCombatFile(attacker_armies, defender_armies, left_side[0].CombatSide, right_side[0].CombatSide, path_log_attila);
+
+                        //  EDIT COMBATS RESULTS FILE
+                        BattleResult.EditCombatResultsFile(attacker_armies, defender_armies);
+
+                        //  EDIT REGIMENTS FILE
+                        BattleResult.EditRegimentsFile(attacker_armies, defender_armies);
+
+                        //  EDIT ARMY REGIMENTS FILE
+                        BattleResult.EditArmyRegimentsFile(attacker_armies, defender_armies);
+
+
+                        //  WRITE TO SAVE FILE
+                        BattleResult.SendToSaveFile(path_editedSave);
+
+                        //  COMPRESS SAVE FILE AND SEND TO SAVE FILE FOLDER
+                        SaveFile.Compress();
+                        SaveFile.Finish();
+
+                        //  OPEN CK3 WITH BATTLE RESULTS
+                        Games.LoadBattleResults();
                     }
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show($"Error retriving battle results: {ex.Message}", "Battle Results Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    Games.CloseTotalWarAttilaProcess();
+                    Games.StartCrusaderKingsProcess();
+                    infoLabel.Text = "Waiting for battle...";
+                    this.Text = "Crusader Wars (Waiting for battle...)";
 
-                    //  EDIT LIVING FILE
-                    BattleResult.EditLivingFile(attacker_armies, defender_armies);
-
-                    //  EDIT COMBATS FILE
-                    BattleResult.EditCombatFile(attacker_armies, defender_armies,left_side[0].CombatSide, right_side[0].CombatSide, path_log_attila);
-
-                    //  EDIT COMBATS RESULTS FILE
-                    BattleResult.EditCombatResultsFile(attacker_armies, defender_armies);
-
-                    //  EDIT REGIMENTS FILE
-                    BattleResult.EditRegimentsFile(attacker_armies, defender_armies);
-
-                    //  EDIT ARMY REGIMENTS FILE
-                    BattleResult.EditArmyRegimentsFile(attacker_armies, defender_armies);
-
-
-                    //  WRITE TO SAVE FILE
-                    BattleResult.SendToSaveFile(path_editedSave);
-
-                    //  COMPRESS SAVE FILE AND SEND TO SAVE FILE FOLDER
-                    SaveFile.Compress();
-                    SaveFile.Finish();
-
-                    //  OPEN CK3 WITH BATTLE RESULTS
-                    Games.LoadBattleResults();
+                    //Data Clear
+                    Data.Reset();
+                    continue;
                 }
 
 

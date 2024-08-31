@@ -96,7 +96,7 @@ namespace Crusader_Wars.data.save_file
         {
             foreach(var mod_folder_path in EnabledMods_Folders_Paths)
             {
-                string landed_titles_path = mod_folder_path + @"\common\landed_titles\00_landed_titles.txt";
+                string landed_titles_path = mod_folder_path.Trim('"') + @"\common\landed_titles\00_landed_titles.txt";
                 if (File.Exists(landed_titles_path))
                 {
                     ReadLandedTitles(landed_titles_path, attacker_armies, defender_armies);

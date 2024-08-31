@@ -1,61 +1,96 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Net.NetworkInformation;
-using Crusader_Wars.client.BETAUPDATE_Message;
-using System.Web;
-using Microsoft.SqlServer.Server;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Text.Json;
+using System.Xml.Linq;
+using System.Drawing;
 
 namespace Crusader_Wars
 {
-    public static class Updater
+    public  class Updater
     {
-        public static string AppVersion { get; set; }
-        private static string ModVersion { get; set; }
+        public  string AppVersion { get; set; }
+        public string UMVersion { get; set; }
 
-        private static void GetAppVersion()
+
+        private static readonly HttpClient client = new HttpClient();
+        private const string LatestReleaseUrl = "https://api.github.com/repos/farayC/Crusader-Wars/releases/latest";
+        private const string UnitMappersLatestReleaseUrl = "https://api.github.com/repos/farayC/CW-Mappers/releases/latest";
+        private async Task<(bool IsUpdateAvailable, string DownloadUrl, string UpdateVersion)> CheckForUpdatesAsync(string currentVersion, string releaseUrl)
+        {
+            if(currentVersion == string.Empty) {
+                return (false, null, null);
+            }
+
+            try
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", "CW App Updater");
+                string json = await client.GetStringAsync(releaseUrl);
+
+                // Parse the JSON response
+                using (JsonDocument document = JsonDocument.Parse(json))
+                {
+                    JsonElement root = document.RootElement;
+
+                    // Get the latest version tag
+                    string latestVersion = root.GetProperty("tag_name").GetString();
+
+                    // Get the download URL of the first asset
+                    string downloadUrl = root.GetProperty("assets")[0].GetProperty("browser_download_url").GetString();
+
+                    if(IsMostRecentUpdate(currentVersion, latestVersion.TrimStart('v')))
+                    {
+                        return (true, downloadUrl, latestVersion.TrimStart('v'));
+                    }
+                };
+               
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking for updates: {ex.Message}");
+            }
+
+            return (false, null, null);
+        }
+
+        string GetAppVersion()
         {
             string version_path = Directory.GetCurrentDirectory() + "\\app_version.txt";
+            string app_version = "";
             if (File.Exists(version_path))
             {
-                AppVersion = File.ReadAllText(version_path);
-                AppVersion = Regex.Match(AppVersion, "\"(.+)\"").Groups[1].Value;
+                app_version = File.ReadAllText(version_path);
+                app_version = Regex.Match(app_version, "\"(.+)\"").Groups[1].Value;
+                AppVersion = app_version;
+                return app_version;
             }
+
+            return app_version;
         }
-        private static void GetModVersion()
+
+        string GetUnitMappersVersion()
         {
-            string steam_mod_path = Properties.Settings.Default.VAR_log_ck3;
-            steam_mod_path = steam_mod_path.Replace("console_history.txt", @"Mod\ugc_2977969008.mod");
-
-            string non_steam_mod_path = Properties.Settings.Default.VAR_log_ck3;
-            non_steam_mod_path = non_steam_mod_path.Replace("console_history.txt", @"Mod\Crusader Wars.mod");
-
-            string version_path = steam_mod_path;
-            string other_version_path = non_steam_mod_path;
+            string version_path = Directory.GetCurrentDirectory() + "\\um_version.txt";
+            string um_version = "";
             if (File.Exists(version_path))
             {
-                string[] allLines = File.ReadAllLines(version_path); 
-                ModVersion = allLines[0];
-                ModVersion = Regex.Match(ModVersion, "\"(.+)\"").Groups[1].Value;
+                um_version = File.ReadAllText(version_path);
+                um_version = Regex.Match(um_version, "\"(.+)\"").Groups[1].Value;
+                UMVersion = um_version;
+                return um_version;
             }
-            else if(File.Exists(other_version_path))
-            {
-                string[] allLines = File.ReadAllLines(other_version_path);
-                ModVersion = allLines[0];
-                ModVersion = Regex.Match(ModVersion, "\"(.+)\"").Groups[1].Value;
-            }
-            else 
-            {
-                ModVersion = string.Empty;
-            }
+
+            return um_version;
         }
 
-        private static bool IsMostRecentUpdate()
+        bool IsMostRecentUpdate(string app_version, string github_version)
         {
-            string[] AppComponents = AppVersion.Split('.');
-            string[] ModComponents = ModVersion.Split('.');
+            string[] AppComponents = app_version.Split('.');
+            string[] ModComponents = github_version.Split('.');
 
             for (int i = 0; i < Math.Max(AppComponents.Length, ModComponents.Length); i++)
             {
@@ -74,8 +109,9 @@ namespace Crusader_Wars
 
             return false;
         }
+        
 
-        private static bool HasInternetConnection()
+        bool HasInternetConnection()
         {
             Ping myPing = new Ping();
             String host = "google.com";
@@ -98,48 +134,51 @@ namespace Crusader_Wars
             return false;
         }
 
-        public static void CheckAppVersion(HomePage main)
+        public async void CheckAppVersion()
         {
-            AppVersion = String.Empty;
-            ModVersion = String.Empty;
-
-            GetAppVersion();
-            GetModVersion();
-
-            if(ModVersion == "1.0")
+            if (HasInternetConnection())
             {
-                string text = "The mod has updated to the official Crusader Wars v1.0 \"Warfare\"!\n" +
-                              "For this you need to uninstall this Launcher by just deleting the folder." +
-                              "Then you need to download the new setup from our website!"
-                              ;
-               // BETAUPDATE_Message.ShowWarningMessage(text);
-            }
-
-
-            if(ModVersion != String.Empty)
-            {
-                if(IsMostRecentUpdate() && HasInternetConnection()) 
+                var (isUpdateAvailable, downloadUrl, updateVersion) = await CheckForUpdatesAsync(GetAppVersion(), LatestReleaseUrl);
+                if (isUpdateAvailable)
                 {
                     try
                     {
-
                         ProcessStartInfo startInfo = new ProcessStartInfo();
-                        startInfo.FileName = @".\CW-Updater.exe";
-                        startInfo.Arguments = $"{AppVersion} {ModVersion}";
+                        startInfo.FileName = @".\data\updater\CW-Updater.exe";
+                        startInfo.Arguments = $"{downloadUrl} {updateVersion}";
                         Process.Start(startInfo);
-
-                        main.Close();
+                        Environment.Exit(0);
                     }
                     catch
                     {
                         return;
                     }
                 }
-
             }
-
         }
 
+        public async void CheckUnitMappersVersion()
+        {
+            if (HasInternetConnection())
+            {
+                var (isUpdateAvailable, downloadUrl, updateVersion) = await CheckForUpdatesAsync(GetUnitMappersVersion(), UnitMappersLatestReleaseUrl);
+                if (isUpdateAvailable)
+                {
+                    try
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo();
+                        startInfo.FileName = @".\data\updater\CW-Updater.exe";
+                        startInfo.Arguments = $"{downloadUrl} {updateVersion} {"unit_mapper"}";
+                        Process.Start(startInfo);
+                        Environment.Exit(0);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+            }
+        }
     }
 
    

@@ -153,12 +153,6 @@
     <Compile Include="client\Options\UC_UnitsOptions.Designer.cs">
       <DependentUpon>UC_UnitsOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="client\RequiredMods\RequiredModsMessage.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="client\RequiredMods\RequiredModsMessage.Designer.cs">
-      <DependentUpon>RequiredModsMessage.cs</DependentUpon>
-    </Compile>
     <Compile Include="client\BETAUPDATE_Message.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -253,9 +247,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="client\Options\UC_GeneralOptions.resx">
       <DependentUpon>UC_GeneralOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="client\RequiredMods\RequiredModsMessage.resx">
-      <DependentUpon>RequiredModsMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="client\Options\UC_UnitsOptions.resx">
       <DependentUpon>UC_UnitsOptions.cs</DependentUpon>

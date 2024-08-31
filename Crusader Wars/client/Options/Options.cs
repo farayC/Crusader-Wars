@@ -114,7 +114,6 @@ namespace Crusader_Wars
                 var BattleMapsSize_Value = xmlDoc.SelectSingleNode("//Option [@name='BattleMapsSize']").InnerText;
                 var DefensiveDeployables_Value = xmlDoc.SelectSingleNode("//Option [@name='DefensiveDeployables']").InnerText;
                 var UnitCards_Value = xmlDoc.SelectSingleNode("//Option [@name='UnitCards']").InnerText;
-                var CulturalPreciseness = xmlDoc.SelectSingleNode("//Option [@name='CulturalPreciseness']").InnerText;
 
                 var LeviesMax_Value = xmlDoc.SelectSingleNode("//Option [@name='LeviesMax']").InnerText;
                 var RangedMax_Value = xmlDoc.SelectSingleNode("//Option [@name='RangedMax']").InnerText;
@@ -134,7 +133,6 @@ namespace Crusader_Wars
                     ("DefensiveDeployables", DefensiveDeployables_Value),
                     ("UnitCards", UnitCards_Value),
                     ("SeparateArmies", SeparateArmies_Value),
-                    ("CulturalPreciseness", CulturalPreciseness),
 
                     ("LeviesMax", LeviesMax_Value),
                     ("RangedMax", RangedMax_Value),
@@ -165,7 +163,6 @@ namespace Crusader_Wars
             var DefensiveDeployables_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_DefensiveDeployables", true).FirstOrDefault() as ComboBox;
             var UnitCards_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_UnitCards", true).FirstOrDefault() as ComboBox;
             var SeparateArmies_ComboBox = General_Tab.Controls[0].Controls.Find("OptionSelection_SeparateArmies", true).FirstOrDefault() as ComboBox;
-            var CulturalPreciseness_TrackBar = General_Tab.Controls[0].Controls.Find("OptionSelection_CulturalPreciseness", true).FirstOrDefault() as TrackBar;
 
             var LeviesMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_LeviesMax", true).FirstOrDefault() as ComboBox;
             var RangedMax_ComboBox = Units_Tab.Controls[0].Controls.Find("OptionSelection_RangedMax", true).FirstOrDefault() as ComboBox;
@@ -183,7 +180,6 @@ namespace Crusader_Wars
             DefensiveDeployables_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "DefensiveDeployables").value;
             UnitCards_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "UnitCards").value;
             SeparateArmies_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "SeparateArmies").value;
-            CulturalPreciseness_TrackBar.Value = Int32.Parse(optionsValuesCollection.FirstOrDefault(x => x.option == "CulturalPreciseness").value);
 
             LeviesMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "LeviesMax").value;
             RangedMax_ComboBox.SelectedItem = optionsValuesCollection.FirstOrDefault(x => x.option == "RangedMax").value;
@@ -211,7 +207,6 @@ namespace Crusader_Wars
             var DefensiveDeployables_ComboBox = General_Tab.Controls.Find("OptionSelection_DefensiveDeployables", true)[0] as ComboBox;
             var UnitCards_ComboBox = General_Tab.Controls.Find("OptionSelection_UnitCards", true)[0] as ComboBox;
             var SeparateArmies_ComboBox = General_Tab.Controls.Find("OptionSelection_SeparateArmies", true)[0] as ComboBox;
-            var CulturalPreciseness_TrackBar = General_Tab.Controls.Find("OptionSelection_CulturalPreciseness", true)[0] as TrackBar;
 
             var LeviesMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_LeviesMax", true)[0] as ComboBox;
             var RangedMax_ComboBox = Units_Tab.Controls.Find("OptionSelection_RangedMax", true)[0] as ComboBox;
@@ -239,7 +234,6 @@ namespace Crusader_Wars
             var SeparateArmies_Node = xmlDoc.SelectSingleNode("//Option [@name='SeparateArmies']");
             SeparateArmies_Node.InnerText = SeparateArmies_ComboBox.Text;
             var CulturalPreciseness_Node = xmlDoc.SelectSingleNode("//Option [@name='CulturalPreciseness']");
-            CulturalPreciseness_Node.InnerText = CulturalPreciseness_TrackBar.Value.ToString();
 
             var LeviesMax_Node = xmlDoc.SelectSingleNode("//Option [@name='LeviesMax']");
             LeviesMax_Node.InnerText = LeviesMax_ComboBox.Text;

@@ -172,7 +172,7 @@ namespace Crusader_Wars
 
         public static void Reset()
         {
-
+            units_scripts.Clear();
             PlayerIDsAccolades = new List<string> ();
             EnemyIDsAccolades = new List<string>();
             PlayerAccolades = new List<(string, string, string)> ();

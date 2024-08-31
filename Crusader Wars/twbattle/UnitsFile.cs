@@ -198,6 +198,9 @@ namespace Crusader_Wars
 
                 var MAA_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
 
+                if (unit.GetObjCulture() == null)
+                    unit.ChangeCulture(unit.GetOwner().GetCulture());
+
                 //If is retinue maa, increase 2xp.
                 if (unitName.Contains("accolade"))
                 {
