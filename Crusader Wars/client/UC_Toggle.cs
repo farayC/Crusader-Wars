@@ -52,5 +52,7 @@ namespace Crusader_Wars.client
             SoundPlayer sounds = new SoundPlayer(@".\data\sounds\metal-dagger-hit-185444.wav");
             sounds.Play();
         }
+
+
     }
 }

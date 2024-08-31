@@ -92,6 +92,7 @@ namespace Crusader_Wars.data.save_file
         public void ChangeSoldiers(int y) { Soldiers = y; }
         public void SetMax(int i) { Max = i; }
         public void SetLocName(string t) { LocName = t; }
+        public void ChangeCulture(Culture culture) { UnitCulture = culture; }
 
 
         public int GetMax() { return Max; }

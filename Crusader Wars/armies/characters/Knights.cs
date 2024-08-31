@@ -36,6 +36,7 @@ namespace Crusader_Wars
         List<(int Index, string Key)> Traits { get; set; }
         BaseSkills BaseSkills { get; set; }
         bool hasFallen { get; set; }
+        int Kills { get; set; }
 
         bool isAccoladeKnight { get; set; }
         Accolade Accolade { get; set; }
@@ -50,8 +51,10 @@ namespace Crusader_Wars
         public bool IsAccolade() { return isAccoladeKnight; }
         public Accolade GetAccolade() { return Accolade; } 
         public bool HasFallen() { return hasFallen; }
+        public int GetKills() { return Kills; }
 
         internal void HasFallen(bool yn) { hasFallen = yn; }
+        public void SetKills(int kills) { Kills = kills; }
         public void ChangeCulture(Culture cul) { CultureObj = cul; }
         public void SetTraits(List<(int, string)> list_trait) { Traits = list_trait; }
         public void IsAccolade(bool yn, Accolade accolade) { isAccoladeKnight = yn; Accolade = accolade; Soldiers += 4; }
@@ -269,7 +272,43 @@ namespace Crusader_Wars
 
         }
 
+        public void GetKills(int kills)
+        {
+            if(hasKnights)
+            {
+                Random random = new Random();
 
+                // Calculate the total strength of all knights
+                int totalStrength = Knights.Sum(knight => knight.GetSoldiers());
+
+                // Calculate proportional kills based on strength
+                int remainingKills = kills;
+                for (int i = 0; i < Knights.Count; i++)
+                {
+                    // For all except the last knight
+                    if (i < Knights.Count - 1)
+                    {
+                        // Calculate the proportion of kills based on strength
+                        double proportion = (double)Knights[i].GetSoldiers() / totalStrength;
+                        int knightKills = (int)Math.Round(proportion * kills);
+
+                        // Randomize the number of kills slightly to add some variability
+                        knightKills = random.Next(knightKills - 2, knightKills + 3);
+
+                        // Ensure the randomized number of kills is within bounds
+                        knightKills = Math.Max(0, Math.Min(knightKills, remainingKills));
+
+                        Knights[i].SetKills(knightKills);
+                        remainingKills -= knightKills;
+                    }
+                    else
+                    {
+                        // Assign the remaining kills to the last knight
+                        Knights[i].SetKills(remainingKills);
+                    }
+                }
+            }
+        }
 
         public void GetKilled(int remaining)
         {
@@ -283,10 +322,10 @@ namespace Crusader_Wars
 
                 //random knight
                 int soldiers_lost = totalSoldiers - remainingSoldiers;
-
+                int weakest_knight_num = Knights.Select(x => x.GetSoldiers()).Min();
                 List<Knight> tempKnightsList = new List<Knight>();
                 tempKnightsList.AddRange(Knights);
-                while (soldiers_lost > 0)
+                while (soldiers_lost >= weakest_knight_num)
                 {
                     if (tempKnightsList.Count == 0) break;
 

@@ -436,7 +436,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;BottomPanelLayout.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="patreonBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -572,51 +572,6 @@
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="WebsiteBTN" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SteamBTN" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="patreonBtn" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SettingsBtn" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,25,Percent,25,Percent,25,Percent,25,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="EA_Text.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <data name="EA_Text.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="EA_Text.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Paradox King Script, 11.25pt</value>
-  </data>
-  <data name="EA_Text.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="EA_Text.Location" type="System.Drawing.Point, System.Drawing">
-    <value>590, 18</value>
-  </data>
-  <data name="EA_Text.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="EA_Text.Size" type="System.Drawing.Size, System.Drawing">
-    <value>312, 58</value>
-  </data>
-  <data name="EA_Text.TabIndex" type="System.Int32, mscorlib">
-    <value>27</value>
-  </data>
-  <data name="EA_Text.Text" xml:space="preserve">
-    <value>This is an early acess to v1.0 "Warfare".
-Everything you see here is a work in 
-progress, and most certainly will change.
-</value>
-  </data>
-  <data name="EA_Text.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopCenter</value>
-  </data>
-  <data name="&gt;&gt;EA_Text.Name" xml:space="preserve">
-    <value>EA_Text</value>
-  </data>
-  <data name="&gt;&gt;EA_Text.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;EA_Text.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;EA_Text.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

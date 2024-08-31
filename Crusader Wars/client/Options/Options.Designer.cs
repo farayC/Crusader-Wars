@@ -53,16 +53,16 @@
             this.Btn_BattleScaleTab = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.ModManager = new System.Windows.Forms.DataGridView();
+            this.ActiveBoxes = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.ModName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.UMpanel = new System.Windows.Forms.Panel();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.Btn_CK3Tab = new System.Windows.Forms.Button();
             this.Btn_TFETab = new System.Windows.Forms.Button();
             this.Btn_LOTRTab = new System.Windows.Forms.Button();
-            this.ActiveBoxes = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.ModName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Ck3_Icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status_Attila_Icon)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
@@ -150,9 +150,9 @@
             this.label1.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(19, 382);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 21);
+            this.label1.Size = new System.Drawing.Size(107, 21);
             this.label1.TabIndex = 16;
-            this.label1.Text = "Unit Mappers";
+            this.label1.Text = "Playthroughs";
             // 
             // label2
             // 
@@ -317,6 +317,60 @@
             this.ModManager.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ModManager_CellMouseUp);
             this.ModManager.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModManager_CellValueChanged);
             // 
+            // ActiveBoxes
+            // 
+            this.ActiveBoxes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.NullValue = false;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            this.ActiveBoxes.DefaultCellStyle = dataGridViewCellStyle2;
+            this.ActiveBoxes.FalseValue = "Disabled";
+            this.ActiveBoxes.HeaderText = "Active";
+            this.ActiveBoxes.IndeterminateValue = "Disabled";
+            this.ActiveBoxes.Name = "ActiveBoxes";
+            this.ActiveBoxes.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ActiveBoxes.TrueValue = "Active";
+            this.ActiveBoxes.Width = 75;
+            // 
+            // ImageColumn
+            // 
+            this.ImageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.NullValue = "System.Drawing.Bitmap";
+            this.ImageColumn.DefaultCellStyle = dataGridViewCellStyle3;
+            this.ImageColumn.HeaderText = "Image";
+            this.ImageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
+            this.ImageColumn.Name = "ImageColumn";
+            this.ImageColumn.ReadOnly = true;
+            this.ImageColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ImageColumn.Width = 70;
+            // 
+            // ModName
+            // 
+            this.ModName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            this.ModName.DefaultCellStyle = dataGridViewCellStyle4;
+            this.ModName.HeaderText = "Mod Name";
+            this.ModName.Name = "ModName";
+            this.ModName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // StatusColumn
+            // 
+            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.StatusColumn.HeaderText = "Status";
+            this.StatusColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
+            this.StatusColumn.Name = "StatusColumn";
+            this.StatusColumn.ReadOnly = true;
+            this.StatusColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.StatusColumn.Width = 50;
+            // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.Transparent;
@@ -400,60 +454,6 @@
             this.Btn_LOTRTab.Text = "Realms in Exile";
             this.Btn_LOTRTab.UseVisualStyleBackColor = false;
             this.Btn_LOTRTab.Click += new System.EventHandler(this.Btn_LOTRTab_Click);
-            // 
-            // ActiveBoxes
-            // 
-            this.ActiveBoxes.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.NullValue = false;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            this.ActiveBoxes.DefaultCellStyle = dataGridViewCellStyle2;
-            this.ActiveBoxes.FalseValue = "Disabled";
-            this.ActiveBoxes.HeaderText = "Active";
-            this.ActiveBoxes.IndeterminateValue = "Disabled";
-            this.ActiveBoxes.Name = "ActiveBoxes";
-            this.ActiveBoxes.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.ActiveBoxes.TrueValue = "Active";
-            this.ActiveBoxes.Width = 75;
-            // 
-            // ImageColumn
-            // 
-            this.ImageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.NullValue = "System.Drawing.Bitmap";
-            this.ImageColumn.DefaultCellStyle = dataGridViewCellStyle3;
-            this.ImageColumn.HeaderText = "Image";
-            this.ImageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
-            this.ImageColumn.Name = "ImageColumn";
-            this.ImageColumn.ReadOnly = true;
-            this.ImageColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.ImageColumn.Width = 70;
-            // 
-            // ModName
-            // 
-            this.ModName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Paradox King Script", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
-            this.ModName.DefaultCellStyle = dataGridViewCellStyle4;
-            this.ModName.HeaderText = "Mod Name";
-            this.ModName.Name = "ModName";
-            this.ModName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // StatusColumn
-            // 
-            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.StatusColumn.HeaderText = "Status";
-            this.StatusColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
-            this.StatusColumn.Name = "StatusColumn";
-            this.StatusColumn.ReadOnly = true;
-            this.StatusColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.StatusColumn.Width = 50;
             // 
             // Options
             // 

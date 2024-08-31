@@ -234,9 +234,8 @@ namespace Crusader_Wars.client
 
         public static int CulturalPreciseness()
         {
-            var option = optionsValuesCollection.FirstOrDefault(x => x.option == "CulturalPreciseness");
-            var value = Math.Abs(Int32.Parse(option.value));
-            return value;
+            int minumum = 5;
+            return minumum;
         }
 
         private static void ShutdownAttila()

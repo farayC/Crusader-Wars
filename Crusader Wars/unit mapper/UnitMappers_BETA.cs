@@ -49,11 +49,12 @@ namespace Crusader_Wars.unit_mapper
                     return "LATE MEDIEVAL";
                 case "OfficialCW_Renaissance_MK1212Mod":
                     return "RENAISSANCE";
-                case "xCW_FallenEagle_AgeOfJustinian":
+                case "OfficialCW_FallenEagle_AgeOfJustinian":
                     return "DARK AGES";
-                case "xCW_FallenEagle_FallofTheEagle":
+                case "OfficialCW_FallenEagle_FallofTheEagle":
+                case "OfficialCW_FallenEagle_Fireforged-Empire":
                     return "LATE ANTIQUITY";
-                case "xCW_RealmsInExile_TheDawnlessDays":
+                case "OfficialCW_RealmsInExile_TheDawnlessDays":
                     return "SECOND AGE";
                 default:
                     return null;

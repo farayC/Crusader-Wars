@@ -17,24 +17,5 @@ namespace Crusader_Wars.client
             InitializeComponent();
         }
 
-        private void OptionSelection_CulturalPreciseness_ValueChanged(object sender, EventArgs e)
-        {
-            
-            if(OptionSelection_CulturalPreciseness.Value <= -10 && OptionSelection_CulturalPreciseness.Value > -50)
-            {
-            }
-            else if (OptionSelection_CulturalPreciseness.Value <= -50 && OptionSelection_CulturalPreciseness.Value > -90)
-            {
-            }
-            else if (OptionSelection_CulturalPreciseness.Value <= -90 && OptionSelection_CulturalPreciseness.Value > -130)
-            {
-            }
-            else if (OptionSelection_CulturalPreciseness.Value <= -130 && OptionSelection_CulturalPreciseness.Value > -170)
-            {
-            }
-            else if (OptionSelection_CulturalPreciseness.Value <= -170 && OptionSelection_CulturalPreciseness.Value > -200)
-            {
-            }
-        }
     }
 }
