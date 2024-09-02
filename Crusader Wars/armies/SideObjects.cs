@@ -37,8 +37,6 @@ namespace Crusader_Wars
         public UnitsResults UnitsResults { get; set; }
         public List<UnitCasualitiesReport> CasualitiesReports { get; private set; }
 
-        //public Modifiers Modifiers { get; set; }
-
 
         public Army(string id, string combat_side, bool is_main)
         {
@@ -121,11 +119,10 @@ namespace Crusader_Wars
         public void RemoveNullUnits()
         {
             var ascending_list = Units.OrderBy(x => x.GetSoldiers()).ToList();
-            var major_levy_culture = ascending_list[0];
-
-            if (ascending_list == null || ascending_list.Count < 1) 
+            if (ascending_list == null || ascending_list.Count < 1)
                 return;
 
+            var major_levy_culture = ascending_list[0];
             int total_soldiers = 0;
             for(int i = 0; i< Units.Count;i++)
             {

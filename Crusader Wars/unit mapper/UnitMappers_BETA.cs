@@ -237,8 +237,10 @@ namespace Crusader_Wars.unit_mapper
                     case "SPECIAL":
                         return 1111;
                     default:
-                        if (int.TryParse(MaxValue, out int max_int)) return max_int;
-                        return ModOptions.GetInfantryMax();
+                        if (int.TryParse(MaxValue, out int max_int)) 
+                            return max_int;
+                        else
+                            return ModOptions.GetInfantryMax();
 
                 }
             }

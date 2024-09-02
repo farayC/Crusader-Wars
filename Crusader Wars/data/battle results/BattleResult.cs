@@ -229,49 +229,47 @@ namespace Crusader_Wars
         public static void ReadAttilaResults(Army army, string path_attila_log)
         {
 
-            UnitsResults units = new UnitsResults();
-            List<(string Script, string Type, string CultureID, string Remaining)> Alive_MainPhase = new List<(string Script, string Type, string CultureID, string Remaining)>();
-            List<(string Script, string Type, string CultureID, string Remaining)> Alive_PursuitPhase = new List<(string Script, string Type, string CultureID, string Remaining)>();
-            List<(string Script, string Type, string CultureID, string Kills)> Kills_MainPhase = new List<(string Name, string Type, string CultureID, string Kills)>();
-            List<(string Script, string Type, string CultureID, string Kills)> Kills_PursuitPhase = new List<(string Name, string Type, string CultureID, string Kills)>();
-
-            var (AliveList, KillsList) = GetRemainingAndKills(path_attila_log);
-            if (AliveList.Count == 1)
-            {
-                Alive_MainPhase = ReturnList(army, AliveList[0], DataType.Alive);
-                units.SetAliveMainPhase(Alive_MainPhase);
-                Kills_MainPhase = ReturnList(army, KillsList[0], DataType.Kills);
-                units.SetKillsMainPhase(Kills_MainPhase);
-
-            }
-            else if (AliveList.Count > 1)
-            {
-                Alive_MainPhase = ReturnList(army, AliveList[0], DataType.Alive);
-                units.SetAliveMainPhase(Alive_MainPhase);
-
-                Alive_PursuitPhase = ReturnList(army, AliveList[1], DataType.Alive);
-                units.SetAlivePursuitPhase(Alive_PursuitPhase);
-
-                Kills_MainPhase = ReturnList(army, KillsList[0], DataType.Kills);
-                units.SetKillsMainPhase(Kills_MainPhase);
-
-                Kills_PursuitPhase = ReturnList(army, KillsList[1], DataType.Kills);
-                units.SetKillsPursuitPhase(Kills_PursuitPhase);
-            }
-
-            army.UnitsResults = units;
-            army.UnitsResults.ScaleTo100Porcent();
-
-            CreateUnitsReports(army);
-            ChangeRegimentsSoldiers(army);
-
             try
             {
+                UnitsResults units = new UnitsResults();
+                List<(string Script, string Type, string CultureID, string Remaining)> Alive_MainPhase = new List<(string Script, string Type, string CultureID, string Remaining)>();
+                List<(string Script, string Type, string CultureID, string Remaining)> Alive_PursuitPhase = new List<(string Script, string Type, string CultureID, string Remaining)>();
+                List<(string Script, string Type, string CultureID, string Kills)> Kills_MainPhase = new List<(string Name, string Type, string CultureID, string Kills)>();
+                List<(string Script, string Type, string CultureID, string Kills)> Kills_PursuitPhase = new List<(string Name, string Type, string CultureID, string Kills)>();
 
+                var (AliveList, KillsList) = GetRemainingAndKills(path_attila_log);
+                if (AliveList.Count == 1)
+                {
+                    Alive_MainPhase = ReturnList(army, AliveList[0], DataType.Alive);
+                    units.SetAliveMainPhase(Alive_MainPhase);
+                    Kills_MainPhase = ReturnList(army, KillsList[0], DataType.Kills);
+                    units.SetKillsMainPhase(Kills_MainPhase);
+
+                }
+                else if (AliveList.Count > 1)
+                {
+                    Alive_MainPhase = ReturnList(army, AliveList[0], DataType.Alive);
+                    units.SetAliveMainPhase(Alive_MainPhase);
+
+                    Alive_PursuitPhase = ReturnList(army, AliveList[1], DataType.Alive);
+                    units.SetAlivePursuitPhase(Alive_PursuitPhase);
+
+                    Kills_MainPhase = ReturnList(army, KillsList[0], DataType.Kills);
+                    units.SetKillsMainPhase(Kills_MainPhase);
+
+                    Kills_PursuitPhase = ReturnList(army, KillsList[1], DataType.Kills);
+                    units.SetKillsPursuitPhase(Kills_PursuitPhase);
+                }
+
+                army.UnitsResults = units;
+                army.UnitsResults.ScaleTo100Porcent();
+
+                CreateUnitsReports(army);
+                ChangeRegimentsSoldiers(army);
             }
-            catch
+            catch(Exception e)
             {
-                MessageBox.Show("Error reading Attila results", "Battle Results Error",
+                MessageBox.Show($"Error reading Attila results: {e.Message}", "Battle Results Error",
                 MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 throw new Exception();
                 
@@ -380,17 +378,20 @@ namespace Crusader_Wars
             Console.WriteLine($"REPORT FROM {army.CombatSide.ToUpper()} ARMY {army.ID}");
             foreach(var group in grouped)
             {
+                // Set the regiment type to the correct one
                 RegimentType unitType;
                 if (group.Key.Type.Contains("Levy")) { unitType = RegimentType.Levy; }
                 else if (group.Key.Type.Contains("commander") || group.Key.Type == "knights") { continue; }
                 else { unitType = RegimentType.MenAtArms; }
 
+                // Search for type, culture, starting soldiers and remaining soldiers of a Unit
+                if(army.Units == null) { continue; }
                 string type = Regex.Match(group.Key.Type, @"\D+").Value;
                 Culture culture = army.Units.FirstOrDefault(x => x.GetObjCulture().ID == group.Key.CultureID).GetObjCulture();
-
-                int starting = army.Units.First(x => x.GetRegimentType() == unitType && x.GetObjCulture().ID == culture.ID && x.GetName() == type).GetSoldiers();
+                int starting = army.Units.Find(x => x.GetRegimentType() == unitType && x.GetObjCulture().ID == culture.ID && x.GetName() == type).GetSoldiers();
                 int remaining = group.Sum(x => Int32.Parse(x.Remaining));
 
+                // Create a Unit Report of the main casualities as default, if pursuit data is available, it creates one from the pursuit casualties
                 UnitCasualitiesReport unitReport;
                 if (pursuit_grouped != null)
                 {
