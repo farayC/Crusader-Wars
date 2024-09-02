@@ -71,7 +71,7 @@ namespace Crusader_Wars.locs
 
         private static void EditBattleTextDetails(int left_side_total, int right_side_total)
         {
-            string patreon_text = "Special thanks to our patreons for supporting the development of the mod: Grant Swift, Galahad, Kieran Britt, Chris Kelly, Ryan Merklen, Kyle T David, Oron Gabay, I Regret This Already, TheRagingMagnus, Gav, Kyra, Michael Nathan Chananja Klaassen, Lightmare Studios, PTOLEMY, wanderinghobo49 and Nico Mangold!";
+            string patreon_text = "Special thanks to our patreons for supporting the development of the mod: Grant Swift, Galahad, Kieran Britt, Chris Kelly, Ryan Merklen, Kyle T David, Oron Gabay, I Regret This Already, TheRagingMagnus, Gav, Kyra, Michael Nathan Chananja Klaassen, Lightmare Studios, PTOLEMY, wanderinghobo49, Nico Mangold, Thierry La Fraude and Samio!";
 
             string original_battle_details_path = @".\data\battle files\text\db\tutorial_historical_battles.loc.tsv";
             string copy_path = @".\data\tutorial_historical_battles.loc.tsv";
