@@ -46,7 +46,8 @@ namespace Crusader_Wars.data.save_file
             CreateUnits();
 
             // Print Armies
-            //Print.PrintArmiesData(attacker_armies, defender_armies);
+            Print.PrintArmiesData(attacker_armies);
+            Print.PrintArmiesData(defender_armies);
 
             return (attacker_armies, defender_armies);
         }
@@ -657,41 +658,6 @@ namespace Crusader_Wars.data.save_file
             }
         }
 
-
-        private static string GetCharacterCultureID(string character_id)
-        {
-            bool isSearchStarted = false;
-            string culture_id = "";
-            using (StreamReader stringReader = new StreamReader(Writter.DataFilesPaths.Living_Path()))
-            {
-                while(true)
-                {
-                    string line = stringReader.ReadLine();
-                    if (line == null) break;
-
-                    if(line == $"{character_id}={{" && !isSearchStarted)
-                    {
-                        isSearchStarted = true;
-                    }
-                    
-                    if(isSearchStarted && Regex.IsMatch(line, @"\tculture=\d+"))
-                    {
-                        culture_id = Regex.Match(line, @"\tculture=(\d+)").Groups[1].Value;
-                        return culture_id;
-                    }
-
-                    if(isSearchStarted && line == "}")
-                    {
-                        return "";
-                    }
-                }
-
-                return culture_id;
-            }
-
-        }
-
-
         private static void CreateUnits()
         {
             Armies_Functions.CreateUnits(attacker_armies);
@@ -852,93 +818,23 @@ namespace Crusader_Wars.data.save_file
                     {
                         county_key = Regex.Match(line, @"\t\t(\w+)={").Groups[1].Value;
 
-                        //
-                        // ATTACKER REGIMENTS
-                        
-                        //Armies
-                        for (int i = 0; i < attacker_armies.Count; i++)
-                        {
-                            if (isSearchStared) break;
-                            //Army Regiments
-                            for (int x = 0; x < attacker_armies[i].ArmyRegiments.Count; x++)
-                            {
-                                if (isSearchStared) break;
-                                //Regiments
-                                if (attacker_armies[i].ArmyRegiments[x].Regiments != null)
-                                {
-                                    for (int y = 0; y < attacker_armies[i].ArmyRegiments[x].Regiments.Count; y++)
-                                    {
-
-                                        //if county key is empty, skip
-                                        if (string.IsNullOrEmpty(attacker_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey()))
-                                        {
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            string regiment_county_key = attacker_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey();
-                                            if (regiment_county_key == county_key)
-                                            {
-                                                isSearchStared = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                       
+                        isSearchStared =  Armies_Functions.SearchCounty(county_key, attacker_armies);
                         if (!isSearchStared)
                         {
-                            //
-                            // DEFENDER REGIMENTS
-                            
-                            //Armies
-                            for (int i = 0; i < defender_armies.Count; i++)
-                            {
-                                if (isSearchStared) break;
-                                //Army Regiments
-                                for (int x = 0; x < defender_armies[i].ArmyRegiments.Count; x++)
-                                {
-                                    if (isSearchStared) break;
-                                    //Regiments
-                                    if(defender_armies[i].ArmyRegiments[x].Regiments != null)
-                                    {
-                                        for (int y = 0; y < defender_armies[i].ArmyRegiments[x].Regiments.Count; y++)
-                                        {
-                                            //if county key is empty, skip
-                                            if (string.IsNullOrEmpty(defender_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey()))
-                                            {
-                                                continue;
-                                            }
-                                            else
-                                            {
-                                                string regiment_county_key = defender_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey();
-                                                if (regiment_county_key == county_key)
-                                                {
-                                                    isSearchStared = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            
+                            isSearchStared = Armies_Functions.SearchCounty(county_key, defender_armies);
                         }
                         
                     }
 
-
                     //Culture ID
-                    if(isSearchStared && line.Contains("\t\t\tculture=")) 
+                    else if(isSearchStared && line.Contains("\t\t\tculture=")) 
                     {
                         string culture_id = Regex.Match(line, @"\t\t\tculture=(\d+)").Groups[1].Value;
                         FoundCounties.Add((county_key, culture_id));                        
                     }
 
                     // County End Line
-                    if(isSearchStared && line == "\t\t}")
+                    else if(isSearchStared && line == "\t\t}")
                     {
                         isSearchStared = false;
                     }
@@ -946,97 +842,11 @@ namespace Crusader_Wars.data.save_file
 
                 }
 
-                List<(string char_id, string culture_id)> temp_characters_cultures = new List<(string char_id, string culture_id)>();
+                
                 //Populate regiments with culture id's
-                foreach(var county in FoundCounties)
-                {
-                    //
-                    //  ATTACKER REGIMENTS
-                                  
-
-                    //Armies
-                    for (int i = 0; i < attacker_armies.Count; i++)
-                    {
-                        //Army Regiments
-                        for (int x = 0; x < attacker_armies[i].ArmyRegiments.Count; x++)
-                        {
-                            //Regiments
-                            if(attacker_armies[i].ArmyRegiments[x].Regiments != null)
-                            {
-                                for (int y = 0; y < attacker_armies[i].ArmyRegiments[x].Regiments.Count; y++)
-                                {
-                                    string regiment_county_key = attacker_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey();
-                                    string owner = attacker_armies[i].ArmyRegiments[x].Regiments[y].Owner;
-                                    if (!string.IsNullOrEmpty(owner))
-                                    {
-                                        if (temp_characters_cultures.Exists(t => t.char_id == owner))
-                                        {
-                                            string culture_id = temp_characters_cultures.FirstOrDefault(p => p.char_id == owner).culture_id;
-                                            attacker_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            string culture_id = GetCharacterCultureID(owner);
-                                            temp_characters_cultures.Add((owner, culture_id));
-                                            attacker_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
-                                            continue;
-                                        }
-
-                                    }
-
-                                    if (county.county_key == regiment_county_key)
-                                    {
-                                        attacker_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(county.culture_id);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
-                    //
-                    //  DEFENDER REGIMENTS
-
-                    //Armies
-                    for (int i = 0; i < defender_armies.Count; i++)
-                    {
-                        //Army Regiments
-                        for (int x = 0; x < defender_armies[i].ArmyRegiments.Count; x++)
-                        {
-                            //Regiments
-                            if(defender_armies[i].ArmyRegiments[x].Regiments != null)
-                            {
-                                for (int y = 0; y < defender_armies[i].ArmyRegiments[x].Regiments.Count; y++)
-                                {
-                                    string regiment_county_key = defender_armies[i].ArmyRegiments[x].Regiments[y].GetCountyKey();
-                                    string owner = defender_armies[i].ArmyRegiments[x].Regiments[y].Owner;
-                                    if (!string.IsNullOrEmpty(owner))
-                                    {
-                                        if (temp_characters_cultures.Exists(t => t.char_id == owner))
-                                        {
-                                            string culture_id = temp_characters_cultures.FirstOrDefault(p => p.char_id == owner).culture_id;
-                                            defender_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            string culture_id = GetCharacterCultureID(owner);
-                                            temp_characters_cultures.Add((owner, culture_id));
-                                            defender_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(culture_id);
-                                            continue;
-                                        }
-                                    }
-                                    if (county.county_key == regiment_county_key)
-                                    {
-                                        defender_armies[i].ArmyRegiments[x].Regiments[y].SetCulture(county.culture_id);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
+                Armies_Functions.PopulateRegimentsWithCultures(FoundCounties, attacker_armies);
+                Armies_Functions.PopulateRegimentsWithCultures(FoundCounties, defender_armies);
+ 
             }
         }
         
@@ -1078,9 +888,8 @@ namespace Crusader_Wars.data.save_file
                         }
                     }
 
-
                     // Index Counter
-                    else if(line == "\t\t\t\t{" && isSearchStarted)
+                    else if (line == "\t\t\t\t{" && isSearchStarted)
                     {
                         string str_index = regiment.Index;
                         if (!string.IsNullOrEmpty(str_index))
@@ -1091,7 +900,7 @@ namespace Crusader_Wars.data.save_file
                         else
                         {
                             reg_chunk_index = 0;
-                            index = 0;
+                            index++;
                         }
                     }
 
@@ -1126,15 +935,19 @@ namespace Crusader_Wars.data.save_file
                     else if (isSearchStarted && line.Contains("\t\t\t\t\tcurrent="))
                     {
                         string current = Regex.Match(line, @"\d+").Value;
-                        if(index == reg_chunk_index)
+                        if (index == reg_chunk_index)
+                        {
                             regiment.SetSoldiers(current);
+                        }
                     }
 
                     //Regiment End Line
                     else if (isSearchStarted && line == "\t\t}")
                     {
+                        
                         isSearchStarted = false;
                         index = -1;
+                        reg_chunk_index = 0;
                     }
                 }
             }

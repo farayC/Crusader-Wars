@@ -403,14 +403,14 @@ namespace Crusader_Wars
 
                 }
 
-                
+                //1.0 Beta Debug
+                UpdateLoadingScreenMessage("Reading save file data...");
+                var armies = ArmiesReader.ReadBattleArmies();
+                attacker_armies = armies.attacker;
+                defender_armies = armies.defender;
                 try
                 {
-                    //1.0 Beta Debug
-                    UpdateLoadingScreenMessage("Reading save file data...");
-                    var armies = ArmiesReader.ReadBattleArmies();
-                    attacker_armies = armies.attacker;
-                    defender_armies = armies.defender;
+
                 }
                 catch(Exception ex)
                 {
@@ -434,42 +434,42 @@ namespace Crusader_Wars
                 int right_side_total = right_side.Sum(army => army.GetTotalSoldiers());
                 string left_side_combat_side = left_side[0].CombatSide;
                 string right_side_combat_side = right_side[0].CombatSide;
-                BattleDetails.ChangeBattleDetails(left_side_total, right_side_total, left_side_combat_side, right_side_combat_side);
-
-                Games.CloseTotalWarAttilaProcess();
-                UpdateLoadingScreenMessage("Creating battle in Total War: Attila...");
-
-                //Create Remaining Soldiers Script
-                BattleScript.CreateScript();
-
-                // Set Battle Scale
-                int total_soldiers = attacker_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers()) +
-                                     defender_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers());
-                ArmyProportions.AutoSizeUnits(total_soldiers);
-                foreach (var army in attacker_armies) army.ScaleUnits(ModOptions.GetBattleScale());
-                foreach (var army in defender_armies) army.ScaleUnits(ModOptions.GetBattleScale());
-
-                //Create Battle
-                BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
-
-                //Close Script
-                BattleScript.CloseScript();
-
-                //Set Commanders Script
-                BattleScript.SetCommandersLocals();
-
-                //Set Units Kills Script
-                BattleScript.SetLocalsKills(Data.units_scripts);
-
-                //Close Script
-                BattleScript.CloseScript();
-
-                //Creates .pack mod file
-                PackFile.PackFileCreator();
 
                 try
                 {
 
+                    BattleDetails.ChangeBattleDetails(left_side_total, right_side_total, left_side_combat_side, right_side_combat_side);
+
+                    Games.CloseTotalWarAttilaProcess();
+                    UpdateLoadingScreenMessage("Creating battle in Total War: Attila...");
+
+                    //Create Remaining Soldiers Script
+                    BattleScript.CreateScript();
+
+                    // Set Battle Scale
+                    int total_soldiers = attacker_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers()) +
+                                         defender_armies.SelectMany(army => army.Units).Sum(unit => unit.GetSoldiers());
+                    ArmyProportions.AutoSizeUnits(total_soldiers);
+                    foreach (var army in attacker_armies) army.ScaleUnits(ModOptions.GetBattleScale());
+                    foreach (var army in defender_armies) army.ScaleUnits(ModOptions.GetBattleScale());
+
+                    //Create Battle
+                    BattleFile.BETA_CreateBattle(attacker_armies, defender_armies);
+
+                    //Close Script
+                    BattleScript.CloseScript();
+
+                    //Set Commanders Script
+                    BattleScript.SetCommandersLocals();
+
+                    //Set Units Kills Script
+                    BattleScript.SetLocalsKills(Data.units_scripts);
+
+                    //Close Script
+                    BattleScript.CloseScript();
+
+                    //Creates .pack mod file
+                    PackFile.PackFileCreator();
                 }
                 catch(Exception ex)
                 {

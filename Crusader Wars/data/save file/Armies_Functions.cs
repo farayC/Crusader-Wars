@@ -2,6 +2,7 @@
 using Crusader_Wars.unit_mapper;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,115 @@ namespace Crusader_Wars.data.save_file
 {
     internal static class Armies_Functions
     {
+        /*##############################################
+         *####               COUNTIES               #### 
+         *####--------------------------------------####
+         *####   Reader for the counties manager    ####
+         *##############################################
+         */
+
+        public static bool SearchCounty(string county_key, List<Army> armies)
+        {
+            foreach(Army army in armies)
+            {
+                foreach(ArmyRegiment armyRegiment in army.ArmyRegiments)
+                {
+                    if (armyRegiment.Regiments == null)
+                        continue;
+
+                    foreach(Regiment regiment in armyRegiment.Regiments)
+                    {
+                        //if county key is empty, skip
+                        if (string.IsNullOrEmpty(regiment.GetCountyKey()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            string regiment_county_key = regiment.GetCountyKey();
+                            if (regiment_county_key == county_key)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static void PopulateRegimentsWithCultures(List<(string county_key, string culture_id)> foundCultures, List<Army> armies)
+        {
+            var temp_characters_cultures = new List<(string char_id, string culture_id)>();
+
+            foreach (Army army in armies)
+            {
+                foreach (ArmyRegiment armyRegiment in army.ArmyRegiments)
+                {
+                    if (armyRegiment.Regiments == null)
+                        continue;
+
+                    foreach (Regiment regiment in armyRegiment.Regiments)
+                    {
+                        string owner_id = regiment.Owner;
+                        if (!string.IsNullOrEmpty(owner_id))
+                        {
+                            if (temp_characters_cultures.Exists(t => t.char_id == owner_id))
+                            {
+                                string culture_id = temp_characters_cultures.FirstOrDefault(p => p.char_id == owner_id).culture_id;
+                                regiment.SetCulture(culture_id);
+                            }
+                            else
+                            {
+                                string culture_id = GetCharacterCultureID(owner_id);
+                                temp_characters_cultures.Add((owner_id, culture_id));
+                                regiment.SetCulture(culture_id);
+                            }
+
+                        }
+                        else if (foundCultures.Exists(culture => culture.county_key == regiment.GetCountyKey()))
+                        {
+                            var foundCulture = foundCultures.Find(culture => culture.county_key == regiment.GetCountyKey());
+                            regiment.SetCulture(foundCulture.culture_id);
+                        }
+                    }
+                }
+            }
+        }
+
+        static string GetCharacterCultureID(string character_id)
+        {
+            bool isSearchStarted = false;
+            string culture_id = "";
+            using (StreamReader stringReader = new StreamReader(Writter.DataFilesPaths.Living_Path()))
+            {
+                while (true)
+                {
+                    string line = stringReader.ReadLine();
+                    if (line == null) break;
+
+                    if (line == $"{character_id}={{" && !isSearchStarted)
+                    {
+                        isSearchStarted = true;
+                    }
+
+                    if (isSearchStarted && Regex.IsMatch(line, @"\tculture=\d+"))
+                    {
+                        culture_id = Regex.Match(line, @"\tculture=(\d+)").Groups[1].Value;
+                        return culture_id;
+                    }
+
+                    if (isSearchStarted && line == "}")
+                    {
+                        return "";
+                    }
+                }
+
+                return culture_id;
+            }
+
+        }
 
         /*##############################################
          *####               CULTURES               #### 
@@ -42,6 +152,72 @@ namespace Crusader_Wars.data.save_file
                     {
                         culture_id = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
 
+                        //Armies
+                        foreach (Army army in armies)
+                        {
+                            //Owner
+                            if (army.Owner.GetCulture() != null && army.Owner.GetCulture().ID == culture_id)
+                            {
+                                isSearchStared = true;
+                                break;
+                            }
+                            //Commanders
+                            else if (army.Commander != null && army.Commander.GetCultureObj().ID == culture_id)
+                            {
+                                isSearchStared = true;
+                                break;
+                            }
+                            //Knights
+                            else if (army.Knights != null && army.Knights.GetKnightsList() != null)
+                            {
+                                foreach (var knight in army.Knights.GetKnightsList())
+                                {
+                                    if (knight.GetCultureObj() != null && knight.GetCultureObj().ID == culture_id)
+                                    {
+                                        isSearchStared = true;
+                                        break;
+                                    }
+                                }
+
+                                if (isSearchStared)
+                                    break;
+                            }
+                            //Army Regiments
+                            foreach(ArmyRegiment armyRegiments in army.ArmyRegiments)
+                            {
+                                if (armyRegiments.Regiments == null) 
+                                    continue;
+                                //Regiments
+                                foreach(Regiment regiment in armyRegiments.Regiments)
+                                {
+                                    if(regiment.Culture == null)
+                                    {
+                                        Console.WriteLine($"WARNING - REGIMENT {regiment.ID} HAS A NULL CULTURE");
+                                        continue;
+                                    }
+                                    else if(string.IsNullOrEmpty(regiment.Culture.ID))
+                                    {
+                                        Console.WriteLine($"WARNING - REGIMENT {regiment.ID} DOESN'T HAVE AN ID");
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        if (regiment.Culture.ID == culture_id)
+                                        {
+                                            isSearchStared = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (isSearchStared)
+                                    break;
+                            }
+                            if (isSearchStared)
+                                break;
+                        }
+
+                        //----- old below-----
+                        /*
                         //Armies
                         for (int i = 0; i < armies.Count; i++)
                         {
@@ -136,7 +312,6 @@ namespace Crusader_Wars.data.save_file
                                         continue;
                                     }
 
-                                    //If is player character
                                     if (string.IsNullOrEmpty(armies[i].ArmyRegiments[x].Regiments[y].Culture.ID))
                                     {
                                         Console.WriteLine("WARNING - REGIMENT NULL CULTURE FOUND");
@@ -157,17 +332,26 @@ namespace Crusader_Wars.data.save_file
                                 }
                             }
                         }
+                        */
                     }
+
 
                     //Culture Name
                     if (isSearchStared && line.Contains("\t\t\tname="))
                     {
-                        culture_name = Regex.Match(line, @"""(\w+)""").Groups[1].Value;
+                        culture_name = Regex.Match(line, @"""(.+)""").Groups[1].Value;
+                        culture_name = culture_name.Replace("-", "");
+                        culture_name = culture_name.Replace("_", "");
+                        if (culture_name == "ringlóvale")
+                            Console.WriteLine("fodasse");
+                        culture_name = RemoveDiacritics(culture_name);
+
                     }
                     //Heritage Name
                     else if (isSearchStared && line.Contains("\t\t\theritage="))
                     {
-                        heritage_name = Regex.Match(line, @"""(\w+)""").Groups[1].Value;
+                        heritage_name = Regex.Match(line, @"""(.+)""").Groups[1].Value;
+                        heritage_name = heritage_name.Trim('-');
                     }
 
                     //End Line
@@ -175,70 +359,142 @@ namespace Crusader_Wars.data.save_file
                     {
                         found_cultures.Add((culture_id, culture_name, heritage_name));
                         isSearchStared = false;
+                        culture_id = ""; culture_name = ""; heritage_name = "";
                     }
                 }
+            }
+
+            // This is only if there are still null cultures
+            foreach (Army army in armies)
+            {
+                //  COMMANDERS
+                if (army.Commander != null && army.Commander.GetCultureObj() == null)
+                {
+                    if (army.IsPlayer())
+                    {
+                        army.Commander.ChangeCulture(new Culture(CK3LogData.LeftSide.GetCommander().culture_id));
+                    }
+                    else if (army.IsEnemy())
+                    {
+                        army.Commander.ChangeCulture(new Culture(CK3LogData.RightSide.GetCommander().culture_id));
+                    }
+                    else
+                    {
+                        army.Commander.ChangeCulture(army.Owner.GetCulture());
+                    }
+                }
+
+                // KNIGHTS
+                if (army.Knights != null && army.Knights.GetKnightsList() != null)
+                {
+                    foreach (Knight knight in army.Knights.GetKnightsList())
+                    {
+                        if (knight.GetCultureObj() == null)
+                        {
+                            Culture mainParticipantCulture = null;
+                            if (army.IsPlayer())
+                            {
+                                string id = CK3LogData.LeftSide.GetMainParticipant().culture_id;
+                                mainParticipantCulture = new Culture(id);
+                            }
+                            else if (army.IsEnemy())
+                            {
+                                string id = CK3LogData.RightSide.GetMainParticipant().culture_id;
+                                mainParticipantCulture = new Culture(id);
+                            }
+
+                            Culture new_culture = army.Knights.GetKnightsList()?.Find(x => x.GetCultureObj() != null)?.GetCultureObj() ?? mainParticipantCulture;
+                            knight.ChangeCulture(new_culture);
+                            //knight_culture_id = knight.GetCultureObj().ID;
+                            army.Knights.SetMajorCulture();
+                        }
+                    }
+                }
+
             }
 
             SetCulturesToAll(armies, found_cultures);
         }
 
+        static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+
+            for (int i = 0; i < normalizedString.Length; i++)
+            {
+                char c = normalizedString[i];
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder
+                .ToString()
+                .Normalize(NormalizationForm.FormC);
+        }
+
         internal static void SetCulturesToAll(List<Army> armies, List<(string culture_id, string culture_name, string heritage_name)> foundCultures)
         {
-            foreach (var culture in foundCultures)
+            foreach (Army army in armies)
             {
-                //Armies
-                for (int i = 0; i < armies.Count; i++)
+
+                //Owner
+                if (army.Owner.GetCulture() != null && foundCultures.Exists(culture => culture.culture_id == army.Owner.GetCulture().ID))
                 {
-                    //Owner
-                    if (armies[i].Owner.GetCulture() != null && armies[i].Owner.GetCulture().ID == culture.culture_id)
-                    {
-                        armies[i].Owner.GetCulture().SetName(culture.culture_name);
-                        armies[i].Owner.GetCulture().SetHeritage(culture.heritage_name);
-                    }
+                    var foundCulture = foundCultures.Find(culture => culture.culture_id == army.Owner.GetCulture().ID);
+                    army.Owner.GetCulture().SetName(foundCulture.culture_name);
+                    army.Owner.GetCulture().SetHeritage(foundCulture.heritage_name);
+                }
 
-                    //Commanders
-                    if (armies[i].Commander != null)
+                //Commanders
+                if (army.Commander != null)
+                {
+                    if (foundCultures.Exists(culture => culture.culture_id == army.Commander.GetCultureObj().ID))
                     {
-                        if (armies[i].Commander.GetCultureObj().ID == culture.culture_id)
+                        var foundCulture = foundCultures.Find(culture => culture.culture_id == army.Commander.GetCultureObj().ID);
+                        army.Commander.GetCultureObj().SetName(foundCulture.culture_name);
+                        army.Commander.GetCultureObj().SetHeritage(foundCulture.heritage_name);
+                    }
+                }
+
+                //Knights
+                if (army.Knights.GetKnightsList() != null)
+                {
+                    foreach (var knight in army.Knights.GetKnightsList())
+                    {
+                        string knight_culture_id = knight.GetCultureObj().ID;
+                        if (foundCultures.Exists(culture => culture.culture_id == knight_culture_id))
                         {
-                            armies[i].Commander.GetCultureObj().SetName(culture.culture_name);
-                            armies[i].Commander.GetCultureObj().SetHeritage(culture.heritage_name);
+                            var foundCulture = foundCultures.Find(culture => culture.culture_id == knight_culture_id);
+                            knight.GetCultureObj().SetName(foundCulture.culture_name);
+                            knight.GetCultureObj().SetHeritage(foundCulture.heritage_name);
                         }
                     }
+                }
 
-                    //Knights
-                    if (armies[i].Knights.GetKnightsList() != null)
+
+                //Army Regiments
+                foreach (ArmyRegiment armyRegiment in army.ArmyRegiments)
+                {
+                    if (armyRegiment.Regiments == null) continue;
+                    foreach (Regiment regiment in armyRegiment.Regiments)
                     {
-                        foreach (var knight in armies[i].Knights.GetKnightsList())
+                        if (regiment.Culture == null)
                         {
-                            string knight_culture_id = knight.GetCultureObj().ID;
-
-                            if (knight_culture_id == culture.culture_id)
-                            {
-                                knight.GetCultureObj().SetName(culture.culture_name);
-                                knight.GetCultureObj().SetHeritage(culture.heritage_name);
-                            }
+                            Console.WriteLine($"WARNING - NULL CULTURE IN REGIMENT {regiment.ID}");
+                            continue;
                         }
-                    }
-
-
-                    //Army Regiments
-                    for (int x = 0; x < armies[i].ArmyRegiments.Count; x++)
-                    {
-                        //Regiments
-                        if (armies[i].ArmyRegiments[x].Regiments is null) continue;
-
-                        for (int y = 0; y < armies[i].ArmyRegiments[x].Regiments.Count; y++)
+                        string regimentCultureID = regiment.Culture.ID;
+                        if (foundCultures.Exists(culture => culture.culture_id == regimentCultureID))
                         {
-                            if (armies[i].ArmyRegiments[x].Regiments[y].Culture is null) { continue; }
-
-                            string regiment_culture_id = armies[i].ArmyRegiments[x].Regiments[y].Culture.ID;
-                            if (culture.culture_id == regiment_culture_id)
-                            {
-                                armies[i].ArmyRegiments[x].Regiments[y].Culture.SetName(culture.culture_name);
-                                armies[i].ArmyRegiments[x].Regiments[y].Culture.SetHeritage(culture.heritage_name);
-                            }
+                            var foundCulture = foundCultures.Find(culture => culture.culture_id == regimentCultureID);
+                            regiment.Culture.SetName(foundCulture.culture_name);
+                            regiment.Culture.SetHeritage(foundCulture.heritage_name);
                         }
+
                     }
                 }
             }
