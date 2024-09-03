@@ -339,9 +339,8 @@ namespace Crusader_Wars
                     if (unitReport == null)
                         continue;
 
-                    int regSoldiers = Int32.Parse(regiment.CurrentNum);
                     int killed = unitReport.GetKilled();
-
+                    int regSoldiers = Int32.Parse(regiment.CurrentNum);
                     while (regSoldiers > 0 && killed > 0)
                     {
                         if (regSoldiers > killed)
@@ -355,9 +354,11 @@ namespace Crusader_Wars
                             regSoldiers = 0;
                         }
                     }
-
+                    
+                        
                     regiment.SetSoldiers(regSoldiers.ToString());
                     unitReport.SetKilled(killed);
+
 
                     int army_regiment_total = armyRegiment.Regiments.Where(reg => reg.CurrentNum != null).Sum(x => Int32.Parse(x.CurrentNum));
                     armyRegiment.SetCurrentNum(army_regiment_total.ToString());
@@ -476,7 +477,7 @@ namespace Crusader_Wars
                         }
                         else if (mergedArmy.Knights.GetKnightsList() != null)
                         {
-                            foreach (Knight knight_u in army.Knights.GetKnightsList())
+                            foreach (Knight knight_u in mergedArmy.Knights.GetKnightsList())
                             {
                                 if (knight_u.GetID() == char_id)
                                 {

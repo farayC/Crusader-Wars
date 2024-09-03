@@ -13,6 +13,8 @@ namespace Crusader_Wars.data.save_file
     {
         public static void PrintArmiesData(List<Army> armies)
         {
+            int armyRegimentsTotal = 0;
+            int regimentsTotal = 0;
             foreach (var i in armies)
             {
                 Console.WriteLine($"#Army - {i.ID} | {i.CombatSide} | Commander {i.CommanderID}");
@@ -20,27 +22,46 @@ namespace Crusader_Wars.data.save_file
                 foreach (var x in i.ArmyRegiments)
                 {
                     if (x.Type == RegimentType.Knight)
+                    {
                         Console.WriteLine($"##Army Regiment - {x.ID} |{x.Type} | Character ID {x.MAA_Name}");
+                    }
                     else
+                    {
                         Console.WriteLine($"##Army Regiment - {x.ID} |{x.Type} | {x.MAA_Name}");
+                        armyRegimentsTotal += x.CurrentNum;
+                    }
+                        
                     foreach (var t in x.Regiments)
                     {
                         if (!t.isMercenary())
+                        {
                             if (t.Culture is null)
+                            {
                                 Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} |Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture ID: null");
+                                regimentsTotal += Int32.Parse(t.CurrentNum);
+                            }
                             else
+                            {
                                 Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
+                                regimentsTotal += Int32.Parse(t.CurrentNum);
+                            }
+                        }
                         else
+                        {
                             ///Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
                             Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
-
-
+                            regimentsTotal += Int32.Parse(t.CurrentNum);
+                        }
+                            
                     }
 
                 }
                 Console.WriteLine("\n");
             }
-
+            
+            Console.WriteLine("\n");
+            Console.WriteLine($"ARMY REGIMENTS TOTAL FOUND: {armyRegimentsTotal}\n" +
+                              $"REGIMENTS TOTAL FOUND: {regimentsTotal}\n");
             Console.WriteLine("\n");
             Console.WriteLine("\n");
 
@@ -207,7 +228,7 @@ namespace Crusader_Wars.data.save_file
         public void isMercenary(bool t) { IsMercenary = t; }
         public void SetOrigin(string origin) { Origin = origin; }
         public void SetMax(string max) { Max = max; }
-        public void SetSoldiers(string soldiers) { CurrentNum = soldiers; }
+        public void SetSoldiers(string soldiers) {CurrentNum = soldiers; }
         public void StoreCountyKey(string key) { county_key = key; }
         public void ChangeIndex(string index) { Index = index; }
     }

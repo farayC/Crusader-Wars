@@ -177,7 +177,7 @@ namespace Crusader_Wars.data.save_file
                             //Regiment Province Origin
                             if (province_id == origin && !armies[i].ArmyRegiments[x].Regiments[y].isMercenary())
                             {
-                                armies[i].ArmyRegiments[x].Regiments[y].StoreCountyKey(county_key);
+                                armies[i].ArmyRegiments[x].Regiments[y].StoreCountyKey(county_key.Trim());
                             }
                         }
                     }
