@@ -2,17 +2,11 @@
 using Crusader_Wars.client;
 using Crusader_Wars.locs;
 using Crusader_Wars.terrain;
-using Crusader_Wars.unit_mapper;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Windows.Media.Media3D;
-using System.Xml.Linq;
+
 
 namespace Crusader_Wars
 {

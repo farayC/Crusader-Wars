@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Crusader_Wars.unit_mapper;
+using System.Xml;
 
 namespace Crusader_Wars.data.save_file
 {
@@ -67,8 +69,11 @@ namespace Crusader_Wars.data.save_file
 
         }
     }
+
+
     public class Unit
     {
+
         string Name { get; set; }
         RegimentType Type { get; set; }
         Culture UnitCulture { get; set; }
@@ -79,6 +84,8 @@ namespace Crusader_Wars.data.save_file
         string AttilaFaction { get; set; }
         int Max { get; set; }
         string LocName { get; set; }
+
+
 
         public Unit(string regiment_name, int soldiers, Culture culture_obj, RegimentType type)
         {
@@ -105,6 +112,8 @@ namespace Crusader_Wars.data.save_file
             IsMercenaryBool = is_merc;
             Owner = owner;
         }
+
+
 
 
         public void SetAttilaFaction(string a) { AttilaFaction = a; }
@@ -142,7 +151,9 @@ namespace Crusader_Wars.data.save_file
         public bool IsMerc() { return IsMercenaryBool; }
         public RegimentType GetRegimentType() { return Type; }
         public string GetLocName() { return LocName; }
+
     }
+
     public enum RegimentType
     {
         Commander,

@@ -148,21 +148,21 @@ namespace Crusader_Wars.data.save_file
                     if (line == null) break;
 
                     //Culture Line
-                    if (Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStared)
+                    if (Regex.IsMatch(line, @"^\t\t\d+={$") && !isSearchStared)
                     {
-                        culture_id = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
+                        culture_id = Regex.Match(line, @"(\d+)").Groups[1].Value;
 
                         //Armies
                         foreach (Army army in armies)
                         {
                             //Owner
-                            if (army.Owner.GetCulture() != null && army.Owner.GetCulture().ID == culture_id)
+                            if (army.Owner.GetCulture() != null && army.Owner.GetCulture() != null && army.Owner.GetCulture().ID == culture_id)
                             {
                                 isSearchStared = true;
                                 break;
                             }
                             //Commanders
-                            else if (army.Commander != null && army.Commander.GetCultureObj().ID == culture_id)
+                            else if (army.Commander != null && army.Commander.GetCultureObj() != null && army.Commander.GetCultureObj().ID == culture_id)
                             {
                                 isSearchStared = true;
                                 break;
@@ -341,10 +341,8 @@ namespace Crusader_Wars.data.save_file
                     {
                         culture_name = Regex.Match(line, @"""(.+)""").Groups[1].Value;
                         culture_name = culture_name.Replace("-", "");
-                        culture_name = culture_name.Replace("_", "");
-                        if (culture_name == "ringlóvale")
-                            Console.WriteLine("fodasse");
                         culture_name = RemoveDiacritics(culture_name);
+                        culture_name = culture_name.Trim();
 
                     }
                     //Heritage Name
@@ -743,7 +741,7 @@ namespace Crusader_Wars.data.save_file
             var organizedUnits = new List<Unit>();
 
             // Group units by Name and Culture
-            var groupedUnits = units.GroupBy(u => new { Name = u.GetName(), Culture = u.GetCulture(), Type = u.GetType(), IsMerc = u.IsMerc() });
+            var groupedUnits = units.GroupBy(u => new { Name = u.GetName(), Culture = u.GetCulture(), Type = u.GetRegimentType(), IsMerc = u.IsMerc() });
 
             // Merge units with the same Name and Culture
             foreach (var group in groupedUnits)
@@ -806,11 +804,9 @@ namespace Crusader_Wars.data.save_file
                     units.Add(new Unit("Levy", unit_data.UnitSoldiers, levies_top_cultures[i].GetObjCulture(), RegimentType.Levy));
             }
 
-
-
-
-
             return units;
         }
+
+
     }
 }

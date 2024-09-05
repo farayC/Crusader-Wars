@@ -277,18 +277,29 @@ namespace Crusader_Wars.data.save_file
                         {
                             searchingArmy.Knights.GetKnightsList().Find(x => x == searchingKnight).ChangeCulture(new Culture(culture_id));
                             searchingArmy.Knights.SetMajorCulture();
-                            if(isOwner) searchingArmy.Owner.SetCulture(new Culture(culture_id));
+                            if(isOwner) 
+                                searchingArmy.Owner.SetCulture(new Culture(culture_id));
                         }
 
                         else if (isMainCommander)
                         {
+                            if(searchingArmy.IsPlayer())
+                                searchingArmy.Commander.ChangeCulture(new Culture(CK3LogData.LeftSide.GetCommander().culture_id));
+                            else
+                                searchingArmy.Commander.ChangeCulture(new Culture(CK3LogData.RightSide.GetCommander().culture_id));
+                            if (isOwner)
+                                searchingArmy.Owner.SetCulture(new Culture(culture_id));
+                            /*
                             searchingArmy.Commander.ChangeCulture(new Culture(culture_id));
-                            if (isOwner) searchingArmy.Owner.SetCulture(new Culture(culture_id));
+                            if (isOwner) 
+                                searchingArmy.Owner.SetCulture(new Culture(culture_id));
+                            */
                         }
                         else if(isCommander)
                         {
                             nonMainCommander_Culture = new Culture(culture_id);
-                            if (isOwner) searchingArmy.Owner.SetCulture(new Culture(culture_id));
+                            if (isOwner) 
+                                searchingArmy.Owner.SetCulture(new Culture(culture_id));
                         }
                         else
                         {

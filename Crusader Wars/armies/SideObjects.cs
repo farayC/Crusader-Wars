@@ -79,10 +79,6 @@ namespace Crusader_Wars
             {
                 if (ArmyRegiments[i].Regiments is null)
                 {
-                    Console.WriteLine($"NULL ARMY REGIMENT DELETED ID:{ArmyRegiments[i].ID}\n" +
-                                      $"Type-{ArmyRegiments[i].Type}\n" +
-                                      $"Starting-{ArmyRegiments[i].StartingNum}\n" +
-                                      $"Current-{ArmyRegiments[i].CurrentNum}\n\n");
                     ArmyRegiments.Remove(ArmyRegiments[i]);
                 }
             }
@@ -92,7 +88,8 @@ namespace Crusader_Wars
         {
             for (int i = 0; i < ArmyRegiments.Count; i++)
             {
-                ArmyRegiments[i].Regiments.RemoveAll(x => x.CurrentNum== null);
+                if (ArmyRegiments[i].Regiments != null)
+                    ArmyRegiments[i].Regiments.RemoveAll(x => x.CurrentNum== null);
             }
         }
 

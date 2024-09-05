@@ -323,29 +323,29 @@ namespace Crusader_Wars
                             break;
                         }
 
-                        UpdateLoadingScreenMessage("Getting data from save file...");
-                        StartLoadingScreen();
-                        
-                        infoLabel.Text = "Reading battle data...";
-                        this.Text = "Crusader Wars (Reading battle data...)";
-                        this.Hide();
 
-                        logFile.Position = 0;
-                        reader.DiscardBufferedData();
-                        log = reader.ReadToEnd();
-                        log = RemoveASCII(log);
-
-                        if (battleHasStarted)
-                        {
-                            DataSearch.Search(log);
-                            AttilaModManager.ReadInstalledMods();
-                            SetPlaythrough();
-                            UpdateLoadingScreenUnitMapperMessage(UnitMappers_BETA.GetLoadedUnitMapperString());
-                            AttilaModManager.CreateUserModsFile();
-                        }
                         try
                         {
+                            UpdateLoadingScreenMessage("Getting data from save file...");
+                            StartLoadingScreen();
 
+                            infoLabel.Text = "Reading battle data...";
+                            this.Text = "Crusader Wars (Reading battle data...)";
+                            this.Hide();
+
+                            logFile.Position = 0;
+                            reader.DiscardBufferedData();
+                            log = reader.ReadToEnd();
+                            log = RemoveASCII(log);
+
+                            if (battleHasStarted)
+                            {
+                                DataSearch.Search(log);
+                                AttilaModManager.ReadInstalledMods();
+                                SetPlaythrough();
+                                UpdateLoadingScreenUnitMapperMessage(UnitMappers_BETA.GetLoadedUnitMapperString());
+                                AttilaModManager.CreateUserModsFile();
+                            }
                         }
                         catch(Exception ex)
                         {
@@ -403,20 +403,20 @@ namespace Crusader_Wars
 
                 }
 
-                //1.0 Beta Debug
-                UpdateLoadingScreenMessage("Reading save file data...");
-                var armies = ArmiesReader.ReadBattleArmies();
-                attacker_armies = armies.attacker;
-                defender_armies = armies.defender;
+
                 try
                 {
-
+                    //1.0 Beta Debug
+                    UpdateLoadingScreenMessage("Reading save file data...");
+                    var armies = ArmiesReader.ReadBattleArmies();
+                    attacker_armies = armies.attacker;
+                    defender_armies = armies.defender;
                 }
                 catch(Exception ex)
                 {
                     this.Show();
                     CloseLoadingScreen();
-                    MessageBox.Show($"Error reading the battle armies: {ex.Message}", "Beta Error",
+                    MessageBox.Show($"Error reading the battle armies: {ex.Message}\nDon't play in Ironman or in debug mode!\nYour Crusader Kings III saves MUST NOT be on the steam cloud.", "Beta Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     ProcessCommands.ResumeProcess();
                     infoLabel.Text = "Waiting for battle...";

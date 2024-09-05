@@ -174,7 +174,7 @@ namespace Crusader_Wars
             //      LEVIES     #
             //                 #
             //##################
-            int levy_max = ModOptions.GetLevyMax();
+
             var levies_units = army.Units.Where(item => item.GetRegimentType() == data.save_file.RegimentType.Levy);
             if (levies_units.Count() > 0)
             {
@@ -205,7 +205,10 @@ namespace Crusader_Wars
                 if (unitName.Contains("accolade"))
                 {
                     string unit_script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPE{unit.GetName()}_CULTURE{unit.GetCulture()}{unit.GetObjCulture().ID}_";
-                    BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, unit_script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
+                    int accolade_xp = army_xp + 2;
+                    if (accolade_xp < 0) accolade_xp = 0;
+                    if (accolade_xp > 9) accolade_xp = 9;
+                    BattleFile.AddUnit(unit.GetAttilaUnitKey(), MAA_Data.UnitSoldiers, MAA_Data.UnitNum, MAA_Data.SoldiersRest, unit_script_name, accolade_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 }
                 //If is normal maa
                 else
@@ -220,6 +223,7 @@ namespace Crusader_Wars
 
             army.PrintUnits();
         }
+
 
         static void BETA_LevyComposition(Unit unit, Army army, List<(int porcentage, string unit_key, string name)> faction_levy_porcentages, int army_xp)
         {
@@ -260,7 +264,7 @@ namespace Crusader_Wars
                 compareNum += (levy_type_data.UnitSoldiers * levy_type_data.UnitNum);
                 //if (Levies_Data.UnitNum * t >= 0.5 && Levies_Data.UnitNum * t < 1) result = 1;
                 string script_name = $"{i}_{army.CombatSide}_army{army.ID}_TYPELevy{porcentageData.porcentage}_CULTURE{culture}{unit.GetObjCulture().ID}_";
-                BattleFile.AddUnit(porcentageData.unit_key, levy_type_data.UnitSoldiers, levy_type_data.UnitNum, Levies_Data.SoldiersRest, script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
+                BattleFile.AddUnit(porcentageData.unit_key, levy_type_data.UnitSoldiers, levy_type_data.UnitNum, levy_type_data.SoldiersRest, script_name, army_xp.ToString(), Deployments.beta_GeDirection(army.CombatSide));
                 i++;
             }
 
