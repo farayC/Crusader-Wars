@@ -597,5 +597,6 @@ namespace Crusader_Wars
             RealmsInExile_Node.InnerText = RealmsInExile_Tab.GetState().ToString();
             xmlDoc.Save(file);
         }
+
     }
 }

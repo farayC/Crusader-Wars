@@ -197,7 +197,7 @@ namespace Crusader_Wars.data.save_file
                                     }
                                     else if(string.IsNullOrEmpty(regiment.Culture.ID))
                                     {
-                                        Console.WriteLine($"WARNING - REGIMENT {regiment.ID} DOESN'T HAVE AN ID");
+                                        //Console.WriteLine($"WARNING - REGIMENT {regiment.ID} DOESN'T HAVE AN ID");
                                         continue;
                                     }
                                     else

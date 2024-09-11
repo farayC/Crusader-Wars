@@ -435,9 +435,11 @@ namespace Crusader_Wars
                 string left_side_combat_side = left_side[0].CombatSide;
                 string right_side_combat_side = right_side[0].CombatSide;
 
+
+
+
                 try
                 {
-
                     BattleDetails.ChangeBattleDetails(left_side_total, right_side_total, left_side_combat_side, right_side_combat_side);
 
                     Games.CloseTotalWarAttilaProcess();
