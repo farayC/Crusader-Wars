@@ -130,8 +130,10 @@ namespace Crusader_Wars
             {
                 Unit knights_unit;
                 if (army.Knights.GetMajorCulture() != null)
+                    // Set major culture on the knights unit
                     knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.Knights.GetMajorCulture(), RegimentType.Knight,false, army.Owner);
                 else
+                    // Set owner culture if it doesn't have a major culture
                     knights_unit = new Unit("Knight", army.Knights.GetKnightsSoldiers(), army.Owner.GetCulture(), RegimentType.Knight, false, army.Owner);
 
 
@@ -180,6 +182,12 @@ namespace Crusader_Wars
             {
                 foreach (var levy_culture in levies_units)
                 {
+                    if(string.IsNullOrEmpty(levy_culture.GetAttilaFaction()))
+                    {
+                        Console.WriteLine($"WARNING - LEVY UNIT WITHOUT A CULTURE FOUND. Amount = {levy_culture.GetSoldiers()} soldiers");
+                        continue;
+                    }
+
                     var levy_porcentages = UnitMappers_BETA.GetFactionLevies(levy_culture.GetAttilaFaction());
                     BETA_LevyComposition(levy_culture, army, levy_porcentages, army_xp);
                 }

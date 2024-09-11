@@ -195,4 +195,34 @@ namespace Crusader_Wars
 
 
     }
+
+    enum CharacterType
+    {
+        MainCommander,
+        Commander,
+        Knight,
+    }
+    public class Character
+    {
+        // MAIN DATA
+        string ID { get; set; }
+        string Name { get; set; }
+        int Prowess { get; set; }
+        int Martial { get; set; }
+        int FeudalRank {  get; set; }
+
+        // SECUNDARY DATA
+        Culture CultureObj { get; set; }
+        List<(int Index, string Key)> Traits { get; set; }
+        BaseSkills BaseSkills { get; set; }
+
+        // IDENTIFIER BOOLS
+        CharacterType CharacterType { get; set; }
+        bool isAccolade { get; set; }
+        Accolade Accolade { get; set; }
+
+        //AFTER BATTLE DATA
+        bool hasFallen { get; set; }
+        int Kills { get; set; }
+    }
 }
