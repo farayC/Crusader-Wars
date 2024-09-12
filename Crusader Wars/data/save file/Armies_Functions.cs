@@ -342,7 +342,7 @@ namespace Crusader_Wars.data.save_file
                         culture_name = Regex.Match(line, @"""(.+)""").Groups[1].Value;
                         culture_name = culture_name.Replace("-", "");
                         culture_name = RemoveDiacritics(culture_name);
-                        culture_name = culture_name.Trim();
+                        culture_name = culture_name.Replace(" ", "");
 
                     }
                     //Heritage Name
