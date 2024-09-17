@@ -295,11 +295,9 @@ namespace Crusader_Wars
                     pattern = Regex.Matches(text, $@"(?<Unit>.+_army{army.ID}_TYPE(?<Type>.+)_CULTURE(?<Culture>.+)_.+)-(?<Remaining>.+)");
                     foreach (Match match in pattern)
                     {
-                        string culture_match = match.Groups["Culture"].Value;
-
                         string unit_script = match.Groups["Unit"].Value;
                         string remaining = match.Groups["Remaining"].Value;
-                        string culture_id = Regex.Match(culture_match, @"(?<Name>\D+)(?<ID>\d+)").Groups["ID"].Value;
+                        string culture_id = match.Groups["Culture"].Value;
                         string type = Regex.Match(match.Groups["Type"].Value, @"\D+").Value;
 
                         list.Add((unit_script, type, culture_id, remaining));
@@ -309,11 +307,10 @@ namespace Crusader_Wars
                     pattern = Regex.Matches(text, $@"(?<Unit>kills_.+_army{army.ID}_TYPE(?<Type>.+)_CULTURE(?<Culture>.+)_.+)-(?<Kills>.+)");
                     foreach (Match match in pattern)
                     {
-                        string culture_match = match.Groups["Culture"].Value;
 
                         string unit_script = match.Groups["Unit"].Value;
                         string kills = match.Groups["Kills"].Value;
-                        string culture_id = Regex.Match(culture_match, @"(?<Name>\D+)(?<ID>\d+)").Groups["ID"].Value;
+                        string culture_id = match.Groups["Culture"].Value;
                         string type = Regex.Match(match.Groups["Type"].Value, @"\D+").Value;
 
                         list.Add((unit_script, type, culture_id, kills));
