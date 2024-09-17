@@ -184,7 +184,7 @@ namespace Crusader_Wars
                 {
                     if(string.IsNullOrEmpty(levy_culture.GetAttilaFaction()))
                     {
-                        Console.WriteLine($"WARNING - LEVY UNIT WITHOUT A CULTURE FOUND. Amount = {levy_culture.GetSoldiers()} soldiers");
+                        Console.WriteLine($"WARNING - LEVY UNIT WITHOUT A FACTION FOUND. Amount = {levy_culture.GetSoldiers()} soldiers");
                         continue;
                     }
 
