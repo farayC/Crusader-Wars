@@ -222,6 +222,7 @@ namespace Crusader_Wars.data.save_file
         public Culture Culture { get; private set; }
         string county_key { get; set; }
         bool IsMercenary { get; set; }
+        bool isGarrison {  get; set; }
 
         public Regiment(string id, string index)
         {
@@ -232,16 +233,20 @@ namespace Crusader_Wars.data.save_file
         //Getters
         public string GetCountyKey() { return county_key; }
         public bool isMercenary() { return IsMercenary; }
+        public bool IsGarrison() { return isGarrison; }
 
         //Setters
-        public void SetOwner(string o) { Owner = o; }
-        public void SetCulture(string id) { Culture = new Culture(id); }
-        public void isMercenary(bool t) { IsMercenary = t; }
-        public void SetOrigin(string origin) { Origin = origin; }
-        public void SetMax(string max) { Max = max; }
-        public void SetSoldiers(string soldiers) {CurrentNum = soldiers; }
-        public void StoreCountyKey(string key) { county_key = key; }
-        public void ChangeIndex(string index) { Index = index; }
+        public void SetOwner(string o) { this.Owner = o; }
+        public void SetCulture(string id) { this.Culture = new Culture(id); }
+        public void isMercenary(bool t) { this.IsMercenary = t; }
+        public void IsGarrison(bool t) { this.isGarrison = t; }
+        public void SetOrigin(string origin) { this.Origin = origin; }
+        public void SetMax(string max) { this.Max = max; }
+        public void SetSoldiers(string soldiers) {this.CurrentNum = soldiers; }
+        public void StoreCountyKey(string key) { this.county_key = key; }
+        public void ChangeIndex(string index) { this.Index = index; }
+
+        
     }
 
     public class Culture

@@ -871,6 +871,7 @@ namespace Crusader_Wars.data.save_file
 
             int index = -1;
             int reg_chunk_index = 0;
+
             using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.Regiments_Path()))
             {
                 while (true)
@@ -878,6 +879,8 @@ namespace Crusader_Wars.data.save_file
                     string line = sr.ReadLine();
                     if (line == null) break;
 
+                    if (line == "\t\t4820={")
+                        Console.Write("");
 
                     // Regiment ID Line
                     if (Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStarted)
@@ -922,6 +925,13 @@ namespace Crusader_Wars.data.save_file
                         regiment.isMercenary(true);
 
                     }
+
+                    // isGarrison 
+                    else if (isSearchStarted && line.Contains("\t\t\tsource=garrison"))
+                    {
+                        regiment.IsGarrison(true);
+
+                    }
                     // Origin 
                     else if (isSearchStarted && line.Contains("\t\t\torigin="))
                     {
@@ -956,15 +966,77 @@ namespace Crusader_Wars.data.save_file
                     //Regiment End Line
                     else if (isSearchStarted && line == "\t\t}")
                     {
-                        
                         isSearchStarted = false;
                         index = -1;
                         reg_chunk_index = 0;
+
+                        EditOgRegiment(regiment, attacker_armies, defender_armies);
+
+                        regiment = null;
+                       
                     }
                 }
             }
 
             ClearEmptyRegiments();
+            RemoveGarrisonRegiments(attacker_armies, defender_armies);
+        }
+
+        static void RemoveGarrisonRegiments(List<Army> attacker_armies, List<Army> defender_armies)
+        {
+            for (int i = 0; i < attacker_armies.Count; i++)
+            {
+                attacker_armies[i].RemoveGarrisonRegiments();
+            }
+            for (int i = 0; i < defender_armies.Count; i++)
+            {
+                defender_armies[i].RemoveGarrisonRegiments();
+            }
+        }
+        static void EditOgRegiment(Regiment editedRegiment ,List<Army> attacker_armies, List<Army> defender_armies)
+        {
+            foreach(Army army in attacker_armies)
+            {
+                foreach(ArmyRegiment armyRegiment in army.ArmyRegiments)
+                {
+                    foreach(Regiment regiment in armyRegiment.Regiments)
+                    {
+                        if(editedRegiment.ID == regiment.ID)
+                        {
+                            regiment.SetOrigin(editedRegiment.Origin);
+                            regiment.SetMax(editedRegiment.Max);
+                            regiment.SetSoldiers(editedRegiment.CurrentNum);
+                            regiment.SetOwner(editedRegiment.Owner);
+                            regiment.isMercenary(editedRegiment.isMercenary());
+                            regiment.IsGarrison(editedRegiment.IsGarrison());
+                            return;
+                        }
+                        
+                    }
+                }
+            }
+
+            foreach (Army army in defender_armies)
+            {
+                foreach (ArmyRegiment armyRegiment in army.ArmyRegiments)
+                {
+                    foreach (Regiment regiment in armyRegiment.Regiments)
+                    {
+                        if (editedRegiment.ID == regiment.ID)
+                        {
+                            regiment.SetOrigin(editedRegiment.Origin);
+                            regiment.SetMax(editedRegiment.Max);
+                            regiment.SetSoldiers(editedRegiment.CurrentNum);
+                            regiment.SetOwner(editedRegiment.Owner);
+                            regiment.isMercenary(editedRegiment.isMercenary());
+                            regiment.IsGarrison(editedRegiment.IsGarrison());
+                            return;
+                        }
+
+                    }
+                }
+            }
+
         }
 
 
@@ -1026,6 +1098,7 @@ namespace Crusader_Wars.data.save_file
             string index = "";
 
             bool isNameSet = false;
+            bool isReadingChunks = false;
 
             using (StreamReader SR = new StreamReader(Writter.DataFilesPaths.ArmyRegiments_Path()))
             {
@@ -1068,6 +1141,11 @@ namespace Crusader_Wars.data.save_file
 
                     }
 
+                    else if(isSearchStarted && line.Contains("\t\t\tchunks={"))
+                    {
+                        isReadingChunks = true;
+                    }
+
                     //Regiment Index
                     else if (isSearchStarted && line.Contains("\t\t\t\t\tindex="))
                     {
@@ -1075,10 +1153,11 @@ namespace Crusader_Wars.data.save_file
                     }
 
                     //Add Found Regiment
-                    else if (isSearchStarted && line == "\t\t\t\t}")
+                    else if (isSearchStarted && line == "\t\t\t\t}" && isReadingChunks)
                     {
                         Regiment regiment = new Regiment(regiment_id, index);
                         found_regiments.Add(regiment);
+                        isReadingChunks = false;
                     }
 
                     //Current Number
@@ -1133,6 +1212,7 @@ namespace Crusader_Wars.data.save_file
                         index = "";
                         isSearchStarted = false;
                         isNameSet= false;
+                        isReadingChunks = false;
                     }
 
                 }

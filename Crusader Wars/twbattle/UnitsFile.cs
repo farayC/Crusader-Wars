@@ -235,6 +235,11 @@ namespace Crusader_Wars
 
         static void BETA_LevyComposition(Unit unit, Army army, List<(int porcentage, string unit_key, string name)> faction_levy_porcentages, int army_xp)
         {
+            if (faction_levy_porcentages == null || faction_levy_porcentages.Count < 1)
+            {
+                Console.WriteLine("ERROR - LEVIES WITHOUT FACTION IN UNIT" + $"\nNUMBER OF SOLDIERS:{unit.GetSoldiers()}" + $"\nATTILA FACTION:{unit.GetAttilaFaction()}");
+                return;
+            }
 
             var Levies_Data = RetriveCalculatedUnits(unit.GetSoldiers(), unit.GetMax());
 
