@@ -121,6 +121,131 @@ namespace Crusader_Wars.data.save_file
             using (StreamReader reader = new StreamReader(file_path))
             {
                 string line = reader.ReadLine();
+                string empire = "";
+                string empire_capital = "";
+                string kingdom = "";
+                string kingdom_capital = "";
+                string duchy = "";
+                string duchy_capital = "";
+                string county = "";
+
+                bool empire_started = false;
+                bool kingdom_started = false;
+                bool duchy_started = false;
+                bool county_started = false;
+                bool barony_started = false;
+
+                while (!reader.EndOfStream)
+                {
+                    line = reader.ReadLine();
+                    if (line == null) break;
+
+                    //Empire Key
+                    if (Regex.IsMatch(line, @"e_.+ = {"))
+                    {
+                        empire = Regex.Match(line, @"(e_.+) = {").Groups[1].Value;
+                        empire_started = true;
+                    }
+                    else if(empire_started && line.StartsWith("\tcapital"))
+                    {
+                        empire_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
+                        SetRegimentsCountiesKeys(attacker_armies, empire_capital, empire);
+                        SetRegimentsCountiesKeys(defender_armies, empire_capital, empire);
+                    }
+                    //Kingdom Key
+                    if (Regex.IsMatch(line, @"k_.+ = {"))
+                    {
+                        kingdom = Regex.Match(line, @"(k_.+) = {").Groups[1].Value;
+                        kingdom_started = true;
+                    }
+                    else if (kingdom_started && line.StartsWith("\t\tcapital"))
+                    {
+                        kingdom_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
+                        SetRegimentsCountiesKeys(attacker_armies, kingdom_capital, kingdom);
+                        SetRegimentsCountiesKeys(defender_armies, kingdom_capital, kingdom);
+                    }
+                    //Duchy Key
+                    if (Regex.IsMatch(line, @"d_.+ = {"))
+                    {
+                        duchy = Regex.Match(line, @"(d_.+) = {").Groups[1].Value;
+                        duchy_started = true;
+                    }
+                    else if (duchy_started && line.StartsWith("\t\t\tcapital"))
+                    {
+                        duchy_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
+                        SetRegimentsCountiesKeys(attacker_armies, duchy_capital, duchy);
+                        SetRegimentsCountiesKeys(defender_armies, duchy_capital, duchy);
+                    }
+                    //County Key
+                    if (Regex.IsMatch(line, @"c_.+ = {"))
+                    {
+                        county = Regex.Match(line, @"(c_.+) = {").Groups[1].Value;
+                        county_started = true;
+                        SetRegimentsCountiesKeys(attacker_armies, county, county);
+                        SetRegimentsCountiesKeys(defender_armies, county, county);
+                    }
+                    //Barony Key
+                    else if (county_started && Regex.IsMatch(line, @"b_.+ = {"))
+                    {
+                        barony_started = true;
+                        string barony = Regex.Match(line, @"(b_.+) = {").Groups[1].Value;
+                        SetRegimentsCountiesKeys(attacker_armies, county, barony);
+                        SetRegimentsCountiesKeys(defender_armies, county, barony);
+                    }
+
+                    //Finishers
+                    else if (line.StartsWith("}"))
+                    {
+                        empire = "";
+                        empire_capital = "";
+                        empire_started = false;
+                    }
+                    else if (line.StartsWith("\t}"))
+                    {
+                        kingdom = "";
+                        kingdom_capital = "";
+                        kingdom_started = false;
+                    }
+                    else if (line.StartsWith("\t\t}"))
+                    {
+                        duchy = "";
+                        duchy_capital = "";
+                        duchy_started = false;
+                    }
+                    else if (line.StartsWith("\t\t\t}"))
+                    {
+                        county = "";
+                        county_started = false;
+                    }
+                    else if (line.StartsWith("\t\t\t\t}"))
+                    {
+                        barony_started = false;
+                    }
+                }
+                reader.Close();
+            }
+        }
+
+
+        static void SetRegimentsCountiesKeys(List<Army> armies, string county_key, string title_key)
+        {
+
+            foreach (Regiment regiment in armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
+            {
+                if (regiment.OriginKey == title_key && string.IsNullOrEmpty(regiment.GetCountyKey()))
+                {
+                    regiment.StoreCountyKey(county_key);
+                }
+            }
+
+        }
+
+        /*
+        static void ReadLandedTitles(string file_path, List<Army> attacker_armies, List<Army> defender_armies)
+        {
+            using (StreamReader reader = new StreamReader(file_path))
+            {
+                string line = reader.ReadLine();
                 string county = "";
                 bool county_started = false;
                 bool barony_started = false;
@@ -185,5 +310,6 @@ namespace Crusader_Wars.data.save_file
                 }
             }
         }
+        */
     }
 }

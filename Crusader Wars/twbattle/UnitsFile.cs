@@ -233,7 +233,7 @@ namespace Crusader_Wars
         }
 
 
-        static void BETA_LevyComposition(Unit unit, Army army, List<(int porcentage, string unit_key, string name)> faction_levy_porcentages, int army_xp)
+        static void BETA_LevyComposition(Unit unit, Army army, List<(int porcentage, string unit_key, string name, string max)> faction_levy_porcentages, int army_xp)
         {
             if (faction_levy_porcentages == null || faction_levy_porcentages.Count < 1)
             {

@@ -216,6 +216,7 @@ namespace Crusader_Wars.data.save_file
         public string ID { get; private set; }
         public string Index { get; private set; }
         public string Origin { get; private set; }
+        public string OriginKey { get; private set; }
         public string Owner { get; private set; }
         public string Max {  get; private set; }
         public string CurrentNum { get; private set; }
@@ -241,6 +242,7 @@ namespace Crusader_Wars.data.save_file
         public void isMercenary(bool t) { this.IsMercenary = t; }
         public void IsGarrison(bool t) { this.isGarrison = t; }
         public void SetOrigin(string origin) { this.Origin = origin; }
+        public void SetOriginKey(string key) { this.OriginKey = key; }
         public void SetMax(string max) { this.Max = max; }
         public void SetSoldiers(string soldiers) {this.CurrentNum = soldiers; }
         public void StoreCountyKey(string key) { this.county_key = key; }

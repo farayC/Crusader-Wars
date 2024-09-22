@@ -18,7 +18,7 @@ namespace Crusader_Wars.unit_mapper
         internal TerrainsUM(string attilaMap, List<(string building, string x, string y)> historicalMaps, List<(string terrain, string x, string y)> normalMaps)
         {
             AttilaMap = attilaMap;
-            HistoricalMaps = historicalMaps;
+            HistoricalMaps = historicalMaps;    
             NormalMaps = normalMaps;
         }
 
@@ -34,7 +34,7 @@ namespace Crusader_Wars.unit_mapper
          * House files reader for AGOT
          ----------------------------------------------------------------*/
 
-        public static TerrainsUM Terrains { get;private set; }
+        public static TerrainsUM Terrains { get;private set; }  
         static string LoadedUnitMapper_FolderPath { get; set; }
 
         public static string GetLoadedUnitMapperName() { return Path.GetFileName(LoadedUnitMapper_FolderPath); }
@@ -327,10 +327,10 @@ namespace Crusader_Wars.unit_mapper
             return max;
         }
 
-        static List<(int porcentage, string unit_key, string name)> Levies(XmlDocument factions_file, string attila_faction)
+        static List<(int porcentage, string unit_key, string name, string max)> Levies(XmlDocument factions_file, string attila_faction)
         {
             var levies_nodes = factions_file.SelectNodes($"/FactionsGroups/Faction[@name=\"{attila_faction}\"]/Levies");
-            List<(int porcentage, string unit_key, string name)> list = new List<(int porcentage, string unit_key, string name)>();
+            List<(int porcentage, string unit_key, string name, string max)> list = new List<(int porcentage, string unit_key, string name, string max)>();
 
             if (levies_nodes.Count == 0) 
                 return list;
@@ -341,18 +341,22 @@ namespace Crusader_Wars.unit_mapper
                 int porcentage = Int32.Parse(levies_node.Attributes["porcentage"].Value);
                 string key = levies_node.Attributes["key"].Value;
                 string name = $"Levy_{porcentage}";
-                list.Add((porcentage, key, name));
+                string max = MaxType.GetMax("LEVY").ToString();
+                if (levies_node.Attributes["max"] != null)
+                    max = MaxType.GetMax(levies_node.Attributes["max"].Value).ToString();
+
+                list.Add((porcentage, key, name, max));
             }
 
             return list;
         }
 
 
-        public static List<(int porcentage, string unit_key, string name)> GetFactionLevies(string attila_faction)
+        public static List<(int porcentage, string unit_key, string name, string max)> GetFactionLevies(string attila_faction)
         {
             string factions_folder_path = LoadedUnitMapper_FolderPath + @"\Factions";
             var files_paths = Directory.GetFiles(factions_folder_path);
-            var levies = new List<(int porcentage, string unit_key, string name)>();
+            var levies = new List<(int porcentage, string unit_key, string name, string max)>();
             foreach (var xml_file in files_paths)
             {
                 if (Path.GetExtension(xml_file) == ".xml")

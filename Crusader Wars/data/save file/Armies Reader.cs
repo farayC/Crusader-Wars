@@ -29,6 +29,7 @@ namespace Crusader_Wars.data.save_file
             ReadArmyRegiments();
             ReadCombatSoldiersNum(BattleResult.Player_Combat);
             ReadRegiments();
+            ReadOrigins();
 
             LandedTitles.ReadProvinces(attacker_armies, defender_armies);
             ReadCountiesManager();
@@ -453,6 +454,56 @@ namespace Crusader_Wars.data.save_file
             }
         }
 
+        static void ReadOrigins()
+        {
+            bool searchStarted = false;
+            string originKey = "";
+            string id = "";
+            using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.LandedTitles()))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null && !sr.EndOfStream)
+                {
+                    if (!line.StartsWith("\t") && line != "}")
+                    {
+                        id = Regex.Match(line, @"\d+").Value;
+                        searchStarted = true;
+                    }
+                    else if (searchStarted && line.StartsWith("\tkey=")) //# KEY
+                    {
+                        originKey = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                        SetRegimentsOriginsKeys(id, originKey);
+                    }
+                    else if (searchStarted && line == "}")
+                    {
+                        searchStarted= false;
+                        originKey = "";
+                        id = "";
+                    }
+
+                }
+            }
+        }
+
+        static void SetRegimentsOriginsKeys(string originId, string originKey)
+        {
+            foreach (Regiment regiment in attacker_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
+            {
+                if(regiment.Origin == originId && string.IsNullOrEmpty(regiment.OriginKey))
+                {
+                    regiment.SetOriginKey(originKey);
+                }
+            }
+
+            foreach (Regiment regiment in defender_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
+            {
+                if (regiment.Origin == originId && string.IsNullOrEmpty(regiment.OriginKey))
+                {
+                    regiment.SetOriginKey(originKey);
+                }
+            }
+        }
+
         static (int rank, string titleName) GetCommanderNobleRankAndTitleName(string commanderTitleID)
         {
             bool searchStarted = false;
@@ -862,7 +913,7 @@ namespace Crusader_Wars.data.save_file
             }
         }
         
-  
+
 
         private static void ReadRegiments()
         {
@@ -878,9 +929,6 @@ namespace Crusader_Wars.data.save_file
                 {
                     string line = sr.ReadLine();
                     if (line == null) break;
-
-                    if (line == "\t\t4820={")
-                        Console.Write("");
 
                     // Regiment ID Line
                     if (Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStarted)
