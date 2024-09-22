@@ -580,7 +580,8 @@ namespace Crusader_Wars
                 ("Permian", "att_fact_hunni"),
                 ("Gothic", "att_fact_greuthingi"),
                 ("Roman African", "att_fact_mauri"),
-                ("Wendish", "att_fact_ostrogothi")
+                ("Wendish", "att_fact_ostrogothi"),
+                ("South Arabian" ,"att_fact_lakhmids")
         };
         static string GetAOJFaction(Army army, bool isPlayer)
         {

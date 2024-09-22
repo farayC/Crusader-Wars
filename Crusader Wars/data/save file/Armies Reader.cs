@@ -1205,6 +1205,9 @@ namespace Crusader_Wars.data.save_file
                     {
                         Regiment regiment = new Regiment(regiment_id, index);
                         found_regiments.Add(regiment);
+                    }
+                    else if (isSearchStarted && line == "}" && isReadingChunks)
+                    {
                         isReadingChunks = false;
                     }
 
