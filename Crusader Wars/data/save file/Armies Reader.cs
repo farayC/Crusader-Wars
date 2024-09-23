@@ -29,7 +29,7 @@ namespace Crusader_Wars.data.save_file
             ReadArmyRegiments();
             ReadCombatSoldiersNum(BattleResult.Player_Combat);
             ReadRegiments();
-            ReadOrigins();
+            //ReadOrigins();
 
             LandedTitles.ReadProvinces(attacker_armies, defender_armies);
             ReadCountiesManager();

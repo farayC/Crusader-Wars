@@ -128,6 +128,7 @@ namespace Crusader_Wars.data.save_file
                 string duchy = "";
                 string duchy_capital = "";
                 string county = "";
+                string barony = "";
 
                 bool empire_started = false;
                 bool kingdom_started = false;
@@ -149,8 +150,8 @@ namespace Crusader_Wars.data.save_file
                     else if(empire_started && line.StartsWith("\tcapital"))
                     {
                         empire_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
-                        SetRegimentsCountiesKeys(attacker_armies, empire_capital, empire);
-                        SetRegimentsCountiesKeys(defender_armies, empire_capital, empire);
+                        //SetRegimentsCountiesKeys(attacker_armies, empire_capital, empire);
+                        //SetRegimentsCountiesKeys(defender_armies, empire_capital, empire);
                     }
                     //Kingdom Key
                     if (Regex.IsMatch(line, @"k_.+ = {"))
@@ -161,8 +162,8 @@ namespace Crusader_Wars.data.save_file
                     else if (kingdom_started && line.StartsWith("\t\tcapital"))
                     {
                         kingdom_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
-                        SetRegimentsCountiesKeys(attacker_armies, kingdom_capital, kingdom);
-                        SetRegimentsCountiesKeys(defender_armies, kingdom_capital, kingdom);
+                        //SetRegimentsCountiesKeys(attacker_armies, kingdom_capital, kingdom);
+                        //SetRegimentsCountiesKeys(defender_armies, kingdom_capital, kingdom);
                     }
                     //Duchy Key
                     if (Regex.IsMatch(line, @"d_.+ = {"))
@@ -173,24 +174,32 @@ namespace Crusader_Wars.data.save_file
                     else if (duchy_started && line.StartsWith("\t\t\tcapital"))
                     {
                         duchy_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
-                        SetRegimentsCountiesKeys(attacker_armies, duchy_capital, duchy);
-                        SetRegimentsCountiesKeys(defender_armies, duchy_capital, duchy);
+                        //SetRegimentsCountiesKeys(attacker_armies, duchy_capital, duchy);
+                        //SetRegimentsCountiesKeys(defender_armies, duchy_capital, duchy);
                     }
                     //County Key
                     if (Regex.IsMatch(line, @"c_.+ = {"))
                     {
                         county = Regex.Match(line, @"(c_.+) = {").Groups[1].Value;
                         county_started = true;
-                        SetRegimentsCountiesKeys(attacker_armies, county, county);
-                        SetRegimentsCountiesKeys(defender_armies, county, county);
+                        //SetRegimentsCountiesKeys(attacker_armies, county, county);
+                        //SetRegimentsCountiesKeys(defender_armies, county, county);
                     }
                     //Barony Key
                     else if (county_started && Regex.IsMatch(line, @"b_.+ = {"))
                     {
                         barony_started = true;
-                        string barony = Regex.Match(line, @"(b_.+) = {").Groups[1].Value;
-                        SetRegimentsCountiesKeys(attacker_armies, county, barony);
-                        SetRegimentsCountiesKeys(defender_armies, county, barony);
+                        barony = Regex.Match(line, @"(b_.+) = {").Groups[1].Value;
+                        //SetRegimentsCountiesKeys(attacker_armies, county, barony);
+                        //SetRegimentsCountiesKeys(defender_armies, county, barony);
+                    }
+                    else if (county_started && barony_started && line.Contains("province ="))
+                    {
+                        string province_id = Regex.Match(line, @"\d+").Value;
+                        SetRegimentsCountiesKeys(attacker_armies, county, province_id);
+                        SetRegimentsCountiesKeys(defender_armies, county, province_id);
+
+                        barony_started = false;
                     }
 
                     //Finishers
@@ -219,6 +228,7 @@ namespace Crusader_Wars.data.save_file
                     }
                     else if (line.StartsWith("\t\t\t\t}"))
                     {
+                        barony = "";
                         barony_started = false;
                     }
                 }
@@ -226,19 +236,34 @@ namespace Crusader_Wars.data.save_file
             }
         }
 
-
-        static void SetRegimentsCountiesKeys(List<Army> armies, string county_key, string title_key)
+        static void SetRegimentsCountiesKeys(List<Army> armies, string county_key, string province_id)
         {
 
             foreach (Regiment regiment in armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
             {
-                if (regiment.OriginKey == title_key && string.IsNullOrEmpty(regiment.GetCountyKey()))
+                if (regiment.Origin == province_id && string.IsNullOrEmpty(regiment.GetCountyKey()) && !regiment.isMercenary())
                 {
                     regiment.StoreCountyKey(county_key);
                 }
             }
 
         }
+
+
+        /*
+        static void SetRegimentsCountiesKeys(List<Army> armies, string county_key, string title_key)
+        {
+
+            foreach (Regiment regiment in armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
+            {
+                if (regiment.OriginKey == title_key && string.IsNullOrEmpty(regiment.GetCountyKey()) && !regiment.isMercenary())
+                {
+                    regiment.StoreCountyKey(county_key);
+                }
+            }
+
+        }
+        */
 
         /*
         static void ReadLandedTitles(string file_path, List<Army> attacker_armies, List<Army> defender_armies)
@@ -277,8 +302,9 @@ namespace Crusader_Wars.data.save_file
                 reader.Close();
             }
         }
-   
+        */
 
+        /*
         static void SetRegimentsCountiesKeys(List<Army> armies, string county_key, string province_id)
         {
             //Armies
@@ -311,5 +337,6 @@ namespace Crusader_Wars.data.save_file
             }
         }
         */
+
     }
 }
