@@ -29,7 +29,7 @@ namespace Crusader_Wars.data.save_file
             ReadArmyRegiments();
             ReadCombatSoldiersNum(BattleResult.Player_Combat);
             ReadRegiments();
-            //ReadOrigins();
+            ReadOriginsKeys();
 
             LandedTitles.ReadProvinces(attacker_armies, defender_armies);
             ReadCountiesManager();
@@ -454,7 +454,7 @@ namespace Crusader_Wars.data.save_file
             }
         }
 
-        static void ReadOrigins()
+        static void ReadOriginsKeys()
         {
             bool searchStarted = false;
             string originKey = "";
@@ -472,7 +472,7 @@ namespace Crusader_Wars.data.save_file
                     else if (searchStarted && line.StartsWith("\tkey=")) //# KEY
                     {
                         originKey = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
-                        SetRegimentsOriginsKeys(id, originKey);
+                        SetRegimentsOriginsKeys(originKey);
                     }
                     else if (searchStarted && line == "}")
                     {
@@ -485,11 +485,11 @@ namespace Crusader_Wars.data.save_file
             }
         }
 
-        static void SetRegimentsOriginsKeys(string originId, string originKey)
+        static void SetRegimentsOriginsKeys(string originKey)
         {
             foreach (Regiment regiment in attacker_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
             {
-                if(regiment.Origin == originId && string.IsNullOrEmpty(regiment.OriginKey))
+                if(!string.IsNullOrEmpty(regiment.OwningTitle) && string.IsNullOrEmpty(regiment.OriginKey))
                 {
                     regiment.SetOriginKey(originKey);
                 }
@@ -497,7 +497,7 @@ namespace Crusader_Wars.data.save_file
 
             foreach (Regiment regiment in defender_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
             {
-                if (regiment.Origin == originId && string.IsNullOrEmpty(regiment.OriginKey))
+                if (!string.IsNullOrEmpty(regiment.OwningTitle) && string.IsNullOrEmpty(regiment.OriginKey))
                 {
                     regiment.SetOriginKey(originKey);
                 }
@@ -993,6 +993,11 @@ namespace Crusader_Wars.data.save_file
                         string owner = Regex.Match(line, @"\d+").Value;
                         regiment.SetOwner(owner);
 
+                    }
+                    else if(isSearchStarted && line.Contains("\t\t\towning_title="))
+                    {
+                        string owiningTitle = Regex.Match(line, @"\d+").Value;
+                        regiment.SetOwningTitle(owiningTitle);
                     }
                     // Max
                     else if (isSearchStarted && line.Contains("\t\t\t\t\tmax="))

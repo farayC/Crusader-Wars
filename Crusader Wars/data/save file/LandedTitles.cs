@@ -150,8 +150,8 @@ namespace Crusader_Wars.data.save_file
                     else if(empire_started && line.StartsWith("\tcapital"))
                     {
                         empire_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
-                        //SetRegimentsCountiesKeys(attacker_armies, empire_capital, empire);
-                        //SetRegimentsCountiesKeys(defender_armies, empire_capital, empire);
+                        SetTitleRegimentsCountiesKeys(attacker_armies, empire_capital, empire);
+                        SetTitleRegimentsCountiesKeys(defender_armies, empire_capital, empire);
                     }
                     //Kingdom Key
                     if (Regex.IsMatch(line, @"k_.+ = {"))
@@ -162,8 +162,8 @@ namespace Crusader_Wars.data.save_file
                     else if (kingdom_started && line.StartsWith("\t\tcapital"))
                     {
                         kingdom_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
-                        //SetRegimentsCountiesKeys(attacker_armies, kingdom_capital, kingdom);
-                        //SetRegimentsCountiesKeys(defender_armies, kingdom_capital, kingdom);
+                        SetTitleRegimentsCountiesKeys(attacker_armies, kingdom_capital, kingdom);
+                        SetTitleRegimentsCountiesKeys(defender_armies, kingdom_capital, kingdom);
                     }
                     //Duchy Key
                     if (Regex.IsMatch(line, @"d_.+ = {"))
@@ -174,24 +174,22 @@ namespace Crusader_Wars.data.save_file
                     else if (duchy_started && line.StartsWith("\t\t\tcapital"))
                     {
                         duchy_capital = Regex.Match(line, @"capital = (\w+)").Groups[1].Value;
-                        //SetRegimentsCountiesKeys(attacker_armies, duchy_capital, duchy);
-                        //SetRegimentsCountiesKeys(defender_armies, duchy_capital, duchy);
+                        SetTitleRegimentsCountiesKeys(attacker_armies, duchy_capital, duchy);
+                        SetTitleRegimentsCountiesKeys(defender_armies, duchy_capital, duchy);
                     }
                     //County Key
                     if (Regex.IsMatch(line, @"c_.+ = {"))
                     {
                         county = Regex.Match(line, @"(c_.+) = {").Groups[1].Value;
                         county_started = true;
-                        //SetRegimentsCountiesKeys(attacker_armies, county, county);
-                        //SetRegimentsCountiesKeys(defender_armies, county, county);
+                        SetTitleRegimentsCountiesKeys(attacker_armies, county, county);
+                        SetTitleRegimentsCountiesKeys(defender_armies, county, county);
                     }
                     //Barony Key
                     else if (county_started && Regex.IsMatch(line, @"b_.+ = {"))
                     {
                         barony_started = true;
                         barony = Regex.Match(line, @"(b_.+) = {").Groups[1].Value;
-                        //SetRegimentsCountiesKeys(attacker_armies, county, barony);
-                        //SetRegimentsCountiesKeys(defender_armies, county, barony);
                     }
                     else if (county_started && barony_started && line.Contains("province ="))
                     {
@@ -233,6 +231,18 @@ namespace Crusader_Wars.data.save_file
                     }
                 }
                 reader.Close();
+            }
+        }
+        static void SetTitleRegimentsCountiesKeys(List<Army> armies, string county_key, string title_key)
+        {
+
+            foreach (Regiment regiment in armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
+            {
+                if (!string.IsNullOrEmpty(regiment.OwningTitle) && regiment.OriginKey == title_key && string.IsNullOrEmpty(regiment.GetCountyKey()) && !regiment.isMercenary())
+                {
+                    regiment.StoreCountyKey(county_key);
+                }
+
             }
         }
 
