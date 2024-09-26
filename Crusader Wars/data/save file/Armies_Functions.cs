@@ -192,12 +192,10 @@ namespace Crusader_Wars.data.save_file
                                 {
                                     if(regiment.Culture == null)
                                     {
-                                        Console.WriteLine($"WARNING - REGIMENT {regiment.ID} HAS A NULL CULTURE");
                                         continue;
                                     }
                                     else if(string.IsNullOrEmpty(regiment.Culture.ID))
                                     {
-                                        //Console.WriteLine($"WARNING - REGIMENT {regiment.ID} DOESN'T HAVE AN ID");
                                         continue;
                                     }
                                     else
@@ -230,7 +228,7 @@ namespace Crusader_Wars.data.save_file
                     //Heritage Name
                     else if (isSearchStared && line.Contains("\t\t\theritage="))
                     {
-                        heritage_name = Regex.Match(line, @"""(.+)""").Groups[1].Value;
+                        heritage_name = Regex.Match(line, @"heritage=(.+)\t\t\tlanguage=").Groups[1].Value;
                         heritage_name = heritage_name.Trim('-');
                     }
 

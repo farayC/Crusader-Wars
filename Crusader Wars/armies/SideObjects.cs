@@ -84,15 +84,6 @@ namespace Crusader_Wars
             }
         }
 
-        public void ClearEmptyRegiments()
-        {
-            for (int i = 0; i < ArmyRegiments.Count; i++)
-            {
-                if (ArmyRegiments[i].Regiments != null)
-                    ArmyRegiments[i].Regiments.RemoveAll(x => x.CurrentNum== null);
-            }
-        }
-
         public void RemoveGarrisonRegiments()
         {
             this.ArmyRegiments.SelectMany(armyRegiment => armyRegiment.Regiments).ToList().RemoveAll(x => x.IsGarrison());

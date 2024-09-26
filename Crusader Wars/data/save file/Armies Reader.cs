@@ -40,6 +40,7 @@ namespace Crusader_Wars.data.save_file
             CreateMainCommanders();
             ReadCharacters();
             ReadCourtPositions();
+            CheckForNullCultures();
             ReadCultureManager();
 
 
@@ -54,18 +55,6 @@ namespace Crusader_Wars.data.save_file
             return (attacker_armies, defender_armies);
         }
 
-        static void ClearEmptyRegiments()
-        {
-            // Clear Empty Regiments
-            for (int i = 0; i < attacker_armies.Count; i++)
-            {
-                attacker_armies[i].ClearEmptyRegiments();
-            }
-            for (int i = 0; i < defender_armies.Count; i++)
-            {
-                defender_armies[i].ClearEmptyRegiments();
-            }
-        }
 
         static void ClearNullArmyRegiments()
         {
@@ -77,6 +66,21 @@ namespace Crusader_Wars.data.save_file
             for (int i = 0; i < defender_armies.Count; i++)
             {
                 defender_armies[i].ClearNullArmyRegiments();
+            }
+        }
+
+        static void CheckForNullCultures()
+        {
+            Console.WriteLine("ATTACKER  WITH NULL CULTURE REGIMENTS:\n");
+            foreach(Regiment regiment in attacker_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiment => armyRegiment.Regiments))
+            {
+                Console.WriteLine($"WARNING - REGIMENT {regiment.ID} HAS A NULL CULTURE");
+            }
+
+            Console.WriteLine("DEFENDER  WITH NULL CULTURE REGIMENTS:\n");
+            foreach (Regiment regiment in defender_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiment => armyRegiment.Regiments))
+            {
+                Console.WriteLine($"WARNING - REGIMENT {regiment.ID} HAS A NULL CULTURE");
             }
         }
 
@@ -1030,8 +1034,6 @@ namespace Crusader_Wars.data.save_file
                     }
                 }
             }
-
-            ClearEmptyRegiments();
             RemoveGarrisonRegiments(attacker_armies, defender_armies);
         }
 
@@ -1211,7 +1213,7 @@ namespace Crusader_Wars.data.save_file
                         Regiment regiment = new Regiment(regiment_id, index);
                         found_regiments.Add(regiment);
                     }
-                    else if (isSearchStarted && line == "}" && isReadingChunks)
+                    else if (isSearchStarted && line == " }" && isReadingChunks)
                     {
                         isReadingChunks = false;
                     }
@@ -1233,7 +1235,7 @@ namespace Crusader_Wars.data.save_file
                     //Men At Arms
                     else if (isSearchStarted && line.Contains("\t\t\ttype="))
                     {
-                        string type = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
+                        string type = Regex.Match(line, "type=(.+)").Groups[1].Value;
                         armyRegiment.SetType(RegimentType.MenAtArms, type);
                         isNameSet = true;
                     }
