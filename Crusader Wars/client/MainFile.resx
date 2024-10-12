@@ -163,7 +163,7 @@
     <value>Flat</value>
   </data>
   <data name="btt_debug.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Paradox King Script, 11.9999981pt</value>
+    <value>Microsoft Sans Serif, 11.9999981pt</value>
   </data>
   <data name="btt_debug.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -190,7 +190,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btt_debug.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="infoLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -199,19 +199,19 @@
     <value>True</value>
   </data>
   <data name="infoLabel.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Paradox King Script, 11.9999981pt, style=Bold</value>
+    <value>Microsoft Sans Serif, 11.9999981pt, style=Bold</value>
   </data>
   <data name="infoLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="infoLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>26, 377</value>
+    <value>30, 377</value>
   </data>
   <data name="infoLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
   <data name="infoLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 23</value>
+    <value>166, 24</value>
   </data>
   <data name="infoLabel.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -277,7 +277,7 @@
     <value>True</value>
   </data>
   <data name="labelVersion.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Paradox King Script, 11.9999981pt, style=Bold</value>
+    <value>Microsoft Sans Serif, 11.9999981pt, style=Bold</value>
   </data>
   <data name="labelVersion.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -289,7 +289,7 @@
     <value>2, 2, 2, 2</value>
   </data>
   <data name="labelVersion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 23</value>
+    <value>50, 24</value>
   </data>
   <data name="labelVersion.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -370,37 +370,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;MainPanelLayout.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="EA_Label.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="EA_Label.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="EA_Label.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Paradox King Script, 11.9999981pt, style=Bold</value>
-  </data>
-  <data name="EA_Label.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="EA_Label.Location" type="System.Drawing.Point, System.Drawing">
-    <value>51, 0</value>
-  </data>
-  <data name="EA_Label.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="EA_Label.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 23</value>
-  </data>
-  <data name="EA_Label.TabIndex" type="System.Int32, mscorlib">
-    <value>26</value>
-  </data>
-  <data name="EA_Label.Text" xml:space="preserve">
-    <value>Early Acess</value>
-  </data>
-  <data name="EA_Label.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopCenter</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;EA_Label.Name" xml:space="preserve">
     <value>EA_Label</value>
@@ -436,7 +406,49 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;BottomPanelLayout.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
+  </data>
+  <data name="EA_Label.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="EA_Label.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="EA_Label.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11.9999981pt, style=Bold</value>
+  </data>
+  <data name="EA_Label.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="EA_Label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>59, 0</value>
+  </data>
+  <data name="EA_Label.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="EA_Label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>107, 24</value>
+  </data>
+  <data name="EA_Label.TabIndex" type="System.Int32, mscorlib">
+    <value>26</value>
+  </data>
+  <data name="EA_Label.Text" xml:space="preserve">
+    <value>Early Acess</value>
+  </data>
+  <data name="EA_Label.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopCenter</value>
+  </data>
+  <data name="&gt;&gt;EA_Label.Name" xml:space="preserve">
+    <value>EA_Label</value>
+  </data>
+  <data name="&gt;&gt;EA_Label.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;EA_Label.Parent" xml:space="preserve">
+    <value>BottomPanelLayout</value>
+  </data>
+  <data name="&gt;&gt;EA_Label.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="patreonBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -568,10 +580,53 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="WebsiteBTN" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SteamBTN" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="patreonBtn" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SettingsBtn" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,25,Percent,25,Percent,25,Percent,25,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9pt, style=Bold</value>
+  </data>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>575, 21</value>
+  </data>
+  <data name="label1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>339, 34</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>The Early Medieval unit mapper
+is temporarly removed until we fix the problem in it.</value>
+  </data>
+  <data name="label1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -586,7 +641,7 @@
     <value>914, 539</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Paradox King Script, 8.25pt</value>
+    <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Crusader Wars</value>

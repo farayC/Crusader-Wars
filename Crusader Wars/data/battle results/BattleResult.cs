@@ -1075,6 +1075,20 @@ namespace Crusader_Wars
             return (false, null);
         }
 
+
+        static string GetChunksText(string size, string owner, string current)
+        {
+            string str = $"\t\t\tmax={size}\n" +
+                       $"\t\t\towner={owner}\n" +
+                       $"\t\t\tchunks={{\n" +
+                       $"\t\t\t\t{{\n" +
+                       $"\t\t\t\t\tmax={size}\n" +
+                       $"\t\t\t\t\tcurrent={current}\n" +
+                       $"\t\t\t\t}}\n" +
+                       $"\t\t\t}}\n";
+
+            return str;
+        }
         public static void EditRegimentsFile(List<Army> attacker_armies, List<Army> defender_armies)
         {
             bool editStarted = false;
@@ -1082,6 +1096,7 @@ namespace Crusader_Wars
             Regiment editRegiment = null;
 
             int index = -1;
+            bool isNewData = false;
             
 
             using (StreamReader streamReader = new StreamReader(DataFilesPaths.Regiments_Path()))
@@ -1117,8 +1132,16 @@ namespace Crusader_Wars
 
                     }
 
+                    else if(editStarted && line.Contains("\t\t\tsize="))
+                    {
+                        isNewData = true;
+                        string newLine = GetChunksText(editRegiment.Max, editRegiment.Owner, editRegiment.CurrentNum);
+                        streamWriter.WriteLine(newLine);
+                        continue;
+                    }
+
                     //Index Counter
-                    else if(editStarted && line == "\t\t\t\t{")
+                    else if(!isNewData && editStarted && line == "\t\t\t\t{")
                     {
                         index++;
                         if (editRegiment.Index == "") 
@@ -1129,7 +1152,7 @@ namespace Crusader_Wars
                         }
                     }
 
-                    else if((editStarted==true && editIndex==true) && line.Contains("\t\t\t\t\tcurrent="))
+                    else if(!isNewData && (editStarted==true && editIndex==true) && line.Contains("\t\t\t\t\tcurrent="))
                     {
                         string edited_line = "\t\t\t\t\tcurrent="+editRegiment.CurrentNum;
                         streamWriter.WriteLine(edited_line);
@@ -1139,7 +1162,7 @@ namespace Crusader_Wars
                     //End Line
                     else if(editStarted && line == "\t\t}")
                     {
-                        editStarted = false; editRegiment = null; editIndex = false; index = -1;
+                        editStarted = false; editRegiment = null; editIndex = false; index = -1; isNewData = false;
                     }
 
                     streamWriter.WriteLine(line);
@@ -1152,23 +1175,15 @@ namespace Crusader_Wars
             bool editStarted = false;
             Regiment editRegiment = null;
 
-            foreach (Army army in armies)
+            foreach (Regiment regiment in armies?.SelectMany(army => army.ArmyRegiments)?.SelectMany(armyRegiment => armyRegiment.Regiments))
             {
-                foreach (ArmyRegiment army_regiment in army.ArmyRegiments)
+                if (regiment.ID == regiment_id)
                 {
-                    foreach (Regiment regiment in army_regiment.Regiments)
-                    {
-                        if (regiment.ID == regiment_id)
-                        {
-                            editStarted = true;
-                            editRegiment = regiment;
-                            return (editStarted, editRegiment);
-                        }
-                    }
+                    editStarted = true;
+                    editRegiment = regiment;
+                    return (editStarted, editRegiment);
                 }
-
             }
-
             return (false, null);
         }
 

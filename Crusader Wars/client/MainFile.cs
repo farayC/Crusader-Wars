@@ -139,6 +139,7 @@ namespace Crusader_Wars
             infoLabel.BackColor = myColor;
             labelVersion.BackColor = myColor;
             EA_Label.BackColor = myColor;
+            label1.BackColor = myColor;
 
             Options.ReadOptionsFile();
             ModOptions.StoreOptionsValues(Options.optionsValuesCollection);
@@ -403,9 +404,9 @@ namespace Crusader_Wars
 
                 }
 
-
                 try
                 {
+
                     //1.0 Beta Debug
                     UpdateLoadingScreenMessage("Reading save file data...");
                     var armies = ArmiesReader.ReadBattleArmies();

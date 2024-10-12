@@ -466,6 +466,7 @@ namespace Crusader_Wars.data.save_file
             using (StreamReader sr = new StreamReader(Writter.DataFilesPaths.LandedTitles()))
             {
                 string line;
+                string title_id = "";
                 while ((line = sr.ReadLine()) != null && !sr.EndOfStream)
                 {
                     if (!line.StartsWith("\t") && line != "}")
@@ -475,12 +476,13 @@ namespace Crusader_Wars.data.save_file
                     }
                     else if (searchStarted && line.StartsWith("\tkey=")) //# KEY
                     {
-                        originKey = Regex.Match(line, "\"(.+)\"").Groups[1].Value;
-                        SetRegimentsOriginsKeys(originKey);
+                        originKey = Regex.Match(line, "=(.+)").Groups[1].Value;
+                        SetRegimentsOriginsKeys(id,originKey);
                     }
                     else if (searchStarted && line == "}")
                     {
                         searchStarted= false;
+                        title_id = "";
                         originKey = "";
                         id = "";
                     }
@@ -489,13 +491,16 @@ namespace Crusader_Wars.data.save_file
             }
         }
 
-        static void SetRegimentsOriginsKeys(string originKey)
+        static void SetRegimentsOriginsKeys(string title_id, string originKey)
         {
             foreach (Regiment regiment in attacker_armies.SelectMany(army => army.ArmyRegiments).SelectMany(armyRegiments => armyRegiments.Regiments))
             {
                 if(!string.IsNullOrEmpty(regiment.OwningTitle) && string.IsNullOrEmpty(regiment.OriginKey))
                 {
-                    regiment.SetOriginKey(originKey);
+                    if (regiment.OwningTitle == title_id)
+                    {
+                        regiment.SetOriginKey(originKey);
+                    }
                 }
             }
 
@@ -503,7 +508,11 @@ namespace Crusader_Wars.data.save_file
             {
                 if (!string.IsNullOrEmpty(regiment.OwningTitle) && string.IsNullOrEmpty(regiment.OriginKey))
                 {
-                    regiment.SetOriginKey(originKey);
+                    if(regiment.OwningTitle == title_id)
+                    {
+                        regiment.SetOriginKey(originKey);
+                    }
+
                 }
             }
         }
@@ -1011,12 +1020,17 @@ namespace Crusader_Wars.data.save_file
                     }
 
                     // Soldiers
-                    else if (isSearchStarted && line.Contains("\t\t\t\t\tcurrent="))
+                    else if (isSearchStarted && (line.Contains("\t\t\t\t\tcurrent=") || line.Contains("\t\t\tsize=")))
                     {
                         string current = Regex.Match(line, @"\d+").Value;
-                        if (index == reg_chunk_index)
+                        if (index == reg_chunk_index || (index == -1 && reg_chunk_index == 0))
                         {
                             regiment.SetSoldiers(current);
+                        }
+
+                        if(line.Contains("\t\t\tsize="))
+                        {
+                            regiment.SetMax(current);
                         }
                     }
 

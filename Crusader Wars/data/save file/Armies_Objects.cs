@@ -171,7 +171,6 @@ namespace Crusader_Wars.data.save_file
         public int CurrentNum { get; private set; }
         public int StartingNum { get; private set; }
         public int Max { get; private set; }
-        public bool IsAdminstrative { get; private set; } 
 
 
         public ArmyRegiment(string id)
@@ -207,14 +206,6 @@ namespace Crusader_Wars.data.save_file
         {
             StartingNum = Int32.Parse(x);
         }
-
-        public void SetAdminstrative(bool b)
-        {
-            IsAdminstrative = b;
-        }
-
-
-
     }
 
     public class Regiment
@@ -224,7 +215,6 @@ namespace Crusader_Wars.data.save_file
         public string Origin { get; private set; }
         public string OriginKey { get; private set; }
         public string OwningTitle { get; private set; }
-        public bool IsAdminstrative { get;private set; }
         public string Owner { get; private set; }
         public string Max {  get; private set; }
         public string CurrentNum { get; private set; }
@@ -256,7 +246,6 @@ namespace Crusader_Wars.data.save_file
         public void SetSoldiers(string soldiers) {this.CurrentNum = soldiers; }
         public void StoreCountyKey(string key) { this.county_key = key; }
         public void ChangeIndex(string index) { this.Index = index; }
-        public void SetAdminstrative(bool b) { this.IsAdminstrative = b; }
 
         
     }

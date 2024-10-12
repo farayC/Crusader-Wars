@@ -198,13 +198,10 @@ namespace Crusader_Wars.data.save_file
                                     {
                                         continue;
                                     }
-                                    else
+                                    else if(regiment.Culture.ID == culture_id)
                                     {
-                                        if (regiment.Culture.ID == culture_id)
-                                        {
-                                            isSearchStared = true;
-                                            break;
-                                        }
+                                        isSearchStared = true;
+                                        break;
                                     }
                                 }
                                 if (isSearchStared)
@@ -230,14 +227,17 @@ namespace Crusader_Wars.data.save_file
                     {
                         heritage_name = Regex.Match(line, @"heritage=(.+)\t\t\tlanguage=").Groups[1].Value;
                         heritage_name = heritage_name.Trim('-');
+
+                        //End Line
+                        found_cultures.Add((culture_id, culture_name, heritage_name));
+                        isSearchStared = false;
+                        culture_id = ""; culture_name = ""; heritage_name = "";
                     }
 
                     //End Line
                     if (isSearchStared && line == "\t\t}")
                     {
-                        found_cultures.Add((culture_id, culture_name, heritage_name));
-                        isSearchStared = false;
-                        culture_id = ""; culture_name = ""; heritage_name = "";
+
                     }
                 }
             }
