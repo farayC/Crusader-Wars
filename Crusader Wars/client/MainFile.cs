@@ -20,6 +20,8 @@ using Crusader_Wars.mod_manager;
 using System.Xml;
 using IWshRuntimeLibrary;
 using System.Web;
+using System.Windows.Media;
+using System.Drawing.Text;
 
 
 namespace Crusader_Wars
@@ -33,6 +35,7 @@ namespace Crusader_Wars
         private int _myVariable = 0;
         public HomePage()
         {
+            LoadFont();
             InitializeComponent();
             
             Thread.Sleep(1000);
@@ -65,9 +68,26 @@ namespace Crusader_Wars
             Original_Color = infoLabel.ForeColor;
         }
 
+        private PrivateFontCollection fonts = new PrivateFontCollection();
+        private Font customFont;
+
+        void LoadFont()
+        {
+            string fontPath = @".\font\Paradox_King_Script.otf";
+            if (System.IO.File.Exists(fontPath))
+            {
+                fonts.AddFontFile(fontPath);
+                customFont = new Font(fonts.Families[0], 12f); // Specify the size you want
+            }
+            else
+            {
+                MessageBox.Show("Font file not found.");
+            }
+        }
 
 
-        Color Original_Color;
+
+        System.Drawing.Color Original_Color;
 
         bool VerifyGamePaths()
         {
@@ -106,7 +126,7 @@ namespace Crusader_Wars
                     if(!gamePaths) infoLabel.Text = "Games Paths Missing!";
                     else infoLabel.Text = "No Unit Mappers Enabled!";
                     ExecuteButton.Enabled = false;
-                    infoLabel.ForeColor = Color.FromArgb(74, 0, 0);
+                    infoLabel.ForeColor = System.Drawing.Color.FromArgb(74, 0, 0);
                 }
                 else if(gamePaths && unitMappers)
                 {
@@ -135,7 +155,7 @@ namespace Crusader_Wars
             //Early Access label visibility
             EA_Label.Visible = false;
 
-            Color myColor = Color.FromArgb(53, 25, 5, 5);
+            System.Drawing.Color myColor = System.Drawing.Color.FromArgb(53, 25, 5, 5);
             infoLabel.BackColor = myColor;
             labelVersion.BackColor = myColor;
             EA_Label.BackColor = myColor;

@@ -425,7 +425,11 @@ namespace Crusader_Wars
             var battleMap = TerrainGenerator.GetBattleMap();
             var playerCommanderTraits = UnitsFile.GetCommanderTraitsObj(true);
             var enemyCommanderTraits = UnitsFile.GetCommanderTraitsObj(true);
-            if(playerCommanderTraits.ShouldRotateDeployment(player_main_army.CombatSide, TerrainGenerator.TerrainType) || enemyCommanderTraits.ShouldRotateDeployment(enemy_main_army.CombatSide, TerrainGenerator.TerrainType))
+
+            bool shouldPlayerRotateDeployment = playerCommanderTraits?.ShouldRotateDeployment(player_main_army.CombatSide, TerrainGenerator.TerrainType) ?? false;
+            bool shouldEnemyRotateDeployment = enemyCommanderTraits?.ShouldRotateDeployment(enemy_main_army.CombatSide, TerrainGenerator.TerrainType) ?? false;
+
+            if (shouldPlayerRotateDeployment || shouldEnemyRotateDeployment)
             {
                 Deployments.beta_SetSidesDirections(total_soldiers, battleMap, true);
             }
