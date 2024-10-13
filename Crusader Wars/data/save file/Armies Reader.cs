@@ -947,6 +947,7 @@ namespace Crusader_Wars.data.save_file
                     if (Regex.IsMatch(line, @"\t\t\d+={") && !isSearchStarted)
                     {
                         string regiment_id = Regex.Match(line, @"\t\t(\d+)={").Groups[1].Value;
+
                         var searchingData = Armies_Functions.SearchRegiments(regiment_id, attacker_armies);
                         if(searchingData.searchHasStarted)
                         {

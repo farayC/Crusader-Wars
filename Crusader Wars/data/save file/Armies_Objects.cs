@@ -40,19 +40,19 @@ namespace Crusader_Wars.data.save_file
                             if (t.Culture is null)
                             {
                                 Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} |Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture ID: null");
-                                regimentsTotal += Int32.Parse(t.CurrentNum);
+                                regimentsTotal += int.TryParse(t.CurrentNum, out int currentNum) ? currentNum : 0;
                             }
                             else
                             {
                                 Console.WriteLine($"## ## Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
-                                regimentsTotal += Int32.Parse(t.CurrentNum);
+                                regimentsTotal += int.TryParse(t.CurrentNum, out int currentNum) ? currentNum : 0;
                             }
                         }
                         else
                         {
                             ///Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {t.CurrentNum} | County Key: {t.GetCountyKey()} | Culture ID: null");
                             Console.WriteLine($"## ## Mercenary Chunk Regiment: {t.ID} | Owner: {t.Owner} | Index: {t.Index} | Origin: {t.Origin} | Soldiers: {ModOptions.FullArmies(t)} | County Key: {t.GetCountyKey()} | Culture: {t.Culture.GetCultureName()} | Heritage: {t.Culture.GetHeritageName()}");
-                            regimentsTotal += Int32.Parse(t.CurrentNum);
+                            regimentsTotal += int.TryParse(t.CurrentNum, out int currentNum) ? currentNum : 0;
                         }
                             
                     }

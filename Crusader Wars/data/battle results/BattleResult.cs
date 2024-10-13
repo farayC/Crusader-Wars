@@ -1078,14 +1078,29 @@ namespace Crusader_Wars
 
         static string GetChunksText(string size, string owner, string current)
         {
-            string str = $"\t\t\tmax={size}\n" +
-                       $"\t\t\towner={owner}\n" +
-                       $"\t\t\tchunks={{\n" +
-                       $"\t\t\t\t{{\n" +
-                       $"\t\t\t\t\tmax={size}\n" +
-                       $"\t\t\t\t\tcurrent={current}\n" +
-                       $"\t\t\t\t}}\n" +
-                       $"\t\t\t}}\n";
+            string str;
+            if (string.IsNullOrEmpty(owner))
+            {
+                str =      $"\t\t\tmax={size}\n" +
+                           $"\t\t\tchunks={{\n" +
+                           $"\t\t\t\t{{\n" +
+                           $"\t\t\t\t\tmax={size}\n" +
+                           $"\t\t\t\t\tcurrent={current}\n" +
+                           $"\t\t\t\t}}\n" +
+                           $"\t\t\t}}\n";
+            }
+            else
+            {
+                str =      $"\t\t\tmax={size}\n" +
+                           $"\t\t\towner={owner}\n" +
+                           $"\t\t\tchunks={{\n" +
+                           $"\t\t\t\t{{\n" +
+                           $"\t\t\t\t\tmax={size}\n" +
+                           $"\t\t\t\t\tcurrent={current}\n" +
+                           $"\t\t\t\t}}\n" +
+                           $"\t\t\t}}\n";
+            }
+
 
             return str;
         }
@@ -1165,7 +1180,11 @@ namespace Crusader_Wars
                         editStarted = false; editRegiment = null; editIndex = false; index = -1; isNewData = false;
                     }
 
-                    streamWriter.WriteLine(line);
+                    if(!isNewData)
+                    {
+                        streamWriter.WriteLine(line);
+                    }
+                    
                 }
             }
         }

@@ -423,15 +423,15 @@ namespace Crusader_Wars
                     continue;
 
                 }
-
+                //1.0 Beta Debug
+                UpdateLoadingScreenMessage("Reading save file data...");
+                var armies = ArmiesReader.ReadBattleArmies();
+                attacker_armies = armies.attacker;
+                defender_armies = armies.defender;
                 try
                 {
 
-                    //1.0 Beta Debug
-                    UpdateLoadingScreenMessage("Reading save file data...");
-                    var armies = ArmiesReader.ReadBattleArmies();
-                    attacker_armies = armies.attacker;
-                    defender_armies = armies.defender;
+
                 }
                 catch(Exception ex)
                 {
